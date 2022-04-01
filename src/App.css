@@ -1,0 +1,17 @@
+.App {
+  text-align: center;
+}
+
+.rounded-grey-border {
+  border: var(--grey-border);
+  border-radius: 4px;
+}
+
+:root {
+  --grey-border: 1px solid #d7d7dc;
+}
+
+.content-container {
+  margin-left: 8%;
+  margin-right: 8%;
+}
