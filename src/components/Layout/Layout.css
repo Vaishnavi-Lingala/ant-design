@@ -1,0 +1,66 @@
+.logo {
+    float: left;
+    color:black;
+    font-size: 17px;
+    font-weight: 700;
+    padding-right: 30px;
+}
+
+.content {
+    min-height: 90vh;
+    padding: 0 9% 100px 9%;
+    background-color: white;
+    margin: 24px 16px 0;
+    overflow: initial;
+}
+
+.app-sider {
+    margin-top: 64px;
+}
+
+.content-layout {
+    margin-left: 250px;
+    background: white !important;
+}
+
+.header {
+    position: fixed;
+    width: 100%;
+    z-index: 1;
+    user-select: none;
+    background-color: white !important;
+    height: 66px;
+    border-bottom: 1px solid #D7D7DC !important;
+}
+
+#logout-menu {
+    float: right;
+    margin-top: -64px;
+}
+
+#sider {
+    overflow: auto;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    border-right: var(--grey-border);
+    background: white;
+}
+
+.sider-menu {
+    border-right: 0; 
+    user-select: none;
+}
+
+.border-bottom-0 {
+    border-bottom: 0;
+}
+
+#user-info{
+    padding: 13px 13px 0 13px;
+}
+
+.menu-item-disabled {
+    color: black !important;
+    cursor: text !important;
+}

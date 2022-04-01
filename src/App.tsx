@@ -1,0 +1,51 @@
+import { Route, useHistory, Switch } from 'react-router-dom';
+import { OktaAuth, toRelativeUrl } from '@okta/okta-auth-js';
+import { Security, LoginCallback } from '@okta/okta-react';
+import { ConfigProvider } from 'antd';
+
+import 'antd/dist/antd.variable.min.css';
+import './App.css';
+
+import config from './config';
+import Login from './components/Login';
+import Policies from './components/Policies/Policies';
+import ProtectedRoute from './components/ProtectedRoute';
+import Settings from './components/Settings';
+import PageNotFound from './components/PageNotFound';
+import Dashboard from './components/Dashboard';
+
+const oktaAuth = new OktaAuth(config.oidc);
+
+function App() {
+	const history = useHistory();
+
+	ConfigProvider.config({
+        theme: {
+            // primaryColor: 'green'
+        },
+    });
+
+	const restoreOriginalUri = async (_oktaAuth: any, originalUri: any) => {
+		history.replace(toRelativeUrl(originalUri || '/', window.location.origin));
+	};
+
+	return (
+		<Security
+			oktaAuth={oktaAuth}
+			restoreOriginalUri={restoreOriginalUri}
+		>
+			<Switch>
+				<Route path="/" exact component={Login} />
+				<Route path="/login/callback" component={LoginCallback} />
+	
+				<ProtectedRoute path="/policies" component={Policies} />
+				<ProtectedRoute path="/settings" component={Settings} />
+				<ProtectedRoute path="/dashboard" component={Dashboard} />
+				
+				<Route component={PageNotFound} />
+			</Switch>
+		</Security>
+	);
+}
+
+export default App;

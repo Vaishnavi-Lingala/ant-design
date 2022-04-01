@@ -1,0 +1,41 @@
+.content-container {
+    padding: 40px;
+    margin: 0;
+    overflow: hidden;
+}
+
+.row-container {
+    display: grid;
+    grid-template-columns: 40% 60%;
+    grid-row-gap: 15px;
+}
+
+.ant-checkbox-disabled + span {
+    color: rgba(0, 0, 0, 0.85) !important;
+}
+
+.select-type {
+    width: 200px;
+}
+
+.select-time {
+    width: 100px;
+}
+
+.checkbox-container > div {
+    padding: 5px;
+}
+
+.content-header {
+    display: flex;
+    font-size: xx-large;
+    font-weight: 600;
+    padding: 5px 5px 0 5px;
+    margin-bottom: 20px;
+}
+
+.policy-header {
+    color: #212126;
+    font-size: x-large;
+    font-weight: 500;
+}
