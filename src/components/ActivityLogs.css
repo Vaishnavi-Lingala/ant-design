@@ -1,0 +1,20 @@
+.filter-container {
+    width: 100%;
+    padding: 10px;
+    border: var(--grey-border);
+    border-radius: 4px;
+}
+
+.filter-container > * {
+    padding: 20px 20px 10px 20px;
+}
+
+.ant-picker {
+    margin-right: 30px;
+}
+
+.log-container {
+    border: var(--grey-border);
+    border-radius: 4px;
+    margin-top: 40px;
+}

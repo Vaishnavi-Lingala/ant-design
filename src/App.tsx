@@ -10,9 +10,9 @@ import config from './config';
 import Login from './components/Login';
 import Policies from './components/Policies/Policies';
 import ProtectedRoute from './components/ProtectedRoute';
-import Settings from './components/Settings';
 import PageNotFound from './components/PageNotFound';
 import Dashboard from './components/Dashboard';
+import ActivityLogs from './components/ActivityLogs';
 
 const oktaAuth = new OktaAuth(config.oidc);
 
@@ -39,7 +39,7 @@ function App() {
 				<Route path="/login/callback" component={LoginCallback} />
 	
 				<ProtectedRoute path="/policies" component={Policies} />
-				<ProtectedRoute path="/settings" component={Settings} />
+				<ProtectedRoute path="/activitylogs" component={ActivityLogs} />
 				<ProtectedRoute path="/dashboard" component={Dashboard} />
 				
 				<Route component={PageNotFound} />
