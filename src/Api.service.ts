@@ -1,5 +1,5 @@
 
-const backend_url = 'http://127.0.0.1:5000';
+const backend_url = 'https://credenti-portal-api.credenti.xyz';
 const headers = {
     'Content-Type': 'application/json'
 };
@@ -11,57 +11,41 @@ export default {
             method: 'POST',
             headers: headers,
             body: JSON.stringify({
-                "domain_name": domain
+                "domain": domain
             })
         };
 
-        return fetch(backend_url + '/api/v1/portal/client/info', requestOptions)
+        return fetch(backend_url + '/client/info', requestOptions)
             .then(response => response.json());
     },
 
-    updateClientConfig(tenantUrl: string, authServerId: string, domainName: string | null, clientId: string) {
-        const requestOptions = {
-            method: 'POST',
-            headers: headers,
-            body: JSON.stringify({
-                "cust_name": "Tecnics",
-                "cust_issuer_url": tenantUrl + "/oauth2/" + authServerId,
-                "last_user": 5,
-                "domain_name": domainName,
-                "auth_cleint_id": clientId,
-                "idp_type": "okta",
-                "cust_tenant_url": tenantUrl
-            })
-        };
-
-        return fetch(backend_url + "/api/v1/portal/client/update", requestOptions)
-            .then(response => response.json());
-    },
-
-    getPolicyDetails(customer_id: string, policy_name: string) {
-        const requestOptions = {
-			method: 'POST',
-			headers: headers,
-			body: JSON.stringify({
-				"customer_id": customer_id,
-				"policy_name": policy_name
-			})
-		};
-
-		return fetch(backend_url + "/api/v1/portal/tectango/policy/info", requestOptions)
+    getAllPolicies() {
+		return fetch(backend_url + "/account/ooaab3ab3443/product/oprc735871d0/auth-policies")
 			.then(response => response.json());
     },
 
-    updatPolicyDetails(requestBody: object) {
-        const requestOptions = {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json', 'x-mock-match-request-body': 'true' },
-			body: JSON.stringify({
-				...requestBody
-			})
-		};
+    getPolicyDetails(uid: string) {
+		return fetch(backend_url + "/auth-policies/" + uid)
+			.then(response => response.json());
+    },
 
-		return fetch("http://127.0.0.1:5000/api/v1/portal/tectango/policy/update", requestOptions)
+    updatePolicyDetails(uid: string, requestOptions: object) {
+		return fetch(backend_url + "/auth-policies/" + uid, requestOptions)
 			.then(res => res.json());
+    },
+
+    getAllMechanisms() {
+		return fetch(backend_url + "/account/ooa9a5e20722/mechanism")
+			.then(response => response.json());
+    },
+
+    getMechanismDetails(uid: string) {
+		return fetch(backend_url + "/account/ooa9a5e20722/mechanism/" + uid)
+			.then(response => response.json());
+    },
+
+    updateMechanismDetails(uid: string, requestOptions: object) {
+		return fetch(backend_url + "/account/ooa9a5e20722/mechanism/" + uid, requestOptions)
+			.then(response => response.json());
     }
 }

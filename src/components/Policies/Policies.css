@@ -1,4 +1,4 @@
-.content-container {
+.content-container-policy {
     padding: 40px;
     margin: 0;
     overflow: hidden;
@@ -44,4 +44,5 @@
     color: #212126;
     font-size: x-large;
     font-weight: 500;
+    padding-bottom: 20px;
 }

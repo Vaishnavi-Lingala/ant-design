@@ -11,10 +11,17 @@ export default function ProtectedRoute({ component: Component, ...restOfProps })
     const oktaStorage = localStorage.getItem("okta-token-storage");
     
     if(oktaStorage !== null) {
-        const idToken = JSON.parse(oktaStorage).idToken;
-        localStorage.setItem("clientId", idToken.clientId);
-        localStorage.setItem("issuer", idToken.issuer);
-        localStorage.setItem("domain", idToken.claims.email.split("@")[1]);
+        if(oktaStorage !== "{}"){
+            const idToken = JSON.parse(oktaStorage).idToken;
+            localStorage.setItem("clientId", idToken.clientId);
+            localStorage.setItem("issuer", idToken.issuer);
+        }
+        else{
+            localStorage.removeItem("domain");
+            localStorage.removeItem("clientId");
+            localStorage.removeItem("issuer");
+            history.push("/");
+        }
     }
     
     return (

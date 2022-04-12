@@ -4,29 +4,34 @@ import { useState } from "react";
 
 import './Policies.css';
 
-import { AuthenticationPolicy } from "../../models/Data.models";
+// import { AuthenticationPolicy } from "../../models/Data.models";
+import { PinPolicy } from "../../models/Data.models";
 import Apis from "../../Api.service";
 
 export const Policy = (props: any) => {
 
 	const [isEdit, setIsEdit] = useState(false);
-	const [displayData, setDisplayData] = useState<AuthenticationPolicy>(props.policyDetails);
-	const [editData, setEditedData] = useState(props.policyDetails);
+	// const [displayData, setDisplayData] = useState<AuthenticationPolicy>(props.policyDetails);
+	// const [editData, setEditedData] = useState(props.policyDetails);
+	const [pinDisplayData, setPinDisplayData] = useState<PinPolicy>(props.pinDetails);
+	const [pinEditData, setPinEditedData] = useState(props.pinDetails);
 	const { TabPane } = Tabs;
+
 	const showPolicyHeader = <>
 		<div className="policy-header">
-			{/* {displayData.PolicyName} */}
-			Default policy
+			{pinDisplayData.name} policy
 			<Button style={{ float: 'right' }} onClick={handleEditClick}>
 				{!isEdit ? 'Edit' : 'Cancel'}
 			</Button>
 		</div>
+
 		<div className="row-container">
 			<div>Description</div>
-			<div>{displayData.policy_desc}</div>
+			<div>{pinDisplayData.description}</div>
 			<div>Assigned to groups</div>
 			<div>
-				{displayData.groups}
+				{/* {displayData.groups} */}
+				GROUPS
 			</div>
 		</div>
 	</>
@@ -39,39 +44,29 @@ export const Policy = (props: any) => {
 	]
 
 	function updatePolicy() {
-		var requestBody = {
-			...editData,
-			"customer_id": "customer1",
-			"policy_name": "Default Policy"
+		var requestOptions = {
+			method: 'PUT',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				...pinEditData
+			})
 		}
 
-		for (const [key] of Object.entries(requestBody)) {
-			requestBody[key] = requestBody[key].toString();
-		}
-
-		delete requestBody.last_date;
-		delete requestBody.pk_policy_id;
-
-		Apis.updatPolicyDetails(requestBody)
+		Apis.updatePolicyDetails(pinDisplayData.uid, requestOptions)
 			.then(data => {
-				if (!data.errorCode) {
-					if (data.status === 'SUCCESS')
-						setDisplayData({ ...editData });
-					setIsEdit(false);
-				}
-				else {
-					console.log(data);
-				}
+				console.log(data);
+				setPinDisplayData({ ...pinEditData });
 			})
 			.catch(error => {
 				console.log(error);
-				setIsEdit(false);
 			})
 	}
 
 	function handleEditClick() {
 		setIsEdit(!isEdit);
-		setEditedData({ ...displayData });
+		setPinEditedData({ ...pinDisplayData });
 	}
 
 	function handleCancelClick() {
@@ -80,6 +75,7 @@ export const Policy = (props: any) => {
 
 	function handleSaveClick() {
 		updatePolicy();
+		setIsEdit(false);
 	}
 
 	return (
@@ -88,7 +84,7 @@ export const Policy = (props: any) => {
 			// style={{border: '1px solid #d7d7dc', margin: 0}} 
 			>
 				<TabPane tab="Pin" key="pin">
-					<div className="content-container">
+					<div className="content-container-policy">
 						{showPolicyHeader}
 
 						<Divider style={{ borderTop: '1px solid #d7d7dc' }} />
@@ -100,16 +96,16 @@ export const Policy = (props: any) => {
 							<div>
 								{
 									isEdit ? <InputNumber
-										onChange={(val) => { editData.min_len = parseInt(val); }}
-										defaultValue={displayData.min_len.toString()} /> : displayData.min_len
+										onChange={(val) => { pinEditData.policy_req.min_length = parseInt(val); }}
+										defaultValue={pinDisplayData.policy_req.min_length.toString()} /> : pinDisplayData.policy_req.min_length
 								}
 							</div>
 							<div>Maxium Length</div>
 							<div>
 								{
 									isEdit ? <InputNumber
-										onChange={(val) => { editData.max_len = parseInt(val); }}
-										defaultValue={displayData.max_len.toString()} /> : displayData.max_len
+										onChange={(val) => { pinEditData.policy_req.max_length = parseInt(val); }}
+										defaultValue={pinDisplayData.policy_req.max_length.toString()} /> : pinDisplayData.policy_req.max_length
 								}
 							</div>
 						</div>
@@ -123,76 +119,76 @@ export const Policy = (props: any) => {
 							<div className="checkbox-container">
 								<div>
 									<Checkbox
-										onChange={(e) => setEditedData({ ...editData, l_case: e.target.checked })}
-										checked={!isEdit ? displayData.l_case : editData.l_case}
+										onChange={(e) => pinEditData.policy_req.is_lower_case_req = e.target.checked}
+										defaultChecked={!isEdit ? pinDisplayData.policy_req.is_lower_case_req : pinEditData.policy_req.is_lower_case_req}
 										disabled={!isEdit}>
 										Lower case letter
 									</Checkbox>
 								</div>
 								<div>
 									<Checkbox
-										onChange={(e) => setEditedData({ ...editData, u_case: e.target.checked })}
-										checked={!isEdit ? displayData.u_case : editData.u_case}
+										onChange={(e) => pinEditData.policy_req.is_upper_case_req = e.target.checked}
+										defaultChecked={!isEdit ? pinDisplayData.policy_req.is_upper_case_req : pinEditData.policy_req.is_upper_case_req}
 										disabled={!isEdit}>
 										Upper case letter
 									</Checkbox>
 								</div>
 								<div>
 									<Checkbox
-										// onChange={(e) => setEditedData({ ...editData, special: e.target.checked })}
-										// checked={!isEdit ? displayData.special : editData.special}
+										onChange={(e) => pinEditData.policy_req.is_num_req = e.target.checked}
+										defaultChecked={!isEdit ? pinDisplayData.policy_req.is_num_req : pinEditData.policy_req.is_num_req}
 										disabled={!isEdit}>
 										Number (0-9)
 									</Checkbox>
 								</div>
 								<div>
 									<Checkbox
-										onChange={(e) => setEditedData({ ...editData, special: e.target.checked })}
-										checked={!isEdit ? displayData.special : editData.special}
+										onChange={(e) => pinEditData.policy_req.is_special_char_req = e.target.checked}
+										defaultChecked={!isEdit ? pinDisplayData.policy_req.is_special_char_req : pinEditData.policy_req.is_special_char_req}
 										disabled={!isEdit}>
 										Special characters (e.g., !@#$%^&*)
 									</Checkbox>
 								</div>
 								<div>
 									<Checkbox
-										onChange={(e) => setEditedData({ ...editData, history: e.target.checked })}
-										checked={!isEdit ? displayData.history : editData.history}
+										onChange={(e) => pinEditData.policy_req.is_pin_history_req = e.target.checked}
+										defaultChecked={!isEdit ? pinDisplayData.policy_req.is_pin_history_req : pinEditData.policy_req.is_pin_history_req}
 										disabled={!isEdit}>
 										Enforce PIN history for last&nbsp;
 										{
 											isEdit ? <InputNumber
-												onChange={(val) => { editData.history_count = parseInt(val) }}
-												value={displayData.history_count.toString()} /> : displayData.history_count
-										} PINS
+												onChange={(val) => { pinEditData.policy_req.pin_history_period = parseInt(val) }}
+												defaultValue={pinDisplayData.policy_req.pin_history_period.toString()} /> : pinDisplayData.policy_req.pin_history_period
+										} {pinDisplayData.policy_req.pin_history_period > 1 ? "PINS" : "PIN"} 
 									</Checkbox>
 								</div>
+
 								<div>
 									<Checkbox
-										onChange={(e) => setEditedData({ ...editData, expire: e.target.checked })}
-										checked={!isEdit ? displayData.expire : editData.expire}
-										disabled={!isEdit}>
-										PIN expires after&nbsp;
-										{
-											isEdit ? <InputNumber
-												onChange={(val) => { editData.expire_count = parseInt(val) }}
-												value={displayData.expire_count.toString()} /> : displayData.expire_count
-										} days
-									</Checkbox>
-								</div>
-								<div>
-									<Checkbox
-										// onChange={(e) => setEditedData({ ...editData, expire: e.target.checked })}
-										// checked={!isEdit ? displayData.expire : editData.expire}
+										onChange={(e) => pinEditData.policy_req.is_non_consecutive_char_req = e.target.checked}
+										defaultChecked={!isEdit ? pinDisplayData.policy_req.is_non_consecutive_char_req : pinEditData.policy_req.is_non_consecutive_char_req}
 										disabled={!isEdit}>
 										No consecutive characters or numbers
 									</Checkbox>
+								</div>
+							</div>
+							<div>
+								PIN expires in
+							</div>
+							<div>
+								<div>
+									{
+										isEdit ? <InputNumber
+											onChange={(val) => { pinEditData.policy_req.expires_in_x_days = parseInt(val) }}
+											defaultValue={pinDisplayData.policy_req.expires_in_x_days.toString()} /> : pinDisplayData.policy_req.expires_in_x_days
+									} {pinDisplayData.policy_req.expires_in_x_days > 1 ? "days" : "day"}
 								</div>
 							</div>
 						</div>
 					</div>
 				</TabPane>
 
-				<TabPane tab="Password" key="password">
+				{/* <TabPane tab="Password" key="password">
 					<div className="content-container">
 						{showPolicyHeader}
 
@@ -233,9 +229,9 @@ export const Policy = (props: any) => {
 							</div>
 						</div>
 					</div>
-				</TabPane>
+				</TabPane> */}
 
-				<TabPane tab="Security Questions" key="security-questions">
+				{/* <TabPane tab="Security Questions" key="security-questions">
 					<div className="content-container">
 						{showPolicyHeader}
 
@@ -288,10 +284,10 @@ export const Policy = (props: any) => {
 							</div>
 						</div>
 					</div>
-				</TabPane>
+				</TabPane> */}
 
-				<TabPane tab="Sign-on" key="sign-on">
-					<div className="content-container">
+				{/* <TabPane tab="Sign-on" key="sign-on">
+					<div className="content-container-policy">
 						{showPolicyHeader}
 
 						<Divider style={{ borderTop: '1px solid #d7d7dc' }} />
@@ -302,20 +298,22 @@ export const Policy = (props: any) => {
 							<div>
 								{
 									isEdit ? <Select disabled={!isEdit} className="select-type"
-										onChange={(val) => { editData.authentication = val }}
+										// onChange={(val) => { editData.authentication = val }}
 										suffixIcon={<CaretDownOutlined
-											style={{ color: isEdit ? 'black' : 'white', cursor: "auto" }} />}
-										defaultValue={displayData.authentication.toString()}>
+											style={{ color: isEdit ? 'black' : 'white', cursor: "pointer" }} />}
+										// defaultValue={displayData.authentication.toString()}
+										>
 										<Select.Option value="1">PIN</Select.Option>
 										<Select.Option value="2">TAP + PIN</Select.Option>
 										<Select.Option value="3">TAP + PIN + OKTAMFA</Select.Option>
 										<Select.Option value="4">TAP + OKTAMFA</Select.Option>
-									</Select> : displayData.authentication ? signonTypes[displayData.authentication - 1] : ''
+									</Select> : "PIN" 
+									// displayData.authentication ? signonTypes[displayData.authentication - 1] : ''
 								}
 							</div>
 						</div>
 					</div>
-				</TabPane>
+				</TabPane> */}
 			</Tabs>
 			{
 				isEdit ? <div style={{ paddingTop: '10px' }}>

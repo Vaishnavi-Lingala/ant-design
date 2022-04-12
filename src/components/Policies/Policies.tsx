@@ -1,5 +1,5 @@
 import { Button, Skeleton, Table } from 'antd';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import './Policies.css';
 
@@ -11,53 +11,67 @@ export default function Policies() {
 	const columns = [
 		{
 			title: 'Policy Name',
-			dataIndex: 'name',
-			width: '25%'
+			dataIndex: 'policy_name',
+			width: '30%'
 		},
 		{
-			title: 'Policy Description',
-			dataIndex: 'description'
+			title: 'Policy Id',
+			dataIndex: 'policy_id',
+			width: '30%'
 		},
 		{
 			title: 'Actions',
 			dataIndex: 'actions',
-			width: '25%'
+			width: '40%',
+			render: (text: any, record: { policy_id: any; }) => (
+				<Button onClick={()=> getPinPolicyDetails(record.policy_id)}>
+				  View
+				</Button>
+			)
 		}
 	];
-
-	const [policyDetails, setPolicyDetails] = useState(undefined);
+	
+	const [pinDetails, setPinDetails] = useState(undefined);
 	const [loadingDetails, setLoadingDetails] = useState(false);
+	const [arr, setArr]: any = useState([]);
 
-	function getPolicyDetails() {
+	useEffect(() => {
+		setLoadingDetails(true)
+		Apis.getAllPolicies()
+		.then(data => {
+			for(var i = 0; i < data.length; i++) {	
+				var obj = {
+					key: i + 1,
+					policy_name: data[i].name,
+					policy_id: data[i].uid
+				}
+				arr.push(obj);
+			}
+			setLoadingDetails(false);
+		})
+	}, [])
+	
+	function getPinPolicyDetails(uid: any) {
 		setLoadingDetails(true);
-		Apis.getPolicyDetails("customer1", "Default Policy")
-			.then(data => {
-				setPolicyDetails(data);
+		Apis.getPolicyDetails(uid)
+		.then(data => {
+				setPinDetails(data);
 				setLoadingDetails(false);
 			})
 			.catch(error => {
 				console.log(error);
 			})
-	}
-
-	const data = [
-		{
-			key: 1,
-			name: 'Default Policy',
-			description: 'It is a default policy',
-			actions: <Button onClick={getPolicyDetails}>Details</Button>
 		}
-	];
 
 	return (
 		<>
 			<div className='content-header'>
 				Authentication
-				{policyDetails ? <Button style={{ marginLeft: 'auto', alignSelf: 'end' }} onClick={() => setPolicyDetails(undefined)}>Back</Button> : <></>}
+				{pinDetails ? <Button style={{ marginLeft: 'auto', alignSelf: 'end' }} onClick={() => setPinDetails(undefined)}>Back</Button> : <></>}
 			</div>
 
 			<Skeleton loading={loadingDetails}>
-				{policyDetails ? <Policy policyDetails={policyDetails} /> : <>
+				{pinDetails ? <Policy pinDetails={pinDetails} /> : <>
 
 					<div style={{ width: '100%', border: '1px solid #D7D7DC', borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6' }}>
 						<Button type='primary' size='large'>Add New Policy</Button>
@@ -65,9 +79,9 @@ export default function Policies() {
 
 					<Table
 						style={{ border: '1px solid #D7D7DC' }}
-						showHeader={false}
+						showHeader={true}
 						columns={columns}
-						dataSource={data}
+						dataSource={arr}
 						pagination={{ position: [] }}
 					/>
 				</>

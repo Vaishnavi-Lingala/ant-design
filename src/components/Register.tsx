@@ -25,26 +25,26 @@ const Register = (props: { domain: any; }) => {
         setDomainName(props.domain);
     }, [props.domain])
 
-    function register() {
-        const tenantUrl = server + details.domain + "." + value;
-            Apis.updateClientConfig(tenantUrl, details.authServerId, domainName, details.clientId)
-            .then(data => {
-                if (!data.errorCode) {
-                    if (data.status === 'SUCCESS') {
-                        ReactDOM.render(
-                            <Login />,
-                            document.getElementById("root")
-                        )
-                    }
-                }
-                else {
-                    console.log(data)
-                }
-            })
-            .catch(error => {
-                console.log(error);
-            })
-    }
+    // function register() {
+    //     const tenantUrl = server + details.domain + "." + value;
+    //         Apis.updateClientConfig(tenantUrl, details.authServerId, domainName, details.clientId)
+    //         .then(data => {
+    //             if (!data.errorCode) {
+    //                 if (data.status === 'SUCCESS') {
+    //                     ReactDOM.render(
+    //                         <Login />,
+    //                         document.getElementById("root")
+    //                     )
+    //                 }
+    //             }
+    //             else {
+    //                 console.log(data)
+    //             }
+    //         })
+    //         .catch(error => {
+    //             console.log(error);
+    //         })
+    // }
 
     const handleSubmit = () => {
         if (details.clientId.length === 0 || details.authServerId.length === 0 || details.domain.length === 0) {
@@ -52,7 +52,7 @@ const Register = (props: { domain: any; }) => {
         }
         else {
             setMessage("");
-            register();
+            // register();
         }
     }
 

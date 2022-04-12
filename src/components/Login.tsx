@@ -10,6 +10,7 @@ import error from "../errors.constants";
 import Register from "./Register";
 import ReactDOM from "react-dom";
 import Apis from "../Api.service";
+import { ClientConfiguration } from "../models/Data.models";
 
 function Login() {
     const [email, setEmail] = useState("");
@@ -20,12 +21,13 @@ function Login() {
 
     const validateEmail = async () => {
         Apis.getClientConfig(domain)
-            .then((data) => {
-                if(!data.errorCode){
-                    config.oidc.clientId = data.auth_cleint_id;
-                    config.oidc.issuer = data.cust_issuer_url;
+            .then((data: ClientConfiguration) => {
+                //@ts-ignore
+                if(!data.detail){
+                    config.oidc.clientId = data.portal_oidc_client_id;
+                    config.oidc.issuer = data.base_url_oauth2;
 
-                    if (data.cust_issuer_url !== "" && data.auth_cleint_id !== "") {
+                    if (data.base_url_oauth2 !== "" && data.portal_oidc_client_id !== "") {
                         const oktaAuth = new OktaAuth(config.oidc);     
                         oktaAuth.signInWithRedirect({
                             originalUri: '/policies'
@@ -40,10 +42,6 @@ function Login() {
                             document.getElementById('root')
                         )
                     }
-                }
-                else if(data.errorCode === error.displayErrors.domain_not_exist){
-                    setErrorMessage("Your organization has not registered yet")
-                    console.log(data);
                 }
                 else{
                     console.log(data);

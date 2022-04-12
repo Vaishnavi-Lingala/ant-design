@@ -2,6 +2,7 @@ import { Skeleton } from 'antd';
 import { useEffect, useState } from 'react';
 
 import Apis from "../Api.service";
+import { ClientConfiguration } from '../models/Data.models';
 
 function Settings() {
     const [clientId, setClientId] = useState("");
@@ -11,10 +12,10 @@ function Settings() {
 
     useEffect(() => {
         Apis.getClientConfig(domain ? domain : '')
-            .then((data) => {
+            .then((data: ClientConfiguration) => {
                 setLoading(false);
-                setClientId(data.auth_cleint_id);
-                setIssuer(data.cust_issuer_url);
+                setClientId(data.portal_oidc_client_id);
+                setIssuer(data.base_url_oauth2);
             }).catch((error) => {
                 console.log(error);
             })
