@@ -1,7 +1,13 @@
-.content-container {
+.content-container-policy {
     padding: 40px;
     margin: 0;
     overflow: hidden;
+    border: 1px solid #d7d7dc;
+    border-top: 0;
+}
+
+.ant-tabs-card>.ant-tabs-nav .ant-tabs-tab {
+    border: 1px solid #d7d7dc;
 }
 
 .row-container {
@@ -38,4 +44,5 @@
     color: #212126;
     font-size: x-large;
     font-weight: 500;
+    padding-bottom: 20px;
 }

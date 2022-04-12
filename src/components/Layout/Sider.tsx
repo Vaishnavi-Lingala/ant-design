@@ -20,7 +20,7 @@ function AppSider() {
 			>
 				<Menu.Item key="policies" >Authentication</Menu.Item>
 				<Menu.Item key="dashboard">Dashboard</Menu.Item>
-				{/* <Menu.Item key="config">Configuration</Menu.Item> */}
+				<Menu.Item key="mechanism">Mechanism</Menu.Item>
 				<Menu.Item key="settings" >Settings</Menu.Item>
 			</Menu>
 		</Sider>
