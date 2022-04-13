@@ -3,7 +3,7 @@
     grid-template-columns: 50% 50%;
 }
 
-.row-container-3coloumns {
+.row-container-3columns {
     display: grid;
     grid-template-columns: 40% 30% 30%;
 }

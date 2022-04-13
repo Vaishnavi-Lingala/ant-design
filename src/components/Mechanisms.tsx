@@ -15,11 +15,6 @@ export default function Mechanisms() {
 			width: '30%'
 		},
 		{
-			title: 'Mechanism Id',
-			dataIndex: 'mechanism_id',
-			width: '30%'
-		},
-		{
 			title: 'Actions',
 			dataIndex: 'actions',
 			width: '40%',

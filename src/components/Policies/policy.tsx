@@ -31,7 +31,7 @@ export const Policy = (props: any) => {
 			<div>Assigned to groups</div>
 			<div>
 				{/* {displayData.groups} */}
-				GROUPS
+				Everyone
 			</div>
 		</div>
 	</>
@@ -202,8 +202,21 @@ export const Policy = (props: any) => {
 							<div className="row-container">
 							<div>Expire Unit</div>
 							<div>
-								{
-									isEdit ? <Select disabled={!isEdit} className="select-time"
+							{isEdit ? <Select defaultValue={"TWO_HOURS"}
+                                        // onChange={(val) => { editData.challenge_factors[0].password_grace_period = val }} style={{ width: 200 }}
+                                    >
+                                        <Select.Option value="TWO_HOURS">2 hours</Select.Option>
+                                        <Select.Option value="FOUR_HOURS">4 hours</Select.Option>
+                                        <Select.Option value="SIX_HOURS">6 hours</Select.Option>
+                                        <Select.Option value="EIGHT_HOURS">8 hours</Select.Option>
+                                        <Select.Option value="TWELVE_HOURS">12 hours</Select.Option>
+                                        <Select.Option value="DO_NOT_PROMPT">Do not prompt</Select.Option>
+                                        <Select.Option value="ALWAYS_PROMPT">Always prompt</Select.Option>
+                                    </Select> : "2 hours"   
+                                    }
+								{/* {
+									isEdit ? 
+									<><InputNumber defaultValue={3}/><Select disabled={!isEdit} className="select-time"
 										// onChange={(val) => { editData.expire_units = val }}
 										suffixIcon={<CaretDownOutlined
 											style={{ color: isEdit ? 'black' : 'white', cursor: 'auto' }} />}
@@ -213,9 +226,9 @@ export const Policy = (props: any) => {
 										<Select.Option value="Days">Days</Select.Option>
 										<Select.Option value="Hours">Hours</Select.Option>
 										<Select.Option value="Minutes">Minutes</Select.Option>
-									</Select> : "Days" 
+									</Select> </> : "3 Days" 
 									// displayData.expire_units
-								}
+								} */}
 							</div>
 							<div>Enforcement</div>
 							<div>
@@ -225,7 +238,7 @@ export const Policy = (props: any) => {
 									disabled={!isEdit}>Do not enforce grace for PIN
 								</Checkbox>
 							</div>
-							<div></div>
+							{/* <div></div>
 							<div>
 								<Checkbox
 									// onChange={(e) => setEditedData({ ...editData, sliding: e.target.checked })}
@@ -233,7 +246,7 @@ export const Policy = (props: any) => {
 									disabled={!isEdit}>
 									Allow sliding of expiration time
 								</Checkbox>
-							</div>
+							</div> */}
 						</div>
 					</div>
 				</TabPane>

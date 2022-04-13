@@ -44,6 +44,8 @@ function Login() {
                     }
                 }
                 else{
+                    //@ts-ignore
+                    setErrorMessage(data.detail);
                     console.log(data);
                 }
             }).catch((error) => {
