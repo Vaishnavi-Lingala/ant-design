@@ -13,6 +13,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import PageNotFound from './components/PageNotFound';
 import Dashboard from './components/Dashboard';
 import ActivityLogs from './components/ActivityLogs';
+import Mechanisms from './components/Mechanisms';
 
 const oktaAuth = new OktaAuth(config.oidc);
 
@@ -41,6 +42,7 @@ function App() {
 				<ProtectedRoute path="/policies" component={Policies} />
 				<ProtectedRoute path="/activitylogs" component={ActivityLogs} />
 				<ProtectedRoute path="/dashboard" component={Dashboard} />
+				<ProtectedRoute path="/mechanism" component={Mechanisms} />
 				
 				<Route component={PageNotFound} />
 			</Switch>

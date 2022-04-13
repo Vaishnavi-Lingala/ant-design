@@ -22,6 +22,8 @@ function AppSider() {
 				<Menu.Item key="dashboard">Dashboard</Menu.Item>
 				{/* <Menu.Item key="config">Configuration</Menu.Item> */}
 				<Menu.Item key="activityLogs" >Activity Logs</Menu.Item>
+				<Menu.Item key="mechanism">Mechanism</Menu.Item>
+				<Menu.Item key="settings" >Settings</Menu.Item>
 			</Menu>
 		</Sider>
 	);
