@@ -92,10 +92,10 @@ function Mechanism(props: any) {
 
                 <div className="row-container-3columns">
                     <div>
-                        <h6>Proximity card</h6>
-                        <Radio.Group name="Tapout Action" defaultValue={"tap"}
+                        <h6>Default Challenge</h6>
+                        <Radio.Group name="Default challenge" defaultValue={"PROXIMITY_CARD"}
                         >
-                            <Radio value={"tap"} disabled>TAP</Radio>
+                            <Radio value={"PROXIMITY_CARD"} disabled>Proximity Card</Radio>
                         </Radio.Group>
                     </div>
 
@@ -148,8 +148,8 @@ function Mechanism(props: any) {
                                         <Space direction="vertical">
                                             <Radio value={"PASSWORD"} disabled>Password</Radio>
                                             <Radio value={"PIN"} >Pin</Radio>
+                                            <Radio value={"OKTA_MFA"} disabled>Okta MFA</Radio>
                                             <Radio value={"None"} disabled>None</Radio>
-                                            <Radio value={"OKTA MFA"} disabled>OKTA MFA</Radio>
                                         </Space>
                                     </Radio.Group>
                                     <br />
@@ -167,8 +167,9 @@ function Mechanism(props: any) {
                                         <Space direction="vertical">
                                             <Radio value={"PASSWORD"}>Password</Radio>
                                             <Radio value={"PIN"} disabled>Pin</Radio>
+                                            <Radio value={"OKTA_MFA"} disabled>Okta MFA</Radio>
                                             <Radio value={"None"} disabled>None</Radio>
-                                            <Radio value={"OKTA MFA"} disabled>OKTA MFA</Radio>
+
                                         </Space>
                                     </Radio.Group>
                                     <br />

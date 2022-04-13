@@ -200,7 +200,7 @@ export const Policy = (props: any) => {
 
 						<h6 style={{ padding: '10px 0 10px 0' }}>Grace Period:</h6>
 							<div className="row-container">
-							<div>Expire Unit</div>
+							{/* <div>Expire Unit</div> */}
 							<div>
 							{isEdit ? <Select defaultValue={"TWO_HOURS"}
                                         // onChange={(val) => { editData.challenge_factors[0].password_grace_period = val }} style={{ width: 200 }}
@@ -230,14 +230,14 @@ export const Policy = (props: any) => {
 									// displayData.expire_units
 								} */}
 							</div>
-							<div>Enforcement</div>
+							{/* <div>Enforcement</div>
 							<div>
 								<Checkbox
 									// onChange={(e) => setEditedData({ ...editData, dne: e.target.checked })}
 									// checked={!isEdit ? displayData.dne : editData.dne}
 									disabled={!isEdit}>Do not enforce grace for PIN
 								</Checkbox>
-							</div>
+							</div> */}
 							{/* <div></div>
 							<div>
 								<Checkbox
