@@ -25,7 +25,9 @@ function Mechanism(props: any) {
         var requestOptions = {
             method: 'PUT',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json', 
+                //@ts-ignore
+                'x-credenti-token': JSON.parse(localStorage.getItem("okta-token-storage")).accessToken.accessToken
             },
             body: JSON.stringify({
                 ...editData
@@ -59,23 +61,7 @@ function Mechanism(props: any) {
     return (
         <Skeleton loading={loading}>
             <div className="content-container rounded-grey-border">
-                <div style={{ paddingBottom: '30px' }}>
-                    <div>
-                        <h5>TecTango</h5>
-                    </div>
-                    <ul className="breadcrumb">
-                        <li className="breadcrumb-item"><a><i className="feather icon-home"></i></a></li>
-                        <li className="breadcrumb-item"><a>mechanism</a></li>
-                    </ul>
-                </div>
-
-                <div style={{ paddingRight: '30px' }}>
-                    <Button style={{ float: 'right', marginTop: '-96px' }} onClick={handleEditClick}>
-                        {!isEdit ? 'Edit' : 'Cancel'}
-                    </Button>
-                </div>
-
-                <div className="row-container-3coloumns">
+                <div className="row-container">
                     <div>
                         <h6>Mechanism name</h6>
                         <span style={{ paddingRight: '20px' }}>
@@ -95,6 +81,22 @@ function Mechanism(props: any) {
                                     /> : displayDetails.name
                             }
                         </span>
+                    </div>
+                    <div style={{paddingRight: '50px'}}>
+                        <Button style={{ float: 'right'}} onClick={handleEditClick}>
+                            {!isEdit ? 'Edit' : 'Cancel'}
+                        </Button>
+                    </div>
+                </div>
+                <br />
+
+                <div className="row-container-3columns">
+                    <div>
+                        <h6>Proximity card</h6>
+                        <Radio.Group name="Tapout Action" defaultValue={"tap"}
+                        >
+                            <Radio value={"tap"} disabled>TAP</Radio>
+                        </Radio.Group>
                     </div>
 
                     <div>
@@ -145,7 +147,9 @@ function Mechanism(props: any) {
                                     <Radio.Group defaultValue={displayDetails?.challenge_factors[1].factor}>
                                         <Space direction="vertical">
                                             <Radio value={"PASSWORD"} disabled>Password</Radio>
-                                            <Radio value={"PIN"}>Pin</Radio>
+                                            <Radio value={"PIN"} >Pin</Radio>
+                                            <Radio value={"None"} disabled>None</Radio>
+                                            <Radio value={"OKTA MFA"} disabled>OKTA MFA</Radio>
                                         </Space>
                                     </Radio.Group>
                                     <br />
@@ -163,11 +167,13 @@ function Mechanism(props: any) {
                                         <Space direction="vertical">
                                             <Radio value={"PASSWORD"}>Password</Radio>
                                             <Radio value={"PIN"} disabled>Pin</Radio>
+                                            <Radio value={"None"} disabled>None</Radio>
+                                            <Radio value={"OKTA MFA"} disabled>OKTA MFA</Radio>
                                         </Space>
                                     </Radio.Group>
                                     <br />
                                     <br />
-                                    <h6>Grace period</h6>
+                                    {/* <h6>Grace period</h6>
 
                                     {isEdit ? <Select defaultValue={displayDetails?.challenge_factors[0].password_grace_period}
                                         onChange={(val) => { editData.challenge_factors[0].password_grace_period = val }} style={{ width: 200 }}
@@ -181,7 +187,7 @@ function Mechanism(props: any) {
                                         <Select.Option value="ALWAYS_PROMPT">Always prompt</Select.Option>
                                     </Select> : //@ts-ignore
                                         password_grace_period[displayDetails.challenge_factors[0].password_grace_period.toString()]   
-                                    }
+                                    } */}
                                 </div>
                             </div>
                         </div>
