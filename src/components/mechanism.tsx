@@ -25,7 +25,9 @@ function Mechanism(props: any) {
         var requestOptions = {
             method: 'PUT',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json', 
+                //@ts-ignore
+                'x-credenti-token': JSON.parse(localStorage.getItem("okta-token-storage")).accessToken.accessToken
             },
             body: JSON.stringify({
                 ...editData
@@ -70,9 +72,12 @@ function Mechanism(props: any) {
                 </div>
 
                 <div style={{ paddingRight: '30px' }}>
-                    <Button style={{ float: 'right', marginTop: '-96px' }} onClick={handleEditClick}>
-                        {!isEdit ? 'Edit' : 'Cancel'}
-                    </Button>
+                    {
+                        displayDetails.name !== "Default" ? 
+                            <Button style={{ float: 'right', marginTop: '-96px' }} onClick={handleEditClick}>
+                                {!isEdit ? 'Edit' : 'Cancel'}
+                            </Button> : <></>
+                    }      
                 </div>
 
                 <div className="row-container-3coloumns">

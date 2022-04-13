@@ -1,15 +1,14 @@
 
 const backend_url = 'https://credenti-portal-api.credenti.xyz';
-const headers = {
-    'Content-Type': 'application/json'
-};
 
 export default {
 
     getClientConfig(domain: string) {
         const requestOptions = {
             method: 'POST',
-            headers: headers,
+            headers: {
+                'Content-Type': 'application/json',
+            },
             body: JSON.stringify({
                 "domain": domain
             })
@@ -19,13 +18,13 @@ export default {
             .then(response => response.json());
     },
 
-    getAllPolicies() {
-		return fetch(backend_url + "/account/ooaab3ab3443/product/oprc735871d0/auth-policies")
+    getAllPolicies(requestOptions: object) {
+		return fetch(backend_url + "/account/ooaab3ab3443/product/oprc735871d0/auth-policies", requestOptions)
 			.then(response => response.json());
     },
 
-    getPolicyDetails(uid: string) {
-		return fetch(backend_url + "/auth-policies/" + uid)
+    getPolicyDetails(uid: string, requestOptions: object) {
+		return fetch(backend_url + "/auth-policies/" + uid, requestOptions)
 			.then(response => response.json());
     },
 
@@ -34,13 +33,13 @@ export default {
 			.then(res => res.json());
     },
 
-    getAllMechanisms() {
-		return fetch(backend_url + "/account/ooa9a5e20722/mechanism")
+    getAllMechanisms(requestOptions: object) {
+		return fetch(backend_url + "/account/ooa9a5e20722/mechanism", requestOptions)
 			.then(response => response.json());
     },
 
-    getMechanismDetails(uid: string) {
-		return fetch(backend_url + "/account/ooa9a5e20722/mechanism/" + uid)
+    getMechanismDetails(uid: string, requestOptions: object) {
+		return fetch(backend_url + "/account/ooa9a5e20722/mechanism/" + uid, requestOptions)
 			.then(response => response.json());
     },
 

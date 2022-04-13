@@ -47,12 +47,16 @@ export const Policy = (props: any) => {
 		var requestOptions = {
 			method: 'PUT',
 			headers: {
-				'Content-Type': 'application/json'
+				'Content-Type': 'application/json', 
+				//@ts-ignore
+				'x-credenti-token': JSON.parse(localStorage.getItem("okta-token-storage")).accessToken.accessToken
 			},
 			body: JSON.stringify({
 				...pinEditData
 			})
 		}
+		
+		console.log(requestOptions);
 
 		Apis.updatePolicyDetails(pinDisplayData.uid, requestOptions)
 			.then(data => {
@@ -188,48 +192,51 @@ export const Policy = (props: any) => {
 					</div>
 				</TabPane>
 
-				{/* <TabPane tab="Password" key="password">
-					<div className="content-container">
+				<TabPane tab="Password" key="password">
+					<div className="content-container-policy">
 						{showPolicyHeader}
 
 						<Divider style={{ borderTop: '1px solid #d7d7dc' }} />
 
 						<h6 style={{ padding: '10px 0 10px 0' }}>Grace Period:</h6>
-						<div className="row-container">
-							<div>Enforcement</div>
-							<div>
-								<Checkbox
-									onChange={(e) => setEditedData({ ...editData, dne: e.target.checked })}
-									checked={!isEdit ? displayData.dne : editData.dne}
-									disabled={!isEdit}>Do not enforce grace for PIN
-								</Checkbox>
-							</div>
+							<div className="row-container">
 							<div>Expire Unit</div>
 							<div>
 								{
 									isEdit ? <Select disabled={!isEdit} className="select-time"
-										onChange={(val) => { editData.expire_units = val }}
+										// onChange={(val) => { editData.expire_units = val }}
 										suffixIcon={<CaretDownOutlined
 											style={{ color: isEdit ? 'black' : 'white', cursor: 'auto' }} />}
-										defaultValue={displayData.expire_units}>
+											defaultValue={"Days"}
+										// defaultValue={displayData.expire_units}
+										>
 										<Select.Option value="Days">Days</Select.Option>
 										<Select.Option value="Hours">Hours</Select.Option>
 										<Select.Option value="Minutes">Minutes</Select.Option>
-									</Select> : displayData.expire_units
+									</Select> : "Days" 
+									// displayData.expire_units
 								}
 							</div>
-							<div>Expiration</div>
+							<div>Enforcement</div>
 							<div>
 								<Checkbox
-									onChange={(e) => setEditedData({ ...editData, sliding: e.target.checked })}
-									checked={!isEdit ? displayData.sliding : editData.sliding}
+									// onChange={(e) => setEditedData({ ...editData, dne: e.target.checked })}
+									// checked={!isEdit ? displayData.dne : editData.dne}
+									disabled={!isEdit}>Do not enforce grace for PIN
+								</Checkbox>
+							</div>
+							<div></div>
+							<div>
+								<Checkbox
+									// onChange={(e) => setEditedData({ ...editData, sliding: e.target.checked })}
+									// checked={!isEdit ? displayData.sliding : editData.sliding}
 									disabled={!isEdit}>
 									Allow sliding of expiration time
 								</Checkbox>
 							</div>
 						</div>
 					</div>
-				</TabPane> */}
+				</TabPane>
 
 				{/* <TabPane tab="Security Questions" key="security-questions">
 					<div className="content-container">
@@ -318,9 +325,13 @@ export const Policy = (props: any) => {
 			{
 				isEdit ? <div style={{ paddingTop: '10px' }}>
 					<Button style={{ float: 'right', marginLeft: '10px' }}
-						onClick={handleCancelClick}>Cancel</Button>
+						onClick={handleCancelClick}>
+							Cancel
+					</Button>
 					<Button type='primary' style={{ float: 'right' }}
-						onClick={handleSaveClick}>Save</Button>
+						onClick={handleSaveClick}>
+							Save
+					</Button>
 				</div> : <></>
 			}
 		</>

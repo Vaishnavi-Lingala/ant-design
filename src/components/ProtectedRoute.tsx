@@ -10,20 +10,27 @@ export default function ProtectedRoute({ component: Component, ...restOfProps })
     const history = useHistory();
     const oktaStorage = localStorage.getItem("okta-token-storage");
     
-    if(oktaStorage !== null) {
+    function removeItems(){
+        localStorage.removeItem("domain");
+        localStorage.removeItem("clientId");
+        localStorage.removeItem("issuer");
+        history.push("/");
+    }
+
+    if(oktaStorage !== null && oktaStorage != "") {
         if(oktaStorage !== "{}"){
             const idToken = JSON.parse(oktaStorage).idToken;
             localStorage.setItem("clientId", idToken.clientId);
             localStorage.setItem("issuer", idToken.issuer);
         }
         else{
-            localStorage.removeItem("domain");
-            localStorage.removeItem("clientId");
-            localStorage.removeItem("issuer");
-            history.push("/");
+            removeItems();
         }
     }
-    
+    else{
+        removeItems();
+    }
+
     return (
         <Route
             {...restOfProps}
