@@ -28,6 +28,19 @@ export interface PinPolicy {
     }
 }
 
+export interface PasswordPolicy {
+    name: string,
+    policy_req: {
+        grace_period: string
+    },
+    default: boolean,
+    order: number,
+    active: boolean,
+    description: string,
+    uid: string,
+    policy_type: string
+}
+
 // export interface AuthenticationPolicy {
 //     authentication: number;
 //     dne: boolean;

@@ -43,7 +43,7 @@ function App() {
 				<ProtectedRoute path="/settings" component={Settings} />
 				<ProtectedRoute path="/dashboard" component={Dashboard} />
 				<ProtectedRoute path="/mechanism" component={Mechanisms} />
-				
+
 				<Route component={PageNotFound} />
 			</Switch>
 		</Security>
