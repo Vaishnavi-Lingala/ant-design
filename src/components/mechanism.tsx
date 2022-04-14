@@ -144,12 +144,14 @@ function Mechanism(props: any) {
                             </div>
                             <div className="card-body">
                                 <div>
-                                    <Radio.Group defaultValue={displayDetails?.challenge_factors[1].factor}>
+                                    <Radio.Group defaultValue={displayDetails?.challenge_factors[1].factor}
+                                        disabled={!isEdit}
+                                    >
                                         <Space direction="vertical">
-                                            <Radio value={"PASSWORD"} disabled>Password</Radio>
-                                            <Radio value={"PIN"} >Pin</Radio>
-                                            <Radio value={"OKTA_MFA"} disabled>Okta MFA</Radio>
-                                            <Radio value={"None"} disabled>None</Radio>
+                                            <Radio value={"PASSWORD"}>Password</Radio>
+                                            <Radio value={"PIN"}>Pin</Radio>
+                                            <Radio value={"OKTA_MFA"}>Okta MFA</Radio>
+                                            <Radio value={"None"}>None</Radio>
                                         </Space>
                                     </Radio.Group>
                                     <br />
@@ -163,12 +165,14 @@ function Mechanism(props: any) {
                             </div>
                             <div className="card-body">
                                 <div>
-                                    <Radio.Group defaultValue={displayDetails?.challenge_factors[0].factor}>
+                                    <Radio.Group defaultValue={displayDetails?.challenge_factors[0].factor}
+                                        disabled={!isEdit}
+                                    >
                                         <Space direction="vertical">
                                             <Radio value={"PASSWORD"}>Password</Radio>
-                                            <Radio value={"PIN"} disabled>Pin</Radio>
-                                            <Radio value={"OKTA_MFA"} disabled>Okta MFA</Radio>
-                                            <Radio value={"None"} disabled>None</Radio>
+                                            <Radio value={"PIN"}>Pin</Radio>
+                                            <Radio value={"OKTA_MFA"}>Okta MFA</Radio>
+                                            <Radio value={"None"}>None</Radio>
 
                                         </Space>
                                     </Radio.Group>

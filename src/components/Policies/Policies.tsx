@@ -15,6 +15,11 @@ export default function Policies() {
 			width: '30%'
 		},
 		{
+			title: 'Policy Id',
+			dataIndex: 'policy_id',
+			width: '30%'
+		},
+		{
 			title: 'Actions',
 			dataIndex: 'actions',
 			width: '40%',

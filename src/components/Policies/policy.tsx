@@ -1,11 +1,11 @@
-import { Divider, Checkbox, Button, InputNumber, Select, Tabs } from "antd";
+import { Divider, Checkbox, Button, InputNumber, Select, Tabs, Radio, Space } from "antd";
 import { CaretDownOutlined } from '@ant-design/icons';
 import { useState } from "react";
 
 import './Policies.css';
 
 // import { AuthenticationPolicy } from "../../models/Data.models";
-import { PinPolicy } from "../../models/Data.models";
+import { PasswordPolicy, PinPolicy } from "../../models/Data.models";
 import Apis from "../../Api.service";
 
 export const Policy = (props: any) => {
@@ -15,6 +15,8 @@ export const Policy = (props: any) => {
 	// const [editData, setEditedData] = useState(props.policyDetails);
 	const [pinDisplayData, setPinDisplayData] = useState<PinPolicy>(props.pinDetails);
 	const [pinEditData, setPinEditedData] = useState(props.pinDetails);
+	const [passwordDisplayData, setPasswordDisplayData] = useState<PasswordPolicy>()
+	const [passwordEditData, setPasswordEditData] = useState();
 	const { TabPane } = Tabs;
 
 	const showPolicyHeader = <>
@@ -114,13 +116,12 @@ export const Policy = (props: any) => {
 							</div>
 						</div>
 
-						<h6 style={{ padding: '10px 0 10px 0' }}>Complexity Requirements:</h6>
-
+						
 						<div className="row-container">
 							<div>
-
+								<h6 style={{ padding: '20px 0 10px 0' }}>Complexity Requirements:</h6>
 							</div>
-							<div className="checkbox-container">
+							<div className="checkbox-container" style={{ padding: '20px 0 10px 0'}}>
 								<div>
 									<Checkbox
 										onChange={(e) => pinEditData.policy_req.is_lower_case_req = e.target.checked}
@@ -198,22 +199,27 @@ export const Policy = (props: any) => {
 
 						<Divider style={{ borderTop: '1px solid #d7d7dc' }} />
 
-						<h6 style={{ padding: '10px 0 10px 0' }}>Grace Period:</h6>
 							<div className="row-container">
-							{/* <div>Expire Unit</div> */}
 							<div>
-							{isEdit ? <Select defaultValue={"TWO_HOURS"}
-                                        // onChange={(val) => { editData.challenge_factors[0].password_grace_period = val }} style={{ width: 200 }}
+								<h6 style={{ padding: '10px 0 10px 0' }}>
+									Grace Period:
+								</h6>
+							</div>
+							<div style={{ padding: '10px 0 10px 0' }}>
+									<Radio.Group defaultValue={"TWO_HOURS"}
+										// defaultValue={displayDetails?.challenge_factors[0].factor}
+                                        disabled={!isEdit}
                                     >
-                                        <Select.Option value="TWO_HOURS">2 hours</Select.Option>
-                                        <Select.Option value="FOUR_HOURS">4 hours</Select.Option>
-                                        <Select.Option value="SIX_HOURS">6 hours</Select.Option>
-                                        <Select.Option value="EIGHT_HOURS">8 hours</Select.Option>
-                                        <Select.Option value="TWELVE_HOURS">12 hours</Select.Option>
-                                        <Select.Option value="DO_NOT_PROMPT">Do not prompt</Select.Option>
-                                        <Select.Option value="ALWAYS_PROMPT">Always prompt</Select.Option>
-                                    </Select> : "2 hours"   
-                                    }
+                                        <Space direction="vertical">
+                                            <Radio value={"TWO_HOURS"}>2 hours</Radio>
+                                            <Radio value={"FOUR_HOURS"}>4 hours</Radio>
+                                            <Radio value={"SIX_HOURS"}>6 hours</Radio>
+                                            <Radio value={"EIGHT_HOURS"}>8 hours</Radio>
+                                            <Radio value={"TWELVE_HOURS"}>12 hours</Radio>
+                                            <Radio value={"ALWAYS_PROMPT"}>Always prompt</Radio>
+                                            <Radio value={"DO_NOT_PROMPT"}>Do not prompt</Radio>
+                                        </Space>
+                                    </Radio.Group>
 								{/* {
 									isEdit ? 
 									<><InputNumber defaultValue={3}/><Select disabled={!isEdit} className="select-time"
