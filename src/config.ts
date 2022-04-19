@@ -30,5 +30,6 @@ export default {
   },
   app: {
     basename: BASENAME,
+    change: 'change'
   },
 };

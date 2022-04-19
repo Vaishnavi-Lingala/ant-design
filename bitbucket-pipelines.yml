@@ -1,0 +1,52 @@
+image: python:3.7.4-alpine3.10
+
+pipelines:
+  branches:
+      master:
+      - step:
+          services:
+            - docker
+          caches:
+            - pip
+          script:
+            - pip3 install awscli
+            - IMAGE="823298410396.dkr.ecr.us-east-1.amazonaws.com/credenti-onboarding-portal"
+            - TAG="${BITBUCKET_BUILD_NUMBER}"
+            - aws configure set aws_access_key_id "${AWS_ACCESS_KEY}"
+            - aws configure set aws_secret_access_key "${AWS_SECRET_ACCESS_KEY}"
+            - eval $(aws ecr get-login --no-include-email --region us-east-1 | sed 's;https://;;g')
+            - touch .env.local
+            - echo "NEXT_PUBLIC_OKTA_DOMAIN='$NEXT_PUBLIC_OKTA_DOMAIN'" | cat >> .env.local
+            - echo "NEXT_PUBLIC_CLIENT_ID='$NEXT_PUBLIC_CLIENT_ID'" | cat >> .env.local
+            - echo "NEXT_PUBLIC_CALLBACK_PATH='$NEXT_PUBLIC_CALLBACK_PATH'" | cat >> .env.local
+            - echo "NEXT_PUBLIC_ISSUER='$NEXT_PUBLIC_ISSUER'" | cat >> .env.local
+            - echo "NEXT_PUBLIC_HOST='$NEXT_PUBLIC_HOST'" | cat >> .env.local
+            - echo "NEXT_PUBLIC_SCOPES='$NEXT_PUBLIC_SCOPES'" | cat >> .env.local
+            - docker build -t $IMAGE:$TAG .
+            - docker push $IMAGE:$TAG
+      - step:
+          name: "Delete Existing Deployment"
+          script:
+            - pipe: atlassian/aws-eks-kubectl-run:2.2.0
+              variables:
+                AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY}
+                AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+                AWS_DEFAULT_REGION: "us-east-1"
+                CLUSTER_NAME: "credenti-portal"
+                KUBECTL_COMMAND: "delete -f credenti-onboarding-portal-deployment.yaml"
+                DEBUG: "true"
+      - step:
+          name: "Deploy to Dev"
+          script:
+            - pip3 install envsubst
+            - export BUILD_NUMBER="${BITBUCKET_BUILD_NUMBER}"
+            - envsubst <credenti-onboarding-portal-deployment.yaml >credenti-deployment.yaml
+            - pipe: atlassian/aws-eks-kubectl-run:2.2.0
+              variables:
+                AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY}
+                AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+                AWS_DEFAULT_REGION: "us-east-1"
+                CLUSTER_NAME: "credenti-portal"
+                KUBECTL_COMMAND: "apply"
+                RESOURCE_PATH: "credenti-deployment.yaml"
+                DEBUG: "true"
