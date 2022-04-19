@@ -10,7 +10,7 @@ pipelines:
             - pip
           script:
             - pip3 install awscli
-            - IMAGE="823298410396.dkr.ecr.us-east-1.amazonaws.com/credenti-onboarding-portal"
+            - IMAGE="823298410396.dkr.ecr.us-east-1.amazonaws.com/credenti-admin-portal"
             - TAG="${BITBUCKET_BUILD_NUMBER}"
             - aws configure set aws_access_key_id "${AWS_ACCESS_KEY}"
             - aws configure set aws_secret_access_key "${AWS_SECRET_ACCESS_KEY}"
@@ -25,21 +25,21 @@ pipelines:
                 AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY}
                 AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
                 AWS_DEFAULT_REGION: "us-east-1"
-                CLUSTER_NAME: "credenti-portal"
-                KUBECTL_COMMAND: "delete -f credenti-onboarding-portal-deployment.yaml"
+                CLUSTER_NAME: "credenti-admin-portal"
+                KUBECTL_COMMAND: "delete -f credenti-admin-portal-deployment.yaml"
                 DEBUG: "true"
       - step:
           name: "Deploy to Dev"
           script:
             - pip3 install envsubst
             - export BUILD_NUMBER="${BITBUCKET_BUILD_NUMBER}"
-            - envsubst <credenti-onboarding-portal-deployment.yaml >credenti-deployment.yaml
+            - envsubst <credenti-admin-portal-deployment.yaml >credenti-deployment.yaml
             - pipe: atlassian/aws-eks-kubectl-run:2.2.0
               variables:
                 AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY}
                 AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
                 AWS_DEFAULT_REGION: "us-east-1"
-                CLUSTER_NAME: "credenti-portal"
+                CLUSTER_NAME: "credenti-admin-portal"
                 KUBECTL_COMMAND: "apply"
                 RESOURCE_PATH: "credenti-deployment.yaml"
                 DEBUG: "true"
