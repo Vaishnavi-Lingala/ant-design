@@ -1,11 +1,11 @@
-import { Divider, Checkbox, Button, InputNumber, Select, Tabs } from "antd";
+import { Divider, Checkbox, Button, InputNumber, Select, Tabs, Radio, Space } from "antd";
 import { CaretDownOutlined } from '@ant-design/icons';
 import { useState } from "react";
 
 import './Policies.css';
 
 // import { AuthenticationPolicy } from "../../models/Data.models";
-import { PinPolicy } from "../../models/Data.models";
+import { PasswordPolicy, PinPolicy } from "../../models/Data.models";
 import Apis from "../../Api.service";
 
 export const Policy = (props: any) => {
@@ -15,6 +15,8 @@ export const Policy = (props: any) => {
 	// const [editData, setEditedData] = useState(props.policyDetails);
 	const [pinDisplayData, setPinDisplayData] = useState<PinPolicy>(props.pinDetails);
 	const [pinEditData, setPinEditedData] = useState(props.pinDetails);
+	const [passwordDisplayData, setPasswordDisplayData] = useState<PasswordPolicy>()
+	const [passwordEditData, setPasswordEditData] = useState();
 	const { TabPane } = Tabs;
 
 	const showPolicyHeader = <>
@@ -31,7 +33,7 @@ export const Policy = (props: any) => {
 			<div>Assigned to groups</div>
 			<div>
 				{/* {displayData.groups} */}
-				GROUPS
+				Everyone
 			</div>
 		</div>
 	</>
@@ -47,12 +49,16 @@ export const Policy = (props: any) => {
 		var requestOptions = {
 			method: 'PUT',
 			headers: {
-				'Content-Type': 'application/json'
+				'Content-Type': 'application/json', 
+				//@ts-ignore
+				'x-credenti-token': JSON.parse(localStorage.getItem("okta-token-storage")).accessToken.accessToken
 			},
 			body: JSON.stringify({
 				...pinEditData
 			})
 		}
+		
+		console.log(requestOptions);
 
 		Apis.updatePolicyDetails(pinDisplayData.uid, requestOptions)
 			.then(data => {
@@ -110,13 +116,12 @@ export const Policy = (props: any) => {
 							</div>
 						</div>
 
-						<h6 style={{ padding: '10px 0 10px 0' }}>Complexity Requirements:</h6>
-
+						
 						<div className="row-container">
 							<div>
-
+								<h6 style={{ padding: '20px 0 10px 0' }}>Complexity Requirements:</h6>
 							</div>
-							<div className="checkbox-container">
+							<div className="checkbox-container" style={{ padding: '20px 0 10px 0'}}>
 								<div>
 									<Checkbox
 										onChange={(e) => pinEditData.policy_req.is_lower_case_req = e.target.checked}
@@ -188,48 +193,69 @@ export const Policy = (props: any) => {
 					</div>
 				</TabPane>
 
-				{/* <TabPane tab="Password" key="password">
-					<div className="content-container">
+				<TabPane tab="Password" key="password">
+					<div className="content-container-policy">
 						{showPolicyHeader}
 
 						<Divider style={{ borderTop: '1px solid #d7d7dc' }} />
 
-						<h6 style={{ padding: '10px 0 10px 0' }}>Grace Period:</h6>
-						<div className="row-container">
-							<div>Enforcement</div>
+							<div className="row-container">
 							<div>
-								<Checkbox
-									onChange={(e) => setEditedData({ ...editData, dne: e.target.checked })}
-									checked={!isEdit ? displayData.dne : editData.dne}
-									disabled={!isEdit}>Do not enforce grace for PIN
-								</Checkbox>
+								<h6 style={{ padding: '10px 0 10px 0' }}>
+									Grace Period:
+								</h6>
 							</div>
-							<div>Expire Unit</div>
-							<div>
-								{
-									isEdit ? <Select disabled={!isEdit} className="select-time"
-										onChange={(val) => { editData.expire_units = val }}
+							<div style={{ padding: '10px 0 10px 0' }}>
+									<Radio.Group defaultValue={"TWO_HOURS"}
+										// defaultValue={displayDetails?.challenge_factors[0].factor}
+                                        disabled={!isEdit}
+                                    >
+                                        <Space direction="vertical">
+                                            <Radio value={"TWO_HOURS"}>2 hours</Radio>
+                                            <Radio value={"FOUR_HOURS"}>4 hours</Radio>
+                                            <Radio value={"SIX_HOURS"}>6 hours</Radio>
+                                            <Radio value={"EIGHT_HOURS"}>8 hours</Radio>
+                                            <Radio value={"TWELVE_HOURS"}>12 hours</Radio>
+                                            <Radio value={"ALWAYS_PROMPT"}>Always prompt</Radio>
+                                            <Radio value={"DO_NOT_PROMPT"}>Do not prompt</Radio>
+                                        </Space>
+                                    </Radio.Group>
+								{/* {
+									isEdit ? 
+									<><InputNumber defaultValue={3}/><Select disabled={!isEdit} className="select-time"
+										// onChange={(val) => { editData.expire_units = val }}
 										suffixIcon={<CaretDownOutlined
 											style={{ color: isEdit ? 'black' : 'white', cursor: 'auto' }} />}
-										defaultValue={displayData.expire_units}>
+											defaultValue={"Days"}
+										// defaultValue={displayData.expire_units}
+										>
 										<Select.Option value="Days">Days</Select.Option>
 										<Select.Option value="Hours">Hours</Select.Option>
 										<Select.Option value="Minutes">Minutes</Select.Option>
-									</Select> : displayData.expire_units
-								}
+									</Select> </> : "3 Days" 
+									// displayData.expire_units
+								} */}
 							</div>
-							<div>Expiration</div>
+							{/* <div>Enforcement</div>
 							<div>
 								<Checkbox
-									onChange={(e) => setEditedData({ ...editData, sliding: e.target.checked })}
-									checked={!isEdit ? displayData.sliding : editData.sliding}
+									// onChange={(e) => setEditedData({ ...editData, dne: e.target.checked })}
+									// checked={!isEdit ? displayData.dne : editData.dne}
+									disabled={!isEdit}>Do not enforce grace for PIN
+								</Checkbox>
+							</div> */}
+							{/* <div></div>
+							<div>
+								<Checkbox
+									// onChange={(e) => setEditedData({ ...editData, sliding: e.target.checked })}
+									// checked={!isEdit ? displayData.sliding : editData.sliding}
 									disabled={!isEdit}>
 									Allow sliding of expiration time
 								</Checkbox>
-							</div>
+							</div> */}
 						</div>
 					</div>
-				</TabPane> */}
+				</TabPane>
 
 				{/* <TabPane tab="Security Questions" key="security-questions">
 					<div className="content-container">
@@ -318,9 +344,13 @@ export const Policy = (props: any) => {
 			{
 				isEdit ? <div style={{ paddingTop: '10px' }}>
 					<Button style={{ float: 'right', marginLeft: '10px' }}
-						onClick={handleCancelClick}>Cancel</Button>
+						onClick={handleCancelClick}>
+							Cancel
+					</Button>
 					<Button type='primary' style={{ float: 'right' }}
-						onClick={handleSaveClick}>Save</Button>
+						onClick={handleSaveClick}>
+							Save
+					</Button>
 				</div> : <></>
 			}
 		</>

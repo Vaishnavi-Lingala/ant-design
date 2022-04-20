@@ -26,7 +26,7 @@ function Login() {
                 if(!data.detail){
                     config.oidc.clientId = data.portal_oidc_client_id;
                     config.oidc.issuer = data.base_url_oauth2;
-
+                    localStorage.setItem("domain", domain);
                     if (data.base_url_oauth2 !== "" && data.portal_oidc_client_id !== "") {
                         const oktaAuth = new OktaAuth(config.oidc);     
                         oktaAuth.signInWithRedirect({
@@ -44,6 +44,8 @@ function Login() {
                     }
                 }
                 else{
+                    //@ts-ignore
+                    setErrorMessage(data.detail);
                     console.log(data);
                 }
             }).catch((error) => {

@@ -35,9 +35,18 @@ export default function Policies() {
 	const [loadingDetails, setLoadingDetails] = useState(false);
 	const [arr, setArr]: any = useState([]);
 
+	var requestOptions = {
+		method: 'GET',
+		headers: {
+			'Content-Type': 'application/json', 
+			//@ts-ignore
+			'x-credenti-token': JSON.parse(localStorage.getItem("okta-token-storage")).accessToken.accessToken
+		}
+	}
+
 	useEffect(() => {
 		setLoadingDetails(true)
-		Apis.getAllPolicies()
+		Apis.getAllPolicies(requestOptions)
 		.then(data => {
 			for(var i = 0; i < data.length; i++) {	
 				var obj = {
@@ -53,7 +62,7 @@ export default function Policies() {
 	
 	function getPinPolicyDetails(uid: any) {
 		setLoadingDetails(true);
-		Apis.getPolicyDetails(uid)
+		Apis.getPolicyDetails(uid, requestOptions)
 		.then(data => {
 				setPinDetails(data);
 				setLoadingDetails(false);

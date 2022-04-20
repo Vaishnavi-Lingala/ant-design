@@ -35,6 +35,10 @@ function AppHeader() {
         })
     };
 
+    function openScreen(screen: string) {
+        history.push('/' + screen);
+    }
+
     return (
         <Header className="header">
             <div className="logo">
@@ -43,7 +47,7 @@ function AppHeader() {
             
             <Menu className="border-bottom-0" theme="light" mode="horizontal" defaultSelectedKeys={['1']}>
                 <Menu.Item key="1">TecTango</Menu.Item>
-                <Menu.Item key="2">TecUnify</Menu.Item>
+                <Menu.Item key="2" onClick={(e) => openScreen("tecunify")}>TecUnify</Menu.Item>
             </Menu>
 
             <Menu className="border-bottom-0" theme="light" mode="horizontal" id="logout-menu">
