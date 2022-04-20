@@ -19,32 +19,32 @@ export default {
     },
 
     getAllPolicies(requestOptions: object) {
-		return fetch(backend_url + "/account/ooaab3ab3443/product/oprc735871d0/auth-policies", requestOptions)
+		return fetch(backend_url + "/account/"+ localStorage.getItem("accountId") + "/product/oprc735871d0/auth-policies", requestOptions)
 			.then(response => response.json());
     },
 
     getPolicyDetails(uid: string, requestOptions: object) {
-		return fetch(backend_url + "/auth-policies/" + uid, requestOptions)
+		return fetch(backend_url + "/account/"+ localStorage.getItem("accountId") + "/auth-policies/" + uid, requestOptions)
 			.then(response => response.json());
     },
 
     updatePolicyDetails(uid: string, requestOptions: object) {
-		return fetch(backend_url + "/auth-policies/" + uid, requestOptions)
+		return fetch(backend_url + "/account/"+ localStorage.getItem("accountId") + "/auth-policies/" + uid, requestOptions)
 			.then(res => res.json());
     },
 
     getAllMechanisms(requestOptions: object) {
-		return fetch(backend_url + "/account/ooa9a5e20722/mechanism", requestOptions)
+		return fetch(backend_url + "/account/"+ localStorage.getItem("accountId") + "/mechanism", requestOptions)
 			.then(response => response.json());
     },
 
     getMechanismDetails(uid: string, requestOptions: object) {
-		return fetch(backend_url + "/account/ooa9a5e20722/mechanism/" + uid, requestOptions)
+		return fetch(backend_url + "/account/o"+ localStorage.getItem("accountId") + "/mechanism/" + uid, requestOptions)
 			.then(response => response.json());
     },
 
     updateMechanismDetails(uid: string, requestOptions: object) {
-		return fetch(backend_url + "/account/ooa9a5e20722/mechanism/" + uid, requestOptions)
+		return fetch(backend_url + "/account/"+ localStorage.getItem("accountId") + "/mechanism/" + uid, requestOptions)
 			.then(response => response.json());
     }
 }

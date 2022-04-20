@@ -30,6 +30,7 @@ function AppHeader() {
             localStorage.removeItem("issuer");
             localStorage.removeItem("domain");
             localStorage.removeItem("companyName");
+            localStorage.removeItem("accountId");
         }).catch((err) => {
             console.error(err)
         })

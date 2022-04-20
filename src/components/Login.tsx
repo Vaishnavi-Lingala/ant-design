@@ -24,9 +24,12 @@ function Login() {
             .then((data: ClientConfiguration) => {
                 //@ts-ignore
                 if(!data.detail){
+                    console.log('Auth profile: ', data);
                     config.oidc.clientId = data.portal_oidc_client_id;
                     config.oidc.issuer = data.base_url_oauth2;
                     localStorage.setItem("domain", domain);
+                    localStorage.setItem("accountId", data.uid);
+                    console.log("Account Id: ", localStorage.getItem("accountId"));
                     if (data.base_url_oauth2 !== "" && data.portal_oidc_client_id !== "") {
                         const oktaAuth = new OktaAuth(config.oidc);     
                         oktaAuth.signInWithRedirect({
