@@ -6,7 +6,6 @@ import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import './Login.css';
 
 import config from "../config";
-import error from "../errors.constants";
 import Register from "./Register";
 import ReactDOM from "react-dom";
 import Apis from "../Api.service";
