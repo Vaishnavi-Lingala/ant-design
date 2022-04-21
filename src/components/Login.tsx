@@ -26,7 +26,7 @@ function Login() {
                 if(!data.detail){
                     console.log('Auth profile: ', data);
                     config.oidc.clientId = data.portal_oidc_client_id;
-                    config.oidc.issuer = data.base_url_oauth2;
+                    config.oidc.issuer = data.base_url;
                     localStorage.setItem("domain", domain);
                     localStorage.setItem("accountId", data.uid);
                     console.log("Account Id: ", localStorage.getItem("accountId"));
