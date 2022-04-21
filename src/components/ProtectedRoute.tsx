@@ -14,6 +14,7 @@ export default function ProtectedRoute({ component: Component, ...restOfProps })
         localStorage.removeItem("domain");
         localStorage.removeItem("clientId");
         localStorage.removeItem("issuer");
+        localStorage.removeItem("accountId");
         history.push("/");
     }
 
