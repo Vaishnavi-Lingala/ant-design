@@ -12,12 +12,12 @@ pipelines:
             - pip3 install awscli
             - IMAGE="823298410396.dkr.ecr.us-east-1.amazonaws.com/credenti-admin-portal"
             - TAG="${BITBUCKET_BUILD_NUMBER}"
-            - aws configure set aws_access_key_id "${AWS_ACCESS_KEY}"
-            - aws configure set aws_secret_access_key "${AWS_SECRET_ACCESS_KEY}"
-            - eval $(aws ecr get-login --no-include-email --region us-east-1 | sed 's;https://;;g')
             - touch .env.local
             - echo "DISABLE_ESLINT_PLUGIN=true" | cat >> .env.local
             - docker build -t $IMAGE:$TAG .
+            - aws configure set aws_access_key_id "${AWS_ACCESS_KEY}"
+            - aws configure set aws_secret_access_key "${AWS_SECRET_ACCESS_KEY}"
+            - eval $(aws ecr get-login --no-include-email --region us-east-1 | sed 's;https://;;g')
             - docker push $IMAGE:$TAG
       - step:
           name: "Delete Existing Deployment"
