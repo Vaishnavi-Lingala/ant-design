@@ -40,7 +40,7 @@ export default function Policies() {
 		headers: {
 			'Content-Type': 'application/json', 
 			//@ts-ignore
-			'x-credenti-token': JSON.parse(localStorage.getItem("okta-token-storage")).accessToken.accessToken
+			'X-CREDENTI-ACCESS-TOKEN': JSON.parse(localStorage.getItem("okta-token-storage")).accessToken.accessToken
 		}
 	}
 
