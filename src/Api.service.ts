@@ -39,12 +39,22 @@ export default {
     },
 
     getMechanismDetails(uid: string, requestOptions: object) {
-		return fetch(backend_url + "/account/o"+ localStorage.getItem("accountId") + "/mechanism/" + uid, requestOptions)
+		return fetch(backend_url + "/account/"+ localStorage.getItem("accountId") + "/mechanism/" + uid, requestOptions)
 			.then(response => response.json());
     },
 
     updateMechanismDetails(uid: string, requestOptions: object) {
 		return fetch(backend_url + "/account/"+ localStorage.getItem("accountId") + "/mechanism/" + uid, requestOptions)
+			.then(response => response.json());
+    },
+
+    getGroups(requestOptions: object) {
+		return fetch(backend_url + "/account/"+ localStorage.getItem("accountId") + "/groups", requestOptions)
+			.then(response => response.json());
+    },
+
+    getGroupDetails(uid: string, requestOptions: object) {
+		return fetch(backend_url + "/account/"+ localStorage.getItem("accountId") + "/groups/" + uid, requestOptions)
 			.then(response => response.json());
     }
 }
