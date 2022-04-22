@@ -6,7 +6,7 @@ pipelines:
       - step:
           services:
             - docker
-            - size: 2x
+          size: 2x
           caches:
             - pip
           script:
