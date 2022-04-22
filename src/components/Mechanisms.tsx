@@ -29,6 +29,10 @@ export default function Mechanisms() {
 	const [mechanismDetails, setMechanismDetails] = useState(undefined);
 	const [loadingDetails, setLoadingDetails] = useState(false);
 	const [arr, setArr]: any = useState([]);
+	const [isModalVisible, setIsModalVisible] = useState(false);
+	const [mechanism, setMechanism] = useState({
+		
+	})
 
 	var requestOptions = {
 		method: 'GET',

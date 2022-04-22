@@ -86,10 +86,10 @@ export const Policy = (props: any) => {
 
 	return (
 		<>
-			<Tabs defaultActiveKey="pin" type="card" size={"middle"} animated={false} tabBarStyle={{ marginBottom: '0px' }}
+			{/* <Tabs defaultActiveKey="pin" type="card" size={"middle"} animated={false} tabBarStyle={{ marginBottom: '0px' }}
 			// style={{border: '1px solid #d7d7dc', margin: 0}} 
 			>
-				<TabPane tab="Pin" key="pin">
+				<TabPane tab="Pin" key="pin"> */}
 					<div className="content-container-policy">
 						{showPolicyHeader}
 
@@ -191,9 +191,9 @@ export const Policy = (props: any) => {
 							</div>
 						</div>
 					</div>
-				</TabPane>
+				{/* </TabPane> */}
 
-				<TabPane tab="Password" key="password">
+				{/* <TabPane tab="Password" key="password">
 					<div className="content-container-policy">
 						{showPolicyHeader}
 
@@ -219,7 +219,7 @@ export const Policy = (props: any) => {
                                             <Radio value={"ALWAYS_PROMPT"}>Always prompt</Radio>
                                             <Radio value={"DO_NOT_PROMPT"}>Do not prompt</Radio>
                                         </Space>
-                                    </Radio.Group>
+                                    </Radio.Group> */}
 								{/* {
 									isEdit ? 
 									<><InputNumber defaultValue={3}/><Select disabled={!isEdit} className="select-time"
@@ -235,7 +235,7 @@ export const Policy = (props: any) => {
 									</Select> </> : "3 Days" 
 									// displayData.expire_units
 								} */}
-							</div>
+							{/* </div> */}
 							{/* <div>Enforcement</div>
 							<div>
 								<Checkbox
@@ -253,9 +253,9 @@ export const Policy = (props: any) => {
 									Allow sliding of expiration time
 								</Checkbox>
 							</div> */}
-						</div>
-					</div>
-				</TabPane>
+				{/* // 		</div> */}
+				{/* // 	</div> */}
+				{/* // </TabPane> */}
 
 				{/* <TabPane tab="Security Questions" key="security-questions">
 					<div className="content-container">
@@ -340,7 +340,7 @@ export const Policy = (props: any) => {
 						</div>
 					</div>
 				</TabPane> */}
-			</Tabs>
+			{/* // </Tabs> */}
 			{
 				isEdit ? <div style={{ paddingTop: '10px' }}>
 					<Button style={{ float: 'right', marginLeft: '10px' }}

@@ -1,5 +1,5 @@
 import { Button, Dropdown, Input, Radio, Select, Skeleton, Space } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MechanismType } from "../models/Data.models";
 
 import './Mechanism.css'
@@ -11,21 +11,45 @@ function Mechanism(props: any) {
     const [loading, setLoading] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
     const [editData, setEditData]: any = useState(props.mechanismDetails);
-    const password_grace_period = {
-        "TWO_HOURS": "2 hours",
-        "FOUR_HOURS": "4 hours",
-        "SIX_HOURS": "6 hours",
-        "EIGHT_HOURS": "8 hours",
-        "TWELVE_HOURS": "12 hours",
-        "DO_NOT_PROMPT": "Do not prompt",
-        "ALWAYS_PROMPT": "Always prompt",
-    }
-    
+    const [options, setOptions] = useState({});
+    const [tapOutOptions, setTapOutOption]: any = useState({
+        "LOCK": "Lock",
+        "SIGN_OUT": "Sign Out",
+        "SIGN_OUT_ALL_USERS": "Sign Out All Users"
+    });
+
+    const [readerOptions, setReaderOptions]: any = useState({
+        "PCSCREADER": "PC/SC Readers",
+        "PCPROXREADER": "rf IDEAS"
+    });
+
+    const [factorOptions, setFactorOptions]: any = useState({
+        "PASSWORD": "Password",
+        "PIN": "Pin",
+        "OKTA_MFA": "Okta MFA",
+        "NONE": "None"
+    });
+
+    // useEffect(() => {
+    //     Apis.getMechanismOptions()
+    //     .then(data => {
+    //         console.log(data)
+    //         setOptions(data);
+    //         tapOutOptions.push(data.tap_out_options);
+    //     })
+    // }, [])
+
+    // console.log(tapOutOptions);
+
+    const getTapoutOptions = Object.keys(tapOutOptions).map(key => ({ value: key, label: tapOutOptions[key] }))
+    const getReaderOptions = Object.keys(readerOptions).map(key => ({ value: key, label: readerOptions[key] }))
+    const getFactorOptions = Object.keys(factorOptions).map(key => ({ value: key, label: factorOptions[key] }))
+
     function updateMechanism() {
         var requestOptions = {
             method: 'PUT',
             headers: {
-                'Content-Type': 'application/json', 
+                'Content-Type': 'application/json',
                 //@ts-ignore
                 'X-CREDENTI-ACCESS-TOKEN': JSON.parse(localStorage.getItem("okta-token-storage")).accessToken.accessToken
             },
@@ -58,6 +82,43 @@ function Mechanism(props: any) {
         setIsEdit(false);
     }
 
+    const [disabledFactors, setDisabledFactors]: any = useState([displayDetails.challenge_factors[1].factor]);
+    const [disabledFactors1, setDisabledFactors1]: any = useState([displayDetails.challenge_factors[0].factor]);
+
+    console.log(!disabledFactors.includes(displayDetails?.challenge_factors[0].factor))
+
+    function showDisabled(e: any) {
+        if (e.target.value === "PASSWORD" || displayDetails?.challenge_factors[1].factor === "PASSWORD") {
+            disabledFactors.push("PASSWORD");
+        }
+        else if (e.target.value === "PIN" || displayDetails?.challenge_factors[1].factor === "PIN") {
+            disabledFactors1.push("PIN");
+        }
+        else {
+            while (disabledFactors.length > 0) {
+                disabledFactors.pop();
+                disabledFactors1.pop();
+            }
+        }
+    }
+
+    const [arr, setArr]: any = useState([]);
+
+    Object.keys(factorOptions).forEach(factor => {
+        arr.push(<Radio value={factor} disabled={disabledFactors.includes(factor)}>
+            {factorOptions[factor]}
+        </Radio>)
+    })
+
+
+    const [arr1, setArr1]: any = useState([]);
+
+    Object.keys(factorOptions).forEach(factor => {
+        arr1.push(<Radio value={factor} disabled={disabledFactors1.includes(factor)}>
+            {factorOptions[factor]}
+        </Radio>)
+    })
+
     return (
         <Skeleton loading={loading}>
             <div className="content-container rounded-grey-border">
@@ -82,8 +143,8 @@ function Mechanism(props: any) {
                             }
                         </span>
                     </div>
-                    <div style={{paddingRight: '50px'}}>
-                        <Button style={{ float: 'right'}} onClick={handleEditClick}>
+                    <div style={{ paddingRight: '50px' }}>
+                        <Button style={{ float: 'right' }} onClick={handleEditClick}>
                             {!isEdit ? 'Edit' : 'Cancel'}
                         </Button>
                     </div>
@@ -107,14 +168,9 @@ function Mechanism(props: any) {
                                     ...editData,
                                     on_tap_out: e.target.value
                                 })
-                            }} disabled={!isEdit}
-                        >
-                            <Space direction="vertical">
-                                <Radio value={"LOCK"}>Lock</Radio>
-                                <Radio value={"SIGN_OUT"}>Sign out</Radio>
-                                <Radio value={"SIGN_OUT_ALL_USERS"}>Sign out All Users</Radio>
-                            </Space>
-                        </Radio.Group>
+                                //@ts-ignore
+                            }} disabled={!isEdit} options={getTapoutOptions}
+                        />
                     </div>
 
                     <div>
@@ -124,19 +180,14 @@ function Mechanism(props: any) {
                                 setEditData((editData: any) => ({
                                     ...editData,
                                     reader_type: e.target.value
-                                }))} disabled={!isEdit}
-                        >
-                            <Space direction="vertical">
-                                <Radio value={"PCSCREADER"}>PC/SC Readers</Radio>
-                                <Radio value={"PCPROXREADER"}>rf IDEAS</Radio>
-                            </Space>
-                        </Radio.Group>
+                                }))} disabled={!isEdit} options={getReaderOptions}
+                        />
                     </div>
                 </div>
 
                 <div style={{ paddingBottom: '65px' }}></div>
 
-                {displayDetails.challenge_factors.length === 2 ? 
+                {displayDetails.challenge_factors.length === 2 ?
                     <div className="row-container">
                         <div className="card shadow mb-4" style={{ width: '90%' }}>
                             <div className="card-header py-3">
@@ -144,14 +195,15 @@ function Mechanism(props: any) {
                             </div>
                             <div className="card-body">
                                 <div>
-                                    <Radio.Group defaultValue={displayDetails?.challenge_factors[1].factor}
-                                        disabled={!isEdit}
+                                    {/* <Radio.Group defaultValue={displayDetails?.challenge_factors[1].factor}
+                                        onChange={showDisabled}
+                                        disabled={!isEdit && disabledFactors} options={getFactorOptions}
+                                    /> */}
+                                    <Radio.Group defaultValue={"PASSWORD"}
+                                        onChange={showDisabled} disabled={!isEdit}
                                     >
                                         <Space direction="vertical">
-                                            <Radio value={"PASSWORD"}>Password</Radio>
-                                            <Radio value={"PIN"}>Pin</Radio>
-                                            <Radio value={"OKTA_MFA"}>Okta MFA</Radio>
-                                            <Radio value={"None"}>None</Radio>
+                                            {arr}
                                         </Space>
                                     </Radio.Group>
                                     <br />
@@ -165,34 +217,17 @@ function Mechanism(props: any) {
                             </div>
                             <div className="card-body">
                                 <div>
-                                    <Radio.Group defaultValue={displayDetails?.challenge_factors[0].factor}
-                                        disabled={!isEdit}
+                                    {/* <Radio.Group defaultValue={displayDetails?.challenge_factors[0].factor}
+                                        disabled={disabledFactors1.includes(displayDetails?.challenge_factors[0].factor)}
+                                        onChange={showDisabled} options={getFactorOptions}
+                                    /> */}
+                                    <Radio.Group defaultValue={"PASSWORD"}
+                                        onChange={showDisabled} disabled={!isEdit}
                                     >
                                         <Space direction="vertical">
-                                            <Radio value={"PASSWORD"}>Password</Radio>
-                                            <Radio value={"PIN"}>Pin</Radio>
-                                            <Radio value={"OKTA_MFA"}>Okta MFA</Radio>
-                                            <Radio value={"None"}>None</Radio>
-
+                                            {arr1}
                                         </Space>
                                     </Radio.Group>
-                                    <br />
-                                    <br />
-                                    {/* <h6>Grace period</h6>
-
-                                    {isEdit ? <Select defaultValue={displayDetails?.challenge_factors[0].password_grace_period}
-                                        onChange={(val) => { editData.challenge_factors[0].password_grace_period = val }} style={{ width: 200 }}
-                                    >
-                                        <Select.Option value="TWO_HOURS">2 hours</Select.Option>
-                                        <Select.Option value="FOUR_HOURS">4 hours</Select.Option>
-                                        <Select.Option value="SIX_HOURS">6 hours</Select.Option>
-                                        <Select.Option value="EIGHT_HOURS">8 hours</Select.Option>
-                                        <Select.Option value="TWELVE_HOURS">12 hours</Select.Option>
-                                        <Select.Option value="DO_NOT_PROMPT">Do not prompt</Select.Option>
-                                        <Select.Option value="ALWAYS_PROMPT">Always prompt</Select.Option>
-                                    </Select> : //@ts-ignore
-                                        password_grace_period[displayDetails.challenge_factors[0].password_grace_period.toString()]   
-                                    } */}
                                 </div>
                             </div>
                         </div>
