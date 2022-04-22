@@ -34,7 +34,7 @@ pipelines:
                 AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY}
                 AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
                 AWS_DEFAULT_REGION: "us-east-1"
-                CLUSTER_NAME: "credenti-admin-portal"
+                CLUSTER_NAME: "credenti-portal"
                 KUBECTL_COMMAND: "delete -f credenti-admin-portal-deployment.yaml"
                 DEBUG: "true"
       - step:
@@ -48,7 +48,7 @@ pipelines:
                 AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY}
                 AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
                 AWS_DEFAULT_REGION: "us-east-1"
-                CLUSTER_NAME: "credenti-admin-portal"
+                CLUSTER_NAME: "credenti-portal"
                 KUBECTL_COMMAND: "apply"
                 RESOURCE_PATH: "credenti-deployment.yaml"
                 DEBUG: "true"
