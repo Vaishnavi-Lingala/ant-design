@@ -12,7 +12,6 @@ pipelines:
       - step:
           services:
             - docker
-                memory: 6144 
           size: 2x
           caches:
             - pip
