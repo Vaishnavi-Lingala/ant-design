@@ -6,7 +6,6 @@ import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import './Login.css';
 
 import config from "../config";
-import error from "../errors.constants";
 import Register from "./Register";
 import ReactDOM from "react-dom";
 import Apis from "../Api.service";
@@ -26,11 +25,11 @@ function Login() {
                 if(!data.detail){
                     console.log('Auth profile: ', data);
                     config.oidc.clientId = data.portal_oidc_client_id;
-                    config.oidc.issuer = data.base_url;
+                    config.oidc.issuer = data.issuer_url;
                     localStorage.setItem("domain", domain);
                     localStorage.setItem("accountId", data.uid);
                     console.log("Account Id: ", localStorage.getItem("accountId"));
-                    if (data.base_url_oauth2 !== "" && data.portal_oidc_client_id !== "") {
+                    if (data.issuer_url !== "" && data.portal_oidc_client_id !== "") {
                         const oktaAuth = new OktaAuth(config.oidc);     
                         oktaAuth.signInWithRedirect({
                             originalUri: '/policies'

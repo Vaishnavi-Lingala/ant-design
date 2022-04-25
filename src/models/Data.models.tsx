@@ -1,12 +1,10 @@
 export interface ClientConfiguration {
     uid: string;
-    portal_oidc_app_id: string;
-    base_url: string;
     portal_oidc_client_id: string;
-    base_url_oauth2: string;
+    issuer_url: string;
 }
 
-export interface PinPolicy {
+export interface PinPolicyType {
     description: string;
     active: boolean;
     default: boolean;
@@ -28,7 +26,7 @@ export interface PinPolicy {
     }
 }
 
-export interface PasswordPolicy {
+export interface PasswordPolicyType {
     name: string,
     policy_req: {
         grace_period: string
