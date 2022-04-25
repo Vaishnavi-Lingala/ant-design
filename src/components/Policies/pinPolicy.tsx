@@ -1,30 +1,27 @@
-import { Divider, Checkbox, Button, InputNumber, Select, Tabs, Radio, Space } from "antd";
-import { CaretDownOutlined } from '@ant-design/icons';
+import { Divider, Checkbox, Button, InputNumber } from "antd";
 import { useState } from "react";
 
 import './Policies.css';
 
 // import { AuthenticationPolicy } from "../../models/Data.models";
-import { PasswordPolicy, PinPolicy } from "../../models/Data.models";
+import { PinPolicyType } from "../../models/Data.models";
 import Apis from "../../Api.service";
 
-export const Policy = (props: any) => {
+export const PinPolicy = (props: any) => {
 
 	const [isEdit, setIsEdit] = useState(false);
-	// const [displayData, setDisplayData] = useState<AuthenticationPolicy>(props.policyDetails);
-	// const [editData, setEditedData] = useState(props.policyDetails);
-	const [pinDisplayData, setPinDisplayData] = useState<PinPolicy>(props.pinDetails);
+	const [pinDisplayData, setPinDisplayData] = useState<PinPolicyType>(props.pinDetails);
 	const [pinEditData, setPinEditedData] = useState(props.pinDetails);
-	const [passwordDisplayData, setPasswordDisplayData] = useState<PasswordPolicy>()
-	const [passwordEditData, setPasswordEditData] = useState();
-	const { TabPane } = Tabs;
+	//@ts-ignore
+	const accessToken = JSON.parse(localStorage.getItem("okta-token-storage")).accessToken.accessToken;
 
 	const showPolicyHeader = <>
 		<div className="policy-header">
 			{pinDisplayData.name} policy
-			<Button style={{ float: 'right' }} onClick={handleEditClick}>
+			{pinDisplayData.default === false ? <Button style={{ float: 'right' }} onClick={handleEditClick}>
 				{!isEdit ? 'Edit' : 'Cancel'}
-			</Button>
+			</Button> : <></>
+			}
 		</div>
 
 		<div className="row-container">
@@ -45,22 +42,8 @@ export const Policy = (props: any) => {
 		'TAP + OKTAMFA'
 	]
 
-	function updatePolicy() {
-		var requestOptions = {
-			method: 'PUT',
-			headers: {
-				'Content-Type': 'application/json', 
-				//@ts-ignore
-				'X-CREDENTI-ACCESS-TOKEN': JSON.parse(localStorage.getItem("okta-token-storage")).accessToken.accessToken
-			},
-			body: JSON.stringify({
-				...pinEditData
-			})
-		}
-		
-		console.log(requestOptions);
-
-		Apis.updatePolicyDetails(pinDisplayData.uid, requestOptions)
+	function updatePinPolicy() {
+		Apis.updatePolicyDetails(pinDisplayData.uid, pinEditData, accessToken)
 			.then(data => {
 				console.log(data);
 				setPinDisplayData({ ...pinEditData });
@@ -80,7 +63,7 @@ export const Policy = (props: any) => {
 	}
 
 	function handleSaveClick() {
-		updatePolicy();
+		updatePinPolicy();
 		setIsEdit(false);
 	}
 
@@ -90,110 +73,110 @@ export const Policy = (props: any) => {
 			// style={{border: '1px solid #d7d7dc', margin: 0}} 
 			>
 				<TabPane tab="Pin" key="pin"> */}
-					<div className="content-container-policy">
-						{showPolicyHeader}
+			<div className="content-container-policy">
+				{showPolicyHeader}
 
-						<Divider style={{ borderTop: '1px solid #d7d7dc' }} />
+				<Divider style={{ borderTop: '1px solid #d7d7dc' }} />
 
-						<h6 style={{ padding: '10px 0 10px 0' }}>Pin Settings:</h6>
+				<h6 style={{ padding: '10px 0 10px 0' }}>Pin Settings:</h6>
 
-						<div className="row-container">
-							<div>Minimum Length</div>
-							<div>
+				<div className="row-container">
+					<div>Minimum Length</div>
+					<div>
+						{
+							isEdit ? <InputNumber
+								onChange={(val) => { pinEditData.policy_req.min_length = parseInt(val); }}
+								defaultValue={pinDisplayData.policy_req.min_length.toString()} /> : pinDisplayData.policy_req.min_length
+						}
+					</div>
+					<div>Maxium Length</div>
+					<div>
+						{
+							isEdit ? <InputNumber
+								onChange={(val) => { pinEditData.policy_req.max_length = parseInt(val); }}
+								defaultValue={pinDisplayData.policy_req.max_length.toString()} /> : pinDisplayData.policy_req.max_length
+						}
+					</div>
+				</div>
+
+
+				<div className="row-container">
+					<div>
+						<h6 style={{ padding: '20px 0 10px 0' }}>Complexity Requirements:</h6>
+					</div>
+					<div className="checkbox-container" style={{ padding: '20px 0 10px 0' }}>
+						<div>
+							<Checkbox
+								onChange={(e) => pinEditData.policy_req.is_lower_case_req = e.target.checked}
+								defaultChecked={!isEdit ? pinDisplayData.policy_req.is_lower_case_req : pinEditData.policy_req.is_lower_case_req}
+								disabled={!isEdit}>
+								Lower case letter
+							</Checkbox>
+						</div>
+						<div>
+							<Checkbox
+								onChange={(e) => pinEditData.policy_req.is_upper_case_req = e.target.checked}
+								defaultChecked={!isEdit ? pinDisplayData.policy_req.is_upper_case_req : pinEditData.policy_req.is_upper_case_req}
+								disabled={!isEdit}>
+								Upper case letter
+							</Checkbox>
+						</div>
+						<div>
+							<Checkbox
+								onChange={(e) => pinEditData.policy_req.is_num_req = e.target.checked}
+								defaultChecked={!isEdit ? pinDisplayData.policy_req.is_num_req : pinEditData.policy_req.is_num_req}
+								disabled={!isEdit}>
+								Number (0-9)
+							</Checkbox>
+						</div>
+						<div>
+							<Checkbox
+								onChange={(e) => pinEditData.policy_req.is_special_char_req = e.target.checked}
+								defaultChecked={!isEdit ? pinDisplayData.policy_req.is_special_char_req : pinEditData.policy_req.is_special_char_req}
+								disabled={!isEdit}>
+								Special characters (e.g., !@#$%^&*)
+							</Checkbox>
+						</div>
+						<div>
+							<Checkbox
+								onChange={(e) => pinEditData.policy_req.is_pin_history_req = e.target.checked}
+								defaultChecked={!isEdit ? pinDisplayData.policy_req.is_pin_history_req : pinEditData.policy_req.is_pin_history_req}
+								disabled={!isEdit}>
+								Enforce PIN history for last&nbsp;
 								{
 									isEdit ? <InputNumber
-										onChange={(val) => { pinEditData.policy_req.min_length = parseInt(val); }}
-										defaultValue={pinDisplayData.policy_req.min_length.toString()} /> : pinDisplayData.policy_req.min_length
-								}
-							</div>
-							<div>Maxium Length</div>
-							<div>
-								{
-									isEdit ? <InputNumber
-										onChange={(val) => { pinEditData.policy_req.max_length = parseInt(val); }}
-										defaultValue={pinDisplayData.policy_req.max_length.toString()} /> : pinDisplayData.policy_req.max_length
-								}
-							</div>
+										onChange={(val) => { pinEditData.policy_req.pin_history_period = parseInt(val) }}
+										defaultValue={pinDisplayData.policy_req.pin_history_period.toString()} /> : pinDisplayData.policy_req.pin_history_period
+								} {pinDisplayData.policy_req.pin_history_period > 1 ? "PINS" : "PIN"}
+							</Checkbox>
 						</div>
 
-						
-						<div className="row-container">
-							<div>
-								<h6 style={{ padding: '20px 0 10px 0' }}>Complexity Requirements:</h6>
-							</div>
-							<div className="checkbox-container" style={{ padding: '20px 0 10px 0'}}>
-								<div>
-									<Checkbox
-										onChange={(e) => pinEditData.policy_req.is_lower_case_req = e.target.checked}
-										defaultChecked={!isEdit ? pinDisplayData.policy_req.is_lower_case_req : pinEditData.policy_req.is_lower_case_req}
-										disabled={!isEdit}>
-										Lower case letter
-									</Checkbox>
-								</div>
-								<div>
-									<Checkbox
-										onChange={(e) => pinEditData.policy_req.is_upper_case_req = e.target.checked}
-										defaultChecked={!isEdit ? pinDisplayData.policy_req.is_upper_case_req : pinEditData.policy_req.is_upper_case_req}
-										disabled={!isEdit}>
-										Upper case letter
-									</Checkbox>
-								</div>
-								<div>
-									<Checkbox
-										onChange={(e) => pinEditData.policy_req.is_num_req = e.target.checked}
-										defaultChecked={!isEdit ? pinDisplayData.policy_req.is_num_req : pinEditData.policy_req.is_num_req}
-										disabled={!isEdit}>
-										Number (0-9)
-									</Checkbox>
-								</div>
-								<div>
-									<Checkbox
-										onChange={(e) => pinEditData.policy_req.is_special_char_req = e.target.checked}
-										defaultChecked={!isEdit ? pinDisplayData.policy_req.is_special_char_req : pinEditData.policy_req.is_special_char_req}
-										disabled={!isEdit}>
-										Special characters (e.g., !@#$%^&*)
-									</Checkbox>
-								</div>
-								<div>
-									<Checkbox
-										onChange={(e) => pinEditData.policy_req.is_pin_history_req = e.target.checked}
-										defaultChecked={!isEdit ? pinDisplayData.policy_req.is_pin_history_req : pinEditData.policy_req.is_pin_history_req}
-										disabled={!isEdit}>
-										Enforce PIN history for last&nbsp;
-										{
-											isEdit ? <InputNumber
-												onChange={(val) => { pinEditData.policy_req.pin_history_period = parseInt(val) }}
-												defaultValue={pinDisplayData.policy_req.pin_history_period.toString()} /> : pinDisplayData.policy_req.pin_history_period
-										} {pinDisplayData.policy_req.pin_history_period > 1 ? "PINS" : "PIN"} 
-									</Checkbox>
-								</div>
-
-								<div>
-									<Checkbox
-										onChange={(e) => pinEditData.policy_req.is_non_consecutive_char_req = e.target.checked}
-										defaultChecked={!isEdit ? pinDisplayData.policy_req.is_non_consecutive_char_req : pinEditData.policy_req.is_non_consecutive_char_req}
-										disabled={!isEdit}>
-										No consecutive characters or numbers
-									</Checkbox>
-								</div>
-							</div>
-							<div>
-								PIN expires in
-							</div>
-							<div>
-								<div>
-									{
-										isEdit ? <InputNumber
-											onChange={(val) => { pinEditData.policy_req.expires_in_x_days = parseInt(val) }}
-											defaultValue={pinDisplayData.policy_req.expires_in_x_days.toString()} /> : pinDisplayData.policy_req.expires_in_x_days
-									} {pinDisplayData.policy_req.expires_in_x_days > 1 ? "days" : "day"}
-								</div>
-							</div>
+						<div>
+							<Checkbox
+								onChange={(e) => pinEditData.policy_req.is_non_consecutive_char_req = e.target.checked}
+								defaultChecked={!isEdit ? pinDisplayData.policy_req.is_non_consecutive_char_req : pinEditData.policy_req.is_non_consecutive_char_req}
+								disabled={!isEdit}>
+								No consecutive characters or numbers
+							</Checkbox>
 						</div>
 					</div>
-				{/* </TabPane> */}
+					<div>
+						PIN expires in
+					</div>
+					<div>
+						<div>
+							{
+								isEdit ? <InputNumber
+									onChange={(val) => { pinEditData.policy_req.expires_in_x_days = parseInt(val) }}
+									defaultValue={pinDisplayData.policy_req.expires_in_x_days.toString()} /> : pinDisplayData.policy_req.expires_in_x_days
+							} {pinDisplayData.policy_req.expires_in_x_days > 1 ? "days" : "day"}
+						</div>
+					</div>
+				</div>
+			</div>
+			{/* </TabPane> */}
 
-				{/* <TabPane tab="Password" key="password">
+			{/* <TabPane tab="Password" key="password">
 					<div className="content-container-policy">
 						{showPolicyHeader}
 
@@ -220,7 +203,7 @@ export const Policy = (props: any) => {
                                             <Radio value={"DO_NOT_PROMPT"}>Do not prompt</Radio>
                                         </Space>
                                     </Radio.Group> */}
-								{/* {
+			{/* {
 									isEdit ? 
 									<><InputNumber defaultValue={3}/><Select disabled={!isEdit} className="select-time"
 										// onChange={(val) => { editData.expire_units = val }}
@@ -235,8 +218,8 @@ export const Policy = (props: any) => {
 									</Select> </> : "3 Days" 
 									// displayData.expire_units
 								} */}
-							{/* </div> */}
-							{/* <div>Enforcement</div>
+			{/* </div> */}
+			{/* <div>Enforcement</div>
 							<div>
 								<Checkbox
 									// onChange={(e) => setEditedData({ ...editData, dne: e.target.checked })}
@@ -244,7 +227,7 @@ export const Policy = (props: any) => {
 									disabled={!isEdit}>Do not enforce grace for PIN
 								</Checkbox>
 							</div> */}
-							{/* <div></div>
+			{/* <div></div>
 							<div>
 								<Checkbox
 									// onChange={(e) => setEditedData({ ...editData, sliding: e.target.checked })}
@@ -253,11 +236,11 @@ export const Policy = (props: any) => {
 									Allow sliding of expiration time
 								</Checkbox>
 							</div> */}
-				{/* // 		</div> */}
-				{/* // 	</div> */}
-				{/* // </TabPane> */}
+			{/* // 		</div> */}
+			{/* // 	</div> */}
+			{/* // </TabPane> */}
 
-				{/* <TabPane tab="Security Questions" key="security-questions">
+			{/* <TabPane tab="Security Questions" key="security-questions">
 					<div className="content-container">
 						{showPolicyHeader}
 
@@ -312,7 +295,7 @@ export const Policy = (props: any) => {
 					</div>
 				</TabPane> */}
 
-				{/* <TabPane tab="Sign-on" key="sign-on">
+			{/* <TabPane tab="Sign-on" key="sign-on">
 					<div className="content-container-policy">
 						{showPolicyHeader}
 
@@ -345,11 +328,11 @@ export const Policy = (props: any) => {
 				isEdit ? <div style={{ paddingTop: '10px' }}>
 					<Button style={{ float: 'right', marginLeft: '10px' }}
 						onClick={handleCancelClick}>
-							Cancel
+						Cancel
 					</Button>
 					<Button type='primary' style={{ float: 'right' }}
 						onClick={handleSaveClick}>
-							Save
+						Save
 					</Button>
 				</div> : <></>
 			}

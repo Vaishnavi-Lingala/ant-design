@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import './Mechanism.css';
 
 import Mechanism from './mechanism';
-import Apis from '../Api.service';
+import Apis from '../../Api.service';
 
 export default function Mechanisms() {
 
@@ -26,6 +26,8 @@ export default function Mechanisms() {
 		}
 	];
 	
+	//@ts-ignore
+	const accessToken = JSON.parse(localStorage.getItem("okta-token-storage")).accessToken.accessToken
 	const [mechanismDetails, setMechanismDetails] = useState(undefined);
 	const [loadingDetails, setLoadingDetails] = useState(false);
 	const [arr, setArr]: any = useState([]);
@@ -34,18 +36,9 @@ export default function Mechanisms() {
 		
 	})
 
-	var requestOptions = {
-		method: 'GET',
-		headers: {
-			'Content-Type': 'application/json', 
-			//@ts-ignore
-			'X-CREDENTI-ACCESS-TOKEN': JSON.parse(localStorage.getItem("okta-token-storage")).accessToken.accessToken
-		}
-	}
-
 	useEffect(() => {
 		setLoadingDetails(true);
-        Apis.getAllMechanisms(requestOptions)
+        Apis.getAllMechanisms(accessToken)
 		.then(data => {
 			for(var i = 0; i < data.length; i++) {	
 				var obj = {
@@ -59,9 +52,9 @@ export default function Mechanisms() {
 		})
 	}, [])
 
-	function getMechanismDetails(uid: any) {
+	function getMechanismDetails(uid: string) {
 		setLoadingDetails(true);
-        Apis.getMechanismDetails(uid, requestOptions)
+        Apis.getMechanismDetails(uid, accessToken)
             .then(data => {
                 setMechanismDetails(data);
                 setLoadingDetails(false);

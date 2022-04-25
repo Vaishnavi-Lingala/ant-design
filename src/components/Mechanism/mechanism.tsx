@@ -1,17 +1,18 @@
 import { Button, Dropdown, Input, Radio, Select, Skeleton, Space } from "antd";
-import { useEffect, useState } from "react";
-import { MechanismType } from "../models/Data.models";
+import { useState } from "react";
+import { MechanismType } from "../../models/Data.models";
 
 import './Mechanism.css'
 
-import Apis from "../Api.service";
+import Apis from "../../Api.service";
 
 function Mechanism(props: any) {
     const [displayDetails, setDisplayDetails] = useState<MechanismType>(props.mechanismDetails);
     const [loading, setLoading] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
     const [editData, setEditData]: any = useState(props.mechanismDetails);
-    const [options, setOptions] = useState({});
+    //@ts-ignore`
+    const accessToken = JSON.parse(localStorage.getItem("okta-token-storage")).accessToken.accessToken;
     const [tapOutOptions, setTapOutOption]: any = useState({
         "LOCK": "Lock",
         "SIGN_OUT": "Sign Out",
@@ -46,19 +47,7 @@ function Mechanism(props: any) {
     const getFactorOptions = Object.keys(factorOptions).map(key => ({ value: key, label: factorOptions[key] }))
 
     function updateMechanism() {
-        var requestOptions = {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                //@ts-ignore
-                'X-CREDENTI-ACCESS-TOKEN': JSON.parse(localStorage.getItem("okta-token-storage")).accessToken.accessToken
-            },
-            body: JSON.stringify({
-                ...editData
-            })
-        }
-
-        Apis.updateMechanismDetails(displayDetails.uid, requestOptions)
+        Apis.updateMechanismDetails(displayDetails.uid, editData, accessToken)
             .then(data => {
                 console.log(data);
                 setDisplayDetails({ ...editData });
@@ -144,9 +133,10 @@ function Mechanism(props: any) {
                         </span>
                     </div>
                     <div style={{ paddingRight: '50px' }}>
-                        <Button style={{ float: 'right' }} onClick={handleEditClick}>
+                    {displayDetails.default === false ? <Button style={{ float: 'right' }} onClick={handleEditClick}>
                             {!isEdit ? 'Edit' : 'Cancel'}
-                        </Button>
+                        </Button> : <></>
+                    }
                     </div>
                 </div>
                 <br />
@@ -195,17 +185,17 @@ function Mechanism(props: any) {
                             </div>
                             <div className="card-body">
                                 <div>
-                                    {/* <Radio.Group defaultValue={displayDetails?.challenge_factors[1].factor}
+                                    <Radio.Group defaultValue={displayDetails?.challenge_factors[1].factor}
                                         onChange={showDisabled}
-                                        disabled={!isEdit && disabledFactors} options={getFactorOptions}
-                                    /> */}
-                                    <Radio.Group defaultValue={"PASSWORD"}
+                                        disabled={!isEdit} options={getFactorOptions}
+                                    />
+                                    {/* <Radio.Group defaultValue={"PASSWORD"}
                                         onChange={showDisabled} disabled={!isEdit}
                                     >
                                         <Space direction="vertical">
                                             {arr}
                                         </Space>
-                                    </Radio.Group>
+                                    </Radio.Group> */}
                                     <br />
                                 </div>
                             </div>
@@ -217,17 +207,13 @@ function Mechanism(props: any) {
                             </div>
                             <div className="card-body">
                                 <div>
-                                    {/* <Radio.Group defaultValue={displayDetails?.challenge_factors[0].factor}
-                                        disabled={disabledFactors1.includes(displayDetails?.challenge_factors[0].factor)}
+                                    <Radio.Group defaultValue={displayDetails?.challenge_factors[0].factor}
+                                        disabled={!isEdit} 
                                         onChange={showDisabled} options={getFactorOptions}
-                                    /> */}
-                                    <Radio.Group defaultValue={"PASSWORD"}
+                                    />
+                                    {/* <Radio.Group defaultValue={"PASSWORD"}
                                         onChange={showDisabled} disabled={!isEdit}
-                                    >
-                                        <Space direction="vertical">
-                                            {arr1}
-                                        </Space>
-                                    </Radio.Group>
+                                    /> */}
                                 </div>
                             </div>
                         </div>

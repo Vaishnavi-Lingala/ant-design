@@ -1,9 +1,10 @@
-import { Button, Checkbox, Divider, Input, InputNumber, Modal, Skeleton, Table, Tabs } from 'antd';
+import { Button, Checkbox, Divider, Input, InputNumber, Modal, Radio, Skeleton, Space, Table, Tabs } from 'antd';
 import { useEffect, useState } from 'react';
 
 import './Policies.css';
 
-import { Policy } from './policy';
+import { PinPolicy } from './pinPolicy';
+import { PasswordPolicy } from './passwordPolicy'
 import Apis from "../../Api.service";
 
 export default function Policies() {
@@ -12,19 +13,19 @@ export default function Policies() {
 		{
 			title: 'Policy Name',
 			dataIndex: 'policy_name',
-			width: '30%'
+			width: '20%'
 		},
 		{
-			title: 'Policy Id',
-			dataIndex: 'policy_id',
-			width: '30%'
+			title: 'Policy Description',
+			dataIndex: 'policy_description',
+			width: '60%'
 		},
 		{
 			title: 'Actions',
 			dataIndex: 'actions',
-			width: '40%',
+			width: '20%',
 			render: (text: any, record: { policy_id: any; }) => (
-				<Button onClick={() => getPinPolicyDetails(record.policy_id)}>
+				<Button onClick={() => getPolicyDetails(record.policy_id)}>
 					View
 				</Button>
 			)
@@ -32,9 +33,18 @@ export default function Policies() {
 	];
 
 	const [pinDetails, setPinDetails] = useState(undefined);
+	const [passwordDetails, setPasswordDetails] = useState(undefined);
 	const [loadingDetails, setLoadingDetails] = useState(false);
-	const [arr, setArr]: any = useState([]);
-	const [isModalVisible, setIsModalVisible] = useState(false);
+
+	const [pinArr, setPinArr]: any = useState([]);
+	const [passwordArr, setPasswordArr]: any = useState([]);
+
+	const [isPinModalVisible, setIsPinModalVisible] = useState(false);
+	const [isPasswordModalVisible, setIsPasswordModalVisible] = useState(false);
+
+	//@ts-ignore
+	const accessToken = JSON.parse(localStorage.getItem("okta-token-storage")).accessToken.accessToken
+
 	const [pinData, setPinData] = useState({
 		description: '',
 		name: '',
@@ -53,28 +63,50 @@ export default function Policies() {
 			is_num_req: false
 		}
 	})
+
+	const [passwordData, setPasswordData] = useState({
+		description: '',
+		name: '',
+		order: 0,
+		policy_type: 'PASSWORD',
+		policy_req: {
+			grace_period: ''
+		}
+	})
+
 	const { TabPane } = Tabs;
 
-	var requestOptions = {
-		method: 'GET',
-		headers: {
-			'Content-Type': 'application/json',
-			//@ts-ignore
-			'X-CREDENTI-ACCESS-TOKEN': JSON.parse(localStorage.getItem("okta-token-storage")).accessToken.accessToken
-		}
-	}
-
 	useEffect(() => {
+		// setArr([]);
 		setLoadingDetails(true)
-		Apis.getAllPolicies(requestOptions)
+		Apis.getAllPolicies(accessToken)
 			.then(data => {
+				console.log(data);
+				var pinCounter = 0;
+				var passwordCounter = 0;
 				for (var i = 0; i < data.length; i++) {
-					var obj = {
-						key: i + 1,
-						policy_name: data[i].name,
-						policy_id: data[i].uid
+					var object;
+					if (data[i].policy_type === "PIN") {
+						object = {
+							key: pinCounter + 1,
+							policy_name: data[i].name,
+							policy_id: data[i].uid,
+							policy_description: data[i].description
+						}
+						pinCounter = pinCounter + 1;
+						pinArr.push(object);
 					}
-					arr.push(obj);
+					else {
+						object = {
+							key: passwordCounter + 1,
+							policy_name: data[i].name,
+							policy_id: data[i].uid,
+							policy_description: data[i].description
+						}
+						passwordCounter = passwordCounter + 1;
+						passwordArr.push(object);
+
+					}
 				}
 				setLoadingDetails(false);
 			})
@@ -89,7 +121,7 @@ export default function Policies() {
 						...pinData,
 						name: e.target.value
 					})}
-					placeholder='enter a new policy name'
+					placeholder='Enter a new policy name'
 				/>
 			</div>
 
@@ -100,7 +132,7 @@ export default function Policies() {
 						...pinData,
 						description: e.target.value
 					})}
-					placeholder='enter policy description'
+					placeholder='Enter policy description'
 				/>
 			</div>
 
@@ -119,11 +151,20 @@ export default function Policies() {
 		</div>
 	</>
 
-	function getPinPolicyDetails(uid: any) {
+	console.log(pinArr);
+	console.log(passwordArr);
+
+	function getPolicyDetails(uid: any) {
 		setLoadingDetails(true);
-		Apis.getPolicyDetails(uid, requestOptions)
+		Apis.getPolicyDetails(uid, accessToken)
 			.then(data => {
-				setPinDetails(data);
+				console.log(data);
+				if (data.policy_type === "PIN") {
+					setPinDetails(data);
+				}
+				else {
+					setPasswordDetails(data);
+				}
 				setLoadingDetails(false);
 			})
 			.catch(error => {
@@ -131,20 +172,8 @@ export default function Policies() {
 			})
 	}
 
-	function createPolicy() {
-		let requestOptions = {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-				//@ts-ignore
-				'X-CREDENTI-ACCESS-TOKEN': JSON.parse(localStorage.getItem("okta-token-storage")).accessToken.accessToken
-			},
-			body: JSON.stringify({
-				...pinData
-			})
-		}
-		
-		Apis.createPolicyDetails(requestOptions)
+	function createPolicy(object: object) {
+		Apis.createPolicyDetails(object, accessToken)
 			.then(data => {
 				console.log(data);
 			})
@@ -155,6 +184,7 @@ export default function Policies() {
 			<div className='content-header'>
 				Authentication
 				{pinDetails ? <Button style={{ marginLeft: 'auto', alignSelf: 'end' }} onClick={() => setPinDetails(undefined)}>Back</Button> : <></>}
+				{passwordDetails ? <Button style={{ marginLeft: 'auto', alignSelf: 'end' }} onClick={() => setPasswordDetails(undefined)}>Back</Button> : <></>}
 			</div>
 
 			<Tabs defaultActiveKey="pin" type="card" size={"middle"} animated={false} tabBarStyle={{ marginBottom: '0px' }}
@@ -162,26 +192,27 @@ export default function Policies() {
 			>
 				<TabPane tab="Pin" key="pin">
 					<Skeleton loading={loadingDetails}>
-						{pinDetails ? <Policy pinDetails={pinDetails} /> : <>
+						{pinDetails ? <PinPolicy pinDetails={pinDetails} /> : <>
 
 							<div style={{ width: '100%', border: '1px solid #D7D7DC', borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6' }}>
-								<Button type='primary' size='large' onClick={() => setIsModalVisible(true)}>Add Pin Policy</Button>
+								<Button type='primary' size='large' onClick={() => setIsPinModalVisible(true)}>Add Pin Policy</Button>
 							</div>
 
 							<Table
 								style={{ border: '1px solid #D7D7DC' }}
 								showHeader={true}
 								columns={columns}
-								dataSource={arr}
+								dataSource={pinArr}
 								pagination={{ position: [] }}
 							/>
-							<Modal visible={isModalVisible}
+
+							<Modal visible={isPinModalVisible}
 								afterClose={() => window.location.reload()}
 								onOk={() => {
-									setIsModalVisible(false);
-									createPolicy();
+									setIsPinModalVisible(false);
+									createPolicy(pinData);
 								}}
-								onCancel={() => setIsModalVisible(false)} width='800px' bodyStyle={{ height: '700px' }}
+								onCancel={() => setIsPinModalVisible(false)} width='800px' bodyStyle={{ height: '700px' }}
 								title={<h4>Add New Pin Policy</h4>} centered maskClosable={false} okText={"Save"}
 							>
 
@@ -293,7 +324,79 @@ export default function Policies() {
 					</Skeleton>
 				</TabPane>
 				<TabPane tab="Password">
+					<Skeleton loading={loadingDetails}>
+						{passwordDetails ? <PasswordPolicy passwordDetails={passwordDetails} /> : <>
 
+							<div style={{ width: '100%', border: '1px solid #D7D7DC', borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6' }}>
+								<Button type='primary' size='large' onClick={() => setIsPasswordModalVisible(true)}>Add Password Policy</Button>
+							</div>
+
+							<Table
+								style={{ border: '1px solid #D7D7DC' }}
+								showHeader={true}
+								columns={columns}
+								dataSource={passwordArr}
+								pagination={{ position: [] }}
+							/>
+							<Modal visible={isPasswordModalVisible}
+								afterClose={() => window.location.reload()}
+								onOk={() => {
+									// setIsPasswordModalVisible(false);
+									createPolicy(passwordData);
+								}}
+								onCancel={() => setIsPasswordModalVisible(false)} width='700px' bodyStyle={{ height: '400px' }}
+								title={<h4>Add New Password Policy</h4>} centered maskClosable={false} okText={"Save"}
+							>
+								<div className="row-container">
+									<div>Policy Name:</div>
+									<div>
+										<Input
+											onChange={(e) => setPasswordData({
+												...passwordData,
+												name: e.target.value
+											})}
+											placeholder='Enter a new policy name'
+										/>
+									</div>
+
+									<div>Description:</div>
+									<div>
+										<Input
+											onChange={(e) => setPasswordData({
+												...passwordData,
+												description: e.target.value
+											})}
+											placeholder='Enter policy description'
+										/>
+									</div>
+
+									<div>Policy Type:</div>
+									<div>
+										{passwordData.policy_type}
+									</div>
+									<div style={{ padding: '10px 0 10px 0' }}>
+											Grace Period:
+									</div>
+									<div style={{ padding: '12px 0 10px 0' }}>
+										<Radio.Group defaultValue={passwordData.policy_req.grace_period}
+											onChange={(e) => passwordData.policy_req.grace_period = e.target.value}
+										>
+											<Space direction="vertical">
+												<Radio value={"TWO_HOURS"}>2 hours</Radio>
+												<Radio value={"FOUR_HOURS"}>4 hours</Radio>
+												<Radio value={"SIX_HOURS"}>6 hours</Radio>
+												<Radio value={"EIGHT_HOURS"}>8 hours</Radio>
+												<Radio value={"TWELVE_HOURS"}>12 hours</Radio>
+												<Radio value={"ALWAYS_PROMPT"}>Always prompt</Radio>
+												<Radio value={"DO_NOT_PROMPT"}>Do not prompt</Radio>
+											</Space>
+										</Radio.Group>
+									</div>
+								</div>
+							</Modal>
+						</>
+						}
+					</Skeleton>
 				</TabPane>
 			</Tabs>
 		</>

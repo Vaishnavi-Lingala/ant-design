@@ -20,37 +20,108 @@ export default {
             .then(response => response.json());
     },
 
-    getAllPolicies(requestOptions: object) {
+    getAllPolicies(accessToken: string) {
+        var requestOptions = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                //@ts-ignore
+                'X-CREDENTI-ACCESS-TOKEN': accessToken            
+            }
+        }
+
 		return fetch(backend_url + "/account/"+ accountId + "/product/oprc735871d0/auth-policies", requestOptions)
 			.then(response => response.json());
     },
 
-    getPolicyDetails(uid: string, requestOptions: object) {
+    getPolicyDetails(uid: string, accessToken: string) {
+        var requestOptions = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                //@ts-ignore
+                'X-CREDENTI-ACCESS-TOKEN': accessToken            
+            }
+        }
+
 		return fetch(backend_url + "/account/"+ accountId + "/auth-policies/" + uid, requestOptions)
 			.then(response => response.json());
     },
 
-    createPolicyDetails(requestOptions: object) {
+    createPolicyDetails(object: object, accessToken: string) {
+        let requestOptions = {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				//@ts-ignore
+				'X-CREDENTI-ACCESS-TOKEN': accessToken
+			},
+			body: JSON.stringify({
+				...object
+			})
+		}
         return fetch(backend_url + "/account/" + accountId + "/product/oprc735871d0/auth-policies", requestOptions)
             .then(response => response.json())
     },
 
-    updatePolicyDetails(uid: string, requestOptions: object) {
+    updatePolicyDetails(uid: string, object: object, accessToken: string) {
+        var requestOptions = {
+			method: 'PUT',
+			headers: {
+				'Content-Type': 'application/json', 
+				//@ts-ignore
+				'X-CREDENTI-ACCESS-TOKEN': accessToken
+			},
+			body: JSON.stringify({
+				...object
+			})
+		}
+
 		return fetch(backend_url + "/account/"+ accountId + "/auth-policies/" + uid, requestOptions)
 			.then(res => res.json());
     },
 
-    getAllMechanisms(requestOptions: object) {
+    getAllMechanisms(accessToken: string) {
+        var requestOptions = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json', 
+                //@ts-ignore
+                'X-CREDENTI-ACCESS-TOKEN': accessToken
+            }
+        }
+
 		return fetch(backend_url + "/account/"+ accountId + "/mechanism", requestOptions)
 			.then(response => response.json());
     },
 
-    getMechanismDetails(uid: string, requestOptions: object) {
+    getMechanismDetails(uid: string, accessToken: string) {
+        var requestOptions = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json', 
+                //@ts-ignore
+                'X-CREDENTI-ACCESS-TOKEN': accessToken
+            }
+        }
+
 		return fetch(backend_url + "/account/"+ accountId + "/mechanism/" + uid, requestOptions)
 			.then(response => response.json());
     },
 
-    updateMechanismDetails(uid: string, requestOptions: object) {
+    updateMechanismDetails(uid: string, object: object, accessToken: string) {
+        var requestOptions = {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                //@ts-ignore
+                'X-CREDENTI-ACCESS-TOKEN': accessToken
+            },
+            body: JSON.stringify({
+                ...object
+            })
+        }
+
 		return fetch(backend_url + "/account/"+ accountId + "/mechanism/" + uid, requestOptions)
 			.then(response => response.json());
     },
