@@ -1,8 +1,8 @@
 import { Skeleton } from 'antd';
 import { useEffect, useState } from 'react';
 
-import Apis from "../Api.service";
-import { ClientConfiguration } from '../models/Data.models';
+import Apis from "../../Api.service";
+import { ClientConfiguration } from '../../models/Data.models';
 
 function Settings() {
     const [clientId, setClientId] = useState("");
@@ -15,7 +15,7 @@ function Settings() {
             .then((data: ClientConfiguration) => {
                 setLoading(false);
                 setClientId(data.portal_oidc_client_id);
-                setIssuer(data.base_url_oauth2);
+                setIssuer(data.issuer_url);
             }).catch((error) => {
                 console.log(error);
             })

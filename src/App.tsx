@@ -10,10 +10,10 @@ import config from './config';
 import Login from './components/Login';
 import Policies from './components/Policies/Policies';
 import ProtectedRoute from './components/ProtectedRoute';
-import Settings from './components/Settings';
+import Settings from './components/Settings/Settings';
 import PageNotFound from './components/PageNotFound';
-import Dashboard from './components/Dashboard';
-import Mechanisms from './components/Mechanisms';
+import Dashboard from './components/Dashboard/Dashboard';
+import Mechanisms from './components/Mechanism/Mechanisms';
 
 const oktaAuth = new OktaAuth(config.oidc);
 
