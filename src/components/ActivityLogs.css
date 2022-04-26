@@ -1,6 +1,7 @@
 .filter-container {
     width: 100%;
     padding: 10px;
+    margin-top: 20px;
     border: var(--grey-border);
     border-radius: 4px;
 }

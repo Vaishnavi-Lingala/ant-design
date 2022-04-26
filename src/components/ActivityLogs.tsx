@@ -1,103 +1,47 @@
 import { Skeleton } from "antd";
 import {
-    ReactChild,
-    ReactFragment,
-    ReactPortal,
     useEffect,
     useState,
 } from "react";
-import { DatePicker, Space, Table } from "antd";
+import { DatePicker, Table } from "antd";
 
 import "./ActivityLogs.css";
 
 import Apis from "../Api.service";
 import Search from "antd/lib/input/Search";
 
-function ActivityLogs() {
-    const [clientId, setClientId] = useState("");
-    const [issuer, setIssuer] = useState("");
+export default function ActivityLogs() {
+    const [logResponse, setLogResponse] = useState<any>({});
     const [loading, setLoading] = useState(true);
-    const domain = localStorage.getItem("domain");
+    //@ts-ignore
+    const accessToken = JSON.parse(localStorage.getItem("okta-token-storage")).accessToken.accessToken;
 
     const columns = [
         {
-            title: "Name",
-            dataIndex: "name",
-            key: "name",
-            render: (
-                text:
-                    | boolean
-                    | ReactChild
-                    | ReactFragment
-                    | ReactPortal
-                    | null
-                    | undefined
-            ) => <a>{text}</a>,
+            title: "Actor",
+            dataIndex: "display_name",
         },
         {
-            title: "Age",
-            dataIndex: "age",
-            key: "age",
+            title: "Event Info",
+            dataIndex: "event_display_message",
         },
         {
-            title: "Address",
-            dataIndex: "address",
-            key: "address",
+            title: "Event Status",
+            dataIndex: "event_outcome",
         },
         {
-            title: "Action",
-            key: "action",
-            render: (
-                text: any,
-                record: {
-                    name:
-                        | boolean
-                        | ReactChild
-                        | ReactFragment
-                        | ReactPortal
-                        | null
-                        | undefined;
-                }
-            ) => (
-                <Space size="middle">
-                    <a>Invite {record.name}</a>
-                    <a>Delete</a>
-                </Space>
-            ),
-        },
-    ];
-
-    const data = [
-        {
-            key: "1",
-            name: "John Brown",
-            age: 32,
-            address: "New York No. 1 Lake Park",
-        },
-        {
-            key: "2",
-            name: "Jim Green",
-            age: 42,
-            address: "London No. 1 Lake Park",
-        },
-        {
-            key: "3",
-            name: "Joe Black",
-            age: 32,
-            address: "Sidney No. 1 Lake Park",
+            title: "Target Product",
+            dataIndex: "product_name",
         },
     ];
 
     useEffect(() => {
-        // Apis.getClientConfig(domain ? domain : '')
-        //     .then((data) => {
-        //         setLoading(false);
-        //         setClientId(data.auth_cleint_id);
-        //         setIssuer(data.cust_issuer_url);
-        //     }).catch((error) => {
-        //         console.log(error);
-        //     })
+        Apis.getActivityLogs({ account_id: ['ooa46c499ccb'], sort_by: "display_name" }, accessToken)
+        .then(data => {
+            setLogResponse(data);
+        });
         setLoading(false);
+        console.log(logResponse);
     }, []);
 
     return (
@@ -130,14 +74,17 @@ function ActivityLogs() {
                 <div className="log-container">
                     <Table
                         columns={columns}
-                        dataSource={data}
-                        title={() => "Header"}
+                        expandable={{
+                            expandedRowRender: record => <p>{record.event_display_message}</p>,
+                            rowExpandable: record => record !== null,
+                        }}
+                        dataSource={logResponse.results}
+                        title={() => <>Events: <b> {logResponse.total_items} </b> </>}
                         pagination={false}
+                        // rowKey={()}
                     />
                 </div>
             </Skeleton>
         </>
     );
 }
-
-export default ActivityLogs;

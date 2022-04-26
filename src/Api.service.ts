@@ -1,3 +1,4 @@
+import { url } from "inspector";
 
 const backend_url = 'https://credenti-portal-api.credenti.xyz';
 // const accountId = "ooa46c499ccb";
@@ -25,8 +26,7 @@ export default {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                //@ts-ignore
-                'X-CREDENTI-ACCESS-TOKEN': accessToken            
+                'X-CREDENTI-ACCESS-TOKEN': accessToken           
             }
         }
 
@@ -129,5 +129,26 @@ export default {
     getMechanismOptions(){
         return fetch(backend_url + "/mechanism/options")
         .then(response => response.json())
+    },
+
+    getActivityLogs(bodyObj: object, accessToken: string, params: object = {}) {
+		let url = new URL(`${backend_url}/account/${accountId}/activitylog`);
+		url.searchParams.append('start', params['start']);
+		url.searchParams.append('limit', params['append']);
+
+		let requestOptions = {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				//@ts-ignore
+				'X-CREDENTI-ACCESS-TOKEN': accessToken
+			},
+			body: JSON.stringify({
+				...bodyObj
+			})
+		}
+		
+		return fetch(url.href, requestOptions)
+			.then(response => response.json())
     }
 }
