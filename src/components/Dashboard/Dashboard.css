@@ -1,0 +1,31 @@
+.overview-stat-container {
+    display: flex;
+}
+
+.overview-item { 
+    padding: 0 60px 10px 10px;
+}
+
+.overview-refresh-timestamp-item {
+    float: right;
+}
+
+.stat-header-link {
+    font-size: medium;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.stat-item {
+    font-size: 2.63904rem;
+    line-height: 2.29742rem;
+    font-weight: 600;
+    height: 2rem;
+    color: #212126;
+}
+
+.ant-statistic-content {
+    color: rgba(0,0,0,.85);
+    font-size: 45px;
+    font-weight: 500;
+}

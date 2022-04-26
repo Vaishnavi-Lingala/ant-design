@@ -13,8 +13,8 @@ import ProtectedRoute from './components/ProtectedRoute';
 import PageNotFound from './components/PageNotFound';
 import Dashboard from './components/Dashboard';
 import ActivityLogs from './components/ActivityLogs';
-import Mechanisms from './components/Mechanisms';
-import Settings from './components/Settings';
+import Mechanisms from './components/Mechanism/Mechanisms';
+import Settings from './components/Settings/Settings';
 
 const oktaAuth = new OktaAuth(config.oidc);
 
