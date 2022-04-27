@@ -8,6 +8,8 @@ export default function Groups() {
     const [groups, setGroups] = useState([]);
     const [loadingDetails, setLoadingDetails] = useState(false);
     const [groupDetails, setGroupDetails] = useState(undefined);
+    //@ts-ignore
+    const accessToken = JSON.parse(localStorage.getItem("okta-token-storage")).accessToken.accessToken
 
     const columns = [
 		{
@@ -27,18 +29,9 @@ export default function Groups() {
 		}
 	];
 
-    var requestOptions = {
-		method: 'GET',
-		headers: {
-			'Content-Type': 'application/json', 
-			//@ts-ignore
-			'X-CREDENTI-ACCESS-TOKEN': JSON.parse(localStorage.getItem("okta-token-storage")).accessToken.accessToken
-		}
-	}
-
     function getGroup(uid: any) {
 		setLoadingDetails(true);
-        ApiService.getGroupDetails(uid, requestOptions)
+        ApiService.getGroupDetails(uid, accessToken)
             .then(data => {
                 setGroupDetails(data);
                 setLoadingDetails(false);
@@ -47,7 +40,7 @@ export default function Groups() {
 
     useEffect(() => {
 		setLoadingDetails(true);
-        ApiService.getGroups(requestOptions)
+        ApiService.getGroups(accessToken)
 		.then(data => {
 			console.log('Groups: ', data);
             data.forEach(group => {
