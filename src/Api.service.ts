@@ -129,5 +129,32 @@ export default {
     getMechanismOptions(){
         return fetch(backend_url + "/mechanism/options")
         .then(response => response.json())
+    },
+
+    getAllUsersList(accessToken: string) {
+
+        var requestOptions = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CREDENTI-ACCESS-TOKEN': accessToken
+            }
+        }
+        
+        return fetch(backend_url + "/account/" + accountId + "/users", requestOptions)
+        .then(response => response.json());
+    },
+
+    getUserDetails(uid: string, accessToken: string) {
+        var requestOptions = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CREDENTI-ACCESS-TOKEN': accessToken
+            }
+        }
+        
+        return fetch(backend_url + "/account/" + accountId + "/users/" + uid, requestOptions)
+        .then(response => response.json());
     }
 }
