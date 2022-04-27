@@ -126,17 +126,41 @@ export default {
 			.then(response => response.json());
     },
 
-    getGroups(requestOptions: object) {
-		return fetch(backend_url + "/account/"+ localStorage.getItem("accountId") + "/groups", requestOptions)
+    getGroups(accessToken: string) {
+        var requestOptions = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json', 
+                //@ts-ignore
+                'X-CREDENTI-ACCESS-TOKEN': accessToken
+            }
+        }
+		return fetch(backend_url + "/account/"+ accountId + "/groups", requestOptions)
 			.then(response => response.json());
     },
 
-    getGroupDetails(uid: string, requestOptions: object) {
-		return fetch(backend_url + "/account/"+ localStorage.getItem("accountId") + "/groups/" + uid, requestOptions)
+    getGroupDetails(uid: string, accessToken: string) {
+        var requestOptions = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json', 
+                //@ts-ignore
+                'X-CREDENTI-ACCESS-TOKEN': accessToken
+            }
+        }
+		return fetch(backend_url + "/account/"+ accountId + "/groups/" + uid, requestOptions)
 			.then(response => response.json());
     },
     
     getMechanismOptions(){
+        var requestOptions = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json', 
+                //@ts-ignore
+                'X-CREDENTI-ACCESS-TOKEN': accessToken
+            }
+        }
         return fetch(backend_url + "/mechanism/options")
         .then(response => response.json())
     }
