@@ -168,7 +168,7 @@ export default {
 			.then(response => response.json());
     },
     
-    getMechanismOptions(){
+    getMechanismOptions(accessToken: string){
         var requestOptions = {
             method: 'GET',
             headers: {
@@ -177,7 +177,7 @@ export default {
                 'X-CREDENTI-ACCESS-TOKEN': accessToken
             }
         }
-        return fetch(backend_url + "/mechanism/options")
+        return fetch(backend_url + "/account/"+ accountId +"/mechanism/options", requestOptions)
         .then(response => response.json())
     },
 
