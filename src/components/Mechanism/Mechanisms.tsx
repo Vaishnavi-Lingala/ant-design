@@ -5,6 +5,7 @@ import './Mechanism.css';
 
 import Mechanism from './mechanism';
 import Apis from '../../Api.service';
+import { useHistory } from 'react-router-dom';
 
 export default function Mechanisms() {
 
@@ -32,6 +33,7 @@ export default function Mechanisms() {
 	const [loadingDetails, setLoadingDetails] = useState(false);
 	const [arr, setArr]: any = useState([]);
 	const [isModalVisible, setIsModalVisible] = useState(false);
+	const history = useHistory();
 	const mechanism = {
 		order: 0,
 		challenge_factors: [
@@ -55,6 +57,9 @@ export default function Mechanisms() {
 	}
 
 	useEffect(() => {
+		if (window.location.pathname.split("/").length === 3) {
+			getMechanismDetails(window.location.pathname.split('/')[2]);
+		}
 		setLoadingDetails(true);
 		Apis.getAllMechanisms(accessToken)
 			.then(data => {
@@ -71,21 +76,27 @@ export default function Mechanisms() {
 	}, [])
 
 	function getMechanismDetails(uid: string) {
+		localStorage.setItem("mechanismUid", uid);
 		setLoadingDetails(true);
 		Apis.getMechanismDetails(uid, accessToken)
 			.then(data => {
+				history.push('/mechanism/' + uid);
 				console.log(data);
 				console.log(mechanism);
 				setMechanismDetails(data);
 				setLoadingDetails(false);
 			})
+			.catch(error => console.log(error))
 	}
 
 	return (
 		<>
 			<div className='content-header'>
 				Mechanism
-				{mechanismDetails ? <Button style={{ marginLeft: 'auto', alignSelf: 'end' }} onClick={() => setMechanismDetails(undefined)}>Back</Button> : <></>}
+				{mechanismDetails ? <Button style={{ marginLeft: 'auto', alignSelf: 'end' }} onClick={() => {
+					setMechanismDetails(undefined)
+					history.push('/mechanism')
+				}}>Back</Button> : <></>}
 			</div>
 
 			<Skeleton loading={loadingDetails}>
