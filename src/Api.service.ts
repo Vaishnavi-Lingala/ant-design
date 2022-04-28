@@ -142,6 +142,45 @@ export default {
 			.then(response => response.json());
     },
 
+    getGroups(accessToken: string) {
+        var requestOptions = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json', 
+                //@ts-ignore
+                'X-CREDENTI-ACCESS-TOKEN': accessToken
+            }
+        }
+		return fetch(backend_url + "/account/"+ accountId + "/groups", requestOptions)
+			.then(response => response.json());
+    },
+
+    getGroupDetails(uid: string, accessToken: string) {
+        var requestOptions = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json', 
+                //@ts-ignore
+                'X-CREDENTI-ACCESS-TOKEN': accessToken
+            }
+        }
+		return fetch(backend_url + "/account/"+ accountId + "/groups/" + uid, requestOptions)
+			.then(response => response.json());
+    },
+
+    getUsersInGroup(uid: string, accessToken: string) {
+        var requestOptions = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json', 
+                //@ts-ignore
+                'X-CREDENTI-ACCESS-TOKEN': accessToken
+            }
+        }
+        return fetch(backend_url + "/account/"+ accountId + "/groups/" + uid + "/users", requestOptions)
+			.then(response => response.json());
+    },
+    
     getMechanismOptions(accessToken: string){
         var requestOptions = {
             method: 'GET',
@@ -151,8 +190,7 @@ export default {
                 'X-CREDENTI-ACCESS-TOKEN': accessToken
             }
         }
-
-        return fetch(backend_url + "/account/" + accountId + "/mechanism/options", requestOptions)
+        return fetch(backend_url + "/account/"+ accountId +"/mechanism/options", requestOptions)
         .then(response => response.json())
     },
 

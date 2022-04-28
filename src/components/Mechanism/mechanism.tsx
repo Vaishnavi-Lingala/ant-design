@@ -139,10 +139,10 @@ function Mechanism(props: any) {
                         </span>
                     </div>
                     <div>
-                        <h6>Default Challenge</h6>
+                        <h6>Primary Challenge</h6>
                     </div>
                     <div>
-                        <Radio.Group name="Default challenge" defaultValue={"PROXIMITY_CARD"}>
+                        <Radio.Group name="Primary challenge" defaultValue={"PROXIMITY_CARD"}>
                             <Radio value={"PROXIMITY_CARD"} disabled>Proximity Card</Radio>
                         </Radio.Group>
                     </div>
