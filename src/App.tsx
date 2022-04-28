@@ -10,10 +10,12 @@ import config from './config';
 import Login from './components/Login';
 import Policies from './components/Policies/Policies';
 import ProtectedRoute from './components/ProtectedRoute';
-import Settings from './components/Settings';
+import Settings from './components/Settings/Settings';
 import PageNotFound from './components/PageNotFound';
-import Dashboard from './components/Dashboard';
-import Mechanisms from './components/Mechanisms';
+import Dashboard from './components/Dashboard/Dashboard';
+import Mechanisms from './components/Mechanism/Mechanisms';
+import Groups from './components/Groups/groups';
+import Users from './components/Users/Users';
 
 const oktaAuth = new OktaAuth(config.oidc);
 
@@ -43,6 +45,8 @@ function App() {
 				<ProtectedRoute path="/settings" component={Settings} />
 				<ProtectedRoute path="/dashboard" component={Dashboard} />
 				<ProtectedRoute path="/mechanism" component={Mechanisms} />
+				<ProtectedRoute path="/groups" component={Groups} />
+				<ProtectedRoute path="/users" component={Users}/>
 
 				<Route component={PageNotFound} />
 			</Switch>
