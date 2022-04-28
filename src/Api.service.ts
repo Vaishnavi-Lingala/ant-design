@@ -167,6 +167,19 @@ export default {
 		return fetch(backend_url + "/account/"+ accountId + "/groups/" + uid, requestOptions)
 			.then(response => response.json());
     },
+
+    getUsersInGroup(uid: string, accessToken: string) {
+        var requestOptions = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json', 
+                //@ts-ignore
+                'X-CREDENTI-ACCESS-TOKEN': accessToken
+            }
+        }
+        return fetch(backend_url + "/account/"+ accountId + "/groups/" + uid + "/users", requestOptions)
+			.then(response => response.json());
+    },
     
     getMechanismOptions(accessToken: string){
         var requestOptions = {
