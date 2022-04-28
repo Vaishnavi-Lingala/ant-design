@@ -64,7 +64,11 @@ export const PinPolicy = (props: any) => {
 		<>
 			<div className="content-container-policy">
 				<div className="row-container">
-					<div></div>
+					<div>
+						{pinDisplayData.uid === undefined ? <h5>Create Pin Policy</h5> :
+							<h5>Edit Pin Policy</h5>
+						}
+					</div>
 					<div>
 						{pinDisplayData.default === false ? <Button style={{ float: 'right' }} onClick={handleEditClick}>
 							{!isEdit ? 'Edit' : 'Cancel'}
@@ -215,7 +219,6 @@ export const PinPolicy = (props: any) => {
 					</div>
 				</div>
 			</div>
-			
 			{pinDisplayData.uid !== undefined ?
 				(isEdit ? <div style={{ paddingTop: '10px', paddingRight: '45px' }}>
 					<Button style={{ float: 'right', marginLeft: '10px' }}

@@ -106,7 +106,11 @@ function Mechanism(props: any) {
         <Skeleton loading={loading}>
             <div className="content-container rounded-grey-border">
                 <div className="row-container">
-                    <div></div>
+                    <div>
+                        {displayDetails.uid === undefined ? <h4>Create Mechanism</h4> :
+                            <h5>Edit Mechanism</h5> 
+                        }
+                    </div>
                     <div style={{ paddingRight: '50px', paddingBottom: '20px' }}>
                         {displayDetails.default === false ? <Button style={{ float: 'right' }} onClick={handleEditClick}>
                             {!isEdit ? 'Edit' : 'Cancel'}
