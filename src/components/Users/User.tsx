@@ -30,7 +30,7 @@ export function User(props: any) {
 			}
         });
         setLoadingDetails(false);
-    });
+    }, []);
 
     return (
         <Skeleton loading={loadingDetails}>
