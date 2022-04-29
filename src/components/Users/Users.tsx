@@ -1,10 +1,10 @@
 import { Skeleton, Table, Button } from "antd";
 import { useEffect, useState } from "react";
-import Apis from "../../Api.service"
-export default function Users() {
+import ApiService from "../../Api.service"
+import ApiUrls from '../../ApiUtils';
 
-    // @ts-ignore
-    const accessToken = JSON.parse(localStorage.getItem("okta-token-storage")).accessToken.accessToken;
+export default function Users() {
+	
 	const [userDetails, setUserDetails] = useState(undefined);
 	const [loadingDetails, setLoadingDetails] = useState(false);
     const [arr, setArr]: any = useState([]);
@@ -27,7 +27,7 @@ export default function Users() {
 
     useEffect(() => {
 		setLoadingDetails(true);
-        Apis.getAllUsersList(accessToken)
+        ApiService.get(ApiUrls.users)
 		.then(data => {
 			console.log(`users data: ${JSON.stringify(data)}`)
 			let usersList = data?.results;
@@ -47,7 +47,7 @@ export default function Users() {
 
 	function getUserDetails(uid: string) {
 		setLoadingDetails(true);
-        Apis.getUserDetails(uid, accessToken)
+        ApiService.get(ApiUrls.user(uid))
             .then(data => {
                 setUserDetails(data);
                 setLoadingDetails(false);

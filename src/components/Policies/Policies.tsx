@@ -5,7 +5,8 @@ import './Policies.css';
 
 import { PinPolicy } from './pinPolicy';
 import { PasswordPolicy } from './passwordPolicy'
-import Apis from "../../Api.service";
+import ApiUrls from '../../ApiUtils'; 
+import ApiService from '../../Api.service';
 import { useHistory } from 'react-router-dom';
 
 export default function Policies() {
@@ -86,18 +87,13 @@ export default function Policies() {
 		}
 
 		setLoadingDetails(true)
-		Apis.getAllPolicies(accessToken)
+		ApiService.get(ApiUrls.policies)
 			.then(data => {
 				console.log(data);
 				var pinCounter = 0;
 				var passwordCounter = 0;
 				for (var i = 0; i < data.length; i++) {
-					var object = {
-						key: pinCounter + 1,
-						policy_name: data[i].name,
-						policy_id: data[i].uid,
-						policy_description: data[i].description
-					}
+					var object;
 					if (data[i].policy_type === "PIN") {
 						object = {
 							key: pinCounter + 1,
@@ -128,7 +124,7 @@ export default function Policies() {
 	function getPolicyDetails(uid: any) {
 		localStorage.setItem("policyUid", uid);
 		setLoadingDetails(true);
-		Apis.getPolicyDetails(uid, accessToken)
+		ApiService.get(ApiUrls.policy(uid))
 			.then(data => {
 				console.log(data);
 				if (data.policy_type === "PIN") {

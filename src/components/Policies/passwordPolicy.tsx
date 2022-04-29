@@ -2,19 +2,18 @@ import { Button, Divider, Input, Radio, Skeleton } from "antd";
 import { useEffect, useState } from "react";
 import { PasswordPolicyType } from "../../models/Data.models";
 
-import Apis from "../../Api.service";
+import ApiService from "../../Api.service";
+import ApiUrls from '../../ApiUtils';
 
 export const PasswordPolicy = (props: any) => {
     const [isEdit, setIsEdit] = useState(false);
     const [passwordDisplayData, setPasswordDisplayData] = useState<PasswordPolicyType>(props.passwordDetails);
     const [passwordEditData, setPasswordEditedData] = useState(props.passwordDetails);
     const [loading, setLoading] = useState(true);
-    //@ts-ignore
-    const accessToken = JSON.parse(localStorage.getItem("okta-token-storage")).accessToken.accessToken;
     const [graceOptions, setGraceOptions]: any = useState({});
 
     useEffect(() => {
-        Apis.getMechanismOptions(accessToken)
+        ApiService.get(ApiUrls.mechanismOptions)
             .then(data => {
                 console.log(data);
                 setGraceOptions(data.password_grace_options);
@@ -40,7 +39,7 @@ export const PasswordPolicy = (props: any) => {
     }
 
     function createPasswordPolicy() {
-        Apis.createPolicyDetails(passwordEditData, accessToken)
+        ApiService.put(ApiUrls.addPolicy, passwordEditData)
             .then(data => {
                 console.log(data);
             })
@@ -54,7 +53,7 @@ export const PasswordPolicy = (props: any) => {
     }
 
     function updatePasswordPolicy() {
-        Apis.updatePolicyDetails(passwordDisplayData.uid, passwordEditData, accessToken)
+        ApiService.post(ApiUrls.policy(passwordDisplayData.uid), passwordEditData)
             .then(data => {
                 console.log(data);
                 setPasswordDisplayData({ ...passwordEditData });

@@ -5,16 +5,15 @@ import './Policies.css';
 
 // import { AuthenticationPolicy } from "../../models/Data.models";
 import { PinPolicyType } from "../../models/Data.models";
-import Apis from "../../Api.service";
+import ApiService from "../../Api.service";
+import ApiUrls from '../../ApiUtils';
 
 export const PinPolicy = (props: any) => {
 
 	const [isEdit, setIsEdit] = useState(false);
 	const [pinDisplayData, setPinDisplayData] = useState<PinPolicyType>(props.pinDetails);
 	const [pinEditData, setPinEditedData] = useState(props.pinDetails);
-	//@ts-ignore
-	const accessToken = JSON.parse(localStorage.getItem("okta-token-storage")).accessToken.accessToken;
-
+	
 	useEffect(() => {
 		if (pinDisplayData.uid === undefined) {
 			setIsEdit(true);
@@ -22,7 +21,7 @@ export const PinPolicy = (props: any) => {
 	}, [])
 
 	function updatePinPolicy() {
-		Apis.updatePolicyDetails(pinDisplayData.uid, pinEditData, accessToken)
+		ApiService.put(ApiUrls.policy(pinDisplayData.uid), pinEditData)
 			.then(data => {
 				console.log(data);
 				setPinDisplayData({ ...pinEditData });
@@ -47,7 +46,7 @@ export const PinPolicy = (props: any) => {
 	}
 
 	function createPinPolicy() {
-		Apis.createPolicyDetails(pinEditData, accessToken)
+		ApiService.put(ApiUrls.addPolicy, pinEditData)
 			.then(data => {
 				console.log(data);
 			})

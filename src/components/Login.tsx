@@ -8,7 +8,6 @@ import './Login.css';
 import config from "../config";
 import Register from "./Register";
 import ReactDOM from "react-dom";
-import Apis from "../Api.service";
 import { ClientConfiguration } from "../models/Data.models";
 
 function Login() {
@@ -19,7 +18,17 @@ function Login() {
     const domain = email.split('@')[1];
 
     const validateEmail = async () => {
-        Apis.getClientConfig(domain)
+        fetch('https://credenti-portal-api.credenti.xyz/client/info', 
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    "domain": domain
+                })
+            })
+			.then(response => response.json())
             .then((data: ClientConfiguration) => {
                 //@ts-ignore
                 if(!data.detail){
