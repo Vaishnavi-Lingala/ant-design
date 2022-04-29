@@ -13,8 +13,6 @@ export const PinPolicy = (props: any) => {
 	const [isEdit, setIsEdit] = useState(false);
 	const [pinDisplayData, setPinDisplayData] = useState<PinPolicyType>(props.pinDetails);
 	const [pinEditData, setPinEditedData] = useState(props.pinDetails);
-	//@ts-ignore
-	const accessToken = JSON.parse(localStorage.getItem("okta-token-storage")).accessToken.accessToken;
 
 	const showPolicyHeader = <>
 		<div className="policy-header">

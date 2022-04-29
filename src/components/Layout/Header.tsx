@@ -29,6 +29,8 @@ function AppHeader() {
             localStorage.removeItem("clientId");
             localStorage.removeItem("issuer");
             localStorage.removeItem("domain");
+            localStorage.removeItem("policyUid");
+            localStorage.removeItem("mechanismUid");
             localStorage.removeItem("companyName");
             localStorage.removeItem("accountId");
         }).catch((err) => {

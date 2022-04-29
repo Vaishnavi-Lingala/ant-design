@@ -1,7 +1,6 @@
 import { Skeleton } from 'antd';
 import { useEffect, useState } from 'react';
 
-import ApiService from "../../Api.service";
 import { ClientConfiguration } from '../../models/Data.models';
 
 function Settings() {
