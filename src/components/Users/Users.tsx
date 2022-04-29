@@ -1,6 +1,7 @@
 import { Skeleton, Table, Button } from "antd";
 import { useEffect, useState } from "react";
 import Apis from "../../Api.service"
+import { User } from "./User";
 export default function Users() {
 
     // @ts-ignore
@@ -19,7 +20,7 @@ export default function Users() {
 		dataIndex: 'actions',
 		width: '40%',
 		render: (text: any, record: { uid: any; }) => (
-			<Button>
+			<Button onClick={() => getUserDetails(record.uid)}>
 			  View
 			</Button>
 		)
@@ -29,13 +30,14 @@ export default function Users() {
 		setLoadingDetails(true);
         Apis.getAllUsersList(accessToken)
 		.then(data => {
-			console.log(`users data: ${JSON.stringify(data)}`)
 			let usersList = data?.results;
 			for(var i = 0; i < usersList.length; i++) {	
 				var obj = {
 					key: i+1,
 					user_name: usersList[i].user_name,
-					uid: usersList[i].uid
+					uid: usersList[i].uid,
+					email: usersList[i].email,
+					status: usersList[i].status
 				}
 				arr.push(obj);
 			}
@@ -47,32 +49,28 @@ export default function Users() {
 
 	function getUserDetails(uid: string) {
 		setLoadingDetails(true);
-        Apis.getUserDetails(uid, accessToken)
-            .then(data => {
-                setUserDetails(data);
-                setLoadingDetails(false);
-            }).catch(error => {
-				console.error(`Error in getting user data: ${error}`);
-			})
+		const selectedUser = arr.find(user => user.uid === uid);
+		if(selectedUser) setUserDetails(selectedUser);
+		setLoadingDetails(false);
 	}
-
 
     return (
 		<>
 			<div className='content-header'>
-				Users
+				{userDetails?<span>User</span>: <span>Users</span>}
 				{userDetails? <Button style={{ marginLeft: 'auto', alignSelf: 'end' }} onClick={() => {setUserDetails(undefined)}}>Back</Button> : <></>}
 			</div>
 
 			<Skeleton loading={loadingDetails}>
+				{userDetails? <User userDetails = {userDetails}></User>: <>
 				 <Table
 						style={{ border: '1px solid #D7D7DC' }}
 						showHeader={true}
 						columns={columns}
 						dataSource={arr}   
-                        // bordered={true}
 						pagination={{ position: [] }}
 					/>
+				</>}
 			</Skeleton>
 		</>
 	);

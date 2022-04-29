@@ -145,7 +145,7 @@ export default {
         .then(response => response.json());
     },
 
-    getUserDetails(uid: string, accessToken: string) {
+    getUserGroups(uid: string, accessToken: string) {
         var requestOptions = {
             method: 'GET',
             headers: {
@@ -154,7 +154,7 @@ export default {
             }
         }
         
-        return fetch(backend_url + "/account/" + accountId + "/users/" + uid, requestOptions)
+        return fetch(backend_url + "/account/" + accountId + "/users/" + uid + "/groups", requestOptions)
         .then(response => response.json());
     }
 }
