@@ -1,7 +1,7 @@
 import { Skeleton } from 'antd';
 import { useEffect, useState } from 'react';
 
-import Apis from "../../Api.service";
+import ApiService from "../../Api.service";
 import { ClientConfiguration } from '../../models/Data.models';
 
 function Settings() {
@@ -11,7 +11,17 @@ function Settings() {
     const domain = localStorage.getItem('domain');
 
     useEffect(() => {
-        Apis.getClientConfig(domain ? domain : '')
+        fetch('https://credenti-portal-api.credenti.xyz/client/info', 
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    "domain": domain
+                })
+            })
+			.then(response => response.json())
             .then((data: ClientConfiguration) => {
                 setLoading(false);
                 setClientId(data.portal_oidc_client_id);

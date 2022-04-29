@@ -7,7 +7,8 @@ import { DatePicker, Table } from "antd";
 
 import "./ActivityLogs.css";
 
-import Apis from "../Api.service";
+import ApiService from "../Api.service";
+import ApiUrls from "../ApiUtils";
 import Search from "antd/lib/input/Search";
 
 export default function ActivityLogs() {
@@ -36,13 +37,27 @@ export default function ActivityLogs() {
     ];
 
     useEffect(() => {
-        Apis.getActivityLogs({ account_id: ['ooa46c499ccb'], sort_by: "display_name" }, accessToken)
+        ApiService.post(ApiUrls.activityLog, { account_id: ['ooa46c499ccb'], sort_by: "display_name" })
         .then(data => {
             setLogResponse(data);
-        });
+        })
+        .catch(error =>
+            console.log({ error })
+        );
         setLoading(false);
-        console.log(logResponse);
+        // console.log({ accessToken });
+        // Apis.PostAPI(accessToken);
+        // var user = { name: 'Rama' };
+    //     axios.post(`https://jsonplaceholder.typicode.com/users`, { user }, { headers: { 'Content-Type': 'applicaiton/json'}})
+    //   .then(res => {
+    //     console.log(res);
+    //     console.log(res.data);
+    //   })
     }, []);
+
+    useEffect(() => {
+        console.log({ logResponse });
+    }, [logResponse]);
 
     return (
         <>

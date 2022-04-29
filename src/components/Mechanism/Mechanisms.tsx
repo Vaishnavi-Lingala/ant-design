@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react';
 import './Mechanism.css';
 
 import Mechanism from './mechanism';
-import Apis from '../../Api.service';
+import ApiService from "../../Api.service";
+import ApiUrls from '../../ApiUtils';
 
 export default function Mechanisms() {
 
@@ -38,7 +39,7 @@ export default function Mechanisms() {
 
 	useEffect(() => {
 		setLoadingDetails(true);
-        Apis.getAllMechanisms(accessToken)
+        ApiService.get(ApiUrls.mechanisms)
 		.then(data => {
 			for(var i = 0; i < data.length; i++) {	
 				var obj = {
@@ -54,7 +55,7 @@ export default function Mechanisms() {
 
 	function getMechanismDetails(uid: string) {
 		setLoadingDetails(true);
-        Apis.getMechanismDetails(uid, accessToken)
+        ApiService.get(ApiUrls.mechanism(uid))
             .then(data => {
                 setMechanismDetails(data);
                 setLoadingDetails(false);

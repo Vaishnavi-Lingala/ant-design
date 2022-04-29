@@ -5,7 +5,8 @@ import './Policies.css';
 
 import { PinPolicy } from './pinPolicy';
 import { PasswordPolicy } from './passwordPolicy'
-import Apis from "../../Api.service";
+import ApiUrls from '../../ApiUtils'; 
+import ApiService from '../../Api.service';
 
 export default function Policies() {
 
@@ -79,7 +80,7 @@ export default function Policies() {
 	useEffect(() => {
 		// setArr([]);
 		setLoadingDetails(true)
-		Apis.getAllPolicies(accessToken)
+		ApiService.get(ApiUrls.policies)
 			.then(data => {
 				console.log(data);
 				var pinCounter = 0;
@@ -156,7 +157,7 @@ export default function Policies() {
 
 	function getPolicyDetails(uid: any) {
 		setLoadingDetails(true);
-		Apis.getPolicyDetails(uid, accessToken)
+		ApiService.get(ApiUrls.policy(uid))
 			.then(data => {
 				console.log(data);
 				if (data.policy_type === "PIN") {
@@ -173,7 +174,7 @@ export default function Policies() {
 	}
 
 	function createPolicy(object: object) {
-		Apis.createPolicyDetails(object, accessToken)
+		ApiService.post(ApiUrls.addPolicy, object)
 			.then(data => {
 				console.log(data);
 			})

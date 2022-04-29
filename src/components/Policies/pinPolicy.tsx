@@ -5,7 +5,8 @@ import './Policies.css';
 
 // import { AuthenticationPolicy } from "../../models/Data.models";
 import { PinPolicyType } from "../../models/Data.models";
-import Apis from "../../Api.service";
+import ApiService from "../../Api.service";
+import ApiUrls from '../../ApiUtils';
 
 export const PinPolicy = (props: any) => {
 
@@ -43,7 +44,7 @@ export const PinPolicy = (props: any) => {
 	]
 
 	function updatePinPolicy() {
-		Apis.updatePolicyDetails(pinDisplayData.uid, pinEditData, accessToken)
+		ApiService.post(ApiUrls.policy(pinDisplayData.uid), pinEditData)
 			.then(data => {
 				console.log(data);
 				setPinDisplayData({ ...pinEditData });

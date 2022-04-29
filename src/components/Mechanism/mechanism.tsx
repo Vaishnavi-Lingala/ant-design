@@ -4,7 +4,8 @@ import { MechanismType } from "../../models/Data.models";
 
 import './Mechanism.css'
 
-import Apis from "../../Api.service";
+import ApiService from "../../Api.service";
+import ApiUrls from '../../ApiUtils';
 
 function Mechanism(props: any) {
     const [displayDetails, setDisplayDetails] = useState<MechanismType>(props.mechanismDetails);
@@ -47,7 +48,7 @@ function Mechanism(props: any) {
     const getFactorOptions = Object.keys(factorOptions).map(key => ({ value: key, label: factorOptions[key] }))
 
     function updateMechanism() {
-        Apis.updateMechanismDetails(displayDetails.uid, editData, accessToken)
+        ApiService.post(ApiUrls.mechanism(displayDetails.uid), editData)
             .then(data => {
                 console.log(data);
                 setDisplayDetails({ ...editData });

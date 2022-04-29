@@ -2,7 +2,8 @@ import { Button, Divider, Radio, Space } from "antd";
 import { useState } from "react";
 import { PasswordPolicyType } from "../../models/Data.models";
 
-import Apis from "../../Api.service";
+import ApiService from "../../Api.service";
+import ApiUrls from '../../ApiUtils';
 
 export const PasswordPolicy = (props: any) => {
     const [isEdit, setIsEdit] = useState(false);
@@ -45,7 +46,7 @@ export const PasswordPolicy = (props: any) => {
     </>
 
     function updatePasswordPolicy() {
-		Apis.updatePolicyDetails(passwordDisplayData.uid, passwordEditData, accessToken)
+		ApiService.post(ApiUrls.policy(passwordDisplayData.uid), passwordEditData)
 			.then(data => {
 				console.log(data);
 				setPasswordDisplayData({ ...passwordEditData });
