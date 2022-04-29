@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { Button, Skeleton, Table, Modal, Input, Row, Col, Typography } from 'antd';
 import ApiService from "../../Api.service";
+import ApiUrls from '../../ApiUtils';
 import GroupDetails from "./groupDetails";
 
 export default function Groups() {
@@ -47,7 +48,7 @@ export default function Groups() {
 
     function getGroup(uid: any) {
 		setLoadingDetails(true);
-        ApiService.getGroupDetails(uid, accessToken)
+        ApiService.get(ApiUrls.group(uid))
             .then(data => {
                 setGroupDetails(data);
                 setLoadingDetails(false);
@@ -56,7 +57,7 @@ export default function Groups() {
 
     useEffect(() => {
 		setLoadingDetails(true);
-        ApiService.getGroups(accessToken)
+        ApiService.get(ApiUrls.groups)
 		.then(data => {
 			console.log('Groups: ', data);
             data.forEach(group => {
