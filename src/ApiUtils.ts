@@ -18,7 +18,7 @@ const Urls = {
     client_info: `client/info`,
 
     // Users Urls
-    user: (uid) => `account/${accountId}/users/${uid}`,
+    userGroups: (uid) => `account/${accountId}/users/${uid}/groups`,
     users: `account/${accountId}/users`,
 
     // Groups Urls
