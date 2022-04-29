@@ -12,7 +12,7 @@ import Policies from './components/Policies/Policies';
 import ProtectedRoute from './components/ProtectedRoute';
 import Settings from './components/Settings/Settings';
 import PageNotFound from './components/PageNotFound';
-import ActivityLogs from './components/ActivityLogs';
+import ActivityLogs from './components/ActivityLogs/ActivityLogs';
 import Dashboard from './components/Dashboard/Dashboard';
 import Mechanisms from './components/Mechanism/Mechanisms';
 import Groups from './components/Groups/groups';

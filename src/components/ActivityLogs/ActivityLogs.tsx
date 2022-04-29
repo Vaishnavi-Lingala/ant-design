@@ -7,15 +7,13 @@ import { DatePicker, Table } from "antd";
 
 import "./ActivityLogs.css";
 
-import ApiService from "../Api.service";
-import ApiUrls from "../ApiUtils";
+import ApiService from "../../Api.service";
+import ApiUrls from "../../ApiUtils";
 import Search from "antd/lib/input/Search";
 
 export default function ActivityLogs() {
     const [logResponse, setLogResponse] = useState<any>({});
     const [loading, setLoading] = useState(true);
-    //@ts-ignore
-    const accessToken = JSON.parse(localStorage.getItem("okta-token-storage")).accessToken.accessToken;
 
     const columns = [
         {
@@ -45,14 +43,6 @@ export default function ActivityLogs() {
             console.log({ error })
         );
         setLoading(false);
-        // console.log({ accessToken });
-        // Apis.PostAPI(accessToken);
-        // var user = { name: 'Rama' };
-    //     axios.post(`https://jsonplaceholder.typicode.com/users`, { user }, { headers: { 'Content-Type': 'applicaiton/json'}})
-    //   .then(res => {
-    //     console.log(res);
-    //     console.log(res.data);
-    //   })
     }, []);
 
     useEffect(() => {
@@ -96,7 +86,6 @@ export default function ActivityLogs() {
                         dataSource={logResponse.results}
                         title={() => <>Events: <b> {logResponse.total_items} </b> </>}
                         pagination={false}
-                        // rowKey={()}
                     />
                 </div>
             </Skeleton>
