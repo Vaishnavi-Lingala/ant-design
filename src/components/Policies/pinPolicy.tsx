@@ -1,5 +1,5 @@
-import { Divider, Checkbox, Button, InputNumber } from "antd";
-import { useState } from "react";
+import { Divider, Checkbox, Button, InputNumber, Input } from "antd";
+import { useEffect, useState } from "react";
 
 import './Policies.css';
 
@@ -13,36 +13,15 @@ export const PinPolicy = (props: any) => {
 	const [isEdit, setIsEdit] = useState(false);
 	const [pinDisplayData, setPinDisplayData] = useState<PinPolicyType>(props.pinDetails);
 	const [pinEditData, setPinEditedData] = useState(props.pinDetails);
-
-	const showPolicyHeader = <>
-		<div className="policy-header">
-			{pinDisplayData.name} policy
-			{pinDisplayData.default === false ? <Button style={{ float: 'right' }} onClick={handleEditClick}>
-				{!isEdit ? 'Edit' : 'Cancel'}
-			</Button> : <></>
-			}
-		</div>
-
-		<div className="row-container">
-			<div>Description</div>
-			<div>{pinDisplayData.description}</div>
-			<div>Assigned to groups</div>
-			<div>
-				{/* {displayData.groups} */}
-				Everyone
-			</div>
-		</div>
-	</>
-
-	const signonTypes = [
-		'PIN',
-		'TAP + PIN',
-		'TAP + PIN + OKTAMFA',
-		'TAP + OKTAMFA'
-	]
+	
+	useEffect(() => {
+		if (pinDisplayData.uid === undefined) {
+			setIsEdit(true);
+		}
+	}, [])
 
 	function updatePinPolicy() {
-		ApiService.post(ApiUrls.policy(pinDisplayData.uid), pinEditData)
+		ApiService.put(ApiUrls.policy(pinDisplayData.uid), pinEditData)
 			.then(data => {
 				console.log(data);
 				setPinDisplayData({ ...pinEditData });
@@ -66,14 +45,81 @@ export const PinPolicy = (props: any) => {
 		setIsEdit(false);
 	}
 
+	function createPinPolicy() {
+		ApiService.put(ApiUrls.addPolicy, pinEditData)
+			.then(data => {
+				console.log(data);
+			})
+		setTimeout(() => {
+			window.location.reload()
+		}, 1000);
+	}
+
+	function setCancelClick() {
+		window.location.reload();
+	}
+
 	return (
 		<>
-			{/* <Tabs defaultActiveKey="pin" type="card" size={"middle"} animated={false} tabBarStyle={{ marginBottom: '0px' }}
-			// style={{border: '1px solid #d7d7dc', margin: 0}} 
-			>
-				<TabPane tab="Pin" key="pin"> */}
 			<div className="content-container-policy">
-				{showPolicyHeader}
+				<div className="row-container">
+					<div>
+						{pinDisplayData.uid === undefined ? <h5>Create Pin Policy</h5> :
+							<h5>Edit Pin Policy</h5>
+						}
+					</div>
+					<div>
+						{pinDisplayData.default === false ? <Button style={{ float: 'right' }} onClick={handleEditClick}>
+							{!isEdit ? 'Edit' : 'Cancel'}
+						</Button> : <></>
+						}
+					</div>
+					<div style={{ paddingTop: '20px' }}>
+						<h6>Policy Name</h6>
+					</div>
+					<div style={{ paddingTop: '20px' }}>
+						{isEdit ? <Input className="form-control"
+							style={{ width: "275px" }}
+							onChange={(e) => setPinEditedData({
+								...pinEditData,
+								name: e.target.value
+							})}
+							defaultValue={pinDisplayData.name}
+							placeholder='Enter a new policy name'
+						/> : pinDisplayData.name
+						}
+					</div>
+
+					<div>
+						<h6>Description</h6>
+					</div>
+					<div>
+						{isEdit ? <Input className="form-control"
+							style={{ width: "410px" }}
+							onChange={(e) => setPinEditedData({
+								...pinEditData,
+								description: e.target.value
+							})}
+							defaultValue={pinDisplayData.description}
+							placeholder='Enter policy description'
+						/> : pinDisplayData.description
+						}
+					</div>
+
+					<div>
+						<h6>Assigned to groups</h6>
+					</div>
+					<div>
+						Everyone
+					</div>
+
+					<div>
+						<h6>Policy Type</h6>
+					</div>
+					<div>
+						{pinDisplayData.policy_type}
+					</div>
+				</div>
 
 				<Divider style={{ borderTop: '1px solid #d7d7dc' }} />
 
@@ -97,7 +143,6 @@ export const PinPolicy = (props: any) => {
 						}
 					</div>
 				</div>
-
 
 				<div className="row-container">
 					<div>
@@ -173,167 +218,17 @@ export const PinPolicy = (props: any) => {
 					</div>
 				</div>
 			</div>
-			{/* </TabPane> */}
-
-			{/* <TabPane tab="Password" key="password">
-					<div className="content-container-policy">
-						{showPolicyHeader}
-
-						<Divider style={{ borderTop: '1px solid #d7d7dc' }} />
-
-							<div className="row-container">
-							<div>
-								<h6 style={{ padding: '10px 0 10px 0' }}>
-									Grace Period:
-								</h6>
-							</div>
-							<div style={{ padding: '10px 0 10px 0' }}>
-									<Radio.Group defaultValue={"TWO_HOURS"}
-										// defaultValue={displayDetails?.challenge_factors[0].factor}
-                                        disabled={!isEdit}
-                                    >
-                                        <Space direction="vertical">
-                                            <Radio value={"TWO_HOURS"}>2 hours</Radio>
-                                            <Radio value={"FOUR_HOURS"}>4 hours</Radio>
-                                            <Radio value={"SIX_HOURS"}>6 hours</Radio>
-                                            <Radio value={"EIGHT_HOURS"}>8 hours</Radio>
-                                            <Radio value={"TWELVE_HOURS"}>12 hours</Radio>
-                                            <Radio value={"ALWAYS_PROMPT"}>Always prompt</Radio>
-                                            <Radio value={"DO_NOT_PROMPT"}>Do not prompt</Radio>
-                                        </Space>
-                                    </Radio.Group> */}
-			{/* {
-									isEdit ? 
-									<><InputNumber defaultValue={3}/><Select disabled={!isEdit} className="select-time"
-										// onChange={(val) => { editData.expire_units = val }}
-										suffixIcon={<CaretDownOutlined
-											style={{ color: isEdit ? 'black' : 'white', cursor: 'auto' }} />}
-											defaultValue={"Days"}
-										// defaultValue={displayData.expire_units}
-										>
-										<Select.Option value="Days">Days</Select.Option>
-										<Select.Option value="Hours">Hours</Select.Option>
-										<Select.Option value="Minutes">Minutes</Select.Option>
-									</Select> </> : "3 Days" 
-									// displayData.expire_units
-								} */}
-			{/* </div> */}
-			{/* <div>Enforcement</div>
-							<div>
-								<Checkbox
-									// onChange={(e) => setEditedData({ ...editData, dne: e.target.checked })}
-									// checked={!isEdit ? displayData.dne : editData.dne}
-									disabled={!isEdit}>Do not enforce grace for PIN
-								</Checkbox>
-							</div> */}
-			{/* <div></div>
-							<div>
-								<Checkbox
-									// onChange={(e) => setEditedData({ ...editData, sliding: e.target.checked })}
-									// checked={!isEdit ? displayData.sliding : editData.sliding}
-									disabled={!isEdit}>
-									Allow sliding of expiration time
-								</Checkbox>
-							</div> */}
-			{/* // 		</div> */}
-			{/* // 	</div> */}
-			{/* // </TabPane> */}
-
-			{/* <TabPane tab="Security Questions" key="security-questions">
-					<div className="content-container">
-						{showPolicyHeader}
-
-						<Divider style={{ borderTop: '1px solid #d7d7dc' }} />
-
-						<h6>Self Service PIN Recovery Settings</h6>
-						<div className="row-container">
-							<div>Self Service Pin Recovery</div>
-							<div className="checkbox-container">
-								<div>
-									<Checkbox
-										onChange={(e) => setEditedData({ ...editData, sspr: e.target.checked })}
-										checked={!isEdit ? displayData.sspr : editData.sspr}
-										disabled={!isEdit}>Enable self-service PIN recovery
-									</Checkbox>
-								</div>
-							</div>
-						</div>
-
-						<Divider style={{ borderTop: '1px solid #d7d7dc' }} />
-
-						<h6 style={{ padding: '10px 0 10px 0' }}>Question Factor Settings</h6>
-						<div className="row-container">
-							<div>Number of questions to ask for enrollment</div>
-							<div>
-								{
-									isEdit ? <InputNumber
-										onChange={(val) => { editData.question_enroll = parseInt(val) }}
-										defaultValue={displayData.question_enroll.toString()}
-									/> : displayData.question_enroll
-								}
-							</div>
-							<div>Number of questions to ask for MFA</div>
-							<div>
-								{
-									isEdit ? <InputNumber
-										onChange={(val) => { editData.question_mfa = parseInt(val) }}
-										defaultValue={displayData.question_mfa.toString()}
-									/> : displayData.question_mfa
-								}
-							</div>
-							<div>Minimum number of answer characters</div>
-							<div>
-								{
-									isEdit ? <InputNumber
-										onChange={(val) => { editData.question_number = parseInt(val) }}
-										defaultValue={displayData.question_number.toString()}
-									/> : displayData.question_number
-								}
-							</div>
-						</div>
-					</div>
-				</TabPane> */}
-
-			{/* <TabPane tab="Sign-on" key="sign-on">
-					<div className="content-container-policy">
-						{showPolicyHeader}
-
-						<Divider style={{ borderTop: '1px solid #d7d7dc' }} />
-
-						<h6 style={{ padding: '10px 0 10px 0' }}>Authentication Type</h6>
-						<div className="row-container">
-							<div>Sign-on Type</div>
-							<div>
-								{
-									isEdit ? <Select disabled={!isEdit} className="select-type"
-										// onChange={(val) => { editData.authentication = val }}
-										suffixIcon={<CaretDownOutlined
-											style={{ color: isEdit ? 'black' : 'white', cursor: "pointer" }} />}
-										// defaultValue={displayData.authentication.toString()}
-										>
-										<Select.Option value="1">PIN</Select.Option>
-										<Select.Option value="2">TAP + PIN</Select.Option>
-										<Select.Option value="3">TAP + PIN + OKTAMFA</Select.Option>
-										<Select.Option value="4">TAP + OKTAMFA</Select.Option>
-									</Select> : "PIN" 
-									// displayData.authentication ? signonTypes[displayData.authentication - 1] : ''
-								}
-							</div>
-						</div>
-					</div>
-				</TabPane> */}
-			{/* // </Tabs> */}
-			{
-				isEdit ? <div style={{ paddingTop: '10px' }}>
+			{pinDisplayData.uid !== undefined ?
+				(isEdit ? <div style={{ paddingTop: '10px', paddingRight: '45px' }}>
 					<Button style={{ float: 'right', marginLeft: '10px' }}
-						onClick={handleCancelClick}>
-						Cancel
-					</Button>
+						onClick={handleCancelClick}>Cancel</Button>
 					<Button type='primary' style={{ float: 'right' }}
-						onClick={handleSaveClick}>
-						Save
-					</Button>
-				</div> : <></>
+						onClick={handleSaveClick}>Save</Button>
+				</div> : <></>) : <div style={{ paddingTop: '10px', paddingRight: '45px' }}>
+					<Button style={{ float: 'right', marginLeft: '10px' }}
+						onClick={setCancelClick}>Cancel</Button>
+					<Button type='primary' style={{ float: 'right' }}
+						onClick={createPinPolicy}>create</Button></div>
 			}
 		</>
 	);

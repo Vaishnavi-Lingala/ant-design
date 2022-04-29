@@ -17,6 +17,14 @@ export function getCredentiTokenHeaders() {
 const Urls = {
     client_info: `client/info`,
 
+    // Users Urls
+    user: (uid) => `account/${accountId}/users/${uid}`,
+    users: `account/${accountId}/users`,
+
+    // Groups Urls
+    group: (uid) => `account/${accountId}/groups/${uid}`,
+    groups: `account/${accountId}/groups`,
+
     // Policy Urls
     policies: `account/${accountId}/product/oprc735871d0/auth-policies`,
     policy: (uid) => `account/${accountId}/auth-policies/${uid}`, // For GET and UPDATE APIs
@@ -25,7 +33,8 @@ const Urls = {
     // Mechanism Urls
     mechanisms: `account/${accountId}/mechanism`,
     mechanism: (uid) => `account/${accountId}/mechanism/${uid}`, // For GET and UPDATE APIs
-    mechanismOptions: `mechanism/options`,
+    mechanismOptions: `account/${accountId}/mechanism/options`,
+    mechanismChallengeFactors: `account/${accountId}/mechanism/challenge-factor-options?product_id=oprc735871d0`,
 
     // Activity Log Urls
     activityLog: `account/${accountId}/activitylog`
