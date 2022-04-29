@@ -6,10 +6,17 @@ import GroupDetails from "./groupDetails";
 
 export default function Groups() {
 
+    const groupmodel = {
+        name: '',
+        description: ''
+    }
+
     const [groups, setGroups] = useState([]);
     const [loadingDetails, setLoadingDetails] = useState(false);
     const [groupDetails, setGroupDetails] = useState(undefined);
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [newGroup, setNewGroup] = useState(groupmodel);
     //@ts-ignore
     const accessToken = JSON.parse(localStorage.getItem("okta-token-storage")).accessToken.accessToken
 
@@ -39,7 +46,12 @@ export default function Groups() {
     };
     
     const handleOk = () => {
-        setIsModalVisible(false);
+        setLoading(true);
+        console.log('New group: ', newGroup);
+        setTimeout(() => {
+            setLoading(false);
+            setIsModalVisible(false);
+        }, 3000);
     };
 
     const handleCancel = () => {
@@ -90,7 +102,16 @@ export default function Groups() {
                 </>
                 }
             </Skeleton>
-            <Modal title={<Title level={2}>Add Group</Title>} visible={isModalVisible} onOk={handleOk} onCancel={handleCancel} width={500}>
+            <Modal title={<Title level={2}>Add Group</Title>} visible={isModalVisible} onOk={handleOk} onCancel={handleCancel} width={500}
+                footer={[
+                    <Button key="back" onClick={handleCancel}>
+                    Return
+                    </Button>,
+                    <Button key="submit" type="primary" loading={loading} onClick={handleOk}>
+                        Submit
+                    </Button>
+                ]}
+            >
                 <Row gutter={16}>
                     <Col span={6}>
                         <h6>Name</h6>
@@ -99,9 +120,13 @@ export default function Groups() {
                         <span style={{ paddingRight: '20px' }}>
                             
                             <Input
-                                name="groupName"
+                                name="name"
                                 type="text"
                                 className="form-control"
+                                onChange={(e) => setNewGroup({
+                                    ...newGroup,
+                                    name: e.target.value
+                                })}
                             /> 
                             
                         </span>
@@ -115,6 +140,10 @@ export default function Groups() {
                             <TextArea
                                 name="description"
                                 className="form-control"
+                                onChange={(e) => setNewGroup({
+                                    ...newGroup,
+                                    description: e.target.value
+                                })}
                             /> 
                             
                         </span>
