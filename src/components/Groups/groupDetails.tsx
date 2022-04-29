@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import ApiService from "../../Api.service";
+import ApiUrls from '../../ApiUtils';
 import { Divider, Table, Skeleton, Button, Modal, Col, Row, Typography } from "antd";
 
 export default function GroupDetails(props: any) {
@@ -41,7 +42,7 @@ export default function GroupDetails(props: any) {
 
     useEffect(() => {
 		setLoadingDetails(true);
-        ApiService.getUsersInGroup(groupDetails.uid, accessToken)
+        ApiService.get(ApiUrls.groupUsers(groupDetails.uid))
 		.then(data => {
 			console.log('Users: ', data);
             data.results.forEach(user => {
