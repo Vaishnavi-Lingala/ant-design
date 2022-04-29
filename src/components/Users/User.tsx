@@ -1,7 +1,9 @@
 import { Skeleton, Table, Tabs } from "antd";
 import { useEffect, useState } from "react";
 
-import Apis from "../../Api.service";
+import ApiService from "../../Api.service"
+import ApiUrls from "../../ApiUtils"
+
 export function User(props: any) {
     let userDetails = props.userDetails;
     const {TabPane} = Tabs;
@@ -15,7 +17,7 @@ export function User(props: any) {
     useEffect(()=> {
         setLoadingDetails(true);
         let userId = props.userDetails.uid;
-        Apis.getUserGroups(userId, accessToken).then((groupsResponse:any) => {
+        ApiService.get(ApiUrls.userGroups(userId)).then((groupsResponse:any) => {
             let userGroups = groupsResponse;
             for(var i = 0; i < userGroups.length; i++) {	
 				let obj = {
