@@ -56,7 +56,7 @@ export default function ActivityLogs() {
             </div>
             <Skeleton loading={loading}>
                 <div className="filter-container">
-                    <div style={{ display: "inline-block" }}>
+                    {/* <div style={{ display: "inline-block" }}>
                         <div>From</div>
                         <DatePicker picker="date" />
                         <DatePicker picker="time" />
@@ -65,7 +65,7 @@ export default function ActivityLogs() {
                         <div>To</div>
                         <DatePicker picker="date" />
                         <DatePicker picker="time" />
-                    </div>
+                    </div> */}
 
                     <div style={{ paddingBottom: "20px" }}>
                         <label>Search</label>
