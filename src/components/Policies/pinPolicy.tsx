@@ -5,16 +5,15 @@ import './Policies.css';
 
 // import { AuthenticationPolicy } from "../../models/Data.models";
 import { PinPolicyType } from "../../models/Data.models";
-import Apis from "../../Api.service";
+import ApiService from "../../Api.service";
+import ApiUrls from '../../ApiUtils';
 
 export const PinPolicy = (props: any) => {
 
 	const [isEdit, setIsEdit] = useState(false);
 	const [pinDisplayData, setPinDisplayData] = useState<PinPolicyType>(props.pinDetails);
 	const [pinEditData, setPinEditedData] = useState(props.pinDetails);
-	//@ts-ignore
-	const accessToken = JSON.parse(localStorage.getItem("okta-token-storage")).accessToken.accessToken;
-
+	
 	useEffect(() => {
 		if (pinDisplayData.uid === undefined) {
 			setIsEdit(true);
@@ -22,7 +21,7 @@ export const PinPolicy = (props: any) => {
 	}, [])
 
 	function updatePinPolicy() {
-		Apis.updatePolicyDetails(pinDisplayData.uid, pinEditData, accessToken)
+		ApiService.put(ApiUrls.policy(pinDisplayData.uid), pinEditData)
 			.then(data => {
 				console.log(data);
 				setPinDisplayData({ ...pinEditData });
@@ -47,7 +46,7 @@ export const PinPolicy = (props: any) => {
 	}
 
 	function createPinPolicy() {
-		Apis.createPolicyDetails(pinEditData, accessToken)
+		ApiService.put(ApiUrls.addPolicy, pinEditData)
 			.then(data => {
 				console.log(data);
 			})
@@ -64,7 +63,11 @@ export const PinPolicy = (props: any) => {
 		<>
 			<div className="content-container-policy">
 				<div className="row-container">
-					<div></div>
+					<div>
+						{pinDisplayData.uid === undefined ? <h5>Create Pin Policy</h5> :
+							<h5>Edit Pin Policy</h5>
+						}
+					</div>
 					<div>
 						{pinDisplayData.default === false ? <Button style={{ float: 'right' }} onClick={handleEditClick}>
 							{!isEdit ? 'Edit' : 'Cancel'}
@@ -215,7 +218,6 @@ export const PinPolicy = (props: any) => {
 					</div>
 				</div>
 			</div>
-			
 			{pinDisplayData.uid !== undefined ?
 				(isEdit ? <div style={{ paddingTop: '10px', paddingRight: '45px' }}>
 					<Button style={{ float: 'right', marginLeft: '10px' }}

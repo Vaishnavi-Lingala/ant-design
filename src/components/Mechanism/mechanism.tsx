@@ -4,15 +4,14 @@ import { MechanismType } from "../../models/Data.models";
 
 import './Mechanism.css'
 
-import Apis from "../../Api.service";
+import ApiService from "../../Api.service";
+import ApiUrls from '../../ApiUtils';
 
 function Mechanism(props: any) {
     const [displayDetails, setDisplayDetails] = useState<MechanismType>(props.mechanismDetails);
     const [loading, setLoading] = useState(true);
     const [isEdit, setIsEdit] = useState(false);
     const [editData, setEditData]: any = useState(props.mechanismDetails);
-    //@ts-ignore`
-    const accessToken = JSON.parse(localStorage.getItem("okta-token-storage")).accessToken.accessToken;
     const [tapOutOptions, setTapOutOption]: any = useState({});
     const [readerOptions, setReaderOptions]: any = useState({});
     const [factorOptions, setFactorOptions]: any = useState({});
@@ -21,14 +20,14 @@ function Mechanism(props: any) {
     const [disabledFactors1]: any = useState([displayDetails.challenge_factors[0].factor]);
 
     useEffect(() => {
-        Apis.getMechanismOptions(accessToken)
+        ApiService.get(ApiUrls.mechanismOptions)
             .then(data => {
                 console.log(data);
                 setTapOutOption(data.tap_out_options);
                 setReaderOptions(data.readers);
             })
 
-        Apis.getMechanismChallengeFactors(accessToken)
+        ApiService.get(ApiUrls.mechanismChallengeFactors)
             .then(data => {
                 console.log(data);
                 setFactorOptions(data);
@@ -49,7 +48,7 @@ function Mechanism(props: any) {
     }, [])
 
     function updateMechanism() {
-        Apis.updateMechanismDetails(displayDetails.uid, editData, accessToken)
+        ApiService.put(ApiUrls.mechanism(displayDetails.uid), editData)
             .then(data => {
                 console.log(data);
                 setDisplayDetails({ ...editData });
@@ -89,7 +88,7 @@ function Mechanism(props: any) {
     }
 
     function createMechanism() {
-        Apis.createMechanism(editData, accessToken)
+        ApiService.post(ApiUrls.mechanism(displayDetails.uid), editData)
             .then(data => {
                 console.log(data);
             })
@@ -106,7 +105,11 @@ function Mechanism(props: any) {
         <Skeleton loading={loading}>
             <div className="content-container rounded-grey-border">
                 <div className="row-container">
-                    <div></div>
+                    <div>
+                        {displayDetails.uid === undefined ? <h4>Create Mechanism</h4> :
+                            <h5>Edit Mechanism</h5> 
+                        }
+                    </div>
                     <div style={{ paddingRight: '50px', paddingBottom: '20px' }}>
                         {displayDetails.default === false ? <Button style={{ float: 'right' }} onClick={handleEditClick}>
                             {!isEdit ? 'Edit' : 'Cancel'}
