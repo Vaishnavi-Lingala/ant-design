@@ -15,7 +15,7 @@ import PageNotFound from './components/PageNotFound';
 import ActivityLogs from './components/ActivityLogs/ActivityLogs';
 import Dashboard from './components/Dashboard/Dashboard';
 import Mechanisms from './components/Mechanism/Mechanisms';
-import Groups from './components/Groups/groups';
+import Groups from './components/Groups/Groups';
 import Users from './components/Users/Users';
 
 const oktaAuth = new OktaAuth(config.oidc);
