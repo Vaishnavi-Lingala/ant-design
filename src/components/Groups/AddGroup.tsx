@@ -3,7 +3,7 @@ import { Button, Skeleton, Table, Modal, Input, Row, Col, Typography } from 'ant
 import ApiService from "../../Api.service";
 import ApiUrls from '../../ApiUtils';
 
-export default function AddGroup() {
+export default function AddGroup(props: any) {
 
     const { Title } = Typography;
     const { TextArea } = Input;
@@ -34,6 +34,7 @@ export default function AddGroup() {
             console.log('Post group response: ', data);
             setLoading(false);
             setIsModalVisible(false);
+            props.onGroupCreate();
         })
     };
 
