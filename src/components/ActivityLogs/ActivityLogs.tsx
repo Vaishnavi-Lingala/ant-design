@@ -1,8 +1,5 @@
-import { Skeleton } from "antd";
-import {
-    useEffect,
-    useState,
-} from "react";
+import { Button, Skeleton } from "antd";
+import { useEffect, useState } from "react";
 import { DatePicker, Table } from "antd";
 
 import "./ActivityLogs.css";
@@ -10,12 +7,43 @@ import "./ActivityLogs.css";
 import ApiService from "../../Api.service";
 import ApiUrls from "../../ApiUtils";
 import Search from "antd/lib/input/Search";
+import Link from "antd/lib/typography/Link";
+import FiltersModal from "./FiltersModal";
+
+const ExpandedRowItem = ({ name, value }) => {
+    return (
+        <>
+            <div>
+                <b>{name}</b>
+            </div>
+            <div>{value}</div>
+        </>
+    );
+};
+
+const ExpandedRowContainer = ({ record }) => {
+    return (
+        <div className="expanded-row-container">
+            {Object.keys(record).map((recordKey) => (
+                <ExpandedRowItem
+                    name={recordKey}
+                    value={record[recordKey]}
+                    key={recordKey}
+                />
+            ))}
+        </div>
+    );
+};
 
 export default function ActivityLogs() {
     const [logResponse, setLogResponse] = useState<any>({});
     const [loading, setLoading] = useState(true);
 
     const columns = [
+        {
+            title: "Time",
+            dataIndex: "created_ts",
+        },
         {
             title: "Actor",
             dataIndex: "display_name",
@@ -28,20 +56,17 @@ export default function ActivityLogs() {
             title: "Event Status",
             dataIndex: "event_outcome",
         },
-        {
-            title: "Target Product",
-            dataIndex: "product_name",
-        },
     ];
 
     useEffect(() => {
-        ApiService.post(ApiUrls.activityLog, { account_id: ['ooa46c499ccb'], sort_by: "display_name" })
-        .then(data => {
-            setLogResponse(data);
+        ApiService.post(ApiUrls.activityLog, {
+            account_id: ["ooa46c499ccb"],
+            sort_by: "display_name",
         })
-        .catch(error =>
-            console.log({ error })
-        );
+            .then((data) => {
+                setLogResponse(data);
+            })
+            .catch((error) => console.log({ error }));
         setLoading(false);
     }, []);
 
@@ -66,13 +91,15 @@ export default function ActivityLogs() {
                         <DatePicker picker="date" />
                         <DatePicker picker="time" />
                     </div>
-
-                    <div style={{ paddingBottom: "20px" }}>
+                    <div>
                         <label>Search</label>
                         <Search
-                            placeholder="input search with enterButton"
+                            placeholder="Search"
                             enterButton
                         />
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '10px 20px 10px 20px'}}>
+                        <FiltersModal />&nbsp;\&nbsp;<Link>Reset Filters</Link>
                     </div>
                 </div>
 
@@ -80,12 +107,20 @@ export default function ActivityLogs() {
                     <Table
                         columns={columns}
                         expandable={{
-                            expandedRowRender: record => <p>{record.event_display_message}</p>,
-                            rowExpandable: record => record !== null,
+                            expandedRowRender: (record) => (
+                                <ExpandedRowContainer record={record} />
+                            ),
+                            rowExpandable: (record) => record !== null,
                         }}
                         dataSource={logResponse.results}
-                        title={() => <>Events: <b> {logResponse.total_items} </b> </>}
+                        title={() => (
+                            <>
+                                Events: <b> {logResponse.total_items} </b>{" "}
+                            </>
+                        )}
+                        footer={() => (<><Button>Show more</Button></>)}
                         pagination={false}
+                        rowKey="created_ts"
                     />
                 </div>
             </Skeleton>
