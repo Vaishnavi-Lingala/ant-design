@@ -7,8 +7,6 @@ import AddGroup from "./AddGroup";
 
 export default function Groups() {
 
-    
-
     const [groups, setGroups] = useState([]);
     const [loadingDetails, setLoadingDetails] = useState(false);
     const [groupDetails, setGroupDetails] = useState(undefined);
@@ -44,7 +42,11 @@ export default function Groups() {
 	}
 
     useEffect(() => {
-		setLoadingDetails(true);
+		getGroups();
+	}, [])
+
+    function getGroups() {
+        setLoadingDetails(true);
         ApiService.get(ApiUrls.groups)
 		.then(data => {
 			console.log('Groups: ', data);
@@ -54,7 +56,7 @@ export default function Groups() {
             setGroups(data);
 			setLoadingDetails(false);
 		})
-	}, [])
+    }
 
     return(
         <>
@@ -64,7 +66,7 @@ export default function Groups() {
 			</div>
             <Skeleton loading={loadingDetails}>
                 {groupDetails ? <GroupDetails groupDetails={groupDetails}/> : <>
-                    <AddGroup></AddGroup>
+                    <AddGroup onGroupCreate={getGroups}/>
                     <Table
                         style={{ border: '1px solid #D7D7DC' }}
                         showHeader={true}
