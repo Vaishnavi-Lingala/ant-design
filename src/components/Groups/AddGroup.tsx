@@ -3,7 +3,7 @@ import { Button, Skeleton, Table, Modal, Input, Row, Col, Typography } from 'ant
 import ApiService from "../../Api.service";
 import ApiUrls from '../../ApiUtils';
 
-export default function AddGroup() {
+export default function AddGroup(props: any) {
 
     const { Title } = Typography;
     const { TextArea } = Input;
@@ -13,11 +13,6 @@ export default function AddGroup() {
     });
     const [loading, setLoading] = useState(false);
     const [isModalVisible, setIsModalVisible] = useState(false);
-
-    useEffect(() => {
-        console.log('New group initial: ', newGroup)
-      }, [newGroup])
-
 
     const showModal = () => {
         setNewGroup({
@@ -34,6 +29,7 @@ export default function AddGroup() {
             console.log('Post group response: ', data);
             setLoading(false);
             setIsModalVisible(false);
+            props.onGroupCreate();
         })
     };
 
@@ -52,7 +48,7 @@ export default function AddGroup() {
                     Cancel
                     </Button>,
                     <Button key="submit" type="primary" loading={loading} onClick={handleOk}>
-                        Submit
+                        Save
                     </Button>
                 ]}
             >
