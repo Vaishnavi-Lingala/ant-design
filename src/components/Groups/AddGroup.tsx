@@ -14,11 +14,6 @@ export default function AddGroup(props: any) {
     const [loading, setLoading] = useState(false);
     const [isModalVisible, setIsModalVisible] = useState(false);
 
-    useEffect(() => {
-        console.log('New group initial: ', newGroup)
-      }, [newGroup])
-
-
     const showModal = () => {
         setNewGroup({
             'name': '',
@@ -53,7 +48,7 @@ export default function AddGroup(props: any) {
                     Cancel
                     </Button>,
                     <Button key="submit" type="primary" loading={loading} onClick={handleOk}>
-                        Submit
+                        Save
                     </Button>
                 ]}
             >
