@@ -7,7 +7,6 @@ import "./ActivityLogs.css";
 import ApiService from "../../Api.service";
 import ApiUrls from "../../ApiUtils";
 import Search from "antd/lib/input/Search";
-import Link from "antd/lib/typography/Link";
 import FiltersModal from "./FiltersModal";
 
 const ExpandedRowItem = ({ name, value }) => {
@@ -74,6 +73,28 @@ export default function ActivityLogs() {
         console.log({ logResponse });
     }, [logResponse]);
 
+    function showMoreClick() {
+        if (logResponse.next) {
+            var url = new URL(`https://${logResponse.next}`);
+            ApiService.post(url.pathname, {
+                account_id: ["ooa46c499ccb"],
+                sort_by: "display_name",
+            }).then((res) => {
+                setLogResponse((logRes) => 
+                {
+                    // console.log("res.results: ", res.results);
+                    // console.log("logResponse.results: ", logRes.results);
+                    // console.log("before: ", res.results.length);
+                    res.results = res.results.concat(logRes.results);
+                    // console.log("after", res.results.length);
+                    // console.log("res.results: ", res.results);
+
+                    return res;
+                });
+            });
+        }
+    }
+
     return (
         <>
             <div>
@@ -94,15 +115,18 @@ export default function ActivityLogs() {
                     <div>
                     </div> */}
 
-                    <div style={{ paddingBottom: "20px" }}>
+                    <div style={{ paddingBottom: "0" }}>
                         <label>Search</label>
-                        <Search
-                            placeholder="Search"
-                            enterButton
-                        />
+                        <Search placeholder="Search" enterButton />
                     </div>
-                    <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '10px 20px 10px 20px'}}>
-                        <FiltersModal />&nbsp;\&nbsp;<Link>Reset Filters</Link>
+                    <div
+                        style={{
+                            display: "flex",
+                            justifyContent: "flex-end",
+                            padding: "10px 20px 10px 20px",
+                        }}
+                    >
+                        <FiltersModal />
                     </div>
                 </div>
 
@@ -121,7 +145,15 @@ export default function ActivityLogs() {
                                 Events: <b> {logResponse.total_items} </b>{" "}
                             </>
                         )}
-                        footer={() => (<><Button>Show more</Button></>)}
+                        footer={() =>
+                            logResponse.next ? (
+                                <Button onClick={showMoreClick}>
+                                    Show more
+                                </Button>
+                            ) : (
+                                false
+                            )
+                        }
                         pagination={false}
                         rowKey="created_ts"
                     />
