@@ -36,6 +36,7 @@ const Urls = {
     mechanism: (uid) => `account/${accountId}/mechanism/${uid}`, // For GET and UPDATE APIs
     mechanismOptions: `account/${accountId}/mechanism/options`,
     mechanismChallengeFactors: `account/${accountId}/mechanism/challenge-factor-options?product_id=oprc735871d0`,
+    mechanismPasswordGraceOptions: `account/${accountId}/mechanism/password-grace-options`,
 
     // Activity Log Urls
     activityLog: `account/${accountId}/activitylog`

@@ -7,6 +7,7 @@ import './Policies.css';
 import { PinPolicyType } from "../../models/Data.models";
 import ApiService from "../../Api.service";
 import ApiUrls from '../../ApiUtils';
+import TextArea from "antd/lib/input/TextArea";
 
 export const PinPolicy = (props: any) => {
 
@@ -140,7 +141,7 @@ export const PinPolicy = (props: any) => {
 						<h6>Description</h6>
 					</div>
 					<div>
-						{isEdit ? <Input className="form-control"
+						{isEdit ? <TextArea	 className="form-control"
 							style={{ width: "275px" }}
 							onChange={(e) => setPinEditedData({
 								...pinEditData,
@@ -155,7 +156,7 @@ export const PinPolicy = (props: any) => {
 					<div>
 						<h6>Assigned to groups</h6>
 					</div>
-					<div>
+					<div> 
 						<Select
 							mode="multiple"
 							size={"large"}
@@ -165,6 +166,7 @@ export const PinPolicy = (props: any) => {
 							disabled={!isEdit}
 							style={{ width: '275px' }}
 							options={groups}
+							listHeight={120}
 						/>
 					</div>
 

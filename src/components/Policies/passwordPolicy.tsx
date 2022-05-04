@@ -4,6 +4,7 @@ import { PasswordPolicyType } from "../../models/Data.models";
 
 import ApiService from "../../Api.service";
 import ApiUrls from '../../ApiUtils';
+import TextArea from "antd/lib/input/TextArea";
 
 export const PasswordPolicy = (props: any) => {
     const [isEdit, setIsEdit] = useState(false);
@@ -144,7 +145,7 @@ export const PasswordPolicy = (props: any) => {
                     <h6>Description</h6>
                 </div>
                 <div>
-                    {isEdit ? <Input className="form-control"
+                    {isEdit ? <TextArea className="form-control"
                         style={{ width: "275px" }}
                         onChange={(e) => setPasswordEditedData({
                             ...passwordEditData,

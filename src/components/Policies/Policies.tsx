@@ -1,11 +1,11 @@
-import { Button, Input, Skeleton, Table, Tabs } from 'antd';
+import { Button, Input, Modal, Skeleton, Table, Tabs } from 'antd';
 import { useEffect, useState } from 'react';
 
 import './Policies.css';
 
 import { PinPolicy } from './pinPolicy';
 import { PasswordPolicy } from './passwordPolicy'
-import ApiUrls from '../../ApiUtils'; 
+import ApiUrls from '../../ApiUtils';
 import ApiService from '../../Api.service';
 import { useHistory } from 'react-router-dom';
 
@@ -33,18 +33,15 @@ export default function Policies() {
 			)
 		}
 	];
-
+	
 	const [pinDetails, setPinDetails] = useState(undefined);
 	const [passwordDetails, setPasswordDetails] = useState(undefined);
 	const [loadingDetails, setLoadingDetails] = useState(false);
 	const [pinArr, setPinArr]: any = useState([]);
 	const [passwordArr, setPasswordArr]: any = useState([]);
-
 	const [isPinModalVisible, setIsPinModalVisible] = useState(false);
 	const [isPasswordModalVisible, setIsPasswordModalVisible] = useState(false);
-
-	//@ts-ignore
-	const accessToken = JSON.parse(localStorage.getItem("okta-token-storage")).accessToken.accessToken
+	const { TabPane } = Tabs;
 
 	const pinData = {
 		description: '',
@@ -77,17 +74,7 @@ export default function Policies() {
 		}
 	}
 
-	const { TabPane } = Tabs;
-
-	useEffect(() => {
-		if (window.location.pathname.split("/")[2] !== 'password' && window.location.pathname.split("/").length !== 4) {
-			history.push('/policies/pin');
-		}
-
-		if (window.location.pathname.split("/").length === 4) {
-			getPolicyDetails(window.location.pathname.split("/")[3]);
-		}
-
+	function getPolicies() {
 		setLoadingDetails(true)
 		ApiService.get(ApiUrls.policies)
 			.then(data => {
@@ -119,6 +106,18 @@ export default function Policies() {
 				}
 				setLoadingDetails(false);
 			})
+	}
+
+	useEffect(() => {
+		if (window.location.pathname.split("/")[2] !== 'password' && window.location.pathname.split("/").length !== 4) {
+			history.push('/policies/pin');
+		}
+
+		if (window.location.pathname.split("/").length === 4) {
+			getPolicyDetails(window.location.pathname.split("/")[3]);
+		}
+
+		getPolicies();
 	}, [])
 
 	const history = useHistory();
