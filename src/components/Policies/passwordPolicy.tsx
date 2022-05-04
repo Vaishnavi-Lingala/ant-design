@@ -1,9 +1,10 @@
-import { Button, Divider, Input, Radio, Skeleton } from "antd";
+import { Button, Divider, Input, Radio, Select, Skeleton } from "antd";
 import { useEffect, useState } from "react";
 import { PasswordPolicyType } from "../../models/Data.models";
 
 import ApiService from "../../Api.service";
 import ApiUrls from '../../ApiUtils';
+import TextArea from "antd/lib/input/TextArea";
 
 export const PasswordPolicy = (props: any) => {
     const [isEdit, setIsEdit] = useState(false);
@@ -11,17 +12,50 @@ export const PasswordPolicy = (props: any) => {
     const [passwordEditData, setPasswordEditedData] = useState(props.passwordDetails);
     const [loading, setLoading] = useState(true);
     const [graceOptions, setGraceOptions]: any = useState({});
+    const [groups, setGroups]: any = useState([]);
+    const { Option } = Select;
+    const [groupNames, setGroupNames]: any = useState([]);
+    const [groupUids, setGroupUids]: any = useState([]);
+    const [groupsChange, setGroupsChange]: any = useState([]);
 
     useEffect(() => {
-        ApiService.get(ApiUrls.mechanismOptions)
+        ApiService.get(ApiUrls.groups)
+            .then(data => {
+                console.log('GROUPS: ', data);
+                for (var i = 0; i < data.length; i++) {
+                    groups.push({
+                        label: data[i].name,
+                        value: data[i].uid
+                    })
+                }
+                var object = {};
+                for (var i = 0; i < data.length; i++) {
+                    object[data[i].name] = data[i].uid
+                }
+                groupsChange.push(object);
+                console.log(groups);
+                setLoading(false);
+            })
+
+        ApiService.get(ApiUrls.mechanismPasswordGraceOptions)
             .then(data => {
                 console.log(data);
                 setGraceOptions(data.password_grace_options);
-                setLoading(false)
             })
+
         if (passwordDisplayData.uid === undefined) {
             setIsEdit(true);
         }
+
+        if (passwordDisplayData.uid !== undefined) {
+            Object.keys(passwordDisplayData.auth_policy_groups).map(data => {
+                groupNames.push(passwordDisplayData.auth_policy_groups[data].name);
+                groupUids.push(passwordDisplayData.auth_policy_groups[data].uid)
+                console.log(groupNames);
+                console.log(groupUids);
+            });
+        }
+        passwordEditData.auth_policy_groups = groupUids;
     }, [])
 
     function handleEditClick() {
@@ -55,7 +89,6 @@ export const PasswordPolicy = (props: any) => {
     function updatePasswordPolicy() {
         ApiService.post(ApiUrls.policy(passwordDisplayData.uid), passwordEditData)
             .then(data => {
-                console.log(data);
                 setPasswordDisplayData({ ...passwordEditData });
             })
             .catch(error => {
@@ -63,12 +96,26 @@ export const PasswordPolicy = (props: any) => {
             })
     }
 
+    function handleGroups(value: any) {
+        Object.keys(groupsChange[0]).map(key => {
+            if (value.includes(key)) {
+                console.log(key)
+                var index = value.indexOf(key)
+                console.log(index)
+                value.splice(index, 1)
+                value.push(groupsChange[0][key]);
+            }
+        })
+        passwordEditData.auth_policy_groups = value;
+        console.log(passwordEditData.auth_policy_groups);
+    }
+
     return <Skeleton loading={loading}>
         <div className="content-container-policy">
             <div className="row-container">
                 <div>
-                    {passwordDisplayData.uid === undefined ? <h5>Create Password Policy</h5> :
-                        <h5>Edit Password Policy</h5>
+                    {passwordDisplayData.uid === undefined ? <h3>Create Password Policy</h3> :
+                        <h3>Edit Password Policy</h3>
                     }
                 </div>
                 <div>
@@ -77,6 +124,7 @@ export const PasswordPolicy = (props: any) => {
                     </Button> : <></>
                     }
                 </div>
+
                 <div style={{ paddingTop: '20px' }}>
                     <h6>Policy Name</h6>
                 </div>
@@ -97,7 +145,7 @@ export const PasswordPolicy = (props: any) => {
                     <h6>Description</h6>
                 </div>
                 <div>
-                    {isEdit ? <Input className="form-control"
+                    {isEdit ? <TextArea className="form-control"
                         style={{ width: "275px" }}
                         onChange={(e) => setPasswordEditedData({
                             ...passwordEditData,
@@ -113,8 +161,16 @@ export const PasswordPolicy = (props: any) => {
                     <h6>Assigned to groups</h6>
                 </div>
                 <div>
-                    {/* {displayData.groups} */}
-                    Everyone
+                    <Select
+                        mode="multiple"
+                        size={"large"}
+                        placeholder={<div>Please select groups</div>}
+                        defaultValue={passwordDisplayData.name !== "" ? groupNames : []}
+                        onChange={handleGroups}
+                        disabled={!isEdit}
+                        style={{ width: '275px' }}
+                        options={groups}
+                    />
                 </div>
 
                 <div>
