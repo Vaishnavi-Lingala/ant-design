@@ -95,12 +95,6 @@ export default function GroupDetails(props: any) {
                     <div style={{ paddingTop: '20px' }}>
                             {groupDetails.name}
                     </div>
-                    <div style={{ paddingTop: '20px' }}>
-                        <h6>Status</h6>
-                    </div>
-                    <div style={{ paddingTop: '20px' }}>
-                        {groupDetails.status}
-                    </div>
                 </div>
                 <Divider style={{ borderTop: '1px solid #d7d7dc' }} />
                 <Skeleton loading={loadingDetails}>
