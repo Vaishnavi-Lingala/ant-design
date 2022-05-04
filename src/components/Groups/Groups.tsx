@@ -10,10 +10,6 @@ export default function Groups() {
     const [groups, setGroups] = useState([]);
     const [loadingDetails, setLoadingDetails] = useState(false);
     const [groupDetails, setGroupDetails] = useState(undefined);
-    //@ts-ignore
-    const accessToken = JSON.parse(localStorage.getItem("okta-token-storage")).accessToken.accessToken
-
-
     const columns = [
 		{
 			title: 'Name',
@@ -36,6 +32,7 @@ export default function Groups() {
 		setLoadingDetails(true);
         ApiService.get(ApiUrls.group(uid))
             .then(data => {
+                console.log('GROUP_DETAILS: ', data);
                 setGroupDetails(data);
                 setLoadingDetails(false);
             })
@@ -50,7 +47,7 @@ export default function Groups() {
         ApiService.get(ApiUrls.groups)
 		.then(data => {
 			console.log('Groups: ', data);
-            data.forEach(group => {
+            data.forEach((group: { key: any; uid: any; }) => {
                 group.key = group.uid;
             })
             setGroups(data);
