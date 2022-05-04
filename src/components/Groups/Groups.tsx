@@ -36,6 +36,7 @@ export default function Groups() {
 		setLoadingDetails(true);
         ApiService.get(ApiUrls.group(uid))
             .then(data => {
+                console.log('GROUP_DETAILS: ', data);
                 setGroupDetails(data);
                 setLoadingDetails(false);
             })
@@ -50,7 +51,7 @@ export default function Groups() {
         ApiService.get(ApiUrls.groups)
 		.then(data => {
 			console.log('Groups: ', data);
-            data.forEach(group => {
+            data.forEach((group: { key: any; uid: any; }) => {
                 group.key = group.uid;
             })
             setGroups(data);

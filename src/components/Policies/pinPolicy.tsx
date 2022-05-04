@@ -1,4 +1,4 @@
-import { Divider, Checkbox, Button, InputNumber, Input } from "antd";
+import { Divider, Checkbox, Button, InputNumber, Input, Select, Skeleton } from "antd";
 import { useEffect, useState } from "react";
 
 import './Policies.css';
@@ -11,19 +11,51 @@ import ApiUrls from '../../ApiUtils';
 export const PinPolicy = (props: any) => {
 
 	const [isEdit, setIsEdit] = useState(false);
+	const [loading, setLoading] = useState(true);
 	const [pinDisplayData, setPinDisplayData] = useState<PinPolicyType>(props.pinDetails);
 	const [pinEditData, setPinEditedData] = useState(props.pinDetails);
-	
+	const [groups, setGroups]: any = useState([]);
+	const [groupNames, setGroupNames]: any = useState([]);
+	const [groupUids, setGroupUids]: any = useState([]);
+	const [groupsChange, setGroupsChange]: any = useState([]);
+
 	useEffect(() => {
 		if (pinDisplayData.uid === undefined) {
 			setIsEdit(true);
 		}
+
+		ApiService.get(ApiUrls.groups)
+			.then(data => {
+				console.log('GROUPS: ', data);
+				for (var i = 0; i < data.length; i++) {
+					groups.push({
+						label: data[i].name,
+						value: data[i].uid
+					})
+				}
+				var object = {};
+				for (var i = 0; i < data.length; i++) {
+					object[data[i].name] = data[i].uid
+				}
+				groupsChange.push(object);
+				console.log(groups);
+				setLoading(false);
+			})
+
+		if (pinDisplayData.uid !== undefined) {
+			Object.keys(pinDisplayData.auth_policy_groups).map(data => {
+				groupNames.push(pinDisplayData.auth_policy_groups[data].name);
+				groupUids.push(pinDisplayData.auth_policy_groups[data].uid)
+				console.log(groupNames);
+				console.log(groupUids);
+			});
+		}
+		pinEditData.auth_policy_groups = groupUids;
 	}, [])
 
 	function updatePinPolicy() {
 		ApiService.put(ApiUrls.policy(pinDisplayData.uid), pinEditData)
 			.then(data => {
-				console.log(data);
 				setPinDisplayData({ ...pinEditData });
 			})
 			.catch(error => {
@@ -59,13 +91,27 @@ export const PinPolicy = (props: any) => {
 		window.location.reload();
 	}
 
+	function handleGroups(value: any) {
+		Object.keys(groupsChange[0]).map(key => {
+			if (value.includes(key)) {
+				console.log(key)
+				var index = value.indexOf(key)
+				console.log(index)
+				value.splice(index, 1)
+				value.push(groupsChange[0][key]);
+			}
+		})
+		pinEditData.auth_policy_groups = value;
+		console.log(pinEditData.auth_policy_groups);
+	}
+
 	return (
-		<>
+		<Skeleton loading={loading}>
 			<div className="content-container-policy">
 				<div className="row-container">
 					<div>
-						{pinDisplayData.uid === undefined ? <h5>Create Pin Policy</h5> :
-							<h5>Edit Pin Policy</h5>
+						{pinDisplayData.uid === undefined ? <h3>Create Pin Policy</h3> :
+							<h3>Edit Pin Policy</h3>
 						}
 					</div>
 					<div>
@@ -95,7 +141,7 @@ export const PinPolicy = (props: any) => {
 					</div>
 					<div>
 						{isEdit ? <Input className="form-control"
-							style={{ width: "410px" }}
+							style={{ width: "275px" }}
 							onChange={(e) => setPinEditedData({
 								...pinEditData,
 								description: e.target.value
@@ -110,7 +156,16 @@ export const PinPolicy = (props: any) => {
 						<h6>Assigned to groups</h6>
 					</div>
 					<div>
-						Everyone
+						<Select
+							mode="multiple"
+							size={"large"}
+							placeholder="Please select groups"
+							defaultValue={pinDisplayData.name !== "" ? groupNames : []}
+							onChange={handleGroups}
+							disabled={!isEdit}
+							style={{ width: '275px' }}
+							options={groups}
+						/>
 					</div>
 
 					<div>
@@ -134,6 +189,7 @@ export const PinPolicy = (props: any) => {
 								defaultValue={pinDisplayData.policy_req.min_length.toString()} /> : pinDisplayData.policy_req.min_length
 						}
 					</div>
+
 					<div>Maxium Length</div>
 					<div>
 						{
@@ -204,6 +260,7 @@ export const PinPolicy = (props: any) => {
 							</Checkbox>
 						</div>
 					</div>
+
 					<div>
 						PIN expires in
 					</div>
@@ -230,6 +287,6 @@ export const PinPolicy = (props: any) => {
 					<Button type='primary' style={{ float: 'right' }}
 						onClick={createPinPolicy}>create</Button></div>
 			}
-		</>
+		</Skeleton>
 	);
 }

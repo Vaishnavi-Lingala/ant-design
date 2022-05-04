@@ -51,6 +51,7 @@ export default function Policies() {
 		name: '',
 		order: 0,
 		policy_type: 'PIN',
+		auth_policy_groups: [],
 		policy_req: {
 			expires_in_x_days: 0,
 			is_special_char_req: false,
@@ -69,6 +70,7 @@ export default function Policies() {
 		description: '',
 		name: '',
 		order: 0,
+		auth_policy_groups: [],
 		policy_type: 'PASSWORD',
 		policy_req: {
 			grace_period: ''
@@ -141,8 +143,6 @@ export default function Policies() {
 				console.log(error);
 			})
 	}
-
-	console.log(window.location.pathname.split("/"));
 
 	return (
 		<>
