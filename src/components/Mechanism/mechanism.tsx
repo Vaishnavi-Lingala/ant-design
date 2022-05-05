@@ -22,6 +22,7 @@ function Mechanism(props: any) {
     const [groupNames, setGroupNames]: any = useState([]);
     const [groupUids, setGroupUids]: any = useState([]);
     const [groupsChange, setGroupsChange]: any = useState([]);
+    const [value, setValue] = useState(displayDetails?.challenge_factors[1].factor);
 
     useEffect(() => {
         ApiService.get(ApiUrls.groups)
@@ -65,6 +66,8 @@ function Mechanism(props: any) {
 
         if (disabledFactors1.includes("NONE")) {
             disabledFactors1.pop();
+            disabledFactors.pop();
+            displayDetails.challenge_factors[1].factor = "NONE";
         }
 
         if (displayDetails.uid !== undefined) {
@@ -112,10 +115,14 @@ function Mechanism(props: any) {
                 }
             }
         })
+        console.log(array);
+        if(editData.challenge_factors[0].factor === "NONE"){
+            editData.challenge_factors[1].factor = "NONE"
+        }
     }
 
     function createMechanism() {
-        ApiService.post(ApiUrls.mechanism(displayDetails.uid), editData)
+        ApiService.post(ApiUrls.addMechanism, editData)
             .then(data => {
                 console.log(data);
             })
@@ -264,6 +271,12 @@ function Mechanism(props: any) {
                                         onChange={(e) => {
                                             editData.challenge_factors[0].factor = e.target.value
                                             showDisabled(e, disabledFactors1)
+                                            if(editData.challenge_factors[0].factor === "NONE"){
+                                                disabledFactors.pop();
+                                                editData.challenge_factors[1].factor = "NONE"
+                                                setValue("NONE")
+                                                setRender(!render)
+                                            }
                                         }}
                                     >
                                         {
@@ -288,8 +301,8 @@ function Mechanism(props: any) {
                                 </div>
                                 <div className="card-body">
                                     <div>
-                                        <Radio.Group defaultValue={disabledFactors !== disabledFactors1 ? displayDetails?.challenge_factors[1].factor : ""}
-                                            disabled={!isEdit}
+                                        <Radio.Group defaultValue={displayDetails.name !== "" ? displayDetails?.challenge_factors[0].factor === "NONE" ? value : value : ""}
+                                            disabled={displayDetails.challenge_factors[0].factor === "NONE" || !isEdit}
                                             onChange={(e) => {
                                                 editData.challenge_factors[1].factor = e.target.value
                                                 showDisabled(e, disabledFactors)
