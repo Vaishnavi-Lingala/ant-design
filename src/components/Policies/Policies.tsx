@@ -37,8 +37,8 @@ export default function Policies() {
 	const [pinDetails, setPinDetails] = useState(undefined);
 	const [passwordDetails, setPasswordDetails] = useState(undefined);
 	const [loadingDetails, setLoadingDetails] = useState(false);
-	const [pinArr, setPinArr]: any = useState([]);
-	const [passwordArr, setPasswordArr]: any = useState([]);
+	const [pinPolicies, setPinPolicies]: any = useState([]);
+	const [passwordPolicies, setPasswordPolicies]: any = useState([]);
 	const [isPinModalVisible, setIsPinModalVisible] = useState(false);
 	const [isPasswordModalVisible, setIsPasswordModalVisible] = useState(false);
 	const { TabPane } = Tabs;
@@ -81,6 +81,8 @@ export default function Policies() {
 				console.log(data);
 				var pinCounter = 0;
 				var passwordCounter = 0;
+				var pinArray: any = [];
+				var passwordArray: any = [];
 				for (var i = 0; i < data.length; i++) {
 					var object;
 					if (data[i].policy_type === "PIN") {
@@ -91,7 +93,7 @@ export default function Policies() {
 							policy_description: data[i].description
 						}
 						pinCounter = pinCounter + 1;
-						pinArr.push(object);
+						pinArray.push(object);
 					}
 					else {
 						object = {
@@ -101,9 +103,11 @@ export default function Policies() {
 							policy_description: data[i].description
 						}
 						passwordCounter = passwordCounter + 1;
-						passwordArr.push(object);
+						passwordArray.push(object);
 					}
 				}
+				setPinPolicies(pinArray);
+				setPasswordPolicies(passwordArray);
 				setLoadingDetails(false);
 			})
 	}
@@ -186,7 +190,7 @@ export default function Policies() {
 										style={{ border: '1px solid #D7D7DC' }}
 										showHeader={true}
 										columns={columns}
-										dataSource={pinArr}
+										dataSource={pinPolicies}
 										pagination={{ position: [] }}
 									/>
 								</>
@@ -212,7 +216,7 @@ export default function Policies() {
 										style={{ border: '1px solid #D7D7DC' }}
 										showHeader={true}
 										columns={columns}
-										dataSource={passwordArr}
+										dataSource={passwordPolicies}
 										pagination={{ position: [] }}
 									/>
 
