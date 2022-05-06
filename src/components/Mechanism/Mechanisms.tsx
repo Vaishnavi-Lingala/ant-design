@@ -15,11 +15,6 @@ export default function Mechanisms() {
 
 	const inActivateColumns = [
 		{
-			title: 'Order',
-			dataIndex: 'mechanism_order',
-			width: '10%'
-		},
-		{
 			title: 'Mechanism Name',
 			dataIndex: 'mechanism_name',
 			width: '40%'
