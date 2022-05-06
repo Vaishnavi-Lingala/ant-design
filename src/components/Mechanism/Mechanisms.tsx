@@ -15,20 +15,9 @@ export default function Mechanisms() {
 
 	const inActivateColumns = [
 		{
-			title: 'Sort',
-			dataIndex: 'sort',
-			width: '10%',
-			// render: (text: any, record: { mechanism_id: any; }) => (
-			// 	<Button onClick={() => reOrderMechanisms(record.mechanism_id, 1)}>
-			// 		Sort
-			// 	</Button>
-			// )
-			render: () => <DragHandle />,
-		},
-		{
 			title: 'Mechanism Name',
 			dataIndex: 'mechanism_name',
-			width: '50%'
+			width: '40%'
 		},
 		{
 			title: 'Actions',
@@ -44,7 +33,7 @@ export default function Mechanisms() {
 			title: 'Status',
 			dataIndex: 'activate',
 			width: '20%',
-			render: (text: any, record: { mechanism_id: any; }) => (
+			render: (text: any, record: { mechanism_id: any; default: any }) => (
 				<Button onClick={() => activateMechanism(record.mechanism_id)}>
 					Activate
 				</Button>
@@ -58,18 +47,25 @@ export default function Mechanisms() {
 			dataIndex: 'sort',
 			width: '10%',
 			className: 'drag-visible',
-			render: () => <DragHandle />,
+			render: (text: any, record: { default: any }) => (
+				record.default === false ? <DragHandle /> : <></>
+			)
+		},
+		{
+			title: 'Order',
+			dataIndex: 'mechanism_order',
+			width: '10%'
 		},
 		{
 			title: 'Mechanism Name',
 			dataIndex: 'mechanism_name',
-			width: '50%'
+			width: '40%'
 		},
 		{
 			title: 'Actions',
 			dataIndex: 'actions',
 			width: '20%',
-			render: (text: any, record: { mechanism_id: any; }) => (
+			render: (text: any, record: { mechanism_id: any }) => (
 				<Button onClick={() => getMechanismDetails(record.mechanism_id)}>
 					View
 				</Button>
@@ -79,10 +75,11 @@ export default function Mechanisms() {
 			title: 'Status',
 			dataIndex: 'inactivate',
 			width: '20%',
-			render: (text: any, record: { mechanism_id: any; }) => (
-				<Button onClick={() => inActivateMechanism(record.mechanism_id)}>
-					Inactivate
-				</Button>
+			render: (text: any, record: { mechanism_id: any; default: any }) => (
+				record.default === false ?
+					<Button onClick={() => inActivateMechanism(record.mechanism_id)}>
+						Inactivate
+					</Button> : <></>
 			)
 		}
 	];
@@ -134,7 +131,9 @@ export default function Mechanisms() {
 							key: i + 1,
 							mechanism_name: data[i].name,
 							mechanism_id: data[i].uid,
-							index: activeCounter + 1
+							default: data[i].default,
+							index: activeCounter + 1,
+							mechanism_order: data[i].order
 						}
 						activeCounter = activeCounter + 1
 						activeArray.push(obj);
@@ -144,7 +143,8 @@ export default function Mechanisms() {
 							key: i + 1,
 							mechanism_name: data[i].name,
 							mechanism_id: data[i].uid,
-							index: inActiveCounter + 1
+							index: inActiveCounter + 1,
+							mechanism_order: data[i].order
 						}
 						inActiveCounter = inActiveCounter + 1
 						inActiveArray.push(obj);
@@ -166,7 +166,7 @@ export default function Mechanisms() {
 	function inActivateMechanism(uid: string) {
 		ApiService.get(ApiUrls.inActivateMechanism(uid))
 			.then(data => window.location.reload())
-			.catch(error => {})
+			.catch(error => { })
 	}
 
 	function reOrderMechanisms(uid: string, order: number) {
@@ -177,7 +177,7 @@ export default function Mechanisms() {
 		ApiService.post(ApiUrls.reOrderMechanisms, data)
 			.then(data => {
 				console.log(data)
-				// window.location.reload()
+				window.location.reload()
 			})
 	}
 
@@ -201,16 +201,16 @@ export default function Mechanisms() {
 	const SortableBody = SortableContainer(props => <tbody {...props} />);
 
 	const onSortEnd = ({ oldIndex, newIndex }) => {
-		if (oldIndex !== newIndex) {
+		if (oldIndex !== newIndex && newIndex != activeMechanisms.length - 1) {
 			const newData = arrayMoveImmutable([].concat(activeMechanisms), oldIndex, newIndex).filter(
 				el => !!el,
 			);
 			console.log('Sorted items: ', newData);
 			setActiveMechanisms(newData);
 			//@ts-ignore
-			console.log(newData[newIndex].mechanism_id, newData.length - newIndex);
+			console.log(newData[newIndex].mechanism_id, newData.length - newIndex - 1);
 			//@ts-ignore
-			reOrderMechanisms(newData[newIndex].mechanism_id, newData.length - newIndex);
+			reOrderMechanisms(newData[newIndex].mechanism_id, newData.length - newIndex - 1);
 		}
 	};
 
@@ -225,7 +225,7 @@ export default function Mechanisms() {
 
 	const DraggableBodyRow = ({ className, style, ...restProps }) => {
 		const index = activeMechanisms.findIndex(x => x.index === restProps['data-row-key']);
-		return <SortableItem index={index} {...restProps}/>;
+		return <SortableItem index={index} {...restProps} />;
 	};
 
 	return (
@@ -256,7 +256,7 @@ export default function Mechanisms() {
 							borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
 						}}
 						>
-							<h4>ACTIVE MECHANISMS</h4>
+							<h4>ACTIVE</h4>
 						</div>
 
 						<Table
@@ -280,7 +280,7 @@ export default function Mechanisms() {
 							borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
 						}}
 						>
-							<h4>INACTIVE MECHANISMS</h4>
+							<h4>INACTIVE</h4>
 						</div>
 						<Table
 							style={{ border: '1px solid #D7D7DC' }}

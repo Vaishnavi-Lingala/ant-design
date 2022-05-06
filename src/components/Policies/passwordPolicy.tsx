@@ -73,7 +73,7 @@ export const PasswordPolicy = (props: any) => {
     }
 
     function createPasswordPolicy() {
-        ApiService.put(ApiUrls.addPolicy, passwordEditData)
+        ApiService.post(ApiUrls.addPolicy, passwordEditData)
             .then(data => {
                 console.log(data);
             })
@@ -87,7 +87,7 @@ export const PasswordPolicy = (props: any) => {
     }
 
     function updatePasswordPolicy() {
-        ApiService.post(ApiUrls.policy(passwordDisplayData.uid), passwordEditData)
+        ApiService.put(ApiUrls.policy(passwordDisplayData.uid), passwordEditData)
             .then(data => {
                 setPasswordDisplayData({ ...passwordEditData });
             })
