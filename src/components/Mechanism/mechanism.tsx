@@ -1,5 +1,5 @@
 import { Button, Input, Radio, Select, Skeleton } from "antd";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { MechanismType } from "../../models/Data.models";
 
 import './Mechanism.css'
@@ -22,7 +22,7 @@ function Mechanism(props: any) {
     const [groupNames, setGroupNames]: any = useState([]);
     const [groupUids, setGroupUids]: any = useState([]);
     const [groupsChange, setGroupsChange]: any = useState([]);
-    const [value, setValue] = useState(displayDetails?.challenge_factors[1].factor);
+    const [value, setValue] = useState("NONE");
 
     useEffect(() => {
         ApiService.get(ApiUrls.groups)
@@ -115,10 +115,6 @@ function Mechanism(props: any) {
                 }
             }
         })
-        console.log(array);
-        if(editData.challenge_factors[0].factor === "NONE"){
-            editData.challenge_factors[1].factor = "NONE"
-        }
     }
 
     function createMechanism() {
@@ -266,7 +262,7 @@ function Mechanism(props: any) {
                                     <h6 className="m-0 font-weight-bold text-gray-900 text-lg" style={{ float: 'left', padding: '2px 5px' }}>Challenge 1</h6>
                                 </div>
                                 <div className="card-body">
-                                    <Radio.Group defaultValue={disabledFactors !== disabledFactors1 ? displayDetails?.challenge_factors[0].factor : ""}
+                                    <Radio.Group value={disabledFactors !== disabledFactors1 ? displayDetails?.challenge_factors[0].factor : ""}
                                         disabled={!isEdit}
                                         onChange={(e) => {
                                             editData.challenge_factors[0].factor = e.target.value
@@ -275,7 +271,6 @@ function Mechanism(props: any) {
                                                 disabledFactors.pop();
                                                 editData.challenge_factors[1].factor = "NONE"
                                                 setValue("NONE")
-                                                setRender(!render)
                                             }
                                         }}
                                     >
@@ -301,7 +296,7 @@ function Mechanism(props: any) {
                                 </div>
                                 <div className="card-body">
                                     <div>
-                                        <Radio.Group defaultValue={displayDetails.name !== "" ? displayDetails?.challenge_factors[0].factor === "NONE" ? value : value : ""}
+                                        <Radio.Group value={displayDetails.name !== "" ? editData?.challenge_factors[0].factor === "NONE" ? value : displayDetails?.challenge_factors[1].factor : ""}
                                             disabled={displayDetails.challenge_factors[0].factor === "NONE" || !isEdit}
                                             onChange={(e) => {
                                                 editData.challenge_factors[1].factor = e.target.value
