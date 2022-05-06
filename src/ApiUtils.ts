@@ -24,6 +24,7 @@ const Urls = {
     // Groups Urls
     group: (uid) => `account/${accountId}/groups/${uid}`,
     groups: `account/${accountId}/groups`,
+    groupUsers: (uid) => `account/${accountId}/groups/${uid}/users` ,
 
     // Policy Urls
     policies: `account/${accountId}/product/oprc735871d0/auth-policies`,
@@ -32,9 +33,14 @@ const Urls = {
 
     // Mechanism Urls
     mechanisms: `account/${accountId}/mechanism`,
+    addMechanism: `account/${accountId}/mechanism`,
     mechanism: (uid) => `account/${accountId}/mechanism/${uid}`, // For GET and UPDATE APIs
     mechanismOptions: `account/${accountId}/mechanism/options`,
     mechanismChallengeFactors: `account/${accountId}/mechanism/challenge-factor-options?product_id=oprc735871d0`,
+    mechanismPasswordGraceOptions: `account/${accountId}/mechanism/password-grace-options`,
+    activateMechanism: (uid) => `account/${accountId}/product/oprc735871d0/mechanism/${uid}/activate`,
+    inActivateMechanism: (uid) => `account/${accountId}/product/oprc735871d0/mechanism/${uid}/inactivate`,
+    reOrderMechanisms: `account/${accountId}/product/oprc735871d0/mechanism/reorder`,
 
     // Activity Log Urls
     activityLog: `account/${accountId}/activitylog`

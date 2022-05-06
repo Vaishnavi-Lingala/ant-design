@@ -1,11 +1,11 @@
-import { Button, Input, Skeleton, Table, Tabs } from 'antd';
+import { Button, Input, Modal, Skeleton, Table, Tabs } from 'antd';
 import { useEffect, useState } from 'react';
 
 import './Policies.css';
 
 import { PinPolicy } from './pinPolicy';
 import { PasswordPolicy } from './passwordPolicy'
-import ApiUrls from '../../ApiUtils'; 
+import ApiUrls from '../../ApiUtils';
 import ApiService from '../../Api.service';
 import { useHistory } from 'react-router-dom';
 
@@ -33,24 +33,22 @@ export default function Policies() {
 			)
 		}
 	];
-
+	
 	const [pinDetails, setPinDetails] = useState(undefined);
 	const [passwordDetails, setPasswordDetails] = useState(undefined);
 	const [loadingDetails, setLoadingDetails] = useState(false);
-	const [pinArr, setPinArr]: any = useState([]);
-	const [passwordArr, setPasswordArr]: any = useState([]);
-
+	const [pinPolicies, setPinPolicies]: any = useState([]);
+	const [passwordPolicies, setPasswordPolicies]: any = useState([]);
 	const [isPinModalVisible, setIsPinModalVisible] = useState(false);
 	const [isPasswordModalVisible, setIsPasswordModalVisible] = useState(false);
-
-	//@ts-ignore
-	const accessToken = JSON.parse(localStorage.getItem("okta-token-storage")).accessToken.accessToken
+	const { TabPane } = Tabs;
 
 	const pinData = {
 		description: '',
 		name: '',
 		order: 0,
 		policy_type: 'PIN',
+		auth_policy_groups: [],
 		policy_req: {
 			expires_in_x_days: 0,
 			is_special_char_req: false,
@@ -69,29 +67,22 @@ export default function Policies() {
 		description: '',
 		name: '',
 		order: 0,
+		auth_policy_groups: [],
 		policy_type: 'PASSWORD',
 		policy_req: {
 			grace_period: ''
 		}
 	}
 
-	const { TabPane } = Tabs;
-
-	useEffect(() => {
-		if (window.location.pathname.split("/")[2] !== 'password' && window.location.pathname.split("/").length !== 4) {
-			history.push('/policies/pin');
-		}
-
-		if (window.location.pathname.split("/").length === 4) {
-			getPolicyDetails(window.location.pathname.split("/")[3]);
-		}
-
+	function getPolicies() {
 		setLoadingDetails(true)
 		ApiService.get(ApiUrls.policies)
 			.then(data => {
 				console.log(data);
 				var pinCounter = 0;
 				var passwordCounter = 0;
+				var pinArray: any = [];
+				var passwordArray: any = [];
 				for (var i = 0; i < data.length; i++) {
 					var object;
 					if (data[i].policy_type === "PIN") {
@@ -102,7 +93,7 @@ export default function Policies() {
 							policy_description: data[i].description
 						}
 						pinCounter = pinCounter + 1;
-						pinArr.push(object);
+						pinArray.push(object);
 					}
 					else {
 						object = {
@@ -112,11 +103,25 @@ export default function Policies() {
 							policy_description: data[i].description
 						}
 						passwordCounter = passwordCounter + 1;
-						passwordArr.push(object);
+						passwordArray.push(object);
 					}
 				}
+				setPinPolicies(pinArray);
+				setPasswordPolicies(passwordArray);
 				setLoadingDetails(false);
 			})
+	}
+
+	useEffect(() => {
+		if (window.location.pathname.split("/")[2] !== 'password' && window.location.pathname.split("/").length !== 4) {
+			history.push('/policies/pin');
+		}
+
+		if (window.location.pathname.split("/").length === 4) {
+			getPolicyDetails(window.location.pathname.split("/")[3]);
+		}
+
+		getPolicies();
 	}, [])
 
 	const history = useHistory();
@@ -141,8 +146,6 @@ export default function Policies() {
 				console.log(error);
 			})
 	}
-
-	console.log(window.location.pathname.split("/"));
 
 	return (
 		<>
@@ -187,7 +190,7 @@ export default function Policies() {
 										style={{ border: '1px solid #D7D7DC' }}
 										showHeader={true}
 										columns={columns}
-										dataSource={pinArr}
+										dataSource={pinPolicies}
 										pagination={{ position: [] }}
 									/>
 								</>
@@ -213,7 +216,7 @@ export default function Policies() {
 										style={{ border: '1px solid #D7D7DC' }}
 										showHeader={true}
 										columns={columns}
-										dataSource={passwordArr}
+										dataSource={passwordPolicies}
 										pagination={{ position: [] }}
 									/>
 
