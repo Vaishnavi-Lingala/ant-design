@@ -1,7 +1,5 @@
 import { Skeleton, Table, Tabs } from "antd";
 import { useEffect, useState } from "react";
-import { json } from "stream/consumers";
-
 import ApiService from "../../Api.service"
 import ApiUrls from "../../ApiUtils"
 
