@@ -1,5 +1,6 @@
 import { Skeleton, Table, Tabs } from "antd";
 import { useEffect, useState } from "react";
+import { json } from "stream/consumers";
 
 import ApiService from "../../Api.service"
 import ApiUrls from "../../ApiUtils"
@@ -11,6 +12,8 @@ export function User(props: any) {
     const accessToken = JSON.parse(localStorage.getItem("okta-token-storage")).accessToken.accessToken;
     const [groups, setGroups]: any = useState([]);
     const [loadingDetails, setLoadingDetails] = useState(false);
+    const [page, setPage]: any = useState(1);
+    const [pageSize, setPageSize]: any = useState(10);
     const columns = [{title: "Group Name", dataIndex: "name", width:"40%" },
     {title: "Status", dataIndex: "status", width:"40%" }];
 
@@ -18,19 +21,21 @@ export function User(props: any) {
         setLoadingDetails(true);
         let userId = props.userDetails.uid;
         ApiService.get(ApiUrls.userGroups(userId)).then((groupsResponse:any) => {
-            let userGroups = groupsResponse;
-            for(var i = 0; i < userGroups.length; i++) {	
-				let obj = {
-					key: i+1,
-					name: userGroups[i].name,
-					uid: userGroups[i].uid,
-					status: userGroups[i].status
-				}
-				groups.push(obj);
-			}
-        });
-        setLoadingDetails(false);
+            let userGroups = appendKeyToGivenList(groupsResponse);
+            setGroups(userGroups);
+        }).catch(error => {
+            console.error(`Error in getting groups: ${JSON.stringify(error)}`);
+        }).finally(() => {
+            setLoadingDetails(false);
+        });  
     }, []);
+
+    const appendKeyToGivenList = (inputList) => {
+		inputList.forEach(each => {
+			each['key'] = each.uid;
+		})
+		return inputList;
+	}
 
     return (
         <Skeleton loading={loadingDetails}>
@@ -57,7 +62,14 @@ export function User(props: any) {
 						showHeader={true}
 						columns={columns}
 						dataSource={groups}   
-						pagination={{ position: [] }}></Table>
+						pagination={{ 
+                            current: page,
+                            pageSize: pageSize,
+                            onChange: (page, pageSize) => {
+                                setPage(page);
+                                setPageSize(pageSize);
+                            }
+                         }}></Table>
                     </div>
                 </TabPane>
             </Tabs>

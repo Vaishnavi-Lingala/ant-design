@@ -10,7 +10,7 @@ export default function Users() {
 	const [loadingDetails, setLoadingDetails] = useState(false);
     const [arr, setArr]: any = useState([]);
 	const [page, setPage]: any = useState(1);
-	const [pageSize, setPageSize]: any = useState(3);
+	const [pageSize, setPageSize]: any = useState(10);
 	const [totalItems, setTotalItems]: any = useState(0);
 
     const columns = [{
