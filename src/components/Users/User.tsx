@@ -36,14 +36,23 @@ export function User(props: any) {
         <Skeleton loading={loadingDetails}>
             <Tabs defaultActiveKey="profile" type="card" size={"middle"} animated={false} tabBarStyle={{ marginBottom: '0px' }}>
                 <TabPane tab="Profile" key="profile">
-                    <div className="row-container-2columns" style={{paddingTop: "20px"}}>
-                        <div>Username:<span>{userDetails.user_name}</span></div>
-                        <div>Email: <span >{userDetails.email}</span></div>
-                        <div>Status: <span >{userDetails.status}</span></div>
+                    <div className="row" style={{paddingTop: "20px"}}>
+                        <div style={{width: "100%", display: "flex", marginBottom: "10px"}}>
+                            <div style={{width: "50%"}}>Username</div>
+                            <div>{userDetails.user_name}</div>
+                        </div>
+                        <div style={{width: "100%", display: "flex", marginBottom: "10px"}}>
+                            <div style={{width: "50%"}}>Email</div>
+                            <div>{userDetails.email}</div>
+                        </div>
+                        <div style={{width: "100%", display: "flex", marginBottom: "10px"}}>
+                            <div style={{width: "50%"}}>Status</div>
+                            <div>{userDetails.status}</div>
+                        </div>    
                     </div>
                 </TabPane>
                 <TabPane tab="Groups" key="groups">
-                    <div className="row-container" style={{paddingTop: "20px"}}>
+                    <div className="row" style={{paddingTop: "20px"}}>
                         <Table style={{ border: '1px solid #D7D7DC' }}
 						showHeader={true}
 						columns={columns}
