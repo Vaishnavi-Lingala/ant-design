@@ -9,6 +9,9 @@ export default function Users() {
 	const [userDetails, setUserDetails] = useState(undefined);
 	const [loadingDetails, setLoadingDetails] = useState(false);
     const [arr, setArr]: any = useState([]);
+	const [page, setPage]: any = useState(1);
+	const [pageSize, setPageSize]: any = useState(10);
+	const [totalItems, setTotalItems]: any = useState(0);
 
     const columns = [{
         title: 'Username',
@@ -28,22 +31,15 @@ export default function Users() {
 
     useEffect(() => {
 		setLoadingDetails(true);
-        ApiService.get(ApiUrls.users)
+        ApiService.get(ApiUrls.users, {start: page, limit: pageSize})
 		.then(data => {
-			let usersList = data?.results;
-			for(var i = 0; i < usersList.length; i++) {	
-				var obj = {
-					key: i+1,
-					user_name: usersList[i].user_name,
-					uid: usersList[i].uid,
-					email: usersList[i].email,
-					status: usersList[i].status
-				}
-				arr.push(obj);
-			}
-			setLoadingDetails(false);
+			const usersWithKey = appendKeyToUsersList(data.results);
+			setArr(usersWithKey);
+			setTotalItems(data.total_items);
 		}).catch(error => {
 			console.error(`Error in getting users list: ${error}`);
+		}).finally(() => {
+			setLoadingDetails(false);
 		})
 	}, [])
 
@@ -52,6 +48,25 @@ export default function Users() {
 		const selectedUser = arr.find(user => user.uid === uid);
 		if(selectedUser) setUserDetails(selectedUser);
 		setLoadingDetails(false);
+	}
+
+	const onUsersPageChange = async (page, pageSize) => {
+		setLoadingDetails(true);
+		let data = await ApiService.get(ApiUrls.users, {start: page, limit: pageSize}).catch(error => {
+			console.error(`Error in getting users list by page: ${JSON.stringify(error)}`);
+		}).finally(() => {
+			setLoadingDetails(false);
+		});
+		const usersWithKey = appendKeyToUsersList(data.results);
+		setArr(usersWithKey);
+		setTotalItems(data.total_items);
+	}
+
+	const appendKeyToUsersList = (usersList) => {
+		usersList.forEach(eachUser => {
+			eachUser['key'] = eachUser.uid;
+		})
+		return usersList;
 	}
 
     return (
@@ -67,8 +82,17 @@ export default function Users() {
 						style={{ border: '1px solid #D7D7DC' }}
 						showHeader={true}
 						columns={columns}
-						dataSource={arr}   
-						pagination={{ position: [] }}
+						dataSource={arr}
+						pagination={{
+							current: page, 
+							pageSize: pageSize,
+							total: totalItems,
+							onChange:(page, pageSize) => {
+								setPage(page);
+								setPageSize(pageSize);
+								onUsersPageChange(page, pageSize);
+							}
+						}}
 					/>
 				</>}
 			</Skeleton>
