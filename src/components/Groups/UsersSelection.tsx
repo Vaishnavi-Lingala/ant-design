@@ -51,19 +51,36 @@ export default function UsersSelection(props: any) {
       };
 
     const onSearch = searchText => {
+        console.log('Search action: ', props.action);
+        setLoadingDetails(true);
+        const params = {
+            q : searchText
+        }
         if (props.action === 'Add') {
             console.log('Search text: ', searchText);
             console.log('Length: ', searchText.length);
-            setLoadingDetails(true);
-            const params = {
-                q : searchText
-            }
             ApiService.get(ApiUrls.users, params).then(data => {
-                console.log('Data: ', data)
+                console.log('Add users search data: ', data)
                 data.results.forEach(user => {
                     user.key = user.uid;
                 })
                 setUsersList(data.results);
+                setLoadingDetails(false);
+            }, error => {
+                console.log('Add users search error: ', error);
+                setLoadingDetails(false);
+            })
+        }
+        if (props.action === 'Remove') {
+            ApiService.get(ApiUrls.groupUsers(props.groupId), params).then(data => {
+                console.log('Remove users search data: ', data);
+                data.results.forEach(user => {
+                    user.key = user.uid;
+                })
+                setUsersList(data.results);
+                setLoadingDetails(false);
+		    }, error => {
+                console.log('Remove users search error: ', error);
                 setLoadingDetails(false);
             })
         }
