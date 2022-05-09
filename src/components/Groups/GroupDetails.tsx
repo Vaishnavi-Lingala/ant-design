@@ -3,6 +3,7 @@ import ApiService from "../../Api.service";
 import ApiUrls from '../../ApiUtils';
 import { Divider, Table, Skeleton, Button, Modal, Col, Row, Typography } from "antd";
 import UsersSelection from "./UsersSelection";
+import Moment from 'moment';
 
 export default function GroupDetails(props: any) {
 
@@ -89,18 +90,12 @@ export default function GroupDetails(props: any) {
         <>
             <div className="content-container rounded-grey-border">
                 <div className="row-container">
-                    <div style={{ paddingTop: '20px' }}>
-                        <h6>Group name</h6>
-                    </div>
-                    <div style={{ paddingTop: '20px' }}>
+                    <div className='content-header'>
                             {groupDetails.name}
                     </div>
-                    <div style={{ paddingTop: '20px' }}>
-                        <h6>Status</h6>
-                    </div>
-                    <div style={{ paddingTop: '20px' }}>
-                        {groupDetails.status}
-                    </div>
+                </div>
+                <div>
+                    <h6>Created: {Moment(groupDetails.created_ts).format('MM/DD/YYYY')}</h6>
                 </div>
                 <Divider style={{ borderTop: '1px solid #d7d7dc' }} />
                 <Skeleton loading={loadingDetails}>
@@ -124,7 +119,7 @@ export default function GroupDetails(props: any) {
                             pagination={{ position: [] }}
                         />
                 </Skeleton>
-                {action ? <UsersSelection action={action} users={usersForSelection} handleCancel={handleCancel} handleOk={handleOk}/> : <></>}
+                {action ? <UsersSelection groupId={groupDetails.uid} action={action} users={usersForSelection} handleCancel={handleCancel} handleOk={handleOk}/> : <></>}
             </div>
         </>
     )

@@ -1,5 +1,5 @@
-import { Button, Input, Radio, Skeleton } from "antd";
-import { useEffect, useState } from "react";
+import { Button, Input, Radio, Select, Skeleton } from "antd";
+import { useEffect, useRef, useState } from "react";
 import { MechanismType } from "../../models/Data.models";
 
 import './Mechanism.css'
@@ -12,14 +12,37 @@ function Mechanism(props: any) {
     const [loading, setLoading] = useState(true);
     const [isEdit, setIsEdit] = useState(false);
     const [editData, setEditData]: any = useState(props.mechanismDetails);
+    const [groups, setGroups]: any = useState([]);
     const [tapOutOptions, setTapOutOption]: any = useState({});
     const [readerOptions, setReaderOptions]: any = useState({});
     const [factorOptions, setFactorOptions]: any = useState({});
     const [render, setRender] = useState(false);
     const [disabledFactors]: any = useState([displayDetails.challenge_factors[1].factor]);
     const [disabledFactors1]: any = useState([displayDetails.challenge_factors[0].factor]);
+    const [groupNames, setGroupNames]: any = useState([]);
+    const [groupUids, setGroupUids]: any = useState([]);
+    const [groupsChange, setGroupsChange]: any = useState([]);
+    const [value, setValue] = useState("NONE");
 
     useEffect(() => {
+        ApiService.get(ApiUrls.groups)
+            .then(data => {
+                console.log('GROUPS: ', data);
+                for (var i = 0; i < data.length; i++) {
+                    groups.push({
+                        label: data[i].name,
+                        value: data[i].uid
+                    })
+                }
+                var object = {};
+                for (var i = 0; i < data.length; i++) {
+                    object[data[i].name] = data[i].uid
+                }
+                groupsChange.push(object);
+                console.log(groups);
+                setLoading(false);
+            })
+
         ApiService.get(ApiUrls.mechanismOptions)
             .then(data => {
                 console.log(data);
@@ -31,7 +54,6 @@ function Mechanism(props: any) {
             .then(data => {
                 console.log(data);
                 setFactorOptions(data);
-                setLoading(false);
             })
 
         if (displayDetails.uid === undefined) {
@@ -44,13 +66,24 @@ function Mechanism(props: any) {
 
         if (disabledFactors1.includes("NONE")) {
             disabledFactors1.pop();
+            disabledFactors.pop();
+            displayDetails.challenge_factors[1].factor = "NONE";
         }
+
+        if (displayDetails.uid !== undefined) {
+            Object.keys(displayDetails.mechanism_groups).map(data => {
+                groupNames.push(displayDetails.mechanism_groups[data].name);
+                groupUids.push(displayDetails.mechanism_groups[data].uid)
+                console.log(groupNames);
+                console.log(groupUids);
+            });
+        }
+        editData.mechanism_groups = groupUids;
     }, [])
 
     function updateMechanism() {
         ApiService.put(ApiUrls.mechanism(displayDetails.uid), editData)
             .then(data => {
-                console.log(data);
                 setDisplayDetails({ ...editData });
             })
             .catch(error => {
@@ -70,9 +103,6 @@ function Mechanism(props: any) {
     function handleSaveClick() {
         updateMechanism();
         setIsEdit(false);
-        setTimeout(() => {
-            window.location.reload()
-        }, 1000);
     }
 
     function showDisabled(e: any, array: any) {
@@ -88,7 +118,7 @@ function Mechanism(props: any) {
     }
 
     function createMechanism() {
-        ApiService.post(ApiUrls.mechanism(displayDetails.uid), editData)
+        ApiService.post(ApiUrls.addMechanism, editData)
             .then(data => {
                 console.log(data);
             })
@@ -101,13 +131,27 @@ function Mechanism(props: any) {
         window.location.reload();
     }
 
+    function handleGroups(value: any) {
+        Object.keys(groupsChange[0]).map(key => {
+            if (value.includes(key)) {
+                console.log(key)
+                var index = value.indexOf(key)
+                console.log(index)
+                value.splice(index, 1)
+                value.push(groupsChange[0][key]);
+            }
+        })
+        editData.mechanism_groups = value;
+        console.log(editData.mechanism_groups);
+    }
+
     return (
         <Skeleton loading={loading}>
             <div className="content-container rounded-grey-border">
                 <div className="row-container">
                     <div>
-                        {displayDetails.uid === undefined ? <h4>Create Mechanism</h4> :
-                            <h5>Edit Mechanism</h5> 
+                        {displayDetails.uid === undefined ? <h3>Create Mechanism</h3> :
+                            <h3>Edit Mechanism</h3>
                         }
                     </div>
                     <div style={{ paddingRight: '50px', paddingBottom: '20px' }}>
@@ -116,27 +160,43 @@ function Mechanism(props: any) {
                         </Button> : <></>
                         }
                     </div>
+
                     <div>
                         <h6>Mechanism name</h6>
                     </div>
                     <div>
-                        <span style={{ paddingRight: '20px' }}>
-                            {isEdit ?
-                                <Input
-                                    name="machanismName"
-                                    type="text"
-                                    onChange={(e) => setEditData({
-                                        ...editData,
-                                        name: e.target.value
-                                    })}
-                                    style={{ width: "275px" }}
-                                    className="form-control"
-                                    placeholder="Enter mechanism name"
-                                    defaultValue={displayDetails.name !== "" ? displayDetails.name : ""}
-                                /> : displayDetails.name
-                            }
-                        </span>
+                        {isEdit ?
+                            <Input
+                                name="machanismName"
+                                type="text"
+                                onChange={(e) => setEditData({
+                                    ...editData,
+                                    name: e.target.value
+                                })}
+                                style={{ width: "275px" }}
+                                className="form-control"
+                                placeholder="Enter mechanism name"
+                                defaultValue={displayDetails.name !== "" ? displayDetails.name : ""}
+                            /> : displayDetails.name
+                        }
                     </div>
+
+                    <div>
+                        <h6>Assigned to groups</h6>
+                    </div>
+                    <div>
+                        <Select
+                            mode="multiple"
+                            size={"large"}
+                            placeholder="Please select groups"
+                            defaultValue={displayDetails.name !== "" ? groupNames : []}
+                            onChange={handleGroups}
+                            disabled={!isEdit}
+                            style={{ width: '275px' }} 
+                            options={groups}
+                        />
+                    </div>
+
                     <div>
                         <h6>Primary Challenge</h6>
                     </div>
@@ -145,6 +205,7 @@ function Mechanism(props: any) {
                             <Radio value={"PROXIMITY_CARD"} disabled>Proximity Card</Radio>
                         </Radio.Group>
                     </div>
+
                     <div style={{ paddingTop: '20px' }}>
                         <h6>Tapout Action</h6>
                     </div>
@@ -169,6 +230,7 @@ function Mechanism(props: any) {
                             }
                         </Radio.Group>
                     </div>
+
                     <div style={{ paddingTop: '20px', paddingBottom: '40px' }}>
                         <h6>Reader Type</h6>
                     </div>
@@ -193,7 +255,6 @@ function Mechanism(props: any) {
                         </Radio.Group>
                     </div>
 
-
                     {displayDetails.challenge_factors.length === 2 ?
                         <>
                             <div className="card shadow mb-4" style={{ width: '90%' }}>
@@ -201,11 +262,16 @@ function Mechanism(props: any) {
                                     <h6 className="m-0 font-weight-bold text-gray-900 text-lg" style={{ float: 'left', padding: '2px 5px' }}>Challenge 1</h6>
                                 </div>
                                 <div className="card-body">
-                                    <Radio.Group defaultValue={disabledFactors !== disabledFactors1 ? displayDetails?.challenge_factors[0].factor : ""}
+                                    <Radio.Group value={disabledFactors !== disabledFactors1 ? displayDetails?.challenge_factors[0].factor : ""}
                                         disabled={!isEdit}
                                         onChange={(e) => {
                                             editData.challenge_factors[0].factor = e.target.value
                                             showDisabled(e, disabledFactors1)
+                                            if(editData.challenge_factors[0].factor === "NONE"){
+                                                disabledFactors.pop();
+                                                editData.challenge_factors[1].factor = "NONE"
+                                                setValue("NONE")
+                                            }
                                         }}
                                     >
                                         {
@@ -230,8 +296,8 @@ function Mechanism(props: any) {
                                 </div>
                                 <div className="card-body">
                                     <div>
-                                        <Radio.Group defaultValue={disabledFactors !== disabledFactors1 ? displayDetails?.challenge_factors[1].factor : ""}
-                                            disabled={!isEdit}
+                                        <Radio.Group value={displayDetails.name !== "" ? editData?.challenge_factors[0].factor === "NONE" ? value : displayDetails?.challenge_factors[1].factor : ""}
+                                            disabled={displayDetails.challenge_factors[0].factor === "NONE" || !isEdit}
                                             onChange={(e) => {
                                                 editData.challenge_factors[1].factor = e.target.value
                                                 showDisabled(e, disabledFactors)
