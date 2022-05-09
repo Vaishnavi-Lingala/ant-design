@@ -1,6 +1,7 @@
 import { Button, Skeleton } from "antd";
 import { useEffect, useState } from "react";
 import { DatePicker, Table } from "antd";
+import moment from "moment";
 
 import "./ActivityLogs.css";
 
@@ -8,6 +9,16 @@ import ApiService from "../../Api.service";
 import ApiUrls from "../../ApiUtils";
 import Search from "antd/lib/input/Search";
 import FiltersModal from "./FiltersModal";
+
+const { RangePicker } = DatePicker;
+
+// constants
+const date_format = "YYYY-MM-DD";
+const time_format = "HH:mm:ss";
+const start_date = "start_date";
+const start_time = "start_time";
+const end_date = "end_date";
+const end_time = "end_time";
 
 const ExpandedRowItem = ({ name, value }) => {
     return (
@@ -37,6 +48,10 @@ const ExpandedRowContainer = ({ record }) => {
 export default function ActivityLogs() {
     const [logResponse, setLogResponse] = useState<any>({});
     const [loading, setLoading] = useState(true);
+    const [datetimeFilters, setDateTimeFilters] = useState({
+        start: { date: moment().startOf("day").subtract(1, "M").format(date_format), time: moment().startOf("day").format(time_format) },
+        end: { date: moment().endOf("day").format(date_format), time: moment().format(time_format) },
+    });
 
     const columns = [
         {
@@ -59,39 +74,67 @@ export default function ActivityLogs() {
 
     useEffect(() => {
         ApiService.post(ApiUrls.activityLog, {
-            account_id: ["ooa46c499ccb"],
-            sort_by: "display_name",
+            start_time: `${datetimeFilters.start.date} ${datetimeFilters.start.time}`,
+            end_time: `${datetimeFilters.end.date} ${datetimeFilters.end.time}`
         })
             .then((data) => {
                 setLogResponse(data);
             })
             .catch((error) => console.log({ error }));
         setLoading(false);
-    }, []);
+    }, [datetimeFilters]);
 
-    useEffect(() => {
-        console.log({ logResponse });
-    }, [logResponse]);
+    // useEffect(() => {
+    //     console.log({ datetimeFilters });
+    // }, [datetimeFilters]);
 
-    function showMoreClick() {
+    async function showMoreClick() {
         if (logResponse.next) {
             var url = new URL(`https://${logResponse.next}`);
-            ApiService.post(url.pathname, {
-                account_id: ["ooa46c499ccb"],
-                sort_by: "display_name",
-            }).then((res) => {
-                setLogResponse((logRes) => 
+            var response = await ApiService.post(
+                `${url.pathname}${url.search}`,
                 {
-                    // console.log("res.results: ", res.results);
-                    // console.log("logResponse.results: ", logRes.results);
-                    // console.log("before: ", res.results.length);
-                    res.results = res.results.concat(logRes.results);
-                    // console.log("after", res.results.length);
-                    // console.log("res.results: ", res.results);
+                    start_time: `${datetimeFilters.start.date} ${datetimeFilters.start.time}`,
+                    end_time: `${datetimeFilters.end.date} ${datetimeFilters.end.time}`
+                }
+            );
 
-                    return res;
-                });
+            console.log({ response });
+            setLogResponse((logRes) => {
+                response.results = logRes.results.concat(response.results);
+                return { ...response };
             });
+        }
+    }
+
+    function onDateFilterChange(date, dateString, type) {
+        switch (type) {
+            case start_date:
+                setDateTimeFilters((state) => {
+                    state.start.date = dateString;
+                    return { ...state };
+                });
+                break;
+            case start_time:
+                setDateTimeFilters((state) => {
+                    state.start.time = dateString;
+                    return { ...state };
+                });
+                break;
+            case end_date:
+                setDateTimeFilters((state) => {
+                    state.end.date = dateString;
+                    return { ...state };
+                });
+                break;
+            case end_time:
+                setDateTimeFilters((state) => {
+                    state.end.time = dateString;
+                    return { ...state };
+                });
+                break;
+            default:
+                setDateTimeFilters(datetimeFilters);
         }
     }
 
@@ -102,18 +145,58 @@ export default function ActivityLogs() {
             </div>
             <Skeleton loading={loading}>
                 <div className="filter-container">
-                    {/* <div style={{ display: "inline-block" }}>
+                    <div style={{ display: "inline-block" }}>
                         <div>From</div>
-                        <DatePicker picker="date" />
-                        <DatePicker picker="time" />
+                        <DatePicker
+                            format={date_format}
+                            defaultValue={moment(datetimeFilters.start.date)}
+                            picker="date"
+                            disabledDate={(current) =>
+                                current > moment().endOf("day")
+                            }
+                            onChange={(date, dateString) =>
+                                onDateFilterChange(
+                                    date,
+                                    dateString,
+                                    start_date
+                                )
+                            }
+                        />
+                        <DatePicker
+                            format={time_format}
+                            defaultValue={moment(datetimeFilters.start.time, time_format)}
+                            picker="time"
+                            onChange={(date, dateString) =>
+                                onDateFilterChange(
+                                    date,
+                                    dateString,
+                                    start_time
+                                )
+                            }
+                        />
                     </div>
                     <div style={{ display: "inline-block" }}>
                         <div>To</div>
-                        <DatePicker picker="date" />
-                        <DatePicker picker="time" />
+                        <DatePicker
+                            format={date_format}
+                            defaultValue={moment(datetimeFilters.end.date)}
+                            picker="date"
+                            disabledDate={(current) =>
+                                current > moment().endOf("day")
+                            }
+                            onChange={(date, dateString) =>
+                                onDateFilterChange(date, dateString, end_date)
+                            }
+                        />
+                        <DatePicker
+                            format={time_format}
+                            defaultValue={moment(datetimeFilters.end.time, time_format)}
+                            picker="time"
+                            onChange={(date, dateString) =>
+                                onDateFilterChange(date, dateString, end_time)
+                            }
+                        />
                     </div>
-                    <div>
-                    </div> */}
 
                     <div style={{ paddingBottom: "0" }}>
                         <label>Search</label>
@@ -155,7 +238,7 @@ export default function ActivityLogs() {
                             )
                         }
                         pagination={false}
-                        rowKey="created_ts"
+                        rowKey="uid"
                     />
                 </div>
             </Skeleton>

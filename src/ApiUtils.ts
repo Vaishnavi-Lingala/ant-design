@@ -38,7 +38,8 @@ const Urls = {
     mechanismChallengeFactors: `account/${accountId}/mechanism/challenge-factor-options?product_id=oprc735871d0`,
 
     // Activity Log Urls
-    activityLog: `account/${accountId}/activitylog`
+    activityLog: `account/${accountId}/activitylog`,
+    filterableFields: `/activitylog/filterable-fields`
 }
 
 export default Urls;
