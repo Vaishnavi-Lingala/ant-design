@@ -26,7 +26,12 @@ export default function UsersSelection(props: any) {
     const [loadingDetails, setLoadingDetails] = useState(false);
 
     useEffect(() => {
-		setUsersList(props.users)
+        if (props.action === 'Add') {
+            getGroupNotMembers(props.groupId);
+        }
+        if (props.action === 'Remove') {
+            getGroupMembers(props.groupId);
+        }
 	}, [])
     
     const handleOk = () => {
@@ -39,6 +44,34 @@ export default function UsersSelection(props: any) {
         setUsersList([]);
         props.handleCancel(props.action);
     };
+
+    function getGroupMembers(groupId, params= {}) {
+        ApiService.get(ApiUrls.groupUsers(groupId), params).then(data => {
+            console.log('Remove users search data: ', data);
+            data.results.forEach(user => {
+                user.key = user.uid;
+            })
+            setUsersList(data.results);
+            setLoadingDetails(false);
+        }, error => {
+            console.log('Remove users search error: ', error);
+            setLoadingDetails(false);
+        })
+    }
+
+    function getGroupNotMembers(groupId, params= {}) {
+        ApiService.get(ApiUrls.usersNotInGroup(groupId), params).then(data => {
+            console.log('Add users search data: ', data)
+            data.results.forEach(user => {
+                user.key = user.uid;
+            })
+            setUsersList(data.results);
+            setLoadingDetails(false);
+        }, error => {
+            console.log('Add users search error: ', error);
+            setLoadingDetails(false);
+        })
+    }
 
     const onSelectChange = selectedRowKeys => {
         console.log('selectedRowKeys changed: ', selectedRowKeys);
@@ -57,32 +90,10 @@ export default function UsersSelection(props: any) {
             q : searchText
         }
         if (props.action === 'Add') {
-            console.log('Search text: ', searchText);
-            console.log('Length: ', searchText.length);
-            ApiService.get(ApiUrls.users, params).then(data => {
-                console.log('Add users search data: ', data)
-                data.results.forEach(user => {
-                    user.key = user.uid;
-                })
-                setUsersList(data.results);
-                setLoadingDetails(false);
-            }, error => {
-                console.log('Add users search error: ', error);
-                setLoadingDetails(false);
-            })
+            getGroupNotMembers(props.groupId, params);
         }
         if (props.action === 'Remove') {
-            ApiService.get(ApiUrls.groupUsers(props.groupId), params).then(data => {
-                console.log('Remove users search data: ', data);
-                data.results.forEach(user => {
-                    user.key = user.uid;
-                })
-                setUsersList(data.results);
-                setLoadingDetails(false);
-		    }, error => {
-                console.log('Remove users search error: ', error);
-                setLoadingDetails(false);
-            })
+            getGroupMembers(props.groupId, params);
         }
         
     }

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Button, Skeleton, Table, Modal, Input, Row, Col, Typography } from 'antd';
+import { Button, Skeleton, Table, Modal, Input, Row, Col, Typography, Tabs } from 'antd';
 import ApiService from "../../Api.service";
 import ApiUrls from '../../ApiUtils';
 import GroupDetails from "./GroupDetails";
@@ -10,6 +10,7 @@ export default function Groups() {
     const [groups, setGroups] = useState([]);
     const [loadingDetails, setLoadingDetails] = useState(false);
     const [groupDetails, setGroupDetails] = useState(undefined);
+    const { TabPane } = Tabs;
     const columns = [
 		{
 			title: 'Name',
@@ -55,26 +56,41 @@ export default function Groups() {
 		})
     }
 
+    function onGroupTypeChange(key) {
+        console.log('Group type: ', key);
+    }
+
     return(
         <>
             <div className='content-header'>
 				Groups
 				{groupDetails ? <Button style={{ marginLeft: 'auto', alignSelf: 'end' }} onClick={() => setGroupDetails(undefined)}>Back</Button> : <></>}
 			</div>
-            <Skeleton loading={loadingDetails}>
-                {groupDetails ? <GroupDetails groupDetails={groupDetails}/> : <>
-                    <AddGroup onGroupCreate={getGroups}/>
-                    <Table
-                        style={{ border: '1px solid #D7D7DC' }}
-                        showHeader={true}
-                        columns={columns}
-                        dataSource={groups}   
-                        // bordered={true}
-                        pagination={{ position: [] }}
-                    />
-                </>
-                }
-            </Skeleton>
+            <Tabs defaultActiveKey='USER'
+				type="card" size={"middle"} animated={false}
+				tabBarStyle={{ marginBottom: '0px' }}
+				onChange={onGroupTypeChange}
+			// style={{border: '1px solid #d7d7dc', margin: 0}} 
+			>
+                <TabPane tab="User" key="USER">
+                    <Skeleton loading={loadingDetails}>
+                        {groupDetails ? <GroupDetails groupDetails={groupDetails}/> : <>
+                            <AddGroup onGroupCreate={getGroups}/>
+                            <Table
+                                style={{ border: '1px solid #D7D7DC' }}
+                                showHeader={true}
+                                columns={columns}
+                                dataSource={groups}   
+                                // bordered={true}
+                                pagination={{ position: [] }}
+                            />
+                        </>
+                        }
+                    </Skeleton>
+                </TabPane>
+                <TabPane tab="Kiosk Machine" key="KIOSK"></TabPane>
+            </Tabs>
+            
         </>
     ) 
 }

@@ -9,7 +9,8 @@ export default function AddGroup(props: any) {
     const { TextArea } = Input;
     const [newGroup, setNewGroup] = useState({
         'name': '',
-        'description': ''
+        'description': '',
+        'type' : 'USER'
     });
     const [loading, setLoading] = useState(false);
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -17,7 +18,8 @@ export default function AddGroup(props: any) {
     const showModal = () => {
         setNewGroup({
             'name': '',
-            'description': ''
+            'description': '',
+            'type' : 'USER'
         })
         setIsModalVisible(true);
     };

@@ -11,7 +11,6 @@ export default function GroupDetails(props: any) {
     const accessToken = JSON.parse(localStorage.getItem("okta-token-storage")).accessToken.accessToken
     const [groupDetails, setGroupDetails] = useState(props.groupDetails);
     const [users, setUsers] = useState([]);
-    const [usersForSelection, setUsersForSelection] = useState([]);
     
     const [loadingDetails, setLoadingDetails] = useState(false);
     const [action, setAction] = useState('');
@@ -59,21 +58,6 @@ export default function GroupDetails(props: any) {
         setAction('');
     };
 
-    const addUsersInit = () => {
-        ApiService.get(ApiUrls.users).then(data => {
-            data.results.forEach(user => {
-                user.key = user.uid;
-            })
-            setUsersForSelection(data.results);
-            setAction('Add');
-        })
-    }
-
-    const deleteUsersInit = () => {
-        setUsersForSelection(users);
-        setAction('Remove');
-    }
-
     useEffect(() => {
 		setLoadingDetails(true);
         ApiService.get(ApiUrls.groupUsers(groupDetails.uid))
@@ -102,10 +86,10 @@ export default function GroupDetails(props: any) {
                     <div style={{ width: '100%', border: '1px solid #D7D7DC', borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6' }}>
                         <Row>
                             <Col span={12}>
-                                <Button type='primary' size='large' onClick={addUsersInit}>Add Users</Button>
+                                <Button type='primary' size='large' onClick={() =>setAction('Add')}>Add Users</Button>
                             </Col>
                             <Col span={6} offset={6}>
-                                <Button type='primary' size='large' onClick={deleteUsersInit}>Remove Users</Button>
+                                <Button type='primary' size='large' onClick={() =>setAction('Remove')}>Remove Users</Button>
                             </Col>
                         </Row>
                             
@@ -119,7 +103,7 @@ export default function GroupDetails(props: any) {
                             pagination={{ position: [] }}
                         />
                 </Skeleton>
-                {action ? <UsersSelection groupId={groupDetails.uid} action={action} users={usersForSelection} handleCancel={handleCancel} handleOk={handleOk}/> : <></>}
+                {action ? <UsersSelection groupId={groupDetails.uid} action={action} handleCancel={handleCancel} handleOk={handleOk}/> : <></>}
             </div>
         </>
     )

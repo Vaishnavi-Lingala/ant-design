@@ -25,6 +25,7 @@ const Urls = {
     group: (uid) => `account/${accountId}/groups/${uid}`,
     groups: `account/${accountId}/groups`,
     groupUsers: (uid) => `account/${accountId}/groups/${uid}/users` ,
+    usersNotInGroup: (uid) => `account/${accountId}/groups/${uid}/users-not-in-group`,
 
     // Policy Urls
     policies: `account/${accountId}/product/oprc735871d0/auth-policies`,
