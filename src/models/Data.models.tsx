@@ -12,6 +12,7 @@ export interface PinPolicyType {
     name: string,
     order: number,
     policy_type: string,
+    auth_policy_groups: string[],
     policy_req: {
         expires_in_x_days: number;
         is_special_char_req: boolean;
@@ -33,6 +34,7 @@ export interface PasswordPolicyType {
     },
     default: boolean,
     order: number,
+    auth_policy_groups: string[],
     active: boolean,
     description: string,
     uid: string,
@@ -72,6 +74,7 @@ export interface MechanismType{
     order: number,
     product_id: string,
     name: string,
+    mechanism_groups: string[],
     challenge_factors: [
         {
             uid: string,

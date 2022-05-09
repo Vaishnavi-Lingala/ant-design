@@ -7,15 +7,9 @@ import AddGroup from "./AddGroup";
 
 export default function Groups() {
 
-    
-
     const [groups, setGroups] = useState([]);
     const [loadingDetails, setLoadingDetails] = useState(false);
     const [groupDetails, setGroupDetails] = useState(undefined);
-    //@ts-ignore
-    const accessToken = JSON.parse(localStorage.getItem("okta-token-storage")).accessToken.accessToken
-
-
     const columns = [
 		{
 			title: 'Name',
@@ -38,23 +32,28 @@ export default function Groups() {
 		setLoadingDetails(true);
         ApiService.get(ApiUrls.group(uid))
             .then(data => {
+                console.log('GROUP_DETAILS: ', data);
                 setGroupDetails(data);
                 setLoadingDetails(false);
             })
 	}
 
     useEffect(() => {
-		setLoadingDetails(true);
+		getGroups();
+	}, [])
+
+    function getGroups() {
+        setLoadingDetails(true);
         ApiService.get(ApiUrls.groups)
 		.then(data => {
 			console.log('Groups: ', data);
-            data.forEach(group => {
+            data.forEach((group: { key: any; uid: any; }) => {
                 group.key = group.uid;
             })
             setGroups(data);
 			setLoadingDetails(false);
 		})
-	}, [])
+    }
 
     return(
         <>
@@ -64,7 +63,7 @@ export default function Groups() {
 			</div>
             <Skeleton loading={loadingDetails}>
                 {groupDetails ? <GroupDetails groupDetails={groupDetails}/> : <>
-                    <AddGroup></AddGroup>
+                    <AddGroup onGroupCreate={getGroups}/>
                     <Table
                         style={{ border: '1px solid #D7D7DC' }}
                         showHeader={true}

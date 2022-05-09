@@ -42,5 +42,16 @@ export default {
 
 		return fetch(`${base_url}/${path}`, requestOptions)
 			.then(res => res.json());
+	},
+
+	delete(path: string, data: object) : Promise<any> {
+		var requestOptions = {
+			method: 'DELETE',
+			headers: getCredentiTokenHeaders(),
+			body: JSON.stringify(data)
+		}
+
+		return fetch(`${base_url}/${path}`, requestOptions)
+			.then(res => res.json());
 	}
 }
