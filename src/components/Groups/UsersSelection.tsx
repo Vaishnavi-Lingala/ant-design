@@ -23,7 +23,11 @@ export default function UsersSelection(props: any) {
 
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
     const [usersList, setUsersList] = useState([]);
+    const [searchText, setSearchText] = useState('');
     const [loadingDetails, setLoadingDetails] = useState(false);
+    const [page, setPage]: any = useState(1);
+	const [pageSize, setPageSize]: any = useState(10);
+	const [totalItems, setTotalItems]: any = useState(0);
 
     useEffect(() => {
         if (props.action === 'Add') {
@@ -37,11 +41,15 @@ export default function UsersSelection(props: any) {
     const handleOk = () => {
         props.handleOk(selectedRowKeys, props.action);
         setSelectedRowKeys([]);
+        setTotalItems(0);
+        setSearchText('');
     };
 
     const handleCancel = () => {
         setSelectedRowKeys([]);
         setUsersList([]);
+        setTotalItems(0);
+        setSearchText('');
         props.handleCancel(props.action);
     };
 
@@ -52,6 +60,7 @@ export default function UsersSelection(props: any) {
                 user.key = user.uid;
             })
             setUsersList(data.results);
+            setTotalItems(data.total_items);
             setLoadingDetails(false);
         }, error => {
             console.log('Remove users search error: ', error);
@@ -66,6 +75,7 @@ export default function UsersSelection(props: any) {
                 user.key = user.uid;
             })
             setUsersList(data.results);
+            setTotalItems(data.total_items);
             setLoadingDetails(false);
         }, error => {
             console.log('Add users search error: ', error);
@@ -83,11 +93,13 @@ export default function UsersSelection(props: any) {
         onChange: onSelectChange,
       };
 
-    const onSearch = searchText => {
+    const onSearch = text => {
         console.log('Search action: ', props.action);
         setLoadingDetails(true);
+        setSearchText(text)
+        setPage(1);
         const params = {
-            q : searchText
+            q : text
         }
         if (props.action === 'Add') {
             getGroupNotMembers(props.groupId, params);
@@ -97,6 +109,23 @@ export default function UsersSelection(props: any) {
         }
         
     }
+
+    const onUsersPageChange = async (page, pageSize) => {
+		setLoadingDetails(true);
+        const params = {
+            q : searchText,
+            start: page, 
+            limit: pageSize
+        }
+        if (props.action === 'Add') {
+            getGroupNotMembers(props.groupId, params);
+        }
+        if (props.action === 'Remove') {
+            getGroupMembers(props.groupId, params);
+        }
+		
+	}
+
 
     return(
         <>
@@ -123,7 +152,16 @@ export default function UsersSelection(props: any) {
                     dataSource={usersList}   
                     rowSelection={rowSelection}
                     // bordered={true}
-                    pagination={{ position: [] }}
+                    pagination={{
+                        current: page, 
+                        pageSize: pageSize,
+                        total: totalItems,
+                        onChange:(page, pageSize) => {
+                            setPage(page);
+                            setPageSize(pageSize);
+                            onUsersPageChange(page, pageSize);
+                        }
+                    }}
                 />
                     
             </Modal>

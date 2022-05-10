@@ -14,6 +14,9 @@ export default function GroupDetails(props: any) {
     
     const [loadingDetails, setLoadingDetails] = useState(false);
     const [action, setAction] = useState('');
+    const [page, setPage]: any = useState(1);
+	const [pageSize, setPageSize]: any = useState(10);
+	const [totalItems, setTotalItems]: any = useState(0);
 
     const { Title } = Typography;
 
@@ -39,6 +42,7 @@ export default function GroupDetails(props: any) {
                     user.key = user.uid;
                 })
                 setUsers(data.results);
+                setTotalItems(data.total_items);
                 setAction('');
             })
         } else if (action === 'Remove') {
@@ -47,6 +51,7 @@ export default function GroupDetails(props: any) {
                     user.key = user.uid;
                 })
                 setUsers(data.results);
+                setTotalItems(data.total_items);
                 setAction('');
             })
         }
@@ -60,23 +65,40 @@ export default function GroupDetails(props: any) {
 
     useEffect(() => {
 		setLoadingDetails(true);
-        ApiService.get(ApiUrls.groupUsers(groupDetails.uid))
+        ApiService.get(ApiUrls.groupUsers(groupDetails.uid), {start: page, limit: pageSize})
 		.then(data => {
             data.results.forEach(user => {
                 user.key = user.uid;
             })
             setUsers(data.results);
+            setTotalItems(data.total_items);
 			setLoadingDetails(false);
 		})
 	}, [])
+
+
+    const onUsersPageChange = async (page, pageSize) => {
+		setLoadingDetails(true);
+		ApiService.get(ApiUrls.groupUsers(groupDetails.uid), {start: page, limit: pageSize}).then(data => {
+            data.results.forEach(user => {
+                user.key = user.uid;
+            })
+            setUsers(data.results);
+            setTotalItems(data.total_items);
+			setLoadingDetails(false);
+		})
+	}
 
     return(
         <>
             <div className="content-container rounded-grey-border">
                 <div className="row-container">
+
                     <div className='content-header'>
                             {groupDetails.name}
                     </div>
+                    <Button style={{ marginLeft: 'auto'}} onClick={() => props.clearGroupDetails()}>Back</Button>
+
                 </div>
                 <div>
                     <h6>Created: {Moment(groupDetails.created_ts).format('MM/DD/YYYY')}</h6>
@@ -100,7 +122,16 @@ export default function GroupDetails(props: any) {
                             columns={columns}
                             dataSource={users}   
                             // bordered={true}
-                            pagination={{ position: [] }}
+                            pagination={{
+                                current: page, 
+                                pageSize: pageSize,
+                                total: totalItems,
+                                onChange:(page, pageSize) => {
+                                    setPage(page);
+                                    setPageSize(pageSize);
+                                    onUsersPageChange(page, pageSize);
+                                }
+                            }}
                         />
                 </Skeleton>
                 {action ? <UsersSelection groupId={groupDetails.uid} action={action} handleCancel={handleCancel} handleOk={handleOk}/> : <></>}

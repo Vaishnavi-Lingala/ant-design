@@ -121,3 +121,14 @@ export interface SecurityQuestionList {
     isCustom: boolean;
     Question: string;
 }
+
+
+export interface Group {
+    created_ts: string
+    description: string
+    is_default: boolean
+    key: string
+    name: string
+    type: string
+    uid: string
+}
