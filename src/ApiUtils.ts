@@ -30,6 +30,9 @@ const Urls = {
     policies: `account/${accountId}/product/oprc735871d0/auth-policies`,
     policy: (uid) => `account/${accountId}/auth-policies/${uid}`, // For GET and UPDATE APIs
     addPolicy: `account/${accountId}/product/oprc735871d0/auth-policies`, // For CREATE API
+    activatePolicy: (uid) => `/account/${accountId}/product/oprc735871d0/auth-policy/${uid}/activate`,
+    deActivatePolicy: (uid) => `/account/${accountId}/product/oprc735871d0/auth-policy/${uid}/inactivate`,
+    reOrderPolicies: `/account/${accountId}/product/oprc735871d0/auth-policy/reorder`,
 
     // Mechanism Urls
     mechanisms: `account/${accountId}/mechanism`,
@@ -39,7 +42,7 @@ const Urls = {
     mechanismChallengeFactors: `account/${accountId}/mechanism/challenge-factor-options?product_id=oprc735871d0`,
     mechanismPasswordGraceOptions: `account/${accountId}/mechanism/password-grace-options`,
     activateMechanism: (uid) => `account/${accountId}/product/oprc735871d0/mechanism/${uid}/activate`,
-    inActivateMechanism: (uid) => `account/${accountId}/product/oprc735871d0/mechanism/${uid}/inactivate`,
+    deActivateMechanism: (uid) => `account/${accountId}/product/oprc735871d0/mechanism/${uid}/inactivate`,
     reOrderMechanisms: `account/${accountId}/product/oprc735871d0/mechanism/reorder`,
 
     // Activity Log Urls
