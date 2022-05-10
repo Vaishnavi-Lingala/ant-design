@@ -79,7 +79,8 @@ export const PinPolicy = (props: any) => {
 	}
 
 	function createPinPolicy() {
-		ApiService.put(ApiUrls.addPolicy, pinEditData)
+		console.log(pinEditData)
+		ApiService.post(ApiUrls.addPolicy, pinEditData)
 			.then(data => {
 				console.log(data);
 			})
