@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import {Table, Skeleton, Button, Modal, Col, Row, Typography, Input } from "antd";
+import {Table,  Button, Modal, Typography, Input } from "antd";
 import ApiService from "../../Api.service";
 import ApiUrls from '../../ApiUtils';
 

@@ -49,9 +49,6 @@ export default function KioskGroupDetails(props: any) {
                             <Col span={12}>
                                 <Button type='primary' size='large' onClick={() =>setAction('Add')}>Add Machines</Button>
                             </Col>
-                            <Col span={6} offset={6}>
-                                <Button type='primary' size='large' onClick={() =>setAction('Remove')}>Remove Machines</Button>
-                            </Col>
                         </Row>
                             
 					</div>
