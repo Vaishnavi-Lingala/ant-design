@@ -3,12 +3,16 @@ import { Divider, Table, Skeleton, Button, Modal, Col, Row, Typography } from "a
 import ApiService from "../../Api.service";
 import ApiUrls from '../../ApiUtils';
 import Moment from 'moment';
+import MachinesSelection from "./MachinesSelection";
 
 export default function KioskGroupDetails(props: any) {
     const [groupDetails, setGroupDetails] = useState(props.groupDetails);
     const [loadingDetails, setLoadingDetails] = useState(false);
     const [action, setAction] = useState('');
     const [machines, setMachines] = useState([]);
+    const [page, setPage]: any = useState(1);
+	const [pageSize, setPageSize]: any = useState(10);
+	const [totalItems, setTotalItems]: any = useState(0);
 
     const columns = [
 		{
@@ -28,6 +32,35 @@ export default function KioskGroupDetails(props: any) {
 		}
 		
 	];
+
+    useEffect(() => {
+		setLoadingDetails(true);
+        ApiService.get(ApiUrls.groupMachines(groupDetails.uid))
+		.then(data => {
+            console.log('Group machines data: ', data);
+            data.results.forEach(user => {
+                user.key = user.uid;
+            })
+            setMachines(data.results);
+            setTotalItems(data.total_items);
+			setLoadingDetails(false);
+		}, error => {
+            console.error('Group machines error: ', error);
+            setLoadingDetails(false);
+        })
+	}, [])
+    
+    const onMachinesPageChange = async (page, pageSize) => {
+		setLoadingDetails(true);
+		ApiService.get(ApiUrls.groupMachines(groupDetails.uid), {start: page, limit: pageSize}).then(data => {
+            data.results.forEach(user => {
+                user.key = user.uid;
+            })
+            setMachines(data.results);
+            setTotalItems(data.total_items);
+			setLoadingDetails(false);
+		})
+	}
 
 
     return(
@@ -58,9 +91,19 @@ export default function KioskGroupDetails(props: any) {
                             columns={columns}
                             dataSource={machines}   
                             // bordered={true}
-                            pagination={{ position: [] }}
+                            pagination={{
+                                current: page, 
+                                pageSize: pageSize,
+                                total: totalItems,
+                                onChange:(page, pageSize) => {
+                                    setPage(page);
+                                    setPageSize(pageSize);
+                                    onMachinesPageChange(page, pageSize);
+                                }
+                            }}
                         />
                 </Skeleton>
+                {action ? <MachinesSelection groupId={groupDetails.uid} action={action}/> : <></>}
             </div>
         </>
     )
