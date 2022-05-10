@@ -10,7 +10,7 @@ export default function AddGroup(props: any) {
     const [newGroup, setNewGroup] = useState({
         'name': '',
         'description': '',
-        'type' : 'USER'
+        'type' : props.type
     });
     const [loading, setLoading] = useState(false);
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -19,7 +19,7 @@ export default function AddGroup(props: any) {
         setNewGroup({
             'name': '',
             'description': '',
-            'type' : 'USER'
+            'type' : props.type
         })
         setIsModalVisible(true);
     };
@@ -42,7 +42,7 @@ export default function AddGroup(props: any) {
     return(
         <>
             <div style={{ width: '100%', border: '1px solid #D7D7DC', borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6' }}>
-                <Button type='primary' size='large'  onClick={showModal}>Add New Group</Button>
+                <Button type='primary' size='large'  onClick={showModal}>Add New {props.type} Group</Button>
             </div>  
             <Modal title={<Title level={2}>Add Group</Title>} visible={isModalVisible} onOk={handleOk} onCancel={handleCancel} width={500}
                 footer={[

@@ -104,7 +104,7 @@ export default function Groups() {
                 <TabPane tab="User" key="USER">
                     <Skeleton loading={loadingDetails}>
                         {groupDetails ? <GroupDetails groupDetails={groupDetails} clearGroupDetails={clearUserGroupDetails}/> : <>
-                            <AddGroup onGroupCreate={getGroups}/>
+                            <AddGroup onGroupCreate={getGroups} type='USER'/>
                             <Table
                                 style={{ border: '1px solid #D7D7DC' }}
                                 showHeader={true}
@@ -120,6 +120,7 @@ export default function Groups() {
                 <TabPane tab="Kiosk Machine" key="KIOSK">
                     <Skeleton loading={loadingDetails}>
                     {kioskGroupDetails ? <KioskGroupDetails groupDetails={kioskGroupDetails} clearGroupDetails={clearMachineGroupDetails}/> : <>
+                        <AddGroup onGroupCreate={getGroups} type='KIOSK'/>
                         <Table
                             style={{ border: '1px solid #D7D7DC' }}
                             showHeader={true}
