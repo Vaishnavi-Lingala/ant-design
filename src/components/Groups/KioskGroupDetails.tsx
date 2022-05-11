@@ -26,7 +26,12 @@ export default function KioskGroupDetails(props: any) {
 			width: '40%'
 		},
         {
-			title: 'Operating System',
+			title: 'Last Know IP Address',
+			dataIndex: 'local_ip',
+			width: '40%'
+		},
+        {
+			title: 'OS',
 			dataIndex: 'os',
 			width: '40%'
 		}
