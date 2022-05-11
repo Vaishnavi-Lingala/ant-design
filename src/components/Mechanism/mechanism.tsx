@@ -122,6 +122,8 @@ function Mechanism(props: any) {
         ApiService.post(ApiUrls.addMechanism, editData)
             .then(data => {
                 console.log(data);
+            }, error => {
+                console.error('Add mechanism error: ', error);
             })
         setTimeout(() => {
             window.location.reload()
@@ -202,59 +204,73 @@ function Mechanism(props: any) {
                         <h6>Primary Challenge</h6>
                     </div>
                     <div>
-                        <Radio.Group name="Primary challenge" defaultValue={"PROXIMITY_CARD"}>
-                            <Radio value={"PROXIMITY_CARD"} disabled>Proximity Card</Radio>
-                        </Radio.Group>
+                        {localStorage.getItem("productName") === 'TecTANGO' ? 
+                            <Radio.Group name="Primary challenge" defaultValue={"PROXIMITY_CARD"}>
+                                <Radio value={"PROXIMITY_CARD"} disabled>Proximity Card</Radio>
+                            </Radio.Group>
+                        :
+                        localStorage.getItem("productName") === 'TecBIO' ?
+                            <Radio.Group name="Primary challenge" defaultValue={"BIO_METRICS"}>
+                                <Radio value={"BIO_METRICS"} disabled>Biometrics</Radio>: <></>
+                            </Radio.Group>
+                        : <></>
+                        }
                     </div>
-
-                    <div style={{ paddingTop: '20px' }}>
-                        <h6>Tapout Action</h6>
-                    </div>
-                    <div style={{ paddingTop: '20px' }}>
-                        <Radio.Group name="Tapout Action" defaultValue={displayDetails?.on_tap_out}
-                            onChange={(e) => {
-                                setEditData({
-                                    ...editData,
-                                    on_tap_out: e.target.value
-                                })
-                            }} disabled={!isEdit}
-                        >
-                            {
-                                Object.keys(tapOutOptions).map(factor => {
-                                    return <div key={factor}>
-                                        <Radio value={factor}>
-                                            {tapOutOptions[factor]}
-                                        </Radio>
-                                        <br />
-                                    </div>
-                                })
-                            }
-                        </Radio.Group>
-                    </div>
-
-                    <div style={{ paddingTop: '20px', paddingBottom: '40px' }}>
-                        <h6>Reader Type</h6>
-                    </div>
-                    <div style={{ paddingTop: '20px' }}>
-                        <Radio.Group name="Reader" defaultValue={displayDetails?.reader_type}
-                            onChange={(e) =>
-                                setEditData((editData: any) => ({
-                                    ...editData,
-                                    reader_type: e.target.value
-                                }))} disabled={!isEdit}
-                        >
-                            {
-                                Object.keys(readerOptions).map(factor => {
-                                    return <div key={factor}>
-                                        <Radio value={factor}>
-                                            {readerOptions[factor]}
-                                        </Radio>
-                                        <br />
-                                    </div>
-                                })
-                            }
-                        </Radio.Group>
-                    </div>
+                    {localStorage.getItem("productName") === 'TecTANGO' ? 
+                    <>
+                        <div style={{ paddingTop: '20px' }}>
+                            <h6>Tapout Action</h6>
+                        </div>
+                        <div style={{ paddingTop: '20px' }}>
+                            <Radio.Group name="Tapout Action" defaultValue={displayDetails?.on_tap_out}
+                                onChange={(e) => {
+                                    setEditData({
+                                        ...editData,
+                                        on_tap_out: e.target.value
+                                    })
+                                }} disabled={!isEdit}
+                            >
+                                {
+                                    Object.keys(tapOutOptions).map(factor => {
+                                        return <div key={factor}>
+                                            <Radio value={factor}>
+                                                {tapOutOptions[factor]}
+                                            </Radio>
+                                            <br />
+                                        </div>
+                                    })
+                                }
+                            </Radio.Group>
+                        </div>
+                        </> : <></>
+                    }
+                    {localStorage.getItem("productName") === 'TecTANGO' ? 
+                    <>
+                        <div style={{ paddingTop: '20px', paddingBottom: '40px' }}>
+                            <h6>Reader Type</h6>
+                        </div>
+                        <div style={{ paddingTop: '20px' }}>
+                            <Radio.Group name="Reader" defaultValue={displayDetails?.reader_type}
+                                onChange={(e) =>
+                                    setEditData((editData: any) => ({
+                                        ...editData,
+                                        reader_type: e.target.value
+                                    }))} disabled={!isEdit}
+                            >
+                                {
+                                    Object.keys(readerOptions).map(factor => {
+                                        return <div key={factor}>
+                                            <Radio value={factor}>
+                                                {readerOptions[factor]}
+                                            </Radio>
+                                            <br />
+                                        </div>
+                                    })
+                                }
+                            </Radio.Group>
+                        </div>
+                    </> : <></>
+                    }
 
                     {displayDetails.challenge_factors.length === 2 ?
                         <>

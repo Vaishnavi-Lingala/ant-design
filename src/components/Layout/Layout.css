@@ -64,3 +64,9 @@
     color: black !important;
     cursor: text !important;
 }
+
+.img {
+    width: 20px;
+    height: 10px;
+    object-fit: contain;
+}
