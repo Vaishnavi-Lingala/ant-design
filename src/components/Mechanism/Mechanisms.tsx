@@ -7,21 +7,21 @@ import { useHistory } from 'react-router-dom';
 
 import './Mechanism.css';
 
-import Mechanism from './mechanism';
 import ApiService from '../../Api.service';
 import ApiUrls from '../../ApiUtils';
+import Mechanism from './mechanism';
 
 export default function Mechanisms() {
 
-	const inActivateColumns = [
+	const deActivateColumns = [
 		{
 			title: 'Mechanism Name',
 			dataIndex: 'mechanism_name',
 			width: '40%'
 		},
 		{
-			title: 'Actions',
-			dataIndex: 'actions',
+			title: 'Details',
+			dataIndex: 'details',
 			width: '20%',
 			render: (text: any, record: { mechanism_id: any; }) => (
 				<Button onClick={() => getMechanismDetails(record.mechanism_id)}>
@@ -62,8 +62,8 @@ export default function Mechanisms() {
 			width: '40%'
 		},
 		{
-			title: 'Actions',
-			dataIndex: 'actions',
+			title: 'Details',
+			dataIndex: 'details',
 			width: '20%',
 			render: (text: any, record: { mechanism_id: any }) => (
 				<Button onClick={() => getMechanismDetails(record.mechanism_id)}>
@@ -73,19 +73,19 @@ export default function Mechanisms() {
 		},
 		{
 			title: 'Status',
-			dataIndex: 'inactivate',
+			dataIndex: 'deactivate',
 			width: '20%',
 			render: (text: any, record: { mechanism_id: any; default: any }) => (
 				record.default === false ?
-					<Button onClick={() => inActivateMechanism(record.mechanism_id)}>
-						Inactivate
+					<Button onClick={() => deActivateMechanism(record.mechanism_id)}>
+						Deactivate
 					</Button> : <></>
 			)
 		}
 	];
 
 	const [mechanismDetails, setMechanismDetails] = useState(undefined);
-	const [loadingDetails, setLoadingDetails] = useState(false);
+	const [loading, setLoading] = useState(false);
 	const [activeMechanisms, setActiveMechanisms]: any = useState([]);
 	const [inActiveMechanisms, setInActiveMechanisms]: any = useState([]);
 	const [isModalVisible, setIsModalVisible] = useState(false);
@@ -116,7 +116,7 @@ export default function Mechanisms() {
 		if (window.location.pathname.split("/").length === 3) {
 			getMechanismDetails(window.location.pathname.split('/')[2]);
 		}
-		setLoadingDetails(true);
+		setLoading(true);
 		ApiService.get(ApiUrls.mechanisms)
 			.then(data => {
 				console.log(data);
@@ -153,7 +153,7 @@ export default function Mechanisms() {
 				setActiveMechanisms(activeArray);
 				console.log(activeArray);
 				setInActiveMechanisms(inActiveArray);
-				setLoadingDetails(false);
+				setLoading(false);
 			})
 	}, [])
 
@@ -163,8 +163,8 @@ export default function Mechanisms() {
 			.catch(error => { })
 	}
 
-	function inActivateMechanism(uid: string) {
-		ApiService.get(ApiUrls.inActivateMechanism(uid))
+	function deActivateMechanism(uid: string) {
+		ApiService.get(ApiUrls.deActivateMechanism(uid))
 			.then(data => window.location.reload())
 			.catch(error => { })
 	}
@@ -183,14 +183,14 @@ export default function Mechanisms() {
 
 	function getMechanismDetails(uid: string) {
 		localStorage.setItem("mechanismUid", uid);
-		setLoadingDetails(true);
+		setLoading(true);
 		ApiService.get(ApiUrls.mechanism(uid))
 			.then(data => {
 				history.push('/mechanism/' + uid);
 				console.log(data);
 				console.log(mechanism);
 				setMechanismDetails(data);
-				setLoadingDetails(false);
+				setLoading(false);
 			})
 			.catch(error => console.log(error))
 	}
@@ -238,7 +238,7 @@ export default function Mechanisms() {
 				}}>Back</Button> : <></>}
 			</div>
 
-			<Skeleton loading={loadingDetails}>
+			<Skeleton loading={loading}>
 				{mechanismDetails ? <Mechanism mechanismDetails={mechanismDetails} /> :
 					isModalVisible ? <Mechanism mechanismDetails={mechanism} /> : <>
 						<div style={{
@@ -285,7 +285,7 @@ export default function Mechanisms() {
 						<Table
 							style={{ border: '1px solid #D7D7DC' }}
 							showHeader={true}
-							columns={inActivateColumns}
+							columns={deActivateColumns}
 							dataSource={inActiveMechanisms}
 							pagination={{ position: [] }}
 						/>

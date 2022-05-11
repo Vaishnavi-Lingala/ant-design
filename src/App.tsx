@@ -17,12 +17,10 @@ import Dashboard from './components/Dashboard/Dashboard';
 import Mechanisms from './components/Mechanism/Mechanisms';
 import Groups from './components/Groups/Groups';
 import Users from './components/Users/Users';
-
 const oktaAuth = new OktaAuth(config.oidc);
 
 function App() {
 	const history = useHistory();
-
 	ConfigProvider.config({
         theme: {
             // primaryColor: 'green'
@@ -41,14 +39,14 @@ function App() {
 			<Switch>
 				<Route path="/" exact component={Login} />
 				<Route path="/login/callback" component={LoginCallback} />
-	
-				<ProtectedRoute path="/policies" component={Policies} />
-				<ProtectedRoute path="/activitylogs" component={ActivityLogs} />
-				<ProtectedRoute path="/dashboard" component={Dashboard} />
-				<ProtectedRoute path="/mechanism" component={Mechanisms} />
-				<ProtectedRoute path="/settings" component={Settings} />
-				<ProtectedRoute path="/groups" component={Groups} />
-				<ProtectedRoute path="/users" component={Users}/>
+				
+				<ProtectedRoute path={`/policies`} component={Policies} />
+				<ProtectedRoute path={`/activitylogs`} component={ActivityLogs} />
+				<ProtectedRoute path={`/dashboard`} component	={Dashboard} />
+				<ProtectedRoute path={`/mechanism`} component={Mechanisms} />
+				<ProtectedRoute path={`/settings`} component={Settings} />
+				<ProtectedRoute path={`/groups`} component={Groups} />
+				<ProtectedRoute path={`/users`} component={Users}/>
 
 				<Route component={PageNotFound} />
 			</Switch>
