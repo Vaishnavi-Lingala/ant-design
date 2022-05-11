@@ -1,61 +1,83 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from "react"
+import { Divider, Table, Skeleton, Button, Modal, Col, Row, Typography } from "antd";
 import ApiService from "../../Api.service";
 import ApiUrls from '../../ApiUtils';
-import { Divider, Table, Skeleton, Button, Modal, Col, Row, Typography } from "antd";
-import UsersSelection from "./UsersSelection";
 import Moment from 'moment';
+import MachinesSelection from "./MachinesSelection";
 
-export default function GroupDetails(props: any) {
-
-    //@ts-ignore
-    const accessToken = JSON.parse(localStorage.getItem("okta-token-storage")).accessToken.accessToken
+export default function KioskGroupDetails(props: any) {
     const [groupDetails, setGroupDetails] = useState(props.groupDetails);
-    const [users, setUsers] = useState([]);
-    
     const [loadingDetails, setLoadingDetails] = useState(false);
     const [action, setAction] = useState('');
+    const [machines, setMachines] = useState([]);
     const [page, setPage]: any = useState(1);
 	const [pageSize, setPageSize]: any = useState(10);
 	const [totalItems, setTotalItems]: any = useState(0);
 
-    const { Title } = Typography;
-
     const columns = [
 		{
-			title: 'Name',
-			dataIndex: 'user_name',
+			title: 'Machine name',
+			dataIndex: 'machine_name',
 			width: '30%'
 		},
         {
-			title: 'Email',
-			dataIndex: 'email',
+			title: 'Mac Address',
+			dataIndex: 'mac_address',
+			width: '40%'
+		},
+        {
+			title: 'Operating System',
+			dataIndex: 'os',
 			width: '40%'
 		}
 		
 	];
+
+    useEffect(() => {
+		setLoadingDetails(true);
+        ApiService.get(ApiUrls.groupMachines(groupDetails.uid))
+		.then(data => {
+            console.log('Group machines data: ', data);
+            data.results.forEach(user => {
+                user.key = user.uid;
+            })
+            setMachines(data.results);
+            setTotalItems(data.total_items);
+			setLoadingDetails(false);
+		}, error => {
+            console.error('Group machines error: ', error);
+            setLoadingDetails(false);
+        })
+	}, [])
     
+    const onMachinesPageChange = async (page, pageSize) => {
+		setLoadingDetails(true);
+		ApiService.get(ApiUrls.groupMachines(groupDetails.uid), {start: page, limit: pageSize}).then(data => {
+            data.results.forEach(machine => {
+                machine.key = machine.uid;
+            })
+            setMachines(data.results);
+            setTotalItems(data.total_items);
+			setLoadingDetails(false);
+		})
+	}
+
     const handleOk = (selectedUsers, action) => {
         console.log('Action: ', action);
-        if (action === 'Add') {
-            ApiService.post(ApiUrls.groupUsers(groupDetails.uid), selectedUsers).then(data => {
-                data.results.forEach(user => {
-                    user.key = user.uid;
+        ApiService.post(ApiUrls.groupMachines(groupDetails.uid), selectedUsers).then(data => {
+            if (data.results !== undefined){
+                data.results.forEach(machine => {
+                    machine.key = machine.uid;
                 })
-                setUsers(data.results);
+                setMachines(data.results);
                 setTotalItems(data.total_items);
-                setAction('');
-            })
-        } else if (action === 'Remove') {
-            ApiService.delete(ApiUrls.groupUsers(groupDetails.uid), selectedUsers).then(data => {
-                data.results.forEach(user => {
-                    user.key = user.uid;
-                })
-                setUsers(data.results);
-                setTotalItems(data.total_items);
-                setAction('');
-            })
-        }
-        
+            }
+            setAction('');
+        }, error => {
+            console.error('Error occured while adding machines to a group', error);
+            setAction('')
+
+        })
     };
 
     const handleCancel = (action) => {
@@ -63,42 +85,15 @@ export default function GroupDetails(props: any) {
         setAction('');
     };
 
-    useEffect(() => {
-		setLoadingDetails(true);
-        ApiService.get(ApiUrls.groupUsers(groupDetails.uid), {start: page, limit: pageSize})
-		.then(data => {
-            data.results.forEach(user => {
-                user.key = user.uid;
-            })
-            setUsers(data.results);
-            setTotalItems(data.total_items);
-			setLoadingDetails(false);
-		})
-	}, [])
-
-
-    const onUsersPageChange = async (page, pageSize) => {
-		setLoadingDetails(true);
-		ApiService.get(ApiUrls.groupUsers(groupDetails.uid), {start: page, limit: pageSize}).then(data => {
-            data.results.forEach(user => {
-                user.key = user.uid;
-            })
-            setUsers(data.results);
-            setTotalItems(data.total_items);
-			setLoadingDetails(false);
-		})
-	}
 
     return(
         <>
             <div className="content-container rounded-grey-border">
                 <div className="row-container">
-
                     <div className='content-header'>
                             {groupDetails.name}
                     </div>
                     <Button style={{ marginLeft: 'auto'}} onClick={() => props.clearGroupDetails()}>Back</Button>
-
                 </div>
                 <div>
                     <h6>Created: {Moment(groupDetails.created_ts).format('MM/DD/YYYY')}</h6>
@@ -108,10 +103,7 @@ export default function GroupDetails(props: any) {
                     <div style={{ width: '100%', border: '1px solid #D7D7DC', borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6' }}>
                         <Row>
                             <Col span={12}>
-                                <Button type='primary' size='large' onClick={() =>setAction('Add')}>Add Users</Button>
-                            </Col>
-                            <Col span={6} offset={6}>
-                                <Button type='primary' size='large' onClick={() =>setAction('Remove')}>Remove Users</Button>
+                                <Button type='primary' size='large' onClick={() =>setAction('Add')}>Add Machines</Button>
                             </Col>
                         </Row>
                             
@@ -120,7 +112,7 @@ export default function GroupDetails(props: any) {
                             style={{ border: '1px solid #D7D7DC' }}
                             showHeader={true}
                             columns={columns}
-                            dataSource={users}   
+                            dataSource={machines}   
                             // bordered={true}
                             pagination={{
                                 current: page, 
@@ -129,12 +121,12 @@ export default function GroupDetails(props: any) {
                                 onChange:(page, pageSize) => {
                                     setPage(page);
                                     setPageSize(pageSize);
-                                    onUsersPageChange(page, pageSize);
+                                    onMachinesPageChange(page, pageSize);
                                 }
                             }}
                         />
                 </Skeleton>
-                {action ? <UsersSelection groupId={groupDetails.uid} action={action} handleCancel={handleCancel} handleOk={handleOk}/> : <></>}
+                {action ? <MachinesSelection groupId={groupDetails.uid} action={action} handleOk={handleOk} handleCancel={handleCancel}/> : <></>}
             </div>
         </>
     )

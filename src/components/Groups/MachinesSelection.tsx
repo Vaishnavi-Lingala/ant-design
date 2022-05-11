@@ -3,85 +3,38 @@ import {Table,  Button, Modal, Typography, Input } from "antd";
 import ApiService from "../../Api.service";
 import ApiUrls from '../../ApiUtils';
 
-export default function UsersSelection(props: any) {
+
+export default function MachinesSelection(props: any) {
 
     const { Title } = Typography;
     const { Search } = Input;
+
     const columns = [
 		{
-			title: 'Name',
-			dataIndex: 'user_name',
+			title: 'Machine name',
+			dataIndex: 'machine_name',
 			width: '30%'
 		},
         {
-			title: 'Email',
-			dataIndex: 'email',
+			title: 'Mac Address',
+			dataIndex: 'mac_address',
+			width: '40%'
+		},
+        {
+			title: 'Operating System',
+			dataIndex: 'os',
 			width: '40%'
 		}
 		
 	];
 
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-    const [usersList, setUsersList] = useState([]);
+    const [machinesList, setMachinesList] = useState([]);
     const [searchText, setSearchText] = useState('');
     const [loadingDetails, setLoadingDetails] = useState(false);
     const [page, setPage]: any = useState(1);
 	const [pageSize, setPageSize]: any = useState(10);
 	const [totalItems, setTotalItems]: any = useState(0);
-
-    useEffect(() => {
-        if (props.action === 'Add') {
-            getGroupNotMembers(props.groupId);
-        }
-        if (props.action === 'Remove') {
-            getGroupMembers(props.groupId);
-        }
-	}, [])
-    
-    const handleOk = () => {
-        props.handleOk(selectedRowKeys, props.action);
-        setSelectedRowKeys([]);
-        setTotalItems(0);
-        setSearchText('');
-    };
-
-    const handleCancel = () => {
-        setSelectedRowKeys([]);
-        setUsersList([]);
-        setTotalItems(0);
-        setSearchText('');
-        props.handleCancel(props.action);
-    };
-
-    function getGroupMembers(groupId, params= {}) {
-        ApiService.get(ApiUrls.groupUsers(groupId), params).then(data => {
-            console.log('Remove users search data: ', data);
-            data.results.forEach(user => {
-                user.key = user.uid;
-            })
-            setUsersList(data.results);
-            setTotalItems(data.total_items);
-            setLoadingDetails(false);
-        }, error => {
-            console.log('Remove users search error: ', error);
-            setLoadingDetails(false);
-        })
-    }
-
-    function getGroupNotMembers(groupId, params= {}) {
-        ApiService.get(ApiUrls.usersNotInGroup(groupId), params).then(data => {
-            console.log('Add users search data: ', data)
-            data.results.forEach(user => {
-                user.key = user.uid;
-            })
-            setUsersList(data.results);
-            setTotalItems(data.total_items);
-            setLoadingDetails(false);
-        }, error => {
-            console.log('Add users search error: ', error);
-            setLoadingDetails(false);
-        })
-    }
 
     const onSelectChange = selectedRowKeys => {
         console.log('selectedRowKeys changed: ', selectedRowKeys);
@@ -91,39 +44,60 @@ export default function UsersSelection(props: any) {
     const rowSelection = {
         selectedRowKeys,
         onChange: onSelectChange,
-      };
+    };
+
+    const handleOk = () => {
+        props.handleOk(selectedRowKeys, props.action);
+        setSelectedRowKeys([]);
+        setTotalItems(0);
+        setSearchText('');
+    };
+
+    const handleCancel = () => {
+        setSelectedRowKeys([]);
+        setMachinesList([]);
+        setTotalItems(0);
+        setSearchText('');
+        props.handleCancel(props.action);
+    };
 
     const onSearch = text => {
         console.log('Search action: ', props.action);
-        setLoadingDetails(true);
         setSearchText(text)
         setPage(1);
         const params = {
             q : text
         }
-        if (props.action === 'Add') {
-            getGroupNotMembers(props.groupId, params);
-        }
-        if (props.action === 'Remove') {
-            getGroupMembers(props.groupId, params);
-        }
-        
+        getMachinesNotInGroup(props.groupId, params);
     }
 
-    const onUsersPageChange = async (page, pageSize) => {
-		setLoadingDetails(true);
+    function getMachinesNotInGroup(groupId, params={}){
+        setLoadingDetails(true);
+        ApiService.get(ApiUrls.machinesNotInGroup(groupId), params).then(data => {
+            data.results.forEach(machine => {
+                machine.key = machine.uid;
+            })
+            setMachinesList(data.results);
+            setTotalItems(data.total_items);
+            setLoadingDetails(false);
+        }, error => {
+            setLoadingDetails(false);
+        })
+    }
+
+
+
+    useEffect(() => {
+       getMachinesNotInGroup(props.groupId);
+	}, [])
+
+    const onMachinesPageChange = async (page, pageSize) => {
         const params = {
             q : searchText,
             start: page, 
             limit: pageSize
         }
-        if (props.action === 'Add') {
-            getGroupNotMembers(props.groupId, params);
-        }
-        if (props.action === 'Remove') {
-            getGroupMembers(props.groupId, params);
-        }
-		
+        getMachinesNotInGroup(props.groupId, params);
 	}
 
 
@@ -149,7 +123,7 @@ export default function UsersSelection(props: any) {
                     style={{ border: '1px solid #D7D7DC' }}
                     showHeader={true}
                     columns={columns}
-                    dataSource={usersList}   
+                    dataSource={machinesList}   
                     rowSelection={rowSelection}
                     // bordered={true}
                     pagination={{
@@ -159,7 +133,7 @@ export default function UsersSelection(props: any) {
                         onChange:(page, pageSize) => {
                             setPage(page);
                             setPageSize(pageSize);
-                            onUsersPageChange(page, pageSize);
+                            onMachinesPageChange(page, pageSize);
                         }
                     }}
                 />

@@ -2,6 +2,7 @@ import { Skeleton, Table, Button } from "antd";
 import { useEffect, useState } from "react";
 import ApiService from "../../Api.service"
 import ApiUrls from '../../ApiUtils';
+import { AddUser } from "./AddUser";
 import { User } from "./User";
 
 export default function Users() {
@@ -19,6 +20,11 @@ export default function Users() {
         width: '30%'
     },
 	{
+        title: 'Status',
+        dataIndex: 'status',
+        width: '30%'
+    },
+	{
 		title: 'Actions',
 		dataIndex: 'actions',
 		width: '40%',
@@ -30,17 +36,7 @@ export default function Users() {
 	}]
 
     useEffect(() => {
-		setLoadingDetails(true);
-        ApiService.get(ApiUrls.users, {start: page, limit: pageSize})
-		.then(data => {
-			const usersWithKey = appendKeyToUsersList(data.results);
-			setArr(usersWithKey);
-			setTotalItems(data.total_items);
-		}).catch(error => {
-			console.error(`Error in getting users list: ${error}`);
-		}).finally(() => {
-			setLoadingDetails(false);
-		})
+		getUsersList(page, pageSize);
 	}, [])
 
 	function getUserDetails(uid: string) {
@@ -50,7 +46,7 @@ export default function Users() {
 		setLoadingDetails(false);
 	}
 
-	const onUsersPageChange = async (page, pageSize) => {
+	const getUsersList = async (page, pageSize) => {
 		setLoadingDetails(true);
 		let data = await ApiService.get(ApiUrls.users, {start: page, limit: pageSize}).catch(error => {
 			console.error(`Error in getting users list by page: ${JSON.stringify(error)}`);
@@ -60,6 +56,10 @@ export default function Users() {
 		const usersWithKey = appendKeyToUsersList(data.results);
 		setArr(usersWithKey);
 		setTotalItems(data.total_items);
+	}
+
+	const getUpdatedUsersList = ()=> {
+		getUsersList(page, pageSize);
 	}
 
 	const appendKeyToUsersList = (usersList) => {
@@ -78,6 +78,7 @@ export default function Users() {
 
 			<Skeleton loading={loadingDetails}>
 				{userDetails? <User userDetails = {userDetails}></User>: <>
+				<AddUser onUserCreate = {getUpdatedUsersList}></AddUser>
 				 <Table
 						style={{ border: '1px solid #D7D7DC' }}
 						showHeader={true}
@@ -90,7 +91,7 @@ export default function Users() {
 							onChange:(page, pageSize) => {
 								setPage(page);
 								setPageSize(pageSize);
-								onUsersPageChange(page, pageSize);
+								getUsersList(page, pageSize);
 							}
 						}}
 					/>
