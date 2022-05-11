@@ -41,6 +41,21 @@ export interface PasswordPolicyType {
     policy_type: string
 }
 
+export interface kioskPolicyType {
+    policy_req: {
+        access_key_id: string,
+        assay: string
+    },
+    auth_policy_groups: string[],
+    kiosk_machine_groups: [],
+    name: string,
+    default: boolean,
+    order: number,
+    active: boolean,
+    description: string,
+    uid: string,
+    policy_type: string
+}
 // export interface AuthenticationPolicy {
 //     authentication: number;
 //     dne: boolean;
