@@ -18,22 +18,22 @@ export default function KioskGroupDetails(props: any) {
 		{
 			title: 'Machine name',
 			dataIndex: 'machine_name',
-			width: '30%'
+			width: '25%'
 		},
         {
 			title: 'Mac Address',
 			dataIndex: 'mac_address',
-			width: '40%'
+			width: '25%'
 		},
         {
 			title: 'Last Know IP Address',
 			dataIndex: 'local_ip',
-			width: '40%'
+			width: '25%'
 		},
         {
-			title: 'OS',
+			title: 'OS version',
 			dataIndex: 'os',
-			width: '40%'
+			width: '25%'
 		}
 		
 	];
