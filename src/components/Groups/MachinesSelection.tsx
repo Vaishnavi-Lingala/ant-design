@@ -47,7 +47,7 @@ export default function MachinesSelection(props: any) {
     };
 
     const handleOk = () => {
-        // props.handleOk(selectedRowKeys, props.action);
+        props.handleOk(selectedRowKeys, props.action);
         setSelectedRowKeys([]);
         setTotalItems(0);
         setSearchText('');
@@ -58,25 +58,24 @@ export default function MachinesSelection(props: any) {
         setMachinesList([]);
         setTotalItems(0);
         setSearchText('');
-        // props.handleCancel(props.action);
+        props.handleCancel(props.action);
     };
 
     const onSearch = text => {
         console.log('Search action: ', props.action);
-        setLoadingDetails(true);
         setSearchText(text)
         setPage(1);
         const params = {
             q : text
         }
+        getMachinesNotInGroup(props.groupId, params);
     }
 
-
-
-    useEffect(() => {
-        ApiService.get(ApiUrls.machinesNotInGroup(props.groupId)).then(data => {
-            data.results.forEach(user => {
-                user.key = user.uid;
+    function getMachinesNotInGroup(groupId, params={}){
+        setLoadingDetails(true);
+        ApiService.get(ApiUrls.machinesNotInGroup(groupId), params).then(data => {
+            data.results.forEach(machine => {
+                machine.key = machine.uid;
             })
             setMachinesList(data.results);
             setTotalItems(data.total_items);
@@ -84,16 +83,21 @@ export default function MachinesSelection(props: any) {
         }, error => {
             setLoadingDetails(false);
         })
+    }
+
+
+
+    useEffect(() => {
+       getMachinesNotInGroup(props.groupId);
 	}, [])
 
     const onMachinesPageChange = async (page, pageSize) => {
-		setLoadingDetails(true);
         const params = {
             q : searchText,
             start: page, 
             limit: pageSize
         }
-		
+        getMachinesNotInGroup(props.groupId, params);
 	}
 
 

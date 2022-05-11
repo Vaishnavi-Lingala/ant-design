@@ -53,14 +53,37 @@ export default function KioskGroupDetails(props: any) {
     const onMachinesPageChange = async (page, pageSize) => {
 		setLoadingDetails(true);
 		ApiService.get(ApiUrls.groupMachines(groupDetails.uid), {start: page, limit: pageSize}).then(data => {
-            data.results.forEach(user => {
-                user.key = user.uid;
+            data.results.forEach(machine => {
+                machine.key = machine.uid;
             })
             setMachines(data.results);
             setTotalItems(data.total_items);
 			setLoadingDetails(false);
 		})
 	}
+
+    const handleOk = (selectedUsers, action) => {
+        console.log('Action: ', action);
+        ApiService.post(ApiUrls.groupMachines(groupDetails.uid), selectedUsers).then(data => {
+            if (data.results !== undefined){
+                data.results.forEach(machine => {
+                    machine.key = machine.uid;
+                })
+                setMachines(data.results);
+                setTotalItems(data.total_items);
+            }
+            setAction('');
+        }, error => {
+            console.error('Error occured while adding machines to a group', error);
+            setAction('')
+
+        })
+    };
+
+    const handleCancel = (action) => {
+        console.log('Action: ', action);
+        setAction('');
+    };
 
 
     return(
@@ -103,7 +126,7 @@ export default function KioskGroupDetails(props: any) {
                             }}
                         />
                 </Skeleton>
-                {action ? <MachinesSelection groupId={groupDetails.uid} action={action}/> : <></>}
+                {action ? <MachinesSelection groupId={groupDetails.uid} action={action} handleOk={handleOk} handleCancel={handleCancel}/> : <></>}
             </div>
         </>
     )
