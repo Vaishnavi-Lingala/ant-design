@@ -83,6 +83,10 @@ export default function ActivityLogs() {
             dataIndex: "display_name",
         },
         {
+            title: "Machine name",
+            dataIndex: "machine_name",
+        },
+        {
             title: "Event Info",
             dataIndex: "event_display_message",
         },
