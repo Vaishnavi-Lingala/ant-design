@@ -7,10 +7,7 @@ import "./ActivityLogs.css";
 
 import ApiService from "../../Api.service";
 import ApiUrls from "../../ApiUtils";
-import Search from "antd/lib/input/Search";
 import FiltersModal from "./FiltersModal";
-
-const { RangePicker } = DatePicker;
 
 // constants
 const date_format = "YYYY-MM-DD";
@@ -48,10 +45,34 @@ const ExpandedRowContainer = ({ record }) => {
 export default function ActivityLogs() {
     const [logResponse, setLogResponse] = useState<any>({});
     const [loading, setLoading] = useState(true);
-    const [datetimeFilters, setDateTimeFilters] = useState({
-        start: { date: moment().startOf("day").subtract(1, "M").format(date_format), time: moment().startOf("day").format(time_format) },
-        end: { date: moment().endOf("day").format(date_format), time: moment().format(time_format) },
-    });
+    const [tableLoading, setTableLoading] = useState(false);
+
+    const initialDateTimeFilters = {
+        start: {
+            date: moment().startOf("day").subtract(1, "M").format(date_format),
+            time: moment().startOf("day").format(time_format),
+        },
+        end: {
+            date: moment().endOf("day").format(date_format),
+            time: moment().format(time_format),
+        },
+    };
+
+    const [datetimeFilters, setDateTimeFilters] = useState(
+        initialDateTimeFilters
+    );
+
+    const [advancedFilters, setAdvancedFilters] = useState({});
+
+    const applyAdvancedFilters = (filters) => {
+        setAdvancedFilters(filters);
+        // console.log({filters});
+    };
+
+    const resetFilters = () => {
+        setDateTimeFilters(initialDateTimeFilters);
+        setAdvancedFilters({});
+    };
 
     const columns = [
         {
@@ -73,31 +94,31 @@ export default function ActivityLogs() {
     ];
 
     useEffect(() => {
-        ApiService.post(ApiUrls.activityLog, {
-            start_time: `${datetimeFilters.start.date} ${datetimeFilters.start.time}`,
-            end_time: `${datetimeFilters.end.date} ${datetimeFilters.end.time}`
-        })
-            .then((data) => {
+        (async function () {
+            setTableLoading(true);
+            try {
+                const data = await ApiService.post(
+                    ApiUrls.activityLog,
+                    generateFilterPayload()
+                );
                 setLogResponse(data);
-            })
-            .catch((error) => console.log({ error }));
-        setLoading(false);
-    }, [datetimeFilters]);
-
-    // useEffect(() => {
-    //     console.log({ datetimeFilters });
-    // }, [datetimeFilters]);
+            } catch (error) {
+                console.log({ error });
+            }
+            setLoading(false);
+            setTableLoading(false);
+        })();
+    }, [datetimeFilters, advancedFilters]);
 
     async function showMoreClick() {
         if (logResponse.next) {
             var url = new URL(`https://${logResponse.next}`);
+            setTableLoading(true);
             var response = await ApiService.post(
                 `${url.pathname}${url.search}`,
-                {
-                    start_time: `${datetimeFilters.start.date} ${datetimeFilters.start.time}`,
-                    end_time: `${datetimeFilters.end.date} ${datetimeFilters.end.time}`
-                }
+                generateFilterPayload()
             );
+            setTableLoading(false);
 
             console.log({ response });
             setLogResponse((logRes) => {
@@ -138,6 +159,17 @@ export default function ActivityLogs() {
         }
     }
 
+    function generateFilterPayload() {
+        const payload = Object.assign(
+            {
+                start_time: `${datetimeFilters.start.date} ${datetimeFilters.start.time}`,
+                end_time: `${datetimeFilters.end.date} ${datetimeFilters.end.time}`,
+            },
+            advancedFilters
+        );
+        return payload;
+    }
+
     return (
         <>
             <div>
@@ -149,29 +181,24 @@ export default function ActivityLogs() {
                         <div>From</div>
                         <DatePicker
                             format={date_format}
-                            defaultValue={moment(datetimeFilters.start.date)}
+                            value={moment(datetimeFilters.start.date)}
                             picker="date"
                             disabledDate={(current) =>
                                 current > moment().endOf("day")
                             }
                             onChange={(date, dateString) =>
-                                onDateFilterChange(
-                                    date,
-                                    dateString,
-                                    start_date
-                                )
+                                onDateFilterChange(date, dateString, start_date)
                             }
                         />
                         <DatePicker
                             format={time_format}
-                            defaultValue={moment(datetimeFilters.start.time, time_format)}
+                            value={moment(
+                                datetimeFilters.start.time,
+                                time_format
+                            )}
                             picker="time"
                             onChange={(date, dateString) =>
-                                onDateFilterChange(
-                                    date,
-                                    dateString,
-                                    start_time
-                                )
+                                onDateFilterChange(date, dateString, start_time)
                             }
                         />
                     </div>
@@ -179,7 +206,7 @@ export default function ActivityLogs() {
                         <div>To</div>
                         <DatePicker
                             format={date_format}
-                            defaultValue={moment(datetimeFilters.end.date)}
+                            value={moment(datetimeFilters.end.date)}
                             picker="date"
                             disabledDate={(current) =>
                                 current > moment().endOf("day")
@@ -190,17 +217,15 @@ export default function ActivityLogs() {
                         />
                         <DatePicker
                             format={time_format}
-                            defaultValue={moment(datetimeFilters.end.time, time_format)}
+                            value={moment(
+                                datetimeFilters.end.time,
+                                time_format
+                            )}
                             picker="time"
                             onChange={(date, dateString) =>
                                 onDateFilterChange(date, dateString, end_time)
                             }
                         />
-                    </div>
-
-                    <div style={{ paddingBottom: "0" }}>
-                        <label>Search</label>
-                        <Search placeholder="Search" enterButton />
                     </div>
                     <div
                         style={{
@@ -209,12 +234,16 @@ export default function ActivityLogs() {
                             padding: "10px 20px 10px 20px",
                         }}
                     >
-                        <FiltersModal />
+                        <FiltersModal
+                            onFilterApply={applyAdvancedFilters}
+                            onResetClick={resetFilters}
+                        />
                     </div>
                 </div>
 
                 <div className="log-container">
                     <Table
+                        loading={tableLoading}
                         columns={columns}
                         expandable={{
                             expandedRowRender: (record) => (
