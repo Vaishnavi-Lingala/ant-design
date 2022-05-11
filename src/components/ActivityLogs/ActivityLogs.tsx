@@ -66,7 +66,6 @@ export default function ActivityLogs() {
 
     const applyAdvancedFilters = (filters) => {
         setAdvancedFilters(filters);
-        // console.log({filters});
     };
 
     const resetFilters = () => {

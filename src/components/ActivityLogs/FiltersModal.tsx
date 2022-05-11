@@ -61,7 +61,7 @@ export default function FiltersModal({ onFilterApply, onResetClick }) {
 
         const optimisedFiltersObj = filterInputs.map((filterInput) => {
             if (filterInput.field !== "" && filterInput.value !== "") {
-                return { [filterInput.field]: filterInput.value };
+                return { [filterInput.field]: [filterInput.value] };
             }
         });
 
