@@ -13,11 +13,21 @@ export default function FiltersModal({ onFilterApply, onResetClick }) {
     const [appliedFilterCount, setAppliedFilterCount] = useState(0);
 
     useEffect(() => {
-        (async function() {
+        (async function () {
             var response = await ApiService.get(ApiUtils.filterableFields);
             setFilterableFields([...response]);
         })();
     }, []);
+
+    useEffect(() => {
+        setAppliedFilterCount(
+            filterInputs.filter(
+                (filterInput) =>
+                    filterInput.field !== "" &&
+                    filterInput.value !== ""
+            ).length
+        );
+    }, [filterInputs]);
 
     const onFilterOptionChange = (field, index) => {
         setFilterInputs((state) => {
@@ -37,29 +47,44 @@ export default function FiltersModal({ onFilterApply, onResetClick }) {
 
     const onApplyFiltersClick = () => {
         setIsVisible(false);
-        
-        setFilterInputs([...filterInputs.filter(filterInput => filterInput.value !== "")]);
 
-        setAppliedFilterCount(filterInputs.filter(filterInput => filterInput.field !== "" && filterInput.value !== "").length)
+        setFilterInputs([
+            ...filterInputs.filter((filterInput) => filterInput.value !== ""),
+        ]);
 
-        const optimisedFiltersObj = filterInputs.map(filterInput => {
-            if (filterInput.field !== "" && filterInput.value !== ""){
-                return {[filterInput.field]: filterInput.value }
+        setAppliedFilterCount(
+            filterInputs.filter(
+                (filterInput) =>
+                    filterInput.field !== "" && filterInput.value !== ""
+            ).length
+        );
+
+        const optimisedFiltersObj = filterInputs.map((filterInput) => {
+            if (filterInput.field !== "" && filterInput.value !== "") {
+                return { [filterInput.field]: [filterInput.value] };
             }
         });
 
-        const reducedOptimisedFiltersObj = optimisedFiltersObj.reduce(((r, c) => Object.assign(r, c)), {});
+        const reducedOptimisedFiltersObj = optimisedFiltersObj.reduce(
+            (r, c) => Object.assign(r, c),
+            {}
+        );
         onFilterApply(reducedOptimisedFiltersObj);
     };
 
     return (
         <>
-            <Link onClick={() => setIsVisible(true)}>Advanced Filters {appliedFilterCount !== 0 ? (appliedFilterCount) : null}</Link>
+            <Link onClick={() => setIsVisible(true)}>
+                Advanced Filters{" "}
+                {appliedFilterCount !== 0 ? `(${appliedFilterCount})` : null}
+            </Link>
             &nbsp;/&nbsp;
-            <Link onClick={() => {
-                setFilterInputs([initialFilterInput]);
-                onResetClick();
-            }}>
+            <Link
+                onClick={() => {
+                    setFilterInputs([initialFilterInput]);
+                    onResetClick();
+                }}
+            >
                 Reset Filters
             </Link>
             <Modal
