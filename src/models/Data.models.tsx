@@ -41,6 +41,21 @@ export interface PasswordPolicyType {
     policy_type: string
 }
 
+export interface kioskPolicyType {
+    policy_req: {
+        access_key_id: string,
+        assay: string
+    },
+    auth_policy_groups: string[],
+    kiosk_machine_groups: [],
+    name: string,
+    default: boolean,
+    order: number,
+    active: boolean,
+    description: string,
+    uid: string,
+    policy_type: string
+}
 // export interface AuthenticationPolicy {
 //     authentication: number;
 //     dne: boolean;
@@ -120,4 +135,15 @@ export interface SecurityQuestionList {
     QuestionId: number;
     isCustom: boolean;
     Question: string;
+}
+
+
+export interface Group {
+    created_ts: string
+    description: string
+    is_default: boolean
+    key: string
+    name: string
+    type: string
+    uid: string
 }

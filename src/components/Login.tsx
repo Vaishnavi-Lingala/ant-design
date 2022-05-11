@@ -41,7 +41,7 @@ function Login() {
                     if (data.issuer_url !== "" && data.portal_oidc_client_id !== "") {
                         const oktaAuth = new OktaAuth(config.oidc);     
                         oktaAuth.signInWithRedirect({
-                            originalUri: '/policies'
+                            originalUri: '/dashboard'
                         }).then((data) => {
                         }).catch((error) => {
                             console.log(error);

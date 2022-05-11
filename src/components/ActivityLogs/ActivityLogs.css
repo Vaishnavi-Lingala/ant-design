@@ -19,3 +19,10 @@
     border-radius: 4px;
     margin-top: 40px;
 }
+
+.expanded-row-container {
+    display: grid;
+    grid-template-columns: 35% 65%;
+    grid-row-gap: 15px;
+    padding: 20px
+}

@@ -1,14 +1,14 @@
 import { Button, Input, Radio, Select, Skeleton } from "antd";
-import { useEffect, useRef, useState } from "react";
-import { MechanismType } from "../../models/Data.models";
+import { useEffect, useState } from "react";
 
 import './Mechanism.css'
 
 import ApiService from "../../Api.service";
+import { MechanismType } from "../../models/Data.models";
 import ApiUrls from '../../ApiUtils';
 
 function Mechanism(props: any) {
-    const [displayDetails, setDisplayDetails] = useState<MechanismType>(props.mechanismDetails);
+    const [displayDetails, setDisplayDetails] = useState(props.mechanismDetails);
     const [loading, setLoading] = useState(true);
     const [isEdit, setIsEdit] = useState(false);
     const [editData, setEditData]: any = useState(props.mechanismDetails);
@@ -22,7 +22,7 @@ function Mechanism(props: any) {
     const [groupNames, setGroupNames]: any = useState([]);
     const [groupUids, setGroupUids]: any = useState([]);
     const [groupsChange, setGroupsChange]: any = useState([]);
-    const [value, setValue] = useState("NONE");
+    const [value, setValue] = useState("");
 
     useEffect(() => {
         ApiService.get(ApiUrls.groups)
@@ -67,6 +67,7 @@ function Mechanism(props: any) {
         if (disabledFactors1.includes("NONE")) {
             disabledFactors1.pop();
             disabledFactors.pop();
+            setValue("NONE")
             displayDetails.challenge_factors[1].factor = "NONE";
         }
 
@@ -155,7 +156,7 @@ function Mechanism(props: any) {
                         }
                     </div>
                     <div style={{ paddingRight: '50px', paddingBottom: '20px' }}>
-                        {displayDetails.default === false ? <Button style={{ float: 'right' }} onClick={handleEditClick}>
+                        {displayDetails.default === false && displayDetails.name !== "" ? <Button style={{ float: 'right' }} onClick={handleEditClick}>
                             {!isEdit ? 'Edit' : 'Cancel'}
                         </Button> : <></>
                         }
@@ -192,7 +193,7 @@ function Mechanism(props: any) {
                             defaultValue={displayDetails.name !== "" ? groupNames : []}
                             onChange={handleGroups}
                             disabled={!isEdit}
-                            style={{ width: '275px' }} 
+                            style={{ width: '275px' }}
                             options={groups}
                         />
                     </div>
@@ -264,10 +265,10 @@ function Mechanism(props: any) {
                                 <div className="card-body">
                                     <Radio.Group value={disabledFactors !== disabledFactors1 ? displayDetails?.challenge_factors[0].factor : ""}
                                         disabled={!isEdit}
-                                        onChange={(e) => {
+                                        onChange={(e) => {  
                                             editData.challenge_factors[0].factor = e.target.value
                                             showDisabled(e, disabledFactors1)
-                                            if(editData.challenge_factors[0].factor === "NONE"){
+                                            if (editData.challenge_factors[0].factor === "NONE") {
                                                 disabledFactors.pop();
                                                 editData.challenge_factors[1].factor = "NONE"
                                                 setValue("NONE")
@@ -296,9 +297,10 @@ function Mechanism(props: any) {
                                 </div>
                                 <div className="card-body">
                                     <div>
-                                        <Radio.Group value={displayDetails.name !== "" ? editData?.challenge_factors[0].factor === "NONE" ? value : displayDetails?.challenge_factors[1].factor : ""}
+                                        <Radio.Group value={displayDetails.name !== "" ? editData?.challenge_factors[0].factor === "NONE" ? value : displayDetails?.challenge_factors[1].factor : value}
                                             disabled={displayDetails.challenge_factors[0].factor === "NONE" || !isEdit}
                                             onChange={(e) => {
+                                                setValue(e.target.value)
                                                 editData.challenge_factors[1].factor = e.target.value
                                                 showDisabled(e, disabledFactors)
                                             }}
