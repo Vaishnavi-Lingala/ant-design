@@ -46,6 +46,7 @@ function AppHeader() {
         <Header className="header">
             <div className="logo">
                 TecConnect
+                {/* <img src="Credenti_Logo.png" alt="Credenti TecConnect"/> */}
             </div>
             
             <Menu className="border-bottom-0" theme="light" mode="horizontal" defaultSelectedKeys={['1']}>
