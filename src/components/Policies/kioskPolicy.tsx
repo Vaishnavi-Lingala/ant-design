@@ -16,18 +16,21 @@ export const KioskPolicy = (props: any) => {
     const [kioskDisplayData, setKioskDisplayData] = useState<kioskPolicyType>(props.kioskDetails);
     const [kioskEditData, setKioskEditedData] = useState(props.kioskDetails);
     const [groups, setGroups]: any = useState([]);
+    const [groupsChange, setGroupsChange]: any = useState([]);
     const [groupNames, setGroupNames]: any = useState([]);
     const [groupUids, setGroupUids]: any = useState([]);
-    const [groupsChange, setGroupsChange]: any = useState([]);
+    const [kioskGroups, setKioskGroups]: any = useState([]);
+    const [kioskGroupsChange, setkioskGroupsChange]: any = useState([]);
+    const [kioskGroupNames, setKioskGroupNames]: any = useState([]);
+    const [kioskGroupUids, setKioskGroupUids]: any = useState([]);
 
     useEffect(() => {
         if (kioskDisplayData.uid === undefined) {
             setIsEdit(true);
         }
 
-        ApiService.get(ApiUrls.groups)
+        ApiService.get(ApiUrls.groups, {type: "USER"})
             .then(data => {
-                console.log('GROUPS: ', data);
                 for (var i = 0; i < data.length; i++) {
                     groups.push({
                         label: data[i].name,
@@ -38,8 +41,25 @@ export const KioskPolicy = (props: any) => {
                 for (var i = 0; i < data.length; i++) {
                     object[data[i].name] = data[i].uid
                 }
+                setGroups(groups);
                 groupsChange.push(object);
                 console.log(groups);
+            })        
+
+            ApiService.get(ApiUrls.groups, {type: "KIOSK"})
+            .then(data => {
+                for (var i = 0; i < data.length; i++) {
+                    kioskGroups.push({
+                        label: data[i].name,
+                        value: data[i].uid
+                    })
+                }
+                var object = {};
+                for (var i = 0; i < data.length; i++) {
+                    object[data[i].name] = data[i].uid
+                }
+                kioskGroupsChange.push(object);
+                console.log(kioskGroups);
                 setLoading(false);
             })
 
@@ -50,8 +70,16 @@ export const KioskPolicy = (props: any) => {
                 console.log(groupNames);
                 console.log(groupUids);
             });
+
+            Object.keys(kioskDisplayData.kiosk_machine_groups).map(data => {
+                kioskGroupNames.push(kioskDisplayData.kiosk_machine_groups[data].name);
+                kioskGroupUids.push(kioskDisplayData.kiosk_machine_groups[data].uid)
+                console.log(kioskGroupNames);
+                console.log(kioskGroupUids);
+            });
         }
         kioskEditData.auth_policy_groups = groupUids;
+        kioskEditData.kiosk_machine_groups = kioskGroupUids;
     }, [])
 
     function updateKioskPolicy() {
@@ -94,13 +122,13 @@ export const KioskPolicy = (props: any) => {
     }
 
     function handleMachineGroups(value: any) {
-        Object.keys(groupsChange[0]).map(key => {
+        Object.keys(kioskGroupsChange[0]).map(key => {
             if (value.includes(key)) {
                 console.log(key)
                 var index = value.indexOf(key)
                 console.log(index)
                 value.splice(index, 1)
-                value.push(groupsChange[0][key]);
+                value.push(kioskGroupsChange[0][key]);
             }
         })
         kioskEditData.kiosk_machine_groups = value;
@@ -169,7 +197,7 @@ export const KioskPolicy = (props: any) => {
                     </div>
 
                     <div>
-                        <h6>Assigned to groups</h6>
+                        <h6>Assigned to user groups</h6>
                     </div>
                     <div>
                         <Select
@@ -186,18 +214,18 @@ export const KioskPolicy = (props: any) => {
                     </div>
 
                     <div>
-                        <h6>Assigned to machine groups</h6>
+                        <h6>Assigned to kiosk machine</h6>
                     </div>
                     <div>
                         <Select
                             mode="multiple"
                             size={"large"}
                             placeholder="Please select groups"
-                            defaultValue={kioskDisplayData.name !== "" ? groupNames : []}
+                            defaultValue={kioskDisplayData.name !== "" ? kioskGroupNames : []}
                             onChange={handleMachineGroups}
                             disabled={!isEdit}
                             style={{ width: '275px' }}
-                            options={groups}
+                            options={kioskGroups}
                             listHeight={120}
                         />
                     </div>

@@ -91,7 +91,6 @@ export default function Mechanisms() {
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const history = useHistory();
 	const mechanism = {
-		order: 0,
 		challenge_factors: [
 			{
 				order: 0,
@@ -109,7 +108,12 @@ export default function Mechanisms() {
 		reader_type: "",
 		product_id: "oprc735871d0",
 		name: "",
-		on_tap_out: ""
+		on_tap_out: "",
+		mechanism_groups: [],
+		default: false,
+		order: null,
+		active: false,
+		account_id: "ooa46c499ccb"
 	}
 
 	useEffect(() => {
@@ -177,7 +181,7 @@ export default function Mechanisms() {
 		ApiService.post(ApiUrls.reOrderMechanisms, data)
 			.then(data => {
 				console.log(data)
-				window.location.reload()
+				// window.location.reload()
 			})
 	}
 

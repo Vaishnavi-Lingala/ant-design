@@ -156,7 +156,7 @@ function Mechanism(props: any) {
                         }
                     </div>
                     <div style={{ paddingRight: '50px', paddingBottom: '20px' }}>
-                        {displayDetails.default === false ? <Button style={{ float: 'right' }} onClick={handleEditClick}>
+                        {displayDetails.default === false && displayDetails.name !== "" ? <Button style={{ float: 'right' }} onClick={handleEditClick}>
                             {!isEdit ? 'Edit' : 'Cancel'}
                         </Button> : <></>
                         }
@@ -265,7 +265,7 @@ function Mechanism(props: any) {
                                 <div className="card-body">
                                     <Radio.Group value={disabledFactors !== disabledFactors1 ? displayDetails?.challenge_factors[0].factor : ""}
                                         disabled={!isEdit}
-                                        onChange={(e) => {
+                                        onChange={(e) => {  
                                             editData.challenge_factors[0].factor = e.target.value
                                             showDisabled(e, disabledFactors1)
                                             if (editData.challenge_factors[0].factor === "NONE") {

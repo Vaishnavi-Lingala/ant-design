@@ -10,13 +10,13 @@ export default function Dashboard() {
                     <div><a className="stat-header-link" href="">Users</a></div>
                     <div className="stat-item">215</div>
                 </div> */}
-                
-                <Statistic loading={false} className="overview-item" 
-                    title={<a className="stat-header-link" href="">Users</a>} value='215' 
+
+                <Statistic loading={false} className="overview-item"
+                    title={<a className="stat-header-link" href="">Users</a>} value='215'
                 />
 
-                <Statistic className="overview-item" title={<a className="stat-header-link" href="">Groups</a>} 
-                    value='25' 
+                <Statistic className="overview-item" title={<a className="stat-header-link" href="">Groups</a>}
+                    value='25'
                 />
                 {/* <div>
                     <div><a className="stat-header-link" href="">Groups</a></div>

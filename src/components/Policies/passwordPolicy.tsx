@@ -19,7 +19,7 @@ export const PasswordPolicy = (props: any) => {
     const [groupsChange, setGroupsChange]: any = useState([]);
 
     useEffect(() => {
-        ApiService.get(ApiUrls.groups)
+        ApiService.get(ApiUrls.groups, {type:"USER"})
             .then(data => {
                 console.log('GROUPS: ', data);
                 for (var i = 0; i < data.length; i++) {

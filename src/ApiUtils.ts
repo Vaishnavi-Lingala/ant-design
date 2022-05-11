@@ -1,6 +1,8 @@
 export const accountId = localStorage.getItem('accountId');
 // export const productId = "opr296b1a0dc"
-export const productId = "oprc735871d0"
+// export const productId = "oprc735871d0"
+export const productId = localStorage.getItem("productId")
+console.log(productId);
 
 export const base_url = 'https://credenti-portal-api.credenti.xyz';
 
@@ -18,6 +20,7 @@ export function getCredentiTokenHeaders() {
 
 const Urls = {
     client_info: `client/info`,
+    getProducts: `account/${accountId}/product`,
 
     // Users Urls
     userGroups: (uid) => `account/${accountId}/users/${uid}/groups`,
