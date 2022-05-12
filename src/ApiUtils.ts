@@ -20,6 +20,7 @@ const Urls = {
     // Users Urls
     userGroups: (uid) => `account/${accountId}/users/${uid}/groups`,
     users: `account/${accountId}/users`,
+    changeUserStatus: (uid) =>  `account/${accountId}/users/${uid}/lifecycle`,
 
     // Groups Urls
     group: (uid) => `account/${accountId}/groups/${uid}`,
