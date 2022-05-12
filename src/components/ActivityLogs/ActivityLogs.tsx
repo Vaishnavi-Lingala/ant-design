@@ -270,7 +270,7 @@ export default function ActivityLogs() {
                             ),
                             rowExpandable: (record) => record !== null,
                         }}
-                        dataSource={logResponse.results.map(result => {
+                        dataSource={logResponse.results?.map(result => {
                             const values = { ...result };
                             values.created_ts = moment.utc(result.created_ts).local().format(`${date_format} ${time_format}`);
                             return values;
