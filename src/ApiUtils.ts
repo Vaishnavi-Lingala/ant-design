@@ -21,6 +21,7 @@ export function getCredentiTokenHeaders() {
 const Urls = {
     client_info: `client/info`,
     getProducts: `account/${accountId}/product`,
+    stats:`account/${accountId}/stats`,
 
     // Users Urls
     userGroups: (uid) => `account/${accountId}/users/${uid}/groups`,
