@@ -108,7 +108,7 @@ export default function Mechanisms() {
 		reader_type: "",
 		product_id: "oprc735871d0",
 		name: "",
-		on_tap_out: "",
+		on_tap_out: null,
 		mechanism_groups: [],
 		default: false,
 		order: null,

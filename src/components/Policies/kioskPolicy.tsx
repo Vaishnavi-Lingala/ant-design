@@ -243,11 +243,11 @@ export const KioskPolicy = (props: any) => {
 
                 <Divider style={{ borderTop: '1px solid #d7d7dc' }} />
 
-                <h6 style={{ padding: '10px 0 10px 0' }}>kiosk Settings:</h6>
+                <h6 style={{ padding: '10px 0 10px 0' }}>Kiosk Settings:</h6>
 
                 <div className="row-container">
                     <div>
-                        access_key_id
+                        Kiosk username
                     </div>
                     <div>
                         {
@@ -255,12 +255,12 @@ export const KioskPolicy = (props: any) => {
                                 style={{ width: "275px" }}
                                 onChange={(e) => kioskEditData.policy_req.access_key_id = e.target.value}
                                 defaultValue={kioskDisplayData.policy_req.access_key_id}
-                                placeholder='Enter access key id'
+                                placeholder='Enter username'
                             /> : kioskDisplayData.policy_req.access_key_id
                         }
                     </div>
                     <div>
-                        assay
+                        Kiosk password
                     </div>
                     <div>
                         {
@@ -268,7 +268,7 @@ export const KioskPolicy = (props: any) => {
                                 style={{ width: "275px" }}
                                 onChange={(e) => kioskEditData.policy_req.assay = e.target.value}
                                 defaultValue={kioskDisplayData.policy_req.assay}
-                                placeholder='Enter assay'
+                                placeholder='Enter password'
                             /> : kioskDisplayData.policy_req.assay
                         }
                     </div>
@@ -284,7 +284,7 @@ export const KioskPolicy = (props: any) => {
                     <Button style={{ float: 'right', marginLeft: '10px' }}
                         onClick={setCancelClick}>Cancel</Button>
                     <Button type='primary' style={{ float: 'right' }}
-                        onClick={createkioskPolicy}>create</Button></div>
+                        onClick={createkioskPolicy}>Create</Button></div>
             }
         </Skeleton>
     );

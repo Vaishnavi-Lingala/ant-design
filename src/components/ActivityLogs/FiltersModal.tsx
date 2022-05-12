@@ -152,7 +152,8 @@ export default function FiltersModal({ onFilterApply, onResetClick }) {
                                     onClick={() => {
                                         setFilterInputs((state) => {
                                             const values = [...state];
-                                            values.splice(index, 1);
+                                            if (values.length > 1)
+                                                values.splice(index, 1);
                                             return values;
                                         });
                                     }}
