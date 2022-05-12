@@ -12,10 +12,19 @@ export default function Dashboard() {
                 </div> */}
 
                 <Statistic loading={false} className="overview-item"
-                    title={<a className="stat-header-link" href="">Users</a>} value='215'
+                    title={
+                        <a className="stat-header-link" href="/users">
+                            Users
+                        </a>
+                    } value='215'
                 />
 
-                <Statistic className="overview-item" title={<a className="stat-header-link" href="">Groups</a>}
+                <Statistic className="overview-item"
+                    title={
+                        <a className="stat-header-link" href="/groups">
+                            Groups
+                        </a>
+                    }
                     value='25'
                 />
                 {/* <div>

@@ -43,9 +43,9 @@ const Urls = {
     reOrderPolicies: `/account/${accountId}/product/${productId}/auth-policy/reorder`,
 
     // Mechanism Urls
-    mechanisms: `account/${accountId}/mechanism`,
-    addMechanism: `account/${accountId}/mechanism`,
-    mechanism: (uid) => `account/${accountId}/mechanism/${uid}`, // For GET and UPDATE APIs
+    mechanisms: `account/${accountId}/product/${productId}/mechanism`,
+    addMechanism: `account/${accountId}/product/${productId}/mechanism`,
+    mechanism: (uid) => `account/${accountId}/product/${productId}/mechanism/${uid}`, // For GET and UPDATE APIs
     mechanismOptions: `account/${accountId}/mechanism/options`,
     mechanismChallengeFactors: `account/${accountId}/mechanism/challenge-factor-options?product_id=${productId}`,
     mechanismPasswordGraceOptions: `account/${accountId}/mechanism/password-grace-options`,

@@ -25,7 +25,7 @@ function Mechanism(props: any) {
     const [value, setValue] = useState("");
 
     useEffect(() => {
-        ApiService.get(ApiUrls.groups)
+        ApiService.get(ApiUrls.groups, {type: "USER"})
             .then(data => {
                 console.log('GROUPS: ', data);
                 for (var i = 0; i < data.length; i++) {
