@@ -25,7 +25,7 @@ export const PinPolicy = (props: any) => {
 			setIsEdit(true);
 		}
 
-		ApiService.get(ApiUrls.groups)
+		ApiService.get(ApiUrls.groups, {type:"USER"})
 			.then(data => {
 				console.log('GROUPS: ', data);
 				for (var i = 0; i < data.length; i++) {

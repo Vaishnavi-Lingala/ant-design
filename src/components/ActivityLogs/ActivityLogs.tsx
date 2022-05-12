@@ -66,7 +66,6 @@ export default function ActivityLogs() {
 
     const applyAdvancedFilters = (filters) => {
         setAdvancedFilters(filters);
-        // console.log({filters});
     };
 
     const resetFilters = () => {
@@ -82,6 +81,10 @@ export default function ActivityLogs() {
         {
             title: "Actor",
             dataIndex: "display_name",
+        },
+        {
+            title: "Machine name",
+            dataIndex: "machine_name",
         },
         {
             title: "Event Info",
@@ -155,7 +158,7 @@ export default function ActivityLogs() {
                 });
                 break;
             default:
-                setDateTimeFilters(datetimeFilters);
+                setDateTimeFilters(initialDateTimeFilters);
         }
     }
 
@@ -186,8 +189,12 @@ export default function ActivityLogs() {
                             disabledDate={(current) =>
                                 current > moment().endOf("day")
                             }
-                            onChange={(date, dateString) =>
-                                onDateFilterChange(date, dateString, start_date)
+                            onChange={(date, dateString) => 
+                                onDateFilterChange(
+                                    date,
+                                    dateString,
+                                    date && dateString ? start_date : null
+                                )
                             }
                         />
                         <DatePicker
@@ -198,7 +205,11 @@ export default function ActivityLogs() {
                             )}
                             picker="time"
                             onChange={(date, dateString) =>
-                                onDateFilterChange(date, dateString, start_time)
+                                onDateFilterChange(
+                                    date,
+                                    dateString,
+                                    date && dateString ? start_time : null
+                                )
                             }
                         />
                     </div>
@@ -212,7 +223,11 @@ export default function ActivityLogs() {
                                 current > moment().endOf("day")
                             }
                             onChange={(date, dateString) =>
-                                onDateFilterChange(date, dateString, end_date)
+                                onDateFilterChange(
+                                    date,
+                                    dateString,
+                                    date && dateString ? end_date : null
+                                )
                             }
                         />
                         <DatePicker
@@ -223,7 +238,11 @@ export default function ActivityLogs() {
                             )}
                             picker="time"
                             onChange={(date, dateString) =>
-                                onDateFilterChange(date, dateString, end_time)
+                                onDateFilterChange(
+                                    date,
+                                    dateString,
+                                    date && dateString ? end_time : null
+                                )
                             }
                         />
                     </div>
