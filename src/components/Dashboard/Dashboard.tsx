@@ -40,6 +40,7 @@ export default function Dashboard() {
                         </div>
                     })}
                 </div>
+                    <div style={{textAlign: 'right'}}>Updated at {Date().slice(4, 21)} IST</div>
             </Card>
         </Skeleton>
     );
