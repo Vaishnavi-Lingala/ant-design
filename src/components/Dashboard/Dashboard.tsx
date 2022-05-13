@@ -1,4 +1,5 @@
 import { Card, Skeleton, Statistic } from "antd";
+import moment from "moment";
 import { useEffect, useState } from "react";
 import ApiService from "../../Api.service";
 import ApiUrls from '../../ApiUtils';
@@ -28,6 +29,10 @@ export default function Dashboard() {
             })
     }, [])
 
+    const date = new Date().toLocaleString('en-US', {
+        timeZone: 'CST',
+      });
+
     return (
         <Skeleton loading={loadingDetails}>
             <Card title="Overview" style={{ width: 400, border: '1px solid #d7d7dc' }}>
@@ -40,7 +45,9 @@ export default function Dashboard() {
                         </div>
                     })}
                 </div>
-                    <div style={{textAlign: 'right'}}>Updated at {Date().slice(4, 21)} IST</div>
+                    <div style={{textAlign: 'right'}}>Updated at {date}</div>
+
+                    {/* <div style={{textAlign: 'right'}}>Updated at {Date().slice(4, 21)} IST</div> */}
             </Card>
         </Skeleton>
     );
