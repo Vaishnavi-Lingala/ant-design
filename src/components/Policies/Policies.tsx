@@ -1,5 +1,9 @@
 import { Button, Input, Modal, Skeleton, Table, Tabs } from 'antd';
+import { MenuOutlined } from '@ant-design/icons';
 import { useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
+import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
+import { arrayMoveImmutable } from 'array-move';
 
 import './Policies.css';
 
@@ -7,11 +11,59 @@ import { PinPolicy } from './pinPolicy';
 import { PasswordPolicy } from './passwordPolicy'
 import ApiUrls from '../../ApiUtils';
 import ApiService from '../../Api.service';
-import { useHistory } from 'react-router-dom';
+import { KioskPolicy } from './kioskPolicy';
 
 export default function Policies() {
 
-	const columns = [
+	const activateColumns = [
+		{
+			title: 'Sort',
+			dataIndex: 'sort',
+			width: '5%',
+			className: 'drag-visible',
+			render: (text: any, record: { default: any }) => (
+				record.default === false ? <DragHandle /> : <></>
+			)
+		},
+		{
+			title: 'Order',
+			dataIndex: 'order',
+			width: '10%'
+		},
+		{
+			title: 'Policy Name',
+			dataIndex: 'policy_name',
+			width: '15%'
+		},
+		{
+			title: 'Policy Description',
+			dataIndex: 'policy_description',
+			width: '40%'
+		},
+		{
+			title: 'Details',
+			dataIndex: 'details',
+			width: '10%',
+			render: (text: any, record: { policy_id: any; }) => (
+				<Button onClick={() => getPolicyDetails(record.policy_id)}>
+					View
+				</Button>
+			)
+		},
+		{
+			title: 'Status',
+			dataIndex: 'details',
+			width: '30%',
+			render: (text: any, record: { policy_id: any; default: any }) => (
+				record.default === false ?
+					<Button onClick={() => deActivatePolicy(record.policy_id)}>
+						Deactivate
+					</Button> : <></>
+			)
+		}
+	];
+
+	const deActivateColumns = [
 		{
 			title: 'Policy Name',
 			dataIndex: 'policy_name',
@@ -20,27 +72,44 @@ export default function Policies() {
 		{
 			title: 'Policy Description',
 			dataIndex: 'policy_description',
-			width: '60%'
+			width: '50%'
 		},
 		{
-			title: 'Actions',
-			dataIndex: 'actions',
-			width: '20%',
+			title: 'Details',
+			dataIndex: 'details',
+			width: '10%',
 			render: (text: any, record: { policy_id: any; }) => (
 				<Button onClick={() => getPolicyDetails(record.policy_id)}>
 					View
 				</Button>
 			)
+		},
+		{
+			title: 'Status',
+			dataIndex: 'details',
+			width: '30%',
+			render: (text: any, record: { policy_id: any; default: any }) => (
+				record.default === false ?
+					<Button onClick={() => activatePolicy(record.policy_id)}>
+						Activate
+					</Button> : <></>
+			)
 		}
 	];
-	
+
 	const [pinDetails, setPinDetails] = useState(undefined);
 	const [passwordDetails, setPasswordDetails] = useState(undefined);
+	const [kioskDetails, setKioskDetails] = useState(undefined);
 	const [loadingDetails, setLoadingDetails] = useState(false);
-	const [pinPolicies, setPinPolicies]: any = useState([]);
-	const [passwordPolicies, setPasswordPolicies]: any = useState([]);
+	const [activePinPolicies, setActivePinPolicies]: any = useState([]);
+	const [inActivePinPolicies, setInActivePinPolicies]: any = useState([]);
+	const [activePasswordPolicies, setActivePasswordPolicies]: any = useState([]);
+	const [inActivepasswordPolicies, setInActivePasswordPolicies]: any = useState([]);
+	const [activeKioskPolicies, setActiveKioskPolicies]: any = useState([]);
+	const [inActiveKioskPolicies, setInActiveKioskPolicies]: any = useState([]);
 	const [isPinModalVisible, setIsPinModalVisible] = useState(false);
 	const [isPasswordModalVisible, setIsPasswordModalVisible] = useState(false);
+	const [isKioskModalVisible, setIsKioskModalVisible] = useState(false);
 	const { TabPane } = Tabs;
 
 	const pinData = {
@@ -74,6 +143,106 @@ export default function Policies() {
 		}
 	}
 
+	const kioskData = {
+		policy_req: {
+            access_key_id: "",
+            assay: ""
+        },
+        auth_policy_groups: [],
+		policy_type: 'KIOSK',
+        kiosk_machine_groups: [],
+        name: "",
+        description: "",
+	}
+
+	const DragHandle = SortableHandle(() => <MenuOutlined style={{ cursor: 'grab', color: '#999' }} />);
+	const SortableItem = SortableElement(props => <tr {...props} />);
+	const SortableBody = SortableContainer(props => <tbody {...props} />);
+
+	const handlePinSortEnd = ({ oldIndex, newIndex }) => {
+		if (oldIndex !== newIndex && newIndex != activePinPolicies.length - 1) {
+			const newData = arrayMoveImmutable([].concat(activePinPolicies), oldIndex, newIndex).filter(
+				el => !!el,
+			);
+			console.log('Sorted items: ', newData);
+			setActivePinPolicies(newData);
+			//@ts-ignore
+			console.log(newData[newIndex].policy_id, newData.length - newIndex - 1);
+			//@ts-ignore
+			reOrderPolicies(newData[newIndex].policy_id, newData.length - newIndex - 1, "PIN");
+		}
+	};
+
+	const pinDraggableContainer = (props) => (
+		<SortableBody
+			useDragHandle
+			disableAutoscroll
+			onSortEnd={handlePinSortEnd}
+			{...props}
+		/>
+	);
+
+	const pinDraggableBodyRow = ({ className, style, ...restProps }) => {
+		const index = activePinPolicies.findIndex(x => x.index === restProps['data-row-key']);
+		return <SortableItem index={index} {...restProps} />;
+	};
+
+	const handlePasswordSortEnd = ({ oldIndex, newIndex }) => {
+		if (oldIndex !== newIndex && newIndex != activePasswordPolicies.length - 1) {
+			const newData = arrayMoveImmutable([].concat(activePasswordPolicies), oldIndex, newIndex).filter(
+				el => !!el,
+			);
+			console.log('Sorted items: ', newData);
+			setActivePasswordPolicies(newData);
+			//@ts-ignore
+			console.log(newData[newIndex].policy_id, newData.length - newIndex - 1);
+			//@ts-ignore
+			reOrderPolicies(newData[newIndex].policy_id, newData.length - newIndex - 1, "PASSWORD");
+		}
+	};
+
+	const passwordDraggableContainer = (props) => (
+		<SortableBody
+			useDragHandle
+			disableAutoscroll
+			onSortEnd={handlePasswordSortEnd}
+			{...props}
+		/>
+	);
+
+	const passwordDraggableBodyRow = ({ className, style, ...restProps }) => {
+		const index = activePasswordPolicies.findIndex(x => x.index === restProps['data-row-key']);
+		return <SortableItem index={index} {...restProps} />;
+	};
+
+	const handleKioskSortEnd = ({ oldIndex, newIndex }) => {
+		if (oldIndex !== newIndex && newIndex != activeKioskPolicies.length - 1) {
+			const newData = arrayMoveImmutable([].concat(activeKioskPolicies), oldIndex, newIndex).filter(
+				el => !!el,
+			);
+			console.log('Sorted items: ', newData);
+			setActiveKioskPolicies(newData);
+			//@ts-ignore
+			console.log(newData[newIndex].policy_id, newData.length - newIndex - 1);
+			//@ts-ignore
+			reOrderPolicies(newData[newIndex].policy_id, newData.length - newIndex - 1, "KIOSK");
+		}
+	};
+
+	const kioskDraggableContainer = (props) => (
+		<SortableBody
+			useDragHandle
+			disableAutoscroll
+			onSortEnd={handleKioskSortEnd}
+			{...props}
+		/>
+	);
+
+	const kioskDraggableBodyRow = ({ className, style, ...restProps }) => {
+		const index = activeKioskPolicies.findIndex(x => x.index === restProps['data-row-key']);
+		return <SortableItem index={index} {...restProps} />;
+	};
+
 	function getPolicies() {
 		setLoadingDetails(true)
 		ApiService.get(ApiUrls.policies)
@@ -81,39 +250,111 @@ export default function Policies() {
 				console.log(data);
 				var pinCounter = 0;
 				var passwordCounter = 0;
-				var pinArray: any = [];
-				var passwordArray: any = [];
+				var kioskCounter = 0;
+				var pinActive: any = [];
+				var pinInActive: any = [];
+				var passwordActive: any = [];
+				var passwordInActive: any = [];
+				var kioskActive: any = [];
+				var kioskInActive: any = [];
 				for (var i = 0; i < data.length; i++) {
 					var object;
 					if (data[i].policy_type === "PIN") {
-						object = {
-							key: pinCounter + 1,
-							policy_name: data[i].name,
-							policy_id: data[i].uid,
-							policy_description: data[i].description
+						if (data[i].active === true) {
+							object = {
+								key: pinCounter + 1,
+								policy_name: data[i].name,
+								policy_id: data[i].uid,
+								policy_description: data[i].description,
+								order: data[i].order,
+								default: data[i].default,
+								index: pinCounter + 1
+							}
+							pinCounter = pinCounter + 1;
+							pinActive.push(object);
 						}
-						pinCounter = pinCounter + 1;
-						pinArray.push(object);
+						else {
+							object = {
+								key: pinCounter + 1,
+								policy_name: data[i].name,
+								policy_id: data[i].uid,
+								policy_description: data[i].description,
+								default: data[i].default,
+								index: pinCounter + 1
+							}
+							pinCounter = pinCounter + 1;
+							pinInActive.push(object);
+						}
 					}
-					else {
-						object = {
-							key: passwordCounter + 1,
-							policy_name: data[i].name,
-							policy_id: data[i].uid,
-							policy_description: data[i].description
+					
+					if(data[i].policy_type === "PASSWORD") {
+						if (data[i].active === true) {
+							object = {
+								key: passwordCounter + 1,
+								policy_name: data[i].name,
+								policy_id: data[i].uid,
+								policy_description: data[i].description,
+								order: data[i].order,
+								default: data[i].default,
+								index: passwordCounter + 1
+							}
+							passwordCounter = passwordCounter + 1;
+							passwordActive.push(object);
 						}
-						passwordCounter = passwordCounter + 1;
-						passwordArray.push(object);
+						else {
+							object = {
+								key: passwordCounter + 1,
+								policy_name: data[i].name,
+								policy_id: data[i].uid,
+								policy_description: data[i].description,
+								default: data[i].default,
+								index: passwordCounter + 1
+							}
+							passwordCounter = passwordCounter + 1;
+							passwordInActive.push(object);
+						}
+					}
+
+					if(data[i].policy_type === "KIOSK") {
+						if (data[i].active === true) {
+							object = {
+								key: kioskCounter + 1,
+								policy_name: data[i].name,
+								policy_id: data[i].uid,
+								policy_description: data[i].description,
+								order: data[i].order,
+								default: data[i].default,
+								index: kioskCounter + 1
+							}
+							kioskCounter = kioskCounter + 1;
+							kioskActive.push(object);
+						}
+						else {
+							object = {
+								key: kioskCounter + 1,
+								policy_name: data[i].name,
+								policy_id: data[i].uid,
+								policy_description: data[i].description,
+								default: data[i].default,
+								index: kioskCounter + 1
+							}
+							kioskCounter = kioskCounter + 1;
+							kioskInActive.push(object);
+						}
 					}
 				}
-				setPinPolicies(pinArray);
-				setPasswordPolicies(passwordArray);
+				setActivePinPolicies(pinActive);
+				setInActivePinPolicies(pinInActive);
+				setActivePasswordPolicies(passwordActive);
+				setInActivePasswordPolicies(passwordInActive);
+				setActiveKioskPolicies(kioskActive);
+				setInActiveKioskPolicies(kioskInActive);
 				setLoadingDetails(false);
 			})
 	}
 
 	useEffect(() => {
-		if (window.location.pathname.split("/")[2] !== 'password' && window.location.pathname.split("/").length !== 4) {
+		if (window.location.pathname.split("/")[2] !== 'password' && window.location.pathname.split("/")[2] !== 'kiosk' && window.location.pathname.split("/").length !== 4) {
 			history.push('/policies/pin');
 		}
 
@@ -126,6 +367,31 @@ export default function Policies() {
 
 	const history = useHistory();
 
+	function activatePolicy(uid: string) {
+		ApiService.get(ApiUrls.activatePolicy(uid))
+			.then(data => window.location.reload())
+			.catch(error => { })
+	}
+
+	function deActivatePolicy(uid: string) {
+		ApiService.get(ApiUrls.deActivatePolicy(uid))
+			.then(data => window.location.reload())
+			.catch(error => { })
+	}
+
+	function reOrderPolicies(uid: string, order: number, policyType: string) {
+		var data = {
+			order: order,
+			auth_policy_uid: uid,
+			policy_type: policyType
+		}
+		ApiService.post(ApiUrls.reOrderPolicies, data)
+			.then(data => {
+				console.log(data)
+				window.location.reload()
+			})
+	}
+
 	function getPolicyDetails(uid: any) {
 		localStorage.setItem("policyUid", uid);
 		setLoadingDetails(true);
@@ -136,9 +402,13 @@ export default function Policies() {
 					history.push('/policies/pin/' + uid);
 					setPinDetails(data);
 				}
-				else {
+				if (data.policy_type === "PASSWORD"){
 					history.push('/policies/password/' + uid);
 					setPasswordDetails(data);
+				}
+				if (data.policy_type === "KIOSK"){
+					history.push('/policies/kiosk/' + uid);
+					setKioskDetails(data);
 				}
 				setLoadingDetails(false);
 			})
@@ -160,6 +430,12 @@ export default function Policies() {
 				{passwordDetails ? <Button style={{ marginLeft: 'auto', alignSelf: 'end' }} onClick={() => {
 					setPasswordDetails(undefined)
 					history.push('/policies/password')
+				}}>
+					Back
+				</Button> : <></>}
+				{kioskDetails ? <Button style={{ marginLeft: 'auto', alignSelf: 'end' }} onClick={() => {
+					setKioskDetails(undefined)
+					history.push('/policies/kiosk')
 				}}>
 					Back
 				</Button> : <></>}
@@ -186,11 +462,42 @@ export default function Policies() {
 										</Button>
 									</div>
 
+									<div style={{
+										width: '100%', border: '1px solid #D7D7DC',
+										borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
+									}}
+									>
+										<h4>ACTIVE</h4>
+									</div>
 									<Table
 										style={{ border: '1px solid #D7D7DC' }}
 										showHeader={true}
-										columns={columns}
-										dataSource={pinPolicies}
+										columns={activateColumns}
+										dataSource={activePinPolicies}
+										rowKey={"index"}
+										components={{
+											body: {
+												wrapper: pinDraggableContainer,
+												row: pinDraggableBodyRow,
+											},
+										}}
+										pagination={{ position: [] }}
+									/>
+
+									<br />
+
+									<div style={{
+										width: '100%', border: '1px solid #D7D7DC',
+										borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
+									}}
+									>
+										<h4>INACTIVE</h4>
+									</div>
+									<Table
+										style={{ border: '1px solid #D7D7DC' }}
+										showHeader={true}
+										columns={deActivateColumns}
+										dataSource={inActivePinPolicies}
 										pagination={{ position: [] }}
 									/>
 								</>
@@ -212,14 +519,101 @@ export default function Policies() {
 										</Button>
 									</div>
 
+									<div style={{
+										width: '100%', border: '1px solid #D7D7DC',
+										borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
+									}}
+									>
+										<h4>ACTIVE</h4>
+									</div>
 									<Table
 										style={{ border: '1px solid #D7D7DC' }}
 										showHeader={true}
-										columns={columns}
-										dataSource={passwordPolicies}
+										columns={activateColumns}
+										dataSource={activePasswordPolicies}
+										rowKey={"index"}
+										components={{
+											body: {
+												wrapper: passwordDraggableContainer,
+												row: passwordDraggableBodyRow,
+											},
+										}}
 										pagination={{ position: [] }}
 									/>
 
+									<br />
+
+									<div style={{
+										width: '100%', border: '1px solid #D7D7DC',
+										borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
+									}}
+									>
+										<h4>INACTIVE</h4>
+									</div>
+									<Table
+										style={{ border: '1px solid #D7D7DC' }}
+										showHeader={true}
+										columns={deActivateColumns}
+										dataSource={inActivepasswordPolicies}
+										pagination={{ position: [] }}
+									/>
+								</>
+						}
+					</Skeleton>
+				</TabPane>
+				<TabPane tab="Kiosk" key="kiosk">
+					<Skeleton loading={loadingDetails}>
+						{kioskDetails ? <KioskPolicy kioskDetails={kioskDetails} /> :
+							isKioskModalVisible ? <KioskPolicy kioskDetails={kioskData} /> :
+								<>
+									<div style={{ width: '100%', border: '1px solid #D7D7DC', borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6' }}>
+										<Button type='primary' size='large' onClick={() => {
+											setIsKioskModalVisible(true)
+											history.push('/policies/kiosk')
+										}}
+										>
+											Add Kiosk Policy
+										</Button>
+									</div>
+
+									<div style={{
+										width: '100%', border: '1px solid #D7D7DC',
+										borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
+									}}
+									>
+										<h4>ACTIVE</h4>
+									</div>
+									<Table
+										style={{ border: '1px solid #D7D7DC' }}
+										showHeader={true}
+										columns={activateColumns}
+										dataSource={activeKioskPolicies}
+										rowKey={"index"}
+										components={{
+											body: {
+												wrapper: kioskDraggableContainer,
+												row: kioskDraggableBodyRow,
+											},
+										}}
+										pagination={{ position: [] }}
+									/>
+
+									<br />
+
+									<div style={{
+										width: '100%', border: '1px solid #D7D7DC',
+										borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
+									}}
+									>
+										<h4>INACTIVE</h4>
+									</div>
+									<Table
+										style={{ border: '1px solid #D7D7DC' }}
+										showHeader={true}
+										columns={deActivateColumns}
+										dataSource={inActiveKioskPolicies}
+										pagination={{ position: [] }}
+									/>
 								</>
 						}
 					</Skeleton>

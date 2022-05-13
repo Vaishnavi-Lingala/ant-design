@@ -1,7 +1,8 @@
-import { Skeleton, Table, Button } from "antd";
+import { Skeleton, Table, Button, Select } from "antd";
 import { useEffect, useState } from "react";
 import ApiService from "../../Api.service"
 import ApiUrls from '../../ApiUtils';
+import { AddUser } from "./AddUser";
 import { User } from "./User";
 
 export default function Users() {
@@ -12,6 +13,7 @@ export default function Users() {
 	const [page, setPage]: any = useState(1);
 	const [pageSize, setPageSize]: any = useState(10);
 	const [totalItems, setTotalItems]: any = useState(0);
+	const [statusList, setStatusList]: any = useState([]);
 
     const columns = [{
         title: 'Username',
@@ -19,28 +21,63 @@ export default function Users() {
         width: '30%'
     },
 	{
+        title: 'Status',
+        dataIndex: 'status',
+        width: '20%'
+    },
+	{
 		title: 'Actions',
 		dataIndex: 'actions',
-		width: '40%',
+		width: '20%',
 		render: (text: any, record: { uid: any; }) => (
 			<Button onClick={() => getUserDetails(record.uid)}>
 			  View
 			</Button>
 		)
+	},
+	{
+		title: 'Change Status',
+		dataIndex: 'change_status',
+		width: '35%',
+		render: (text: any, record: { uid: any; }) => (
+			<Select onChange = {(value) => {
+				changeUserStatus(value, record.uid)
+			}}
+			placeholder= "Select status" 
+			style={{width:"100%"}}>
+				{statusList.map((eachStatus) => {
+					return <Select.Option key={eachStatus.key} value={eachStatus.key}>{eachStatus.value}</Select.Option>
+				})}
+			</Select>
+		)
 	}]
 
     useEffect(() => {
-		setLoadingDetails(true);
-        ApiService.get(ApiUrls.users, {start: page, limit: pageSize})
-		.then(data => {
-			const usersWithKey = appendKeyToUsersList(data.results);
-			setArr(usersWithKey);
-			setTotalItems(data.total_items);
-		}).catch(error => {
-			console.error(`Error in getting users list: ${error}`);
-		}).finally(() => {
-			setLoadingDetails(false);
-		})
+		getUsersList(page, pageSize);
+		const statusTypes = [{
+			key: 'ACTIVE', 
+			value: 'Activate'
+		}, {
+			key: 'INACTIVE', 
+			value: 'Inactivate'
+		},
+		{
+			key: 'DEACTIVATED', 
+			value: 'Deactivate'
+		},
+		{
+			key: 'STAGED', 
+			value: 'Stage'
+		},
+		{
+			key: 'SUSPENDED', 
+			value: 'Suspend'
+		},
+		{
+			key: 'LOCKED_OUT', 
+			value: 'Lock'
+		}]
+		setStatusList(statusTypes);
 	}, [])
 
 	function getUserDetails(uid: string) {
@@ -50,7 +87,7 @@ export default function Users() {
 		setLoadingDetails(false);
 	}
 
-	const onUsersPageChange = async (page, pageSize) => {
+	const getUsersList = async (page, pageSize) => {
 		setLoadingDetails(true);
 		let data = await ApiService.get(ApiUrls.users, {start: page, limit: pageSize}).catch(error => {
 			console.error(`Error in getting users list by page: ${JSON.stringify(error)}`);
@@ -62,11 +99,29 @@ export default function Users() {
 		setTotalItems(data.total_items);
 	}
 
+	const getUpdatedUsersList = ()=> {
+		getUsersList(page, pageSize);
+	}
+
 	const appendKeyToUsersList = (usersList) => {
 		usersList.forEach(eachUser => {
 			eachUser['key'] = eachUser.uid;
 		})
 		return usersList;
+	}
+
+    const changeUserStatus = async (status, userId: string) => {
+		setLoadingDetails(true);
+		let statusObj = {
+			status: status
+		}
+		let result = await ApiService.post(ApiUrls.changeUserStatus(userId), statusObj).catch(error => {
+			console.error(`Error in updating status of ${userId}: ${JSON.stringify(error)}`)
+		}).finally(()=> {
+			setLoadingDetails(false);
+		});
+		console.log(`Status for ${userId} is updated successfully with ${status}.`);
+		getUpdatedUsersList();
 	}
 
     return (
@@ -78,6 +133,7 @@ export default function Users() {
 
 			<Skeleton loading={loadingDetails}>
 				{userDetails? <User userDetails = {userDetails}></User>: <>
+				<AddUser onUserCreate = {getUpdatedUsersList}></AddUser>
 				 <Table
 						style={{ border: '1px solid #D7D7DC' }}
 						showHeader={true}
@@ -90,12 +146,13 @@ export default function Users() {
 							onChange:(page, pageSize) => {
 								setPage(page);
 								setPageSize(pageSize);
-								onUsersPageChange(page, pageSize);
+								getUsersList(page, pageSize);
 							}
 						}}
 					/>
 				</>}
 			</Skeleton>
 		</>
+		
 	);
 }

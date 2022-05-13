@@ -1,14 +1,14 @@
 import { Button, Input, Radio, Select, Skeleton } from "antd";
-import { useEffect, useRef, useState } from "react";
-import { MechanismType } from "../../models/Data.models";
+import { useEffect, useState } from "react";
 
 import './Mechanism.css'
 
 import ApiService from "../../Api.service";
+import { MechanismType } from "../../models/Data.models";
 import ApiUrls from '../../ApiUtils';
 
 function Mechanism(props: any) {
-    const [displayDetails, setDisplayDetails] = useState<MechanismType>(props.mechanismDetails);
+    const [displayDetails, setDisplayDetails] = useState(props.mechanismDetails);
     const [loading, setLoading] = useState(true);
     const [isEdit, setIsEdit] = useState(false);
     const [editData, setEditData]: any = useState(props.mechanismDetails);
@@ -22,7 +22,7 @@ function Mechanism(props: any) {
     const [groupNames, setGroupNames]: any = useState([]);
     const [groupUids, setGroupUids]: any = useState([]);
     const [groupsChange, setGroupsChange]: any = useState([]);
-    const [value, setValue] = useState("NONE");
+    const [value, setValue] = useState("");
 
     useEffect(() => {
         ApiService.get(ApiUrls.groups)
@@ -67,6 +67,7 @@ function Mechanism(props: any) {
         if (disabledFactors1.includes("NONE")) {
             disabledFactors1.pop();
             disabledFactors.pop();
+            setValue("NONE")
             displayDetails.challenge_factors[1].factor = "NONE";
         }
 
@@ -121,6 +122,8 @@ function Mechanism(props: any) {
         ApiService.post(ApiUrls.addMechanism, editData)
             .then(data => {
                 console.log(data);
+            }, error => {
+                console.error('Add mechanism error: ', error);
             })
         setTimeout(() => {
             window.location.reload()
@@ -155,7 +158,7 @@ function Mechanism(props: any) {
                         }
                     </div>
                     <div style={{ paddingRight: '50px', paddingBottom: '20px' }}>
-                        {displayDetails.default === false ? <Button style={{ float: 'right' }} onClick={handleEditClick}>
+                        {displayDetails.default === false && displayDetails.name !== "" ? <Button style={{ float: 'right' }} onClick={handleEditClick}>
                             {!isEdit ? 'Edit' : 'Cancel'}
                         </Button> : <></>
                         }
@@ -192,7 +195,7 @@ function Mechanism(props: any) {
                             defaultValue={displayDetails.name !== "" ? groupNames : []}
                             onChange={handleGroups}
                             disabled={!isEdit}
-                            style={{ width: '275px' }} 
+                            style={{ width: '275px' }}
                             options={groups}
                         />
                     </div>
@@ -201,11 +204,19 @@ function Mechanism(props: any) {
                         <h6>Primary Challenge</h6>
                     </div>
                     <div>
-                        <Radio.Group name="Primary challenge" defaultValue={"PROXIMITY_CARD"}>
-                            <Radio value={"PROXIMITY_CARD"} disabled>Proximity Card</Radio>
-                        </Radio.Group>
+                        {localStorage.getItem("productName") === 'TecTANGO' ? 
+                            <Radio.Group name="Primary challenge" defaultValue={"PROXIMITY_CARD"}>
+                                <Radio value={"PROXIMITY_CARD"} disabled>Proximity Card</Radio>
+                            </Radio.Group>
+                        :
+                        localStorage.getItem("productName") === 'TecBIO' ?
+                            <Radio.Group name="Primary challenge" defaultValue={"BIO_METRICS"}>
+                                <Radio value={"BIO_METRICS"} disabled>Biometrics</Radio>: <></>
+                            </Radio.Group>
+                        : <></>
+                        }
                     </div>
-
+                    
                     <div style={{ paddingTop: '20px' }}>
                         <h6>Tapout Action</h6>
                     </div>
@@ -230,30 +241,33 @@ function Mechanism(props: any) {
                             }
                         </Radio.Group>
                     </div>
-
-                    <div style={{ paddingTop: '20px', paddingBottom: '40px' }}>
-                        <h6>Reader Type</h6>
-                    </div>
-                    <div style={{ paddingTop: '20px' }}>
-                        <Radio.Group name="Reader" defaultValue={displayDetails?.reader_type}
-                            onChange={(e) =>
-                                setEditData((editData: any) => ({
-                                    ...editData,
-                                    reader_type: e.target.value
-                                }))} disabled={!isEdit}
-                        >
-                            {
-                                Object.keys(readerOptions).map(factor => {
-                                    return <div key={factor}>
-                                        <Radio value={factor}>
-                                            {readerOptions[factor]}
-                                        </Radio>
-                                        <br />
-                                    </div>
-                                })
-                            }
-                        </Radio.Group>
-                    </div>
+                    {localStorage.getItem("productName") === 'TecTANGO' ? 
+                    <>
+                        <div style={{ paddingTop: '20px', paddingBottom: '40px' }}>
+                            <h6>Reader Type</h6>
+                        </div>
+                        <div style={{ paddingTop: '20px' }}>
+                            <Radio.Group name="Reader" defaultValue={displayDetails?.reader_type}
+                                onChange={(e) =>
+                                    setEditData((editData: any) => ({
+                                        ...editData,
+                                        reader_type: e.target.value
+                                    }))} disabled={!isEdit}
+                            >
+                                {
+                                    Object.keys(readerOptions).map(factor => {
+                                        return <div key={factor}>
+                                            <Radio value={factor}>
+                                                {readerOptions[factor]}
+                                            </Radio>
+                                            <br />
+                                        </div>
+                                    })
+                                }
+                            </Radio.Group>
+                        </div>
+                    </> : <></>
+                    }
 
                     {displayDetails.challenge_factors.length === 2 ?
                         <>
@@ -264,10 +278,10 @@ function Mechanism(props: any) {
                                 <div className="card-body">
                                     <Radio.Group value={disabledFactors !== disabledFactors1 ? displayDetails?.challenge_factors[0].factor : ""}
                                         disabled={!isEdit}
-                                        onChange={(e) => {
+                                        onChange={(e) => {  
                                             editData.challenge_factors[0].factor = e.target.value
                                             showDisabled(e, disabledFactors1)
-                                            if(editData.challenge_factors[0].factor === "NONE"){
+                                            if (editData.challenge_factors[0].factor === "NONE") {
                                                 disabledFactors.pop();
                                                 editData.challenge_factors[1].factor = "NONE"
                                                 setValue("NONE")
@@ -292,13 +306,14 @@ function Mechanism(props: any) {
 
                             <div className="card shadow mb-4" style={{ width: '90%' }}>
                                 <div className="card-header py-3" >
-                                    <h6 className="m-0 font-weight-bold text-gray-900 text-lg" style={{ float: 'left', padding: '2px 5px' }}>Challenge_2(Optional)</h6>
+                                    <h6 className="m-0 font-weight-bold text-gray-900 text-lg" style={{ float: 'left', padding: '2px 5px' }}>Challenge 2</h6>
                                 </div>
                                 <div className="card-body">
                                     <div>
-                                        <Radio.Group value={displayDetails.name !== "" ? editData?.challenge_factors[0].factor === "NONE" ? value : displayDetails?.challenge_factors[1].factor : ""}
+                                        <Radio.Group value={displayDetails.name !== "" ? editData?.challenge_factors[0].factor === "NONE" ? value : displayDetails?.challenge_factors[1].factor : value}
                                             disabled={displayDetails.challenge_factors[0].factor === "NONE" || !isEdit}
                                             onChange={(e) => {
+                                                setValue(e.target.value)
                                                 editData.challenge_factors[1].factor = e.target.value
                                                 showDisabled(e, disabledFactors)
                                             }}
@@ -333,7 +348,7 @@ function Mechanism(props: any) {
                     <Button style={{ float: 'right', marginLeft: '10px' }}
                         onClick={setCancelClick}>Cancel</Button>
                     <Button type='primary' style={{ float: 'right' }}
-                        onClick={createMechanism}>create</Button></div>
+                        onClick={createMechanism}>Create</Button></div>
             }
         </Skeleton>
     );

@@ -1,31 +1,46 @@
 import { Card, Statistic } from "antd";
+import { useEffect, useState } from "react";
+import ApiService from "../../Api.service";
+import ApiUrls from '../../ApiUtils';
 
 import './Dashboard.css'
 
 export default function Dashboard() {
+
+    const [loadingDetails, setLoadingDetails] = useState(false);
+    const [statsData, setStatsData] = useState({});
+    const titles = {
+        users: 'Users',
+        groups: 'Groups',
+        machines:'Machines'
+
+    }
+
+    useEffect(() => {
+		setLoadingDetails(true);
+        ApiService.get(ApiUrls.stats)
+		.then(data => {
+            console.log('Stats data: ', data);
+            setStatsData(data);
+			setLoadingDetails(false);
+		}, error => {
+            console.error('Stats error: ', error);
+            setLoadingDetails(false);
+        })
+	}, [])
+
     return (
         <Card title="Overview" style={{ width: 400, border: '1px solid #d7d7dc' }}>
             <div className="overview-stat-container">
-                {/* <div className="overview-item">
-                    <div><a className="stat-header-link" href="">Users</a></div>
-                    <div className="stat-item">215</div>
-                </div> */}
-                
-                <Statistic loading={false} className="overview-item" 
-                    title={<a className="stat-header-link" href="">Users</a>} value='215' 
-                />
-
-                <Statistic className="overview-item" title={<a className="stat-header-link" href="">Groups</a>} 
-                    value='25' 
-                />
-                {/* <div>
-                    <div><a className="stat-header-link" href="">Groups</a></div>
-                    <div className="stat-item">38</div>
-                </div> */}
+                {Object.keys(statsData).map(type => {
+                    return <div key={type}> 
+                        <Statistic loading={loadingDetails} className="overview-item"
+                            title={<a className="stat-header-link" href="">{titles[type]}</a>} value={statsData[type].count}
+                        /> 
+                    </div>
+                })}
             </div>
-            <div className="overview-refresh-timestamp-item">
-                Updated at 9 Feb, 09:38
-            </div>
+            
         </Card>
     );
 } 
