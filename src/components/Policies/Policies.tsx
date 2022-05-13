@@ -122,13 +122,13 @@ export default function Policies() {
 			expires_in_x_days: 0,
 			is_special_char_req: false,
 			pin_history_period: 0,
-			min_length: 0,
+			min_length: 4,
 			is_upper_case_req: false,
 			is_lower_case_req: false,
 			is_non_consecutive_char_req: false,
-			max_length: 0,
+			max_length: 4,
 			is_pin_history_req: false,
-			is_num_req: false
+			is_num_req: true
 		}
 	}
 
