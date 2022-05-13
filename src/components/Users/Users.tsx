@@ -1,4 +1,4 @@
-import { Skeleton, Table, Button } from "antd";
+import { Skeleton, Table, Button, Select } from "antd";
 import { useEffect, useState } from "react";
 import ApiService from "../../Api.service"
 import ApiUrls from '../../ApiUtils';
@@ -13,6 +13,7 @@ export default function Users() {
 	const [page, setPage]: any = useState(1);
 	const [pageSize, setPageSize]: any = useState(10);
 	const [totalItems, setTotalItems]: any = useState(0);
+	const [statusList, setStatusList]: any = useState([]);
 
     const columns = [{
         title: 'Username',
@@ -22,21 +23,61 @@ export default function Users() {
 	{
         title: 'Status',
         dataIndex: 'status',
-        width: '30%'
+        width: '20%'
     },
 	{
 		title: 'Actions',
 		dataIndex: 'actions',
-		width: '40%',
+		width: '20%',
 		render: (text: any, record: { uid: any; }) => (
 			<Button onClick={() => getUserDetails(record.uid)}>
 			  View
 			</Button>
 		)
+	},
+	{
+		title: 'Change Status',
+		dataIndex: 'change_status',
+		width: '35%',
+		render: (text: any, record: { uid: any; }) => (
+			<Select onChange = {(value) => {
+				changeUserStatus(value, record.uid)
+			}}
+			placeholder= "Select status" 
+			style={{width:"100%"}}>
+				{statusList.map((eachStatus) => {
+					return <Select.Option key={eachStatus.key} value={eachStatus.key}>{eachStatus.value}</Select.Option>
+				})}
+			</Select>
+		)
 	}]
 
     useEffect(() => {
 		getUsersList(page, pageSize);
+		const statusTypes = [{
+			key: 'ACTIVE', 
+			value: 'Activate'
+		}, {
+			key: 'INACTIVE', 
+			value: 'Inactivate'
+		},
+		{
+			key: 'DEACTIVATED', 
+			value: 'Deactivate'
+		},
+		{
+			key: 'STAGED', 
+			value: 'Stage'
+		},
+		{
+			key: 'SUSPENDED', 
+			value: 'Suspend'
+		},
+		{
+			key: 'LOCKED_OUT', 
+			value: 'Lock'
+		}]
+		setStatusList(statusTypes);
 	}, [])
 
 	function getUserDetails(uid: string) {
@@ -69,6 +110,20 @@ export default function Users() {
 		return usersList;
 	}
 
+    const changeUserStatus = async (status, userId: string) => {
+		setLoadingDetails(true);
+		let statusObj = {
+			status: status
+		}
+		let result = await ApiService.post(ApiUrls.changeUserStatus(userId), statusObj).catch(error => {
+			console.error(`Error in updating status of ${userId}: ${JSON.stringify(error)}`)
+		}).finally(()=> {
+			setLoadingDetails(false);
+		});
+		console.log(`Status for ${userId} is updated successfully with ${status}.`);
+		getUpdatedUsersList();
+	}
+
     return (
 		<>
 			<div className='content-header'>
@@ -98,5 +153,6 @@ export default function Users() {
 				</>}
 			</Skeleton>
 		</>
+		
 	);
 }

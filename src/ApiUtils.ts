@@ -21,10 +21,12 @@ export function getCredentiTokenHeaders() {
 const Urls = {
     client_info: `client/info`,
     getProducts: `account/${accountId}/product`,
+    stats:`account/${accountId}/stats`,
 
     // Users Urls
     userGroups: (uid) => `account/${accountId}/users/${uid}/groups`,
     users: `account/${accountId}/users`,
+    changeUserStatus: (uid) =>  `account/${accountId}/users/${uid}/lifecycle`,
 
     // Groups Urls
     group: (uid) => `account/${accountId}/groups/${uid}`,

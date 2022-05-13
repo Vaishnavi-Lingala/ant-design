@@ -216,34 +216,31 @@ function Mechanism(props: any) {
                         : <></>
                         }
                     </div>
-                    {localStorage.getItem("productName") === 'TecTANGO' ? 
-                    <>
-                        <div style={{ paddingTop: '20px' }}>
-                            <h6>Tapout Action</h6>
-                        </div>
-                        <div style={{ paddingTop: '20px' }}>
-                            <Radio.Group name="Tapout Action" defaultValue={displayDetails?.on_tap_out}
-                                onChange={(e) => {
-                                    setEditData({
-                                        ...editData,
-                                        on_tap_out: e.target.value
-                                    })
-                                }} disabled={!isEdit}
-                            >
-                                {
-                                    Object.keys(tapOutOptions).map(factor => {
-                                        return <div key={factor}>
-                                            <Radio value={factor}>
-                                                {tapOutOptions[factor]}
-                                            </Radio>
-                                            <br />
-                                        </div>
-                                    })
-                                }
-                            </Radio.Group>
-                        </div>
-                        </> : <></>
-                    }
+                    
+                    <div style={{ paddingTop: '20px' }}>
+                        <h6>Tapout Action</h6>
+                    </div>
+                    <div style={{ paddingTop: '20px' }}>
+                        <Radio.Group name="Tapout Action" defaultValue={displayDetails?.on_tap_out}
+                            onChange={(e) => {
+                                setEditData({
+                                    ...editData,
+                                    on_tap_out: e.target.value
+                                })
+                            }} disabled={!isEdit}
+                        >
+                            {
+                                Object.keys(tapOutOptions).map(factor => {
+                                    return <div key={factor}>
+                                        <Radio value={factor}>
+                                            {tapOutOptions[factor]}
+                                        </Radio>
+                                        <br />
+                                    </div>
+                                })
+                            }
+                        </Radio.Group>
+                    </div>
                     {localStorage.getItem("productName") === 'TecTANGO' ? 
                     <>
                         <div style={{ paddingTop: '20px', paddingBottom: '40px' }}>
@@ -309,7 +306,7 @@ function Mechanism(props: any) {
 
                             <div className="card shadow mb-4" style={{ width: '90%' }}>
                                 <div className="card-header py-3" >
-                                    <h6 className="m-0 font-weight-bold text-gray-900 text-lg" style={{ float: 'left', padding: '2px 5px' }}>Challenge_2(Optional)</h6>
+                                    <h6 className="m-0 font-weight-bold text-gray-900 text-lg" style={{ float: 'left', padding: '2px 5px' }}>Challenge 2</h6>
                                 </div>
                                 <div className="card-body">
                                     <div>
@@ -351,7 +348,7 @@ function Mechanism(props: any) {
                     <Button style={{ float: 'right', marginLeft: '10px' }}
                         onClick={setCancelClick}>Cancel</Button>
                     <Button type='primary' style={{ float: 'right' }}
-                        onClick={createMechanism}>create</Button></div>
+                        onClick={createMechanism}>Create</Button></div>
             }
         </Skeleton>
     );
