@@ -128,7 +128,7 @@ export default function Policies() {
 			is_non_consecutive_char_req: false,
 			max_length: 4,
 			is_pin_history_req: false,
-			is_num_req: false
+			is_num_req: true
 		}
 	}
 
