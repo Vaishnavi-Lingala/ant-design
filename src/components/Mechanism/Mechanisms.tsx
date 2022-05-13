@@ -13,7 +13,7 @@ import Mechanism from './mechanism';
 
 export default function Mechanisms() {
 
-	const deActivateColumns = [
+	const inactiveColumns = [
 		{
 			title: 'Mechanism Name',
 			dataIndex: 'mechanism_name',
@@ -41,7 +41,7 @@ export default function Mechanisms() {
 		}
 	];
 
-	const activateColumns = [
+	const activeColumns = [
 		{
 			title: 'Sort',
 			dataIndex: 'sort',
@@ -87,7 +87,7 @@ export default function Mechanisms() {
 	const [mechanismDetails, setMechanismDetails] = useState(undefined);
 	const [loading, setLoading] = useState(false);
 	const [activeMechanisms, setActiveMechanisms]: any = useState([]);
-	const [inActiveMechanisms, setInActiveMechanisms]: any = useState([]);
+	const [inactiveMechanisms, setInactiveMechanisms]: any = useState([]);
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const history = useHistory();
 	const mechanism = {
@@ -156,7 +156,7 @@ export default function Mechanisms() {
 				}
 				setActiveMechanisms(activeArray);
 				console.log(activeArray);
-				setInActiveMechanisms(inActiveArray);
+				setInactiveMechanisms(inActiveArray);
 				setLoading(false);
 			})
 	}, [])
@@ -181,7 +181,7 @@ export default function Mechanisms() {
 		ApiService.post(ApiUrls.reOrderMechanisms, data)
 			.then(data => {
 				console.log(data)
-				// window.location.reload()
+				window.location.reload()
 			})
 	}
 
@@ -266,7 +266,7 @@ export default function Mechanisms() {
 						<Table
 							style={{ border: '1px solid #D7D7DC' }}
 							showHeader={true}
-							columns={activateColumns}
+							columns={activeColumns}
 							dataSource={activeMechanisms}
 							rowKey={"index"}
 							components={{
@@ -289,8 +289,8 @@ export default function Mechanisms() {
 						<Table
 							style={{ border: '1px solid #D7D7DC' }}
 							showHeader={true}
-							columns={deActivateColumns}
-							dataSource={inActiveMechanisms}
+							columns={inactiveColumns}
+							dataSource={inactiveMechanisms}
 							pagination={{ position: [] }}
 						/>
 					</>
