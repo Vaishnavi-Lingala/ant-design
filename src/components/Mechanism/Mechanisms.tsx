@@ -222,6 +222,7 @@ export default function Mechanisms() {
 		<SortableBody
 			useDragHandle
 			disableAutoscroll
+			helperClass="row-dragging"
 			onSortEnd={onSortEnd}
 			{...props}
 		/>
