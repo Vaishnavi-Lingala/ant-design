@@ -77,7 +77,14 @@ function AppHeader() {
                         if (e.key === factor) {
                             localStorage.setItem("productName", factor)
                             localStorage.setItem("productId", products[factor])
+                            console.log(window.location.pathname.split('/').length)
+                            // if (window.location.pathname.split('/').length >= 3) {
+                            //     history.goBack();
+                            // }
+                            history.push("/dashboard");
                             window.location.reload()
+                            // setInterval(() => {
+                            // }, 100)
                         }
                     })
                 }}
