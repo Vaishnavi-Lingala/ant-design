@@ -19,8 +19,8 @@ function AppSider() {
 				className="sider-menu"
 			>
 				<Menu.Item key="dashboard">Dashboard</Menu.Item>
-				<Menu.Item key="mechanism">Mechanisms</Menu.Item>
-				<Menu.Item key="policies" >Policies</Menu.Item>
+				<Menu.Item key="mechanism">Mechanism</Menu.Item>
+				<Menu.Item key="policies" >Policy</Menu.Item>
 				{/* <Menu.Item key="config">Configuration</Menu.Item> */}
 				<Menu.Item key="users">Users</Menu.Item>
 				<Menu.Item key="groups">Groups</Menu.Item>

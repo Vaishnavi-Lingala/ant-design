@@ -14,7 +14,7 @@ const PageNotFound = () => {
                 We are sorry but the page you are looking for does not exist.
             </p>
             
-            <Button type="primary" size="large" onClick={() => {history.push("/dashboard")}}>
+            <Button type="primary" size="large" onClick={() => {history.push("/policies")}}>
                 Go to Homepage
             </Button>
         </div>
