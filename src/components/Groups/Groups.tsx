@@ -6,12 +6,10 @@ import GroupDetails from "./GroupDetails";
 import AddGroup from "./AddGroup";
 import { Group } from "../../models/Data.models";
 import KioskGroupDetails from "./KioskGroupDetails";
-import { useHistory } from "react-router-dom";
 
 export default function Groups() {
 
     const [userGroups, setUserGroups] = useState<Group[]>([]);
-    const history = useHistory();
     const [kioskMachineGroups, setKioskMachineGroups] = useState<Group[]>([]);
     const [loadingDetails, setLoadingDetails] = useState(false);
     const [groupDetails, setGroupDetails] = useState(undefined);
@@ -53,9 +51,6 @@ export default function Groups() {
 	}
 
     useEffect(() => {
-        if(window.location.pathname.split('/').length === 2){
-            history.push("/groups/users")
-        }
 		getGroups();
 	}, [])
 
@@ -82,7 +77,6 @@ export default function Groups() {
     }
 
     function onGroupTypeChange(key) {
-        history.push('/groups/' + key);
         console.log('Group type: ', key);
     }
 
@@ -100,15 +94,14 @@ export default function Groups() {
 				Groups
 			</div>
             
-            <Tabs 
+            <Tabs defaultActiveKey='USER'
 				type="card" size={"middle"} animated={false}
 				tabBarStyle={{ marginBottom: '0px' }}
-                defaultActiveKey={window.location.pathname.split("/")[2]}
 				onChange={onGroupTypeChange}
 			// style={{border: '1px solid #d7d7dc', margin: 0}} 
 			>
 
-                <TabPane tab="User" key="user">
+                <TabPane tab="User" key="USER">
                     <Skeleton loading={loadingDetails}>
                         {groupDetails ? <GroupDetails groupDetails={groupDetails} clearGroupDetails={clearUserGroupDetails}/> : <>
                             <AddGroup onGroupCreate={getGroups} type='USER'/>
@@ -124,7 +117,7 @@ export default function Groups() {
                         }
                     </Skeleton>
                 </TabPane>
-                <TabPane tab="Kiosk Machine" key="kiosk">
+                <TabPane tab="Kiosk Machine" key="KIOSK">
                     <Skeleton loading={loadingDetails}>
                     {kioskGroupDetails ? <KioskGroupDetails groupDetails={kioskGroupDetails} clearGroupDetails={clearMachineGroupDetails}/> : <>
                         <AddGroup onGroupCreate={getGroups} type='KIOSK'/>
