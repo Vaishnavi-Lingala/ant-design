@@ -3,6 +3,7 @@ import Link from "antd/lib/typography/Link";
 import { useEffect, useState } from "react";
 import ApiService from "../../Api.service";
 import ApiUtils from "../../ApiUtils";
+import FilterInput from "./FilterInput";
 
 export default function FiltersModal({ onFilterApply, onResetClick }) {
     const initialFilterInput = { field: "", value: "" };
@@ -108,61 +109,22 @@ export default function FiltersModal({ onFilterApply, onResetClick }) {
                 </Button>
 
                 {filterInputs.map((filterInput, index) => (
-                    <Input.Group key={index}>
-                        <Row style={{ marginTop: "10px" }} gutter={10}>
-                            <Col span={9}>
-                                <Select
-                                    showSearch
-                                    style={{ width: "100%" }}
-                                    value={filterInput.field}
-                                    defaultActiveFirstOption={false}
-                                    showArrow={false}
-                                    filterOption={true}
-                                    onChange={(value) => {
-                                        onFilterOptionChange(value, index);
-                                    }}
-                                    notFoundContent={null}
-                                >
-                                    {filterableFields.map((d) => (
-                                        <Select.Option key={d} value={d}>
-                                            {d}
-                                        </Select.Option>
-                                    ))}
-                                </Select>
-                            </Col>
-                            <Col span={5}>
-                                <Select
-                                    style={{ width: "100%" }}
-                                    value="equals"
-                                ></Select>
-                            </Col>
-                            <Col span={8}>
-                                <Input
-                                    value={filterInput.value}
-                                    onChange={(event) => {
-                                        onFilterValueChange(
-                                            event.target.value,
-                                            index
-                                        );
-                                    }}
-                                />
-                            </Col>
-                            <Col span={2}>
-                                <Button
-                                    onClick={() => {
-                                        setFilterInputs((state) => {
-                                            const values = [...state];
-                                            if (values.length > 1)
-                                                values.splice(index, 1);
-                                            return values;
-                                        });
-                                    }}
-                                >
-                                    X
-                                </Button>
-                            </Col>
-                        </Row>
-                    </Input.Group>
+                    <FilterInput
+                        key={index}
+                        filterableFields={filterableFields}
+                        filterInput={filterInput}
+                        index={index}
+                        onFilterFieldChange={(value) => onFilterOptionChange(value, index)}
+                        onFilterValueChange={(value) => onFilterValueChange(value, index)}
+                        onCloseClick={() => {
+                            setFilterInputs((state) => {
+                                const values = [...state];
+                                if (values.length > 1)
+                                    values.splice(index, 1);
+                                return values;
+                            });
+                        }}
+                    />
                 ))}
 
                 <Button
