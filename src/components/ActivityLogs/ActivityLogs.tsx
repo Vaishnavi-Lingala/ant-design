@@ -30,18 +30,44 @@ const DisplayField = ({ name, value }) => {
     );
 };
 
-const ExpandedRows = ({ record }) => {
-    return (
+const ExpandedRows = ({ activity, user, machine, uid }) => {
+    const filteredActivity = Object.fromEntries(Object.entries(activity).filter(([key]) => !hiddenFields.includes(key)));;
+    const filteredMachine = Object.fromEntries(Object.entries(machine).filter(([key]) => !hiddenFields.includes(key)));;
+    const filteredUser = Object.fromEntries(Object.entries(user).filter(([key]) => !hiddenFields.includes(key)));;
+
+    return <>
+        <h5>Activity</h5>
         <div className="expanded-row-container">
-            {Object.keys(record).filter(key => !hiddenFields.includes(key)).map((recordKey) => (
+            {Object.keys(filteredActivity).map((recordKey) => (
                 <DisplayField
                     name={recordKey}
-                    value={record[recordKey]}
+                    value={filteredActivity[recordKey]}
                     key={recordKey}
                 />
             ))}
         </div>
-    );
+        <h5>Machine</h5>
+        <div className="expanded-row-container">
+
+            {Object.keys(filteredMachine).map((recordKey) => (
+                <DisplayField
+                    name={recordKey}
+                    value={filteredMachine[recordKey]}
+                    key={recordKey}
+                />
+            ))}
+        </div>
+        <h5>User</h5>
+        <div className="expanded-row-container">
+            {Object.keys(filteredUser).map((recordKey) => (
+                <DisplayField
+                    name={recordKey}
+                    value={filteredUser[recordKey]}
+                    key={recordKey}
+                />
+            ))}
+        </div>
+    </>;
 };
 
 export default function ActivityLogs() {
@@ -78,24 +104,24 @@ export default function ActivityLogs() {
     const columns = [
         {
             title: "Time",
-            dataIndex: "created_ts",
+            render: (text, record) => <>{moment.utc(record.activity?.created_ts).local().format(`${date_format} ${time_format}`)}</>
         },
         {
             title: "Actor",
-            dataIndex: "display_name",
-        },
-        {
-            title: "Machine name",
-            dataIndex: "machine_name",
+            render: (text, record) => <>{record.activity?.display_name}</>
         },
         {
             title: "Event Info",
             dataIndex: "event_display_message",
+            render: (text, record) => <>
+                <div>{record.activity?.event_display_message}</div>
+                <div>{record.activity?.event_outcome}</div>
+            </>
         },
         {
-            title: "Event Status",
-            dataIndex: "event_outcome",
-        },
+            title: "Machine",
+            render: (text, record) => <>{record.machine?.machine_name}</>
+        }
     ];
 
     useEffect(() => {
@@ -198,7 +224,7 @@ export default function ActivityLogs() {
                             disabledDate={(current) =>
                                 current > moment().endOf("day")
                             }
-                            onChange={(date, dateString) => 
+                            onChange={(date, dateString) =>
                                 onDateFilterChange(
                                     date,
                                     dateString,
@@ -274,16 +300,12 @@ export default function ActivityLogs() {
                         loading={tableLoading}
                         columns={columns}
                         expandable={{
-                            expandedRowRender: (record) => (
-                                <ExpandedRows record={record} />
-                            ),
+                            expandedRowRender: (record) => {
+                                return <ExpandedRows {...record} />
+                            },
                             rowExpandable: (record) => record !== null,
                         }}
-                        dataSource={logResponse.results?.map(result => {
-                            const values = { ...result };
-                            values.created_ts = moment.utc(result.created_ts).local().format(`${date_format} ${time_format}`);
-                            return values;
-                        })}
+                        dataSource={logResponse.results}
                         title={() => (
                             <>
                                 Events: <b> {logResponse.total_items} </b>{" "}
