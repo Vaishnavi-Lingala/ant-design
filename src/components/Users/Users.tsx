@@ -1,5 +1,5 @@
 import { Skeleton, Table, Button, Select } from "antd";
-import { useEffect, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 import ApiService from "../../Api.service"
 import ApiUrls from '../../ApiUtils';
 import { AddUser } from "./AddUser";
@@ -8,12 +8,13 @@ import { User } from "./User";
 export default function Users() {
 	
 	const [userDetails, setUserDetails] = useState(undefined);
-	const [loadingDetails, setLoadingDetails] = useState(false);
+	const [loadingDetails, setLoadingDetails] = useState(true);
     const [arr, setArr]: any = useState([]);
 	const [page, setPage]: any = useState(1);
 	const [pageSize, setPageSize]: any = useState(10);
 	const [totalItems, setTotalItems]: any = useState(0);
 	const [statusList, setStatusList]: any = useState([]);
+	const [lifeCycleTypes, setLifeCycleTypes] :any = useState(undefined);
 
     const columns = [{
         title: 'Username',
@@ -53,7 +54,7 @@ export default function Users() {
 	}]
 
     useEffect(() => {
-		getUsersList(page, pageSize);
+		console.log(`useEffect called:`);
 		const statusTypes = [{
 			key: 'ACTIVE', 
 			value: 'Activate'
@@ -78,13 +79,29 @@ export default function Users() {
 			value: 'Lock'
 		}]
 		setStatusList(statusTypes);
+		getLifeCycleOptions();
 	}, [])
+
+	useEffect(()=> {
+		if (lifeCycleTypes) {
+			getUsersList(page, pageSize);
+		}
+	}, [lifeCycleTypes])
 
 	function getUserDetails(uid: string) {
 		setLoadingDetails(true);
 		const selectedUser = arr.find(user => user.uid === uid);
 		if(selectedUser) setUserDetails(selectedUser);
 		setLoadingDetails(false);
+	}
+
+	const getLifeCycleOptions = async () => {
+		if (lifeCycleTypes === undefined) {
+			let userStatusTypes = await ApiService.get(ApiUrls.lifeCycleOptions).catch(error => {
+				console.error(`Error in getting life cycle types: ${JSON.stringify(error)}`);
+			});
+			setLifeCycleTypes(userStatusTypes);
+		}
 	}
 
 	const getUsersList = async (page, pageSize) => {
@@ -94,8 +111,8 @@ export default function Users() {
 		}).finally(() => {
 			setLoadingDetails(false);
 		});
-		const usersWithKey = appendKeyToUsersList(data.results);
-		setArr(usersWithKey);
+		const updatedUsers = updateUsersListWithStatusAndKey(data.results);
+		setArr(updatedUsers);
 		setTotalItems(data.total_items);
 	}
 
@@ -103,9 +120,10 @@ export default function Users() {
 		getUsersList(page, pageSize);
 	}
 
-	const appendKeyToUsersList = (usersList) => {
+	const updateUsersListWithStatusAndKey = (usersList) => {
 		usersList.forEach(eachUser => {
 			eachUser['key'] = eachUser.uid;
+			eachUser.status = lifeCycleTypes[eachUser.status];
 		})
 		return usersList;
 	}
