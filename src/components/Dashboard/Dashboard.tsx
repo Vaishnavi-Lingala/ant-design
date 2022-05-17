@@ -40,7 +40,7 @@ export default function Dashboard() {
 
             <Skeleton loading={loadingDetails}>
                 {Object.keys(statsData).map(type => {
-                    return <>
+                    return <div key={statsData[type].count}>
                         <Card key={type} style={{ border: '1px solid #d7d7dc', width: '550px' }}>
                             <Statistic key={titles[type]}
                                 title={<h5>{titles[type]}</h5>} value={statsData[type].count}
@@ -59,7 +59,7 @@ export default function Dashboard() {
                             </div>
                         </Card>
                         <br />
-                    </>
+                    </div>
                 })}
             </Skeleton>
         </>
