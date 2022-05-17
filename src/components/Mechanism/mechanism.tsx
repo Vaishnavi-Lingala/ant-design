@@ -8,7 +8,7 @@ import { MechanismType } from "../../models/Data.models";
 import ApiUrls from '../../ApiUtils';
 
 function Mechanism(props: any) {
-    const [displayDetails, setDisplayDetails] = useState(props.mechanismDetails);
+    const [displayDetails, setDisplayDetails] = useState<MechanismType>(props.mechanismDetails);
     const [loading, setLoading] = useState(true);
     const [isEdit, setIsEdit] = useState(false);
     const [editData, setEditData]: any = useState(props.mechanismDetails);
@@ -25,36 +25,39 @@ function Mechanism(props: any) {
     const [value, setValue] = useState("");
 
     useEffect(() => {
-        ApiService.get(ApiUrls.groups)
-            .then(data => {
-                console.log('GROUPS: ', data);
-                for (var i = 0; i < data.length; i++) {
-                    groups.push({
-                        label: data[i].name,
-                        value: data[i].uid
-                    })
-                }
-                var object = {};
-                for (var i = 0; i < data.length; i++) {
-                    object[data[i].name] = data[i].uid
-                }
-                groupsChange.push(object);
-                console.log(groups);
-                setLoading(false);
-            })
+        Promise.all(([
+            //     ApiService.get(ApiUrls.mechanism(window.location.pathname.split('/')[2])),
+            ApiService.get(ApiUrls.groups, { type: "USER" }),
+            ApiService.get(ApiUrls.mechanismOptions),
+            ApiService.get(ApiUrls.mechanismChallengeFactors)
+        ])).then(data => {
 
-        ApiService.get(ApiUrls.mechanismOptions)
-            .then(data => {
-                console.log(data);
-                setTapOutOption(data.tap_out_options);
-                setReaderOptions(data.readers);
-            })
+            // console.log(allData[0].data);
+            // setDisplayDetails(allData[0].data);
+            // setEditData(allData[0].data);
+            // disabledFactors.push(allData[0].data.challenge_factors[1].factor);
+            // disabledFactors1.push(allData[0].challenge_factors[0].factor);
+            for (var i = 0; i < data[0].length; i++) {
+                groups.push({
+                    label: data[0][i].name,
+                    value: data[0][i].uid
+                })
+            }
+            var object = {};
+            for (var i = 0; i < data[0].length; i++) {
+                object[data[0][i].name] = data[0][i].uid
+            }
+            groupsChange.push(object);
+            console.log(groups);
 
-        ApiService.get(ApiUrls.mechanismChallengeFactors)
-            .then(data => {
-                console.log(data);
-                setFactorOptions(data);
-            })
+            console.log(data[1]);
+            setTapOutOption(data[1].tap_out_options);
+            setReaderOptions(data[1].readers);
+
+            console.log(data[2]);
+            setFactorOptions(data[2]);
+            setLoading(false);
+        })
 
         if (displayDetails.uid === undefined) {
             setIsEdit(true);
@@ -204,19 +207,19 @@ function Mechanism(props: any) {
                         <h6>Primary Challenge</h6>
                     </div>
                     <div>
-                        {localStorage.getItem("productName") === 'TecTANGO' ? 
+                        {localStorage.getItem("productName") === 'TecTANGO' ?
                             <Radio.Group name="Primary challenge" defaultValue={"PROXIMITY_CARD"}>
                                 <Radio value={"PROXIMITY_CARD"} disabled>Proximity Card</Radio>
                             </Radio.Group>
-                        :
-                        localStorage.getItem("productName") === 'TecBIO' ?
-                            <Radio.Group name="Primary challenge" defaultValue={"BIO_METRICS"}>
-                                <Radio value={"BIO_METRICS"} disabled>Biometrics</Radio>: <></>
-                            </Radio.Group>
-                        : <></>
+                            :
+                            localStorage.getItem("productName") === 'TecBIO' ?
+                                <Radio.Group name="Primary challenge" defaultValue={"BIO_METRICS"}>
+                                    <Radio value={"BIO_METRICS"} disabled>Biometrics</Radio>: <></>
+                                </Radio.Group>
+                                : <></>
                         }
                     </div>
-                    
+
                     <div style={{ paddingTop: '20px' }}>
                         <h6>Tapout Action</h6>
                     </div>
@@ -241,32 +244,32 @@ function Mechanism(props: any) {
                             }
                         </Radio.Group>
                     </div>
-                    {localStorage.getItem("productName") === 'TecTANGO' ? 
-                    <>
-                        <div style={{ paddingTop: '20px', paddingBottom: '40px' }}>
-                            <h6>Reader Type</h6>
-                        </div>
-                        <div style={{ paddingTop: '20px' }}>
-                            <Radio.Group name="Reader" defaultValue={displayDetails?.reader_type}
-                                onChange={(e) =>
-                                    setEditData((editData: any) => ({
-                                        ...editData,
-                                        reader_type: e.target.value
-                                    }))} disabled={!isEdit}
-                            >
-                                {
-                                    Object.keys(readerOptions).map(factor => {
-                                        return <div key={factor}>
-                                            <Radio value={factor}>
-                                                {readerOptions[factor]}
-                                            </Radio>
-                                            <br />
-                                        </div>
-                                    })
-                                }
-                            </Radio.Group>
-                        </div>
-                    </> : <></>
+                    {localStorage.getItem("productName") === 'TecTANGO' ?
+                        <>
+                            <div style={{ paddingTop: '20px', paddingBottom: '40px' }}>
+                                <h6>Reader Type</h6>
+                            </div>
+                            <div style={{ paddingTop: '20px' }}>
+                                <Radio.Group name="Reader" defaultValue={displayDetails?.reader_type}
+                                    onChange={(e) =>
+                                        setEditData((editData: any) => ({
+                                            ...editData,
+                                            reader_type: e.target.value
+                                        }))} disabled={!isEdit}
+                                >
+                                    {
+                                        Object.keys(readerOptions).map(factor => {
+                                            return <div key={factor}>
+                                                <Radio value={factor}>
+                                                    {readerOptions[factor]}
+                                                </Radio>
+                                                <br />
+                                            </div>
+                                        })
+                                    }
+                                </Radio.Group>
+                            </div>
+                        </> : <></>
                     }
 
                     {displayDetails.challenge_factors.length === 2 ?
@@ -278,7 +281,7 @@ function Mechanism(props: any) {
                                 <div className="card-body">
                                     <Radio.Group value={disabledFactors !== disabledFactors1 ? displayDetails?.challenge_factors[0].factor : ""}
                                         disabled={!isEdit}
-                                        onChange={(e) => {  
+                                        onChange={(e) => {
                                             editData.challenge_factors[0].factor = e.target.value
                                             showDisabled(e, disabledFactors1)
                                             if (editData.challenge_factors[0].factor === "NONE") {

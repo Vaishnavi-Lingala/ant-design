@@ -60,6 +60,7 @@ function Login() {
                     console.log(data);
                 }
             }).catch((error) => {
+                setErrorMessage(error.message + ". Please contact Admin");
                 console.log(error);
             })
     }

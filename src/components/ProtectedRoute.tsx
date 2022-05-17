@@ -22,15 +22,17 @@ export default function ProtectedRoute({
         history.push("/");
     }
 
-    if (oktaStorage !== null && oktaStorage != "") {
-        if (oktaStorage !== "{}") {
+    if (oktaStorage !== null && oktaStorage !== "") {
+        if (oktaStorage !== "{}") {            
             const idToken = JSON.parse(oktaStorage).idToken;
             localStorage.setItem("clientId", idToken.clientId);
             localStorage.setItem("issuer", idToken.issuer);
-        } else {
+        } 
+        else {
             removeItems();
         }
-    } else {
+    } 
+    else {
         removeItems();
     }
 

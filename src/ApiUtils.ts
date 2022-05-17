@@ -23,10 +23,14 @@ const Urls = {
     getProducts: `account/${accountId}/product`,
     stats:`account/${accountId}/stats`,
 
+    //Machine Urls
+    machines: `account/${accountId}/machines`,
+
     // Users Urls
     userGroups: (uid) => `account/${accountId}/users/${uid}/groups`,
     users: `account/${accountId}/users`,
     changeUserStatus: (uid) =>  `account/${accountId}/users/${uid}/lifecycle`,
+    lifeCycleOptions: `account/${accountId}/users/lifecycle/options`,
 
     // Groups Urls
     group: (uid) => `account/${accountId}/groups/${uid}`,
