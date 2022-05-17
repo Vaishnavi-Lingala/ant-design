@@ -4,6 +4,7 @@ import ApiService from "../../Api.service";
 import ApiUrls from '../../ApiUtils';
 import Moment from 'moment';
 import MachinesSelection from "./MachinesSelection";
+import { useHistory } from "react-router-dom";
 
 export default function KioskGroupDetails(props: any) {
     const [groupDetails, setGroupDetails] = useState(props.groupDetails);
@@ -13,7 +14,7 @@ export default function KioskGroupDetails(props: any) {
     const [page, setPage]: any = useState(1);
 	const [pageSize, setPageSize]: any = useState(10);
 	const [totalItems, setTotalItems]: any = useState(0);
-
+    const history = useHistory();
     const columns = [
 		{
 			title: 'Machine name',
@@ -98,7 +99,12 @@ export default function KioskGroupDetails(props: any) {
                     <div className='content-header'>
                             {groupDetails.name}
                     </div>
-                    <Button style={{ marginLeft: 'auto'}} onClick={() => props.clearGroupDetails()}>Back</Button>
+                    <Button style={{ marginLeft: 'auto'}} onClick={() => {
+                        props.clearGroupDetails() 
+                        history.goBack()}}
+                    >
+                        Back
+                    </Button>
                 </div>
                 <div>
                     <h6>Created: {Moment(groupDetails.created_ts).format('MM/DD/YYYY')}</h6>

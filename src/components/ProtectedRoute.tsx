@@ -18,19 +18,23 @@ export default function ProtectedRoute({
         localStorage.removeItem("accountId");
         localStorage.removeItem("policyUid");
         localStorage.removeItem("mechanismUid");
+        localStorage.removeItem("productId");
+        localStorage.removeItem("productName");
         localStorage.removeItem("accountId");
         history.push("/");
     }
 
-    if (oktaStorage !== null && oktaStorage != "") {
-        if (oktaStorage !== "{}") {
+    if (oktaStorage !== null && oktaStorage !== "") {
+        if (oktaStorage !== "{}") {            
             const idToken = JSON.parse(oktaStorage).idToken;
             localStorage.setItem("clientId", idToken.clientId);
             localStorage.setItem("issuer", idToken.issuer);
-        } else {
+        } 
+        else {
             removeItems();
         }
-    } else {
+    } 
+    else {
         removeItems();
     }
 

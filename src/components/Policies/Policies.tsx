@@ -177,6 +177,7 @@ export default function Policies() {
 		<SortableBody
 			useDragHandle
 			disableAutoscroll
+			helperClass="row-dragging"
 			onSortEnd={handlePinSortEnd}
 			{...props}
 		/>
@@ -205,6 +206,7 @@ export default function Policies() {
 		<SortableBody
 			useDragHandle
 			disableAutoscroll
+			helperClass="row-dragging"
 			onSortEnd={handlePasswordSortEnd}
 			{...props}
 		/>
@@ -233,6 +235,7 @@ export default function Policies() {
 		<SortableBody
 			useDragHandle
 			disableAutoscroll
+			helperClass="row-dragging"
 			onSortEnd={handleKioskSortEnd}
 			{...props}
 		/>
@@ -420,7 +423,7 @@ export default function Policies() {
 	return (
 		<>
 			<div className='content-header'>
-				Authentication
+				Policy
 				{pinDetails ? <Button style={{ marginLeft: 'auto', alignSelf: 'end' }} onClick={() => {
 					setPinDetails(undefined)
 					history.push('/policies/pin')

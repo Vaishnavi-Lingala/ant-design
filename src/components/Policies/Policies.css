@@ -16,6 +16,19 @@
     grid-row-gap: 15px;
 }
 
+.row-dragging {
+    background: #fafafa;
+    border: 1px solid #ccc;
+  }
+  
+  .row-dragging td {
+    padding: 18px 50px 0 15px ;
+  }
+  
+  .row-dragging .drag-visible {
+    visibility: visible;
+  }
+
 .ant-checkbox-disabled + span {
     color: rgba(0, 0, 0, 0.85) !important;
 }
