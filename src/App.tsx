@@ -18,6 +18,7 @@ import Mechanisms from "./components/Mechanism/Mechanisms";
 import Groups from "./components/Groups/Groups";
 import Users from "./components/Users/Users";
 import Layout from "./components/Layout/Layout";
+import Machines from "./components/Machines/Machines";
 
 const oktaAuth = new OktaAuth(config.oidc);
 
@@ -49,6 +50,7 @@ function App() {
                     <ProtectedRoute path={`/settings`} component={Settings} />
                     <ProtectedRoute path={`/groups`} component={Groups} />
                     <ProtectedRoute path={`/users`} component={Users} />
+                    <ProtectedRoute path={`/machines`} component={Machines} />
                 </Layout>
                 <Route component={PageNotFound} />
             </Switch>
