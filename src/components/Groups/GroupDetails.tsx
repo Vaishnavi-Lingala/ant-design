@@ -4,6 +4,7 @@ import ApiUrls from '../../ApiUtils';
 import { Divider, Table, Skeleton, Button, Modal, Col, Row, Typography } from "antd";
 import UsersSelection from "./UsersSelection";
 import Moment from 'moment';
+import { useHistory } from "react-router-dom";
 
 export default function GroupDetails(props: any) {
 
@@ -17,7 +18,7 @@ export default function GroupDetails(props: any) {
     const [page, setPage]: any = useState(1);
 	const [pageSize, setPageSize]: any = useState(10);
 	const [totalItems, setTotalItems]: any = useState(0);
-
+    const history = useHistory();
     const { Title } = Typography;
 
     const columns = [
@@ -97,7 +98,12 @@ export default function GroupDetails(props: any) {
                     <div className='content-header'>
                             {groupDetails.name}
                     </div>
-                    <Button style={{ marginLeft: 'auto'}} onClick={() => props.clearGroupDetails()}>Back</Button>
+                    <Button style={{ marginLeft: 'auto'}} onClick={() => {
+                        props.clearGroupDetails()
+                        history.goBack()}}
+                    >
+                            Back
+                    </Button>
 
                 </div>
                 <div>

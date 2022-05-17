@@ -19,7 +19,7 @@ export const PasswordPolicy = (props: any) => {
     const [groupsChange, setGroupsChange]: any = useState([]);
 
     useEffect(() => {
-        ApiService.get(ApiUrls.groups, {type:"USER"})
+        ApiService.get(ApiUrls.groups, { type: "USER" })
             .then(data => {
                 console.log('GROUPS: ', data);
                 for (var i = 0; i < data.length; i++) {
@@ -205,7 +205,17 @@ export const PasswordPolicy = (props: any) => {
                     </Radio.Group>
                 </div>
             </div>
+            <br />
+            <div style={{ display: 'grid', gridTemplateColumns: '6% 85%' }}>
+                <div>
+                    <h6>Help:</h6>
+                </div>
+                <div>
+                    Grace Period is the amount of time the user can tap in and out until they are required to re-enter their password after tapping badge.
+                </div>
+            </div>
         </div>
+
         {passwordDisplayData.uid !== undefined ?
             (isEdit ? <div style={{ paddingTop: '10px', paddingRight: '45px' }}>
                 <Button style={{ float: 'right', marginLeft: '10px' }}
