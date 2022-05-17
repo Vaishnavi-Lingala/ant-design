@@ -72,11 +72,11 @@ function AppHeader() {
 
             <Menu className="border-bottom-0" theme="light" mode="horizontal"
                 selectedKeys={[String(localStorage.getItem("productName"))]} onClick={(e) => {
-                    Object.keys(products).map(factor => {
+                    Object.keys(products).map(product => {
                         console.log(e.key)
-                        if (e.key === factor) {
-                            localStorage.setItem("productName", factor)
-                            localStorage.setItem("productId", products[factor])
+                        if (e.key === product) {
+                            localStorage.setItem("productName", product)
+                            localStorage.setItem("productId", products[product])
                             console.log(window.location.pathname.split('/').length)
                             // if (window.location.pathname.split('/').length >= 3) {
                             //     history.goBack();
@@ -90,9 +90,9 @@ function AppHeader() {
                 }}
             >
                 {
-                    Object.keys(products).map(factor => {
-                        return <Menu.Item key={factor}>
-                            {factor.slice(0, 1).toUpperCase() + factor.slice(1, 3).toLowerCase() + factor.slice(3, 4).toUpperCase() + factor.slice(4).toLowerCase()}
+                    Object.keys(products).map(product => {
+                        return <Menu.Item key={product}>
+                            {product.slice(0, 1).toUpperCase() + product.slice(1, 3).toLowerCase() + product.slice(3, 4).toUpperCase() + product.slice(4).toLowerCase()}
                         </Menu.Item>
                     })
                 }
