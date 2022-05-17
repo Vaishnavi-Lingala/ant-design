@@ -41,10 +41,12 @@ export default function Groups() {
             .then(data => {
                 console.log('GROUP_DETAILS: ', data);
                 if (data.type === 'USER') {
+                    history.push('/groups/users/' + uid);
                     setGroupDetails(data);
                     setLoadingDetails(false);
                 }
                 if (data.type === 'KIOSK') {
+                    history.push('/groups/kiosk/' + uid);
                     setKioskGroupDetails(data);
                     setLoadingDetails(false);
                 }
@@ -53,6 +55,10 @@ export default function Groups() {
 	}
 
     useEffect(() => {
+        if (window.location.pathname.split("/").length === 4) {
+			getGroup(window.location.pathname.split('/')[3]);
+		}
+
         if(window.location.pathname.split('/').length === 2){
             history.push("/groups/users")
         }
