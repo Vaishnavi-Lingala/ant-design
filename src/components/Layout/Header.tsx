@@ -83,8 +83,6 @@ function AppHeader() {
                             // }
                             history.push("/dashboard");
                             window.location.reload()
-                            // setInterval(() => {
-                            // }, 100)
                         }
                     })
                 }}

@@ -44,9 +44,15 @@ function App() {
 
                 <Layout>
                     <ProtectedRoute path={`/policies`} component={Policies} />
-                    <ProtectedRoute path={`/activitylogs`} component={ActivityLogs}/>
+                    <ProtectedRoute
+                        path={`/activitylogs`}
+                        component={ActivityLogs}
+                    />
                     <ProtectedRoute path={`/dashboard`} component={Dashboard} />
-                    <ProtectedRoute path={`/mechanism`} component={Mechanisms} />
+                    <ProtectedRoute
+                        path={`/mechanism`}
+                        component={Mechanisms}
+                    />
                     <ProtectedRoute path={`/settings`} component={Settings} />
                     <ProtectedRoute path={`/groups`} component={Groups} />
                     <ProtectedRoute path={`/users`} component={Users} />

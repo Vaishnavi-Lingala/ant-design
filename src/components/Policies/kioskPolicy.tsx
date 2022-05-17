@@ -13,7 +13,6 @@ export const KioskPolicy = (props: any) => {
 
     const [isEdit, setIsEdit] = useState(false);
     const [loading, setLoading] = useState(true);
-    const [loadingDetails, setLoadingDetails] = useState(true);
     const [kioskDisplayData, setKioskDisplayData] = useState<kioskPolicyType>(props.kioskDetails);
     const [kioskEditData, setKioskEditedData] = useState(props.kioskDetails);
     const [groups, setGroups]: any = useState([]);
@@ -38,16 +37,15 @@ export const KioskPolicy = (props: any) => {
                         value: data[i].uid
                     })
                 }
-                setGroups(groups);
                 var object = {};
                 for (var i = 0; i < data.length; i++) {
                     object[data[i].name] = data[i].uid
                 }
+                setGroups(groups);
                 groupsChange.push(object);
                 console.log(groups);
-                setLoadingDetails(false);
             })        
-            
+
             ApiService.get(ApiUrls.groups, {type: "KIOSK"})
             .then(data => {
                 for (var i = 0; i < data.length; i++) {
@@ -56,7 +54,6 @@ export const KioskPolicy = (props: any) => {
                         value: data[i].uid
                     })
                 }
-                setKioskGroups(kioskGroups);
                 var object = {};
                 for (var i = 0; i < data.length; i++) {
                     object[data[i].name] = data[i].uid
@@ -153,7 +150,7 @@ export const KioskPolicy = (props: any) => {
     }
 
     return (
-        <Skeleton loading={loading || loadingDetails}>
+        <Skeleton loading={loading}>
             <div className="content-container-policy">
                 <div className="row-container">
                     <div>

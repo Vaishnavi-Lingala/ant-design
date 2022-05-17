@@ -8,18 +8,16 @@ import "./ActivityLogs.css";
 import ApiService from "../../Api.service";
 import ApiUrls from "../../ApiUtils";
 import FiltersModal from "./FiltersModal";
-import {
-    date_format,
-    time_format,
-    ts_format,
-    start_date,
-    start_time,
-    end_date,
-    end_time,
-    hiddenFields
-} from '../../constants';
 
-const DisplayField = ({ name, value }) => {
+// constants
+const date_format = "YYYY-MM-DD";
+const time_format = "HH:mm:ss";
+const start_date = "start_date";
+const start_time = "start_time";
+const end_date = "end_date";
+const end_time = "end_time";
+
+const ExpandedRowItem = ({ name, value }) => {
     return (
         <>
             <div>
@@ -30,11 +28,11 @@ const DisplayField = ({ name, value }) => {
     );
 };
 
-const ExpandedRows = ({ record }) => {
+const ExpandedRowContainer = ({ record }) => {
     return (
         <div className="expanded-row-container">
-            {Object.keys(record).filter(key => !hiddenFields.includes(key)).map((recordKey) => (
-                <DisplayField
+            {Object.keys(record).map((recordKey) => (
+                <ExpandedRowItem
                     name={recordKey}
                     value={record[recordKey]}
                     key={recordKey}
@@ -164,21 +162,14 @@ export default function ActivityLogs() {
         }
     }
 
-    // convert Local date time to utc date time
-    function convertLocaltoUtc(local_ts, format) {
-        return moment.utc(moment(local_ts)).format(format);
-    }
-
     function generateFilterPayload() {
         const payload = Object.assign(
             {
-                start_time: convertLocaltoUtc(`${datetimeFilters.start.date} ${datetimeFilters.start.time}`, ts_format),
-                end_time: convertLocaltoUtc(`${datetimeFilters.end.date} ${datetimeFilters.end.time}`, ts_format),
+                start_time: `${datetimeFilters.start.date} ${datetimeFilters.start.time}`,
+                end_time: `${datetimeFilters.end.date} ${datetimeFilters.end.time}`,
             },
             advancedFilters
         );
-
-        console.log("Activitylog Payload: ", payload);
         return payload;
     }
 
@@ -275,7 +266,7 @@ export default function ActivityLogs() {
                         columns={columns}
                         expandable={{
                             expandedRowRender: (record) => (
-                                <ExpandedRows record={record} />
+                                <ExpandedRowContainer record={record} />
                             ),
                             rowExpandable: (record) => record !== null,
                         }}
