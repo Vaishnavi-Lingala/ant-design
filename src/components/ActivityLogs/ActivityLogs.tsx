@@ -8,16 +8,18 @@ import "./ActivityLogs.css";
 import ApiService from "../../Api.service";
 import ApiUrls from "../../ApiUtils";
 import FiltersModal from "./FiltersModal";
+import {
+    date_format,
+    time_format,
+    ts_format,
+    start_date,
+    start_time,
+    end_date,
+    end_time,
+    hiddenFields
+} from '../../constants';
 
-// constants
-const date_format = "YYYY-MM-DD";
-const time_format = "HH:mm:ss";
-const start_date = "start_date";
-const start_time = "start_time";
-const end_date = "end_date";
-const end_time = "end_time";
-
-const ExpandedRowItem = ({ name, value }) => {
+const DisplayField = ({ name, value }) => {
     return (
         <>
             <div>
@@ -28,18 +30,44 @@ const ExpandedRowItem = ({ name, value }) => {
     );
 };
 
-const ExpandedRowContainer = ({ record }) => {
-    return (
+const ExpandedRows = ({ activity, user, machine, uid }) => {
+    const filteredActivity = Object.fromEntries(Object.entries(activity).filter(([key]) => !hiddenFields.includes(key)));;
+    const filteredMachine = Object.fromEntries(Object.entries(machine).filter(([key]) => !hiddenFields.includes(key)));;
+    const filteredUser = Object.fromEntries(Object.entries(user).filter(([key]) => !hiddenFields.includes(key)));;
+
+    return <>
+        <h5>Activity</h5>
         <div className="expanded-row-container">
-            {Object.keys(record).map((recordKey) => (
-                <ExpandedRowItem
+            {Object.keys(filteredActivity).map((recordKey) => (
+                <DisplayField
                     name={recordKey}
-                    value={record[recordKey]}
+                    value={filteredActivity[recordKey]}
                     key={recordKey}
                 />
             ))}
         </div>
-    );
+        <h5>Machine</h5>
+        <div className="expanded-row-container">
+
+            {Object.keys(filteredMachine).map((recordKey) => (
+                <DisplayField
+                    name={recordKey}
+                    value={filteredMachine[recordKey]}
+                    key={recordKey}
+                />
+            ))}
+        </div>
+        <h5>User</h5>
+        <div className="expanded-row-container">
+            {Object.keys(filteredUser).map((recordKey) => (
+                <DisplayField
+                    name={recordKey}
+                    value={filteredUser[recordKey]}
+                    key={recordKey}
+                />
+            ))}
+        </div>
+    </>;
 };
 
 export default function ActivityLogs() {
@@ -76,24 +104,24 @@ export default function ActivityLogs() {
     const columns = [
         {
             title: "Time",
-            dataIndex: "created_ts",
+            render: (text, record) => <>{moment.utc(record.activity?.created_ts).local().format(`${date_format} ${time_format}`)}</>
         },
         {
             title: "Actor",
-            dataIndex: "display_name",
-        },
-        {
-            title: "Machine name",
-            dataIndex: "machine_name",
+            render: (text, record) => <>{record.activity?.display_name}</>
         },
         {
             title: "Event Info",
             dataIndex: "event_display_message",
+            render: (text, record) => <>
+                <div>{record.activity?.event_display_message}</div>
+                <div>{record.activity?.event_outcome}</div>
+            </>
         },
         {
-            title: "Event Status",
-            dataIndex: "event_outcome",
-        },
+            title: "Machine",
+            render: (text, record) => <>{record.machine?.machine_name}</>
+        }
     ];
 
     useEffect(() => {
@@ -162,14 +190,21 @@ export default function ActivityLogs() {
         }
     }
 
+    // convert Local date time to utc date time
+    function convertLocaltoUtc(local_ts, format) {
+        return moment.utc(moment(local_ts)).format(format);
+    }
+
     function generateFilterPayload() {
         const payload = Object.assign(
             {
-                start_time: `${datetimeFilters.start.date} ${datetimeFilters.start.time}`,
-                end_time: `${datetimeFilters.end.date} ${datetimeFilters.end.time}`,
+                start_time: convertLocaltoUtc(`${datetimeFilters.start.date} ${datetimeFilters.start.time}`, ts_format),
+                end_time: convertLocaltoUtc(`${datetimeFilters.end.date} ${datetimeFilters.end.time}`, ts_format),
             },
             advancedFilters
         );
+
+        console.log("Activitylog Payload: ", payload);
         return payload;
     }
 
@@ -189,7 +224,7 @@ export default function ActivityLogs() {
                             disabledDate={(current) =>
                                 current > moment().endOf("day")
                             }
-                            onChange={(date, dateString) => 
+                            onChange={(date, dateString) =>
                                 onDateFilterChange(
                                     date,
                                     dateString,
@@ -265,16 +300,12 @@ export default function ActivityLogs() {
                         loading={tableLoading}
                         columns={columns}
                         expandable={{
-                            expandedRowRender: (record) => (
-                                <ExpandedRowContainer record={record} />
-                            ),
+                            expandedRowRender: (record) => {
+                                return <ExpandedRows {...record} />
+                            },
                             rowExpandable: (record) => record !== null,
                         }}
-                        dataSource={logResponse.results?.map(result => {
-                            const values = { ...result };
-                            values.created_ts = moment.utc(result.created_ts).local().format(`${date_format} ${time_format}`);
-                            return values;
-                        })}
+                        dataSource={logResponse.results}
                         title={() => (
                             <>
                                 Events: <b> {logResponse.total_items} </b>{" "}
