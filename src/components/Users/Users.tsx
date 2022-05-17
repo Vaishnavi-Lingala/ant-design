@@ -1,5 +1,5 @@
 import { Skeleton, Table, Button, Select } from "antd";
-import { useEffect, useReducer, useState } from "react";
+import { useEffect, useState } from "react";
 import ApiService from "../../Api.service"
 import ApiUrls from '../../ApiUtils';
 import { AddUser } from "./AddUser";
