@@ -13,7 +13,6 @@ export default function Dashboard() {
         users: 'Users',
         groups: 'Groups',
         machines: 'Machines'
-
     }
 
     useEffect(() => {
@@ -36,21 +35,22 @@ export default function Dashboard() {
         <>
             <div>
                 <h2>Dashboard</h2>
-                <br />  
+                <br />
             </div>
 
             <Skeleton loading={loadingDetails}>
                 {Object.keys(statsData).map(type => {
                     return <>
-                        <Card title={<><a className="stat-header-link" href={type === "machines" ? "" : "/" + type}>{titles[type]}</a> &nbsp;&nbsp;&nbsp; {statsData[type].count}</>}
-                            style={{ border: '1px solid #d7d7dc' }}
-                        >
+                        <Card key={type} style={{ border: '1px solid #d7d7dc', width: '550px' }}>
+                            <Statistic key={titles[type]}
+                                title={<h5>{titles[type]}</h5>} value={statsData[type].count}
+                            />
+                            <br />
                             <div className="overview-stat-container">
                                 {Object.keys(statsData[type].stats).map(key => {
-                                    return <div>
-                                        <Statistic className="overview-item"
-                                            title={<>{key}</>} value={statsData[type].stats[key]}
-                                        />
+                                    return <div key={key}>
+                                        <div>{key.slice(0, 1) + key.slice(1).toLowerCase()}&nbsp;&nbsp;&nbsp;</div>
+                                        <div>{statsData[type].stats[key]}</div>
                                     </div>
                                 })}
                             </div>
@@ -63,5 +63,5 @@ export default function Dashboard() {
                 })}
             </Skeleton>
         </>
-    );  
+    );
 } 

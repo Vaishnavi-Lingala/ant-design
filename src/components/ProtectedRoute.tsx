@@ -25,14 +25,16 @@ export default function ProtectedRoute({
     }
 
     if (oktaStorage !== null && oktaStorage !== "") {
-        if (oktaStorage !== "{}" && oktaStorage.length === 3386) {            
+        if (oktaStorage !== "{}") {            
             const idToken = JSON.parse(oktaStorage).idToken;
             localStorage.setItem("clientId", idToken.clientId);
             localStorage.setItem("issuer", idToken.issuer);
-        } else {
+        } 
+        else {
             removeItems();
         }
-    } else {
+    } 
+    else {
         removeItems();
     }
 
