@@ -13,6 +13,7 @@ export const KioskPolicy = (props: any) => {
 
     const [isEdit, setIsEdit] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [loadingDetails, setLoadingDetails] = useState(true);
     const [kioskDisplayData, setKioskDisplayData] = useState<kioskPolicyType>(props.kioskDetails);
     const [kioskEditData, setKioskEditedData] = useState(props.kioskDetails);
     const [groups, setGroups]: any = useState([]);
@@ -44,6 +45,7 @@ export const KioskPolicy = (props: any) => {
                 setGroups(groups);
                 groupsChange.push(object);
                 console.log(groups);
+                setLoadingDetails(false);
             })        
 
             ApiService.get(ApiUrls.groups, {type: "KIOSK"})
@@ -150,7 +152,7 @@ export const KioskPolicy = (props: any) => {
     }
 
     return (
-        <Skeleton loading={loading}>
+        <Skeleton loading={loading || loadingDetails}>
             <div className="content-container-policy">
                 <div className="row-container">
                     <div>

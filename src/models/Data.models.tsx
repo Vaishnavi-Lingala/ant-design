@@ -56,31 +56,6 @@ export interface kioskPolicyType {
     uid: string,
     policy_type: string
 }
-// export interface AuthenticationPolicy {
-//     authentication: number;
-//     dne: boolean;
-//     expire: boolean;
-//     expire_count: number;
-//     expire_quantity: number;
-//     expire_units: string;
-//     groups: string;
-//     history: boolean;
-//     history_count: number;
-//     l_case: boolean;
-//     last_date: number;
-//     last_user_id: number;
-//     max_len: number;
-//     min_len: number;
-//     pk_policy_id: string;
-//     policy_desc: string;
-//     question_enroll: number;
-//     question_mfa: number;
-//     question_number: number;
-//     sliding: boolean;
-//     special: boolean;
-//     sspr: boolean;
-//     u_case: boolean
-// }
 
 export interface MechanismType{
     uid: string,
