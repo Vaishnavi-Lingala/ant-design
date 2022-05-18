@@ -19,6 +19,8 @@ export default function ProtectedRoute({
         localStorage.removeItem("policyUid");
         localStorage.removeItem("mechanismUid");
         localStorage.removeItem("accountId");
+        localStorage.removeItem("productId");
+        localStorage.removeItem("productName");
         history.push("/");
     }
 
