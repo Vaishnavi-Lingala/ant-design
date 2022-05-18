@@ -1,5 +1,5 @@
 import { Divider, Checkbox, Button, InputNumber, Input, Select, Skeleton } from "antd";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import './Policies.css';
 
@@ -8,6 +8,9 @@ import { PinPolicyType } from "../../models/Data.models";
 import ApiService from "../../Api.service";
 import ApiUrls from '../../ApiUtils';
 import TextArea from "antd/lib/input/TextArea";
+
+import { showToast } from "../Layout/Toast/Toast";
+import { StoreContext } from "../../helpers/Store";
 
 export const PinPolicy = (props: any) => {
 
@@ -19,13 +22,14 @@ export const PinPolicy = (props: any) => {
 	const [groupNames, setGroupNames]: any = useState([]);
 	const [groupUids, setGroupUids]: any = useState([]);
 	const [groupsChange, setGroupsChange]: any = useState([]);
+	const [toastList, setToastList] = useContext(StoreContext);
 
 	useEffect(() => {
 		if (pinDisplayData.uid === undefined) {
 			setIsEdit(true);
 		}
 
-		ApiService.get(ApiUrls.groups, {type:"USER"})
+		ApiService.get(ApiUrls.groups, { type: "USER" })
 			.then(data => {
 				console.log('GROUPS: ', data);
 				for (var i = 0; i < data.length; i++) {
@@ -41,6 +45,13 @@ export const PinPolicy = (props: any) => {
 				groupsChange.push(object);
 				console.log(groups);
 				setLoading(false);
+			}, error => {
+				console.error('Error: ', error);
+				setLoading(false);
+
+				const response = showToast('error', 'An Error has occured with getting Groups');
+				console.log('response: ', response);
+				setToastList([...toastList, response]);
 			})
 
 		if (pinDisplayData.uid !== undefined) {
@@ -58,9 +69,17 @@ export const PinPolicy = (props: any) => {
 		ApiService.put(ApiUrls.policy(pinDisplayData.uid), pinEditData)
 			.then(data => {
 				setPinDisplayData({ ...pinEditData });
+
+				const response = showToast('success', 'Successfully updated PIN Policy');
+				console.log('response: ', response);
+				setToastList([...toastList, response]);
 			})
 			.catch(error => {
-				console.log(error);
+				console.error('Error: ', error);
+
+				const response = showToast('error', 'An Error has occured with updating PIN Policy');
+				console.log('response: ', response);
+				setToastList([...toastList, response]);
 			})
 	}
 
@@ -83,6 +102,16 @@ export const PinPolicy = (props: any) => {
 		ApiService.post(ApiUrls.addPolicy, pinEditData)
 			.then(data => {
 				console.log(data);
+
+				const response = showToast('success', 'Successfully added PIN Policy');
+				console.log('response: ', response);
+				setToastList([...toastList, response]);
+			}, error => {
+				console.error('Error: ', error);
+
+				const response = showToast('error', 'An Error has occured with adding PIN Policy');
+				console.log('response: ', response);
+				setToastList([...toastList, response]);
 			})
 		setTimeout(() => {
 			window.location.reload()
@@ -142,7 +171,7 @@ export const PinPolicy = (props: any) => {
 						<h6>Description</h6>
 					</div>
 					<div>
-						{isEdit ? <TextArea	 className="form-control"
+						{isEdit ? <TextArea className="form-control"
 							style={{ width: "275px" }}
 							onChange={(e) => setPinEditedData({
 								...pinEditData,
@@ -157,7 +186,7 @@ export const PinPolicy = (props: any) => {
 					<div>
 						<h6>Assigned to groups</h6>
 					</div>
-					<div> 
+					<div>
 						<Select
 							mode="multiple"
 							size={"large"}

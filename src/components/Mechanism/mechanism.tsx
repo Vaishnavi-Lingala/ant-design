@@ -1,11 +1,14 @@
 import { Button, Input, Radio, Select, Skeleton } from "antd";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import './Mechanism.css'
 
 import ApiService from "../../Api.service";
 import { MechanismType } from "../../models/Data.models";
 import ApiUrls from '../../ApiUtils';
+
+import { showToast } from "../Layout/Toast/Toast";
+import { StoreContext } from "../../helpers/Store";
 
 function Mechanism(props: any) {
     const [displayDetails, setDisplayDetails] = useState<MechanismType>(props.mechanismDetails);
@@ -23,6 +26,7 @@ function Mechanism(props: any) {
     const [groupUids, setGroupUids]: any = useState([]);
     const [groupsChange, setGroupsChange]: any = useState([]);
     const [value, setValue] = useState("");
+    const [toastList, setToastList] = useContext(StoreContext);
 
     useEffect(() => {
         Promise.all(([
@@ -89,9 +93,17 @@ function Mechanism(props: any) {
         ApiService.put(ApiUrls.mechanism(displayDetails.uid), editData)
             .then(data => {
                 setDisplayDetails({ ...editData });
+
+                const response = showToast('success', 'Successfully updated Mechanism');
+                console.log('response: ', response);
+                setToastList([...toastList, response]);
             })
             .catch(error => {
-                console.log(error);
+                console.error('Error: ', error);
+
+                const response = showToast('error', 'An Error has occured with updating Mechanism');
+                console.log('response: ', response);
+                setToastList([...toastList, response]);
             })
     }
 
@@ -125,8 +137,16 @@ function Mechanism(props: any) {
         ApiService.post(ApiUrls.addMechanism, editData)
             .then(data => {
                 console.log(data);
+
+                const response = showToast('success', 'Successfully added Mechanism');
+                console.log('response: ', response);
+                setToastList([...toastList, response]);
             }, error => {
-                console.error('Add mechanism error: ', error);
+                console.error('Error: ', error);
+
+                const response = showToast('error', 'An Error has occured with adding Mechanism');
+                console.log('response: ', response);
+                setToastList([...toastList, response]);
             })
         setTimeout(() => {
             window.location.reload()

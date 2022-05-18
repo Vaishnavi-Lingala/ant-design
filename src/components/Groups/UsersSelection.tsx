@@ -1,33 +1,37 @@
-import { useEffect, useState } from "react";
-import {Table,  Button, Modal, Typography, Input } from "antd";
+import { useContext, useEffect, useState } from "react";
+import { Table, Button, Modal, Typography, Input } from "antd";
 import ApiService from "../../Api.service";
 import ApiUrls from '../../ApiUtils';
+
+import { showToast } from "../Layout/Toast/Toast";
+import { StoreContext } from "../../helpers/Store";
 
 export default function UsersSelection(props: any) {
 
     const { Title } = Typography;
     const { Search } = Input;
     const columns = [
-		{
-			title: 'Name',
-			dataIndex: 'user_name',
-			width: '30%'
-		},
         {
-			title: 'Email',
-			dataIndex: 'email',
-			width: '40%'
-		}
-		
-	];
+            title: 'Name',
+            dataIndex: 'user_name',
+            width: '30%'
+        },
+        {
+            title: 'Email',
+            dataIndex: 'email',
+            width: '40%'
+        }
+
+    ];
 
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
     const [usersList, setUsersList] = useState([]);
     const [searchText, setSearchText] = useState('');
     const [loadingDetails, setLoadingDetails] = useState(false);
     const [page, setPage]: any = useState(1);
-	const [pageSize, setPageSize]: any = useState(10);
-	const [totalItems, setTotalItems]: any = useState(0);
+    const [pageSize, setPageSize]: any = useState(10);
+    const [totalItems, setTotalItems]: any = useState(0);
+    const [toastList, setToastList] = useContext(StoreContext);
 
     useEffect(() => {
         if (props.action === 'Add') {
@@ -36,8 +40,8 @@ export default function UsersSelection(props: any) {
         if (props.action === 'Remove') {
             getGroupMembers(props.groupId);
         }
-	}, [])
-    
+    }, [])
+
     const handleOk = () => {
         props.handleOk(selectedRowKeys, props.action);
         setSelectedRowKeys([]);
@@ -53,7 +57,7 @@ export default function UsersSelection(props: any) {
         props.handleCancel(props.action);
     };
 
-    function getGroupMembers(groupId, params= {}) {
+    function getGroupMembers(groupId, params = {}) {
         ApiService.get(ApiUrls.groupUsers(groupId), params).then(data => {
             console.log('Remove users search data: ', data);
             data.results.forEach(user => {
@@ -63,12 +67,16 @@ export default function UsersSelection(props: any) {
             setTotalItems(data.total_items);
             setLoadingDetails(false);
         }, error => {
-            console.log('Remove users search error: ', error);
+            console.error('Error: ', error);
             setLoadingDetails(false);
+
+            const response = showToast('error', 'An Error has occured with getting Group Users');
+            console.log('response: ', response);
+            setToastList([...toastList, response]);
         })
     }
 
-    function getGroupNotMembers(groupId, params= {}) {
+    function getGroupNotMembers(groupId, params = {}) {
         ApiService.get(ApiUrls.usersNotInGroup(groupId), params).then(data => {
             console.log('Add users search data: ', data)
             data.results.forEach(user => {
@@ -78,20 +86,24 @@ export default function UsersSelection(props: any) {
             setTotalItems(data.total_items);
             setLoadingDetails(false);
         }, error => {
-            console.log('Add users search error: ', error);
+            console.error('Error: ', error);
             setLoadingDetails(false);
+
+            const response = showToast('error', 'An Error has occured with getting Users not in Group');
+            console.log('response: ', response);
+            setToastList([...toastList, response]);
         })
     }
 
     const onSelectChange = selectedRowKeys => {
         console.log('selectedRowKeys changed: ', selectedRowKeys);
         setSelectedRowKeys(selectedRowKeys)
-      };
+    };
 
     const rowSelection = {
         selectedRowKeys,
         onChange: onSelectChange,
-      };
+    };
 
     const onSearch = text => {
         console.log('Search action: ', props.action);
@@ -99,7 +111,7 @@ export default function UsersSelection(props: any) {
         setSearchText(text)
         setPage(1);
         const params = {
-            q : text
+            q: text
         }
         if (props.action === 'Add') {
             getGroupNotMembers(props.groupId, params);
@@ -107,14 +119,14 @@ export default function UsersSelection(props: any) {
         if (props.action === 'Remove') {
             getGroupMembers(props.groupId, params);
         }
-        
+
     }
 
     const onUsersPageChange = async (page, pageSize) => {
-		setLoadingDetails(true);
+        setLoadingDetails(true);
         const params = {
-            q : searchText,
-            start: page, 
+            q: searchText,
+            start: page,
             limit: pageSize
         }
         if (props.action === 'Add') {
@@ -123,11 +135,11 @@ export default function UsersSelection(props: any) {
         if (props.action === 'Remove') {
             getGroupMembers(props.groupId, params);
         }
-		
-	}
+
+    }
 
 
-    return(
+    return (
         <>
             <Modal title={<Title level={2}>{props.action} Users</Title>} visible={true} onOk={handleOk} onCancel={handleCancel} width={1000}
                 footer={[
@@ -135,35 +147,35 @@ export default function UsersSelection(props: any) {
                         Cancel
                     </Button>,
                     <Button key="submit" type="primary" onClick={handleOk}>
-                       {props.action}
+                        {props.action}
                     </Button>
                 ]}>
                 <div style={{ width: '100%', border: '1px solid #D7D7DC', borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6' }}>
-                    <Search placeholder="Search for users by name or email" allowClear style={{ width: 400 }} 
-                    onSearch={onSearch}
-                    size="large"
-                    enterButton/>
+                    <Search placeholder="Search for users by name or email" allowClear style={{ width: 400 }}
+                        onSearch={onSearch}
+                        size="large"
+                        enterButton />
                 </div>
                 <Table
                     loading={loadingDetails}
                     style={{ border: '1px solid #D7D7DC' }}
                     showHeader={true}
                     columns={columns}
-                    dataSource={usersList}   
+                    dataSource={usersList}
                     rowSelection={rowSelection}
                     // bordered={true}
                     pagination={{
-                        current: page, 
+                        current: page,
                         pageSize: pageSize,
                         total: totalItems,
-                        onChange:(page, pageSize) => {
+                        onChange: (page, pageSize) => {
                             setPage(page);
                             setPageSize(pageSize);
                             onUsersPageChange(page, pageSize);
                         }
                     }}
                 />
-                    
+
             </Modal>
         </>
     )
