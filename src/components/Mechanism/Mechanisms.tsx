@@ -1,7 +1,7 @@
 import { Button, Skeleton, Table } from 'antd';
 import { useContext, useEffect, useState } from 'react';
 import { MenuOutlined } from '@ant-design/icons';
-import { SortableContainer, SortableElement, SortableHandle, arrayMove } from 'react-sortable-hoc';
+import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { arrayMoveImmutable } from 'array-move';
 import { useHistory } from 'react-router-dom';
 
@@ -16,7 +16,7 @@ import { StoreContext } from "../../helpers/Store";
 
 export default function Mechanisms() {
 
-	const deActivateColumns = [
+	const inactiveColumns = [
 		{
 			title: 'Mechanism Name',
 			dataIndex: 'mechanism_name',
@@ -44,7 +44,7 @@ export default function Mechanisms() {
 		}
 	];
 
-	const activateColumns = [
+	const activeColumns = [
 		{
 			title: 'Sort',
 			dataIndex: 'sort',
@@ -90,7 +90,7 @@ export default function Mechanisms() {
 	const [mechanismDetails, setMechanismDetails] = useState(undefined);
 	const [loading, setLoading] = useState(false);
 	const [activeMechanisms, setActiveMechanisms]: any = useState([]);
-	const [inActiveMechanisms, setInActiveMechanisms]: any = useState([]);
+	const [inactiveMechanisms, setInactiveMechanisms]: any = useState([]);
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [toastList, setToastList] = useContext(StoreContext);
 	const history = useHistory();
@@ -160,7 +160,7 @@ export default function Mechanisms() {
 				}
 				setActiveMechanisms(activeArray);
 				console.log(activeArray);
-				setInActiveMechanisms(inActiveArray);
+				setInactiveMechanisms(inActiveArray);
 				setLoading(false);
 			}, error => {
 				console.error('Error: ', error);
@@ -215,7 +215,7 @@ export default function Mechanisms() {
 		ApiService.post(ApiUrls.reOrderMechanisms, data)
 			.then(data => {
 				console.log(data)
-				// window.location.reload()
+				window.location.reload()
 			}, error => {
 				console.error('Error: ', error);
 
@@ -268,6 +268,7 @@ export default function Mechanisms() {
 		<SortableBody
 			useDragHandle
 			disableAutoscroll
+			helperClass="row-dragging"
 			onSortEnd={onSortEnd}
 			{...props}
 		/>
@@ -312,7 +313,7 @@ export default function Mechanisms() {
 						<Table
 							style={{ border: '1px solid #D7D7DC' }}
 							showHeader={true}
-							columns={activateColumns}
+							columns={activeColumns}
 							dataSource={activeMechanisms}
 							rowKey={"index"}
 							components={{
@@ -335,8 +336,8 @@ export default function Mechanisms() {
 						<Table
 							style={{ border: '1px solid #D7D7DC' }}
 							showHeader={true}
-							columns={deActivateColumns}
-							dataSource={inActiveMechanisms}
+							columns={inactiveColumns}
+							dataSource={inactiveMechanisms}
 							pagination={{ position: [] }}
 						/>
 					</>

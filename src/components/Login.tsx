@@ -30,7 +30,7 @@ function Login() {
 			.then(response => response.json())
             .then((data: ClientConfiguration) => {
                 //@ts-ignore
-                if(!data.detail){
+                if(!data.errorSummary){
                     console.log('Auth profile: ', data);
                     config.oidc.clientId = data.portal_oidc_client_id;
                     config.oidc.issuer = data.issuer_url;
@@ -55,7 +55,7 @@ function Login() {
                 }
                 else{
                     //@ts-ignore
-                    setErrorMessage(data.detail);
+                    setErrorMessage(data.errorSummary);
                     console.log(data);
                 }
             }).catch((error) => {

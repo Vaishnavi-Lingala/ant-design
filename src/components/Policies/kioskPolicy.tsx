@@ -16,6 +16,7 @@ export const KioskPolicy = (props: any) => {
 
     const [isEdit, setIsEdit] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [loadingDetails, setLoadingDetails] = useState(true);
     const [kioskDisplayData, setKioskDisplayData] = useState<kioskPolicyType>(props.kioskDetails);
     const [kioskEditData, setKioskEditedData] = useState(props.kioskDetails);
     const [groups, setGroups]: any = useState([]);
@@ -48,8 +49,10 @@ export const KioskPolicy = (props: any) => {
                 setGroups(groups);
                 groupsChange.push(object);
                 console.log(groups);
+                setLoadingDetails(false);
             }, error => {
                 console.error('Error: ', error);
+                setLoadingDetails(false);
 
                 const response = showToast('error', 'An Error has occured with getting Groups');
                 console.log('response: ', response);
@@ -184,7 +187,7 @@ export const KioskPolicy = (props: any) => {
     }
 
     return (
-        <Skeleton loading={loading}>
+        <Skeleton loading={loading || loadingDetails}>
             <div className="content-container-policy">
                 <div className="row-container">
                     <div>

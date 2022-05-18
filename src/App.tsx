@@ -54,6 +54,7 @@ function App() {
 						<ProtectedRoute path={`/settings`} component={Settings} />
 						<ProtectedRoute path={`/groups`} component={Groups} />
 						<ProtectedRoute path={`/users`} component={Users} />
+						<ProtectedRoute path={`/machines`} component={Machines} />
 
 					</Layout>
 					<Route component={PageNotFound} />
