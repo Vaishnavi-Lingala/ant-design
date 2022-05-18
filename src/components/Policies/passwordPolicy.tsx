@@ -1,10 +1,13 @@
 import { Button, Divider, Input, Radio, Select, Skeleton } from "antd";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { PasswordPolicyType } from "../../models/Data.models";
 
 import ApiService from "../../Api.service";
 import ApiUrls from '../../ApiUtils';
 import TextArea from "antd/lib/input/TextArea";
+
+import { showToast } from "../Layout/Toast/Toast";
+import { StoreContext } from "../../helpers/Store";
 
 export const PasswordPolicy = (props: any) => {
     const [isEdit, setIsEdit] = useState(false);
@@ -17,6 +20,7 @@ export const PasswordPolicy = (props: any) => {
     const [groupNames, setGroupNames]: any = useState([]);
     const [groupUids, setGroupUids]: any = useState([]);
     const [groupsChange, setGroupsChange]: any = useState([]);
+    const [toastList, setToastList] = useContext(StoreContext);
 
     useEffect(() => {
         ApiService.get(ApiUrls.groups, { type: "USER" })
@@ -35,12 +39,24 @@ export const PasswordPolicy = (props: any) => {
                 groupsChange.push(object);
                 console.log(groups);
                 setLoading(false);
+            }, error => {
+                console.error('Error: ', error);
+
+                const response = showToast('error', 'An Error has occured with getting Groups');
+                console.log('response: ', response);
+                setToastList([...toastList, response]);
             })
 
         ApiService.get(ApiUrls.mechanismPasswordGraceOptions)
             .then(data => {
                 console.log(data);
                 setGraceOptions(data.password_grace_options);
+            }, error => {
+                console.error('Error: ', error);
+
+                const response = showToast('error', 'An Error has occured with getting Password Grace Options');
+                console.log('response: ', response);
+                setToastList([...toastList, response]);
             })
 
         if (passwordDisplayData.uid === undefined) {
@@ -76,6 +92,16 @@ export const PasswordPolicy = (props: any) => {
         ApiService.post(ApiUrls.addPolicy, passwordEditData)
             .then(data => {
                 console.log(data);
+
+                const response = showToast('success', 'Successfully added Password Policy');
+                console.log('response: ', response);
+                setToastList([...toastList, response]);
+            }, error => {
+                console.error('Error: ', error);
+
+                const response = showToast('error', 'An Error has occured with adding Password Policy');
+                console.log('response: ', response);
+                setToastList([...toastList, response]);
             })
         setTimeout(() => {
             window.location.reload()
@@ -90,9 +116,17 @@ export const PasswordPolicy = (props: any) => {
         ApiService.put(ApiUrls.policy(passwordDisplayData.uid), passwordEditData)
             .then(data => {
                 setPasswordDisplayData({ ...passwordEditData });
+
+                const response = showToast('success', 'Successfully updated Password Policy');
+                console.log('response: ', response);
+                setToastList([...toastList, response]);
             })
             .catch(error => {
-                console.log(error);
+                console.error('Error: ', error);
+
+                const response = showToast('error', 'An Error has occured with updating Password Policy');
+                console.log('response: ', response);
+                setToastList([...toastList, response]);
             })
     }
 

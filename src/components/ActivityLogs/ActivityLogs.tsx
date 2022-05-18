@@ -1,6 +1,6 @@
 import { Button, Collapse, Skeleton } from "antd";
 import { CaretRightOutlined } from '@ant-design/icons';
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { DatePicker, Table } from "antd";
 import moment from "moment";
 
@@ -22,6 +22,9 @@ import {
 } from '../../constants';
 
 const { Panel } = Collapse;
+
+import { showToast } from "../Layout/Toast/Toast";
+import { StoreContext } from "../../helpers/Store";
 
 const DisplayField = ({ field, value, fieldNames }) => {
     return (
@@ -90,6 +93,7 @@ export default function ActivityLogs() {
     const [logResponse, setLogResponse] = useState<any>({});
     const [loading, setLoading] = useState(true);
     const [tableLoading, setTableLoading] = useState(false);
+    const [toastList, setToastList] = useContext(StoreContext);
 
     const initialDateTimeFilters = {
         start: {
@@ -150,7 +154,11 @@ export default function ActivityLogs() {
                 );
                 setLogResponse(data);
             } catch (error) {
-                console.log({ error });
+                console.error('Error: ', error);
+
+                const response = showToast('error', 'An Error has occured with getting Activity Logs');
+                console.log('response: ', response);
+                setToastList([...toastList, response]);
             }
             setLoading(false);
             setTableLoading(false);
@@ -161,17 +169,25 @@ export default function ActivityLogs() {
         if (logResponse.next) {
             var url = new URL(`https://${logResponse.next}`);
             setTableLoading(true);
-            var response = await ApiService.post(
-                `${url.pathname}${url.search}`,
-                generateFilterPayload()
-            );
-            setTableLoading(false);
+            try {
+                var response = await ApiService.post(
+                    `${url.pathname}${url.search}`,
+                    generateFilterPayload()
+                );
+                setTableLoading(false);
 
-            console.log({ response });
-            setLogResponse((logRes) => {
-                response.results = logRes.results.concat(response.results);
-                return { ...response };
-            });
+                console.log({ response });
+                setLogResponse((logRes) => {
+                    response.results = logRes.results.concat(response.results);
+                    return { ...response };
+                });
+            } catch (error) {
+                console.error('Error: ', error);
+
+                const response = showToast('error', 'An Error has occured with getting Activity Logs');
+                console.log('response: ', response);
+                setToastList([...toastList, response]);
+            }
         }
     }
 
