@@ -1,4 +1,5 @@
-import { Button, Skeleton } from "antd";
+import { Button, Collapse, Skeleton } from "antd";
+import { CaretRightOutlined } from '@ant-design/icons';
 import { useEffect, useState } from "react";
 import { DatePicker, Table } from "antd";
 import moment from "moment";
@@ -16,14 +17,17 @@ import {
     start_time,
     end_date,
     end_time,
-    hiddenFields
+    hiddenFields,
+    fieldNames
 } from '../../constants';
 
-const DisplayField = ({ name, value }) => {
+const { Panel } = Collapse;
+
+const DisplayField = ({ field, value, fieldNames }) => {
     return (
         <>
             <div>
-                <b>{name}</b>
+                <b>{fieldNames[field]}</b>
             </div>
             <div>{value}</div>
         </>
@@ -31,42 +35,54 @@ const DisplayField = ({ name, value }) => {
 };
 
 const ExpandedRows = ({ activity, user, machine, uid }) => {
-    const filteredActivity = Object.fromEntries(Object.entries(activity).filter(([key]) => !hiddenFields.includes(key)));;
-    const filteredMachine = Object.fromEntries(Object.entries(machine).filter(([key]) => !hiddenFields.includes(key)));;
-    const filteredUser = Object.fromEntries(Object.entries(user).filter(([key]) => !hiddenFields.includes(key)));;
+    const filteredActivity = Object.fromEntries(Object.entries(activity).filter(([key]) => !hiddenFields.activity.includes(key)));;
+    const filteredMachine = Object.fromEntries(Object.entries(machine).filter(([key]) => !hiddenFields.machine.includes(key)));;
+    const filteredUser = Object.fromEntries(Object.entries(user).filter(([key]) => !hiddenFields.user.includes(key)));;
 
     return <>
-        <h5>Activity</h5>
-        <div className="expanded-row-container">
-            {Object.keys(filteredActivity).map((recordKey) => (
-                <DisplayField
-                    name={recordKey}
-                    value={filteredActivity[recordKey]}
-                    key={recordKey}
-                />
-            ))}
-        </div>
-        <h5>Machine</h5>
-        <div className="expanded-row-container">
-
-            {Object.keys(filteredMachine).map((recordKey) => (
-                <DisplayField
-                    name={recordKey}
-                    value={filteredMachine[recordKey]}
-                    key={recordKey}
-                />
-            ))}
-        </div>
-        <h5>User</h5>
-        <div className="expanded-row-container">
-            {Object.keys(filteredUser).map((recordKey) => (
-                <DisplayField
-                    name={recordKey}
-                    value={filteredUser[recordKey]}
-                    key={recordKey}
-                />
-            ))}
-        </div>
+        <Collapse
+            bordered={false}
+            defaultActiveKey={['1']}
+            expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 90 : 0} />}
+            className="site-collapse-custom-collapse"
+        >
+            <Panel header="Activity" key="1">
+                <div className="log-field-container">
+                    {Object.keys(filteredActivity).map((recordKey) => (
+                        <DisplayField
+                            field={recordKey}
+                            value={filteredActivity[recordKey]}
+                            key={recordKey}
+                            fieldNames={fieldNames.activity}
+                        />
+                    ))}
+                </div>
+            </Panel>
+            <Panel header="Machine" key="2">
+                <div className="log-field-container">
+                    {Object.keys(filteredMachine).map((recordKey) => (
+                        <DisplayField
+                            field={recordKey}
+                            value={filteredMachine[recordKey]}
+                            key={recordKey}
+                            fieldNames={fieldNames.machine}
+                        />
+                    ))}
+                </div>
+            </Panel>
+            <Panel header="User" key="3">
+                <div className="log-field-container">
+                    {Object.keys(filteredUser).map((recordKey) => (
+                        <DisplayField
+                            field={recordKey}
+                            value={filteredUser[recordKey]}
+                            key={recordKey}
+                            fieldNames={fieldNames.user}
+                        />
+                    ))}
+                </div>
+            </Panel>
+        </Collapse>
     </>;
 };
 
@@ -308,7 +324,7 @@ export default function ActivityLogs() {
                         dataSource={logResponse.results}
                         title={() => (
                             <>
-                                Events: <b> {logResponse.total_items} </b>{" "}
+                                Events: <b> {logResponse.total_items ? logResponse.total_items : 0} </b>{" "}
                             </>
                         )}
                         footer={() =>
