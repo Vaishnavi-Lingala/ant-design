@@ -2,7 +2,6 @@ import { useState } from "react";
 import { OktaAuth } from "@okta/okta-auth-js";
 import { Input, Button, Form } from "antd";
 
-import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import './Login.css';
 
 import config from "../config";

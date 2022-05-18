@@ -19,46 +19,10 @@ import Groups from "./components/Groups/Groups";
 import Users from "./components/Users/Users";
 import Layout from "./components/Layout/Layout";
 
-import Toast from "./components/Layout/Toast/Toast";
-import checkIcon from './assets/check.svg'
-import errorIcon from './assets/error.svg'
-import infoIcon from './assets/info.svg'
-import warningIcon from './assets/warning.svg'
-
 const oktaAuth = new OktaAuth(config.oidc);
 
 function App() {
 	const history = useHistory();
-	const testList = [
-		{
-			id: 1,
-			title: 'Success',
-			description: 'This is a success toast component',
-			backgroundColor: '#5cb85c',
-			icon: checkIcon
-		},
-		{
-			id: 2,
-			title: 'Warning',
-			description: 'This is a warning toast component',
-			backgroundColor: '#f0ad4e',
-			icon: warningIcon
-		},
-		{
-			id: 3,
-			title: 'Danger',
-			description: 'This is an error toast component',
-			backgroundColor: '#d9534f',
-			icon: errorIcon
-		},
-		{
-			id: 4,
-			title: 'Info',
-			description: 'This is an info toast component',
-			backgroundColor: '#5bc0de',
-			icon: infoIcon
-		},
-	];
 
 	ConfigProvider.config({
 		theme: {
@@ -87,10 +51,6 @@ function App() {
 					<ProtectedRoute path={`/groups`} component={Groups} />
 					<ProtectedRoute path={`/users`} component={Users} />
 
-					<Toast
-						toastList={testList}
-						position="top-right"
-					/>
 				</Layout>
 				<Route component={PageNotFound} />
 			</Switch>
