@@ -13,9 +13,9 @@
     border: 1px solid #ccc;
 }
 
-/* .row-dragging td {
-    padding: 18px 70px 0 15px;
-} */
+.row-dragging td {
+    padding: 18px 50px 0 15px;
+}
 
 .row-dragging .drag-visible {
     visibility: visible;

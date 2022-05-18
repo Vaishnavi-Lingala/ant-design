@@ -18,6 +18,7 @@ import Mechanisms from "./components/Mechanism/Mechanisms";
 import Groups from "./components/Groups/Groups";
 import Users from "./components/Users/Users";
 import Layout from "./components/Layout/Layout";
+import Machines from "./components/Machines/Machines";
 
 const oktaAuth = new OktaAuth(config.oidc);
 
@@ -41,15 +42,15 @@ function App() {
                 <Route path="/" exact component={Login} />
                 <Route path="/login/callback" component={LoginCallback} />
 
-                <Layout>
-                    <ProtectedRoute path={`/policies`} component={Policies} />
-                    <ProtectedRoute path={`/activitylogs`} component={ActivityLogs}/>
-                    <ProtectedRoute path={`/dashboard`} component={Dashboard} />
-                    <ProtectedRoute path={`/mechanism`} component={Mechanisms} />
-                    <ProtectedRoute path={`/settings`} component={Settings} />
-                    <ProtectedRoute path={`/groups`} component={Groups} />
-                    <ProtectedRoute path={`/users`} component={Users} />
-                </Layout>
+                <ProtectedRoute path={`/policies`} component={Policies} />
+                <ProtectedRoute path={`/activitylogs`} component={ActivityLogs} />
+                <ProtectedRoute path={`/dashboard`} component={Dashboard} />
+                <ProtectedRoute path={`/mechanism`} component={Mechanisms} />
+                <ProtectedRoute path={`/settings`} component={Settings} />
+                <ProtectedRoute path={`/groups`} component={Groups} />
+                <ProtectedRoute path={`/users`} component={Users} />
+                <ProtectedRoute path={`/machines`} component={Machines} />
+
                 <Route component={PageNotFound} />
             </Switch>
         </Security>

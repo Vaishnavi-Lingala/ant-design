@@ -38,16 +38,16 @@ export const KioskPolicy = (props: any) => {
                         value: data[i].uid
                     })
                 }
-                setGroups(groups);
                 var object = {};
                 for (var i = 0; i < data.length; i++) {
                     object[data[i].name] = data[i].uid
                 }
+                setGroups(groups);
                 groupsChange.push(object);
                 console.log(groups);
                 setLoadingDetails(false);
             })        
-            
+
             ApiService.get(ApiUrls.groups, {type: "KIOSK"})
             .then(data => {
                 for (var i = 0; i < data.length; i++) {
@@ -56,7 +56,6 @@ export const KioskPolicy = (props: any) => {
                         value: data[i].uid
                     })
                 }
-                setKioskGroups(kioskGroups);
                 var object = {};
                 for (var i = 0; i < data.length; i++) {
                     object[data[i].name] = data[i].uid

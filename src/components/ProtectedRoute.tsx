@@ -1,6 +1,7 @@
 import { useOktaAuth } from "@okta/okta-react";
 import { Redirect, Route, useHistory } from "react-router-dom";
 import { SecureRoute } from "@okta/okta-react";
+import Layout from "./Layout/Layout";
 
 // @ts-ignore
 export default function ProtectedRoute({
@@ -18,22 +19,22 @@ export default function ProtectedRoute({
         localStorage.removeItem("accountId");
         localStorage.removeItem("policyUid");
         localStorage.removeItem("mechanismUid");
+        localStorage.removeItem("accountId");
         localStorage.removeItem("productId");
         localStorage.removeItem("productName");
-        localStorage.removeItem("accountId");
         history.push("/");
     }
 
     if (oktaStorage !== null && oktaStorage !== "") {
-        if (oktaStorage !== "{}") {            
+        if (oktaStorage !== "{}") {
             const idToken = JSON.parse(oktaStorage).idToken;
             localStorage.setItem("clientId", idToken.clientId);
             localStorage.setItem("issuer", idToken.issuer);
-        } 
+        }
         else {
             removeItems();
         }
-    } 
+    }
     else {
         removeItems();
     }
@@ -44,11 +45,13 @@ export default function ProtectedRoute({
             render={(props) =>
                 oktaStorage !== null ? (
                     <SecureRoute>
-                        <Component
-                            authStatus={authState}
-                            oktaAuth={oktaAuth}
-                            {...props}
-                        />
+                        <Layout>
+                            <Component
+                                authStatus={authState}
+                                oktaAuth={oktaAuth}
+                                {...props}
+                            />
+                        </Layout>
                     </SecureRoute>
                 ) : (
                     <Redirect to={"/"} />

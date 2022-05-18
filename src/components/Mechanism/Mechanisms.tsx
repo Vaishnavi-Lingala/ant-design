@@ -1,7 +1,7 @@
 import { Button, Skeleton, Table } from 'antd';
 import { useEffect, useState } from 'react';
 import { MenuOutlined } from '@ant-design/icons';
-import { SortableContainer, SortableElement, SortableHandle, arrayMove } from 'react-sortable-hoc';
+import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { arrayMoveImmutable } from 'array-move';
 import { useHistory } from 'react-router-dom';
 
