@@ -18,6 +18,7 @@ import Mechanisms from "./components/Mechanism/Mechanisms";
 import Groups from "./components/Groups/Groups";
 import Users from "./components/Users/Users";
 import Layout from "./components/Layout/Layout";
+import Machines from "./components/Machines/Machines";
 
 const oktaAuth = new OktaAuth(config.oidc);
 
