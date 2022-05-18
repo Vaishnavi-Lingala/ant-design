@@ -105,7 +105,7 @@ export default function Mechanisms() {
 				password_grace_period: null
 			}
 		],
-		reader_type: "",
+		// reader_type: "",
 		product_id: "oprc735871d0",
 		name: "",
 		on_tap_out: null,

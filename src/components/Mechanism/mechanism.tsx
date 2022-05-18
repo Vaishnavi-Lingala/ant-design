@@ -244,7 +244,7 @@ function Mechanism(props: any) {
                             }
                         </Radio.Group>
                     </div>
-                    {localStorage.getItem("productName") === 'TecTANGO' ?
+                    {/* {localStorage.getItem("productName") === 'TecTANGO' ?
                         <>
                             <div style={{ paddingTop: '20px', paddingBottom: '40px' }}>
                                 <h6>Reader Type</h6>
@@ -270,7 +270,7 @@ function Mechanism(props: any) {
                                 </Radio.Group>
                             </div>
                         </> : <></>
-                    }
+                    } */}
 
                     {displayDetails.challenge_factors.length === 2 ?
                         <>
