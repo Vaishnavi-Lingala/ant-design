@@ -1,4 +1,4 @@
-import { Skeleton, Table, Button, Select } from "antd";
+import { Skeleton, Table, Button,  Dropdown, Menu, Space } from "antd";
 import { useContext, useEffect, useState } from "react";
 import ApiService from "../../Api.service"
 import ApiUrls from '../../ApiUtils';
@@ -31,8 +31,8 @@ export default function Users() {
 		width: '20%'
 	},
 	{
-		title: 'Actions',
-		dataIndex: 'actions',
+		title: 'Details',
+		dataIndex: 'details',
 		width: '20%',
 		render: (text: any, record: { uid: any; }) => (
 			<Button onClick={() => getUserDetails(record.uid)}>
@@ -41,30 +41,37 @@ export default function Users() {
 		)
 	},
 	{
-		title: 'Change Status',
-		dataIndex: 'change_status',
+		title: 'Actions',
+		dataIndex: 'actions',
 		width: '35%',
 		render: (text: any, record: { uid: any; }) => (
-			<Select onChange={(value) => {
-				changeUserStatus(value, record.uid)
-			}}
-				placeholder="Select status"
-				style={{ width: "100%" }}>
-				{statusList.map((eachStatus) => {
-					return <Select.Option key={eachStatus.key} value={eachStatus.key}>{eachStatus.value}</Select.Option>
-				})}
-			</Select>
+			<Dropdown overlay={<Menu
+				onClick={({key}) => {
+				 changeUserStatus(key, record.uid)
+				}}>
+					{
+					statusList.map(item => {
+						return <Menu.Item key={item.key}>
+						{item.value}
+					</Menu.Item> 
+					})
+				}
+
+				</Menu>
+			}>
+				{ <Button onClick={e => e.preventDefault()}>
+				  <Space>
+					Change Status
+				  </Space>
+				</Button> }
+			  </Dropdown>
 		)
 	}]
 
-	useEffect(() => {
-		console.log(`useEffect called:`);
+    useEffect(() => {
 		const statusTypes = [{
 			key: 'ACTIVE',
 			value: 'Activate'
-		}, {
-			key: 'INACTIVE',
-			value: 'Inactivate'
 		},
 		{
 			key: 'DEACTIVATED',
