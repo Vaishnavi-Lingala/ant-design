@@ -1,6 +1,6 @@
 import { Button, Input, Modal, Skeleton, Table, Tabs } from 'antd';
 import { MenuOutlined } from '@ant-design/icons';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { arrayMoveImmutable } from 'array-move';
@@ -12,6 +12,9 @@ import { PasswordPolicy } from './passwordPolicy'
 import ApiUrls from '../../ApiUtils';
 import ApiService from '../../Api.service';
 import { KioskPolicy } from './kioskPolicy';
+
+import { showToast } from "../Layout/Toast/Toast";
+import { StoreContext } from "../../helpers/Store";
 
 export default function Policies() {
 
@@ -110,6 +113,7 @@ export default function Policies() {
 	const [isPinModalVisible, setIsPinModalVisible] = useState(false);
 	const [isPasswordModalVisible, setIsPasswordModalVisible] = useState(false);
 	const [isKioskModalVisible, setIsKioskModalVisible] = useState(false);
+	const [toastList, setToastList] = useContext(StoreContext);
 	const { TabPane } = Tabs;
 
 	const pinData = {
@@ -145,14 +149,14 @@ export default function Policies() {
 
 	const kioskData = {
 		policy_req: {
-            access_key_id: "",
-            assay: ""
-        },
-        auth_policy_groups: [],
+			access_key_id: "",
+			assay: ""
+		},
+		auth_policy_groups: [],
 		policy_type: 'KIOSK',
-        kiosk_machine_groups: [],
-        name: "",
-        description: "",
+		kiosk_machine_groups: [],
+		name: "",
+		description: "",
 	}
 
 	const DragHandle = SortableHandle(() => <MenuOutlined style={{ cursor: 'grab', color: '#999' }} />);
@@ -286,8 +290,8 @@ export default function Policies() {
 							pinInActive.push(object);
 						}
 					}
-					
-					if(data[i].policy_type === "PASSWORD") {
+
+					if (data[i].policy_type === "PASSWORD") {
 						if (data[i].active === true) {
 							object = {
 								key: passwordCounter + 1,
@@ -315,7 +319,7 @@ export default function Policies() {
 						}
 					}
 
-					if(data[i].policy_type === "KIOSK") {
+					if (data[i].policy_type === "KIOSK") {
 						if (data[i].active === true) {
 							object = {
 								key: kioskCounter + 1,
@@ -350,6 +354,13 @@ export default function Policies() {
 				setActiveKioskPolicies(kioskActive);
 				setInActiveKioskPolicies(kioskInActive);
 				setLoadingDetails(false);
+			}, error => {
+				console.error('Error: ', error);
+				setLoadingDetails(false);
+
+				const response = showToast('error', 'An Error has occured with getting Policies');
+				console.log('response: ', response);
+				setToastList([...toastList, response]);
 			})
 	}
 
@@ -369,14 +380,38 @@ export default function Policies() {
 
 	function activatePolicy(uid: string) {
 		ApiService.get(ApiUrls.activatePolicy(uid))
-			.then(data => window.location.reload())
-			.catch(error => { })
+			.then(data => {
+				window.location.reload()
+
+				const response = showToast('success', 'Successfully activated Policy');
+				console.log('response: ', response);
+				setToastList([...toastList, response]);
+			})
+			.catch(error => {
+				console.error('Error: ', error);
+
+				const response = showToast('error', 'An Error has occured with activating Policy');
+				console.log('response: ', response);
+				setToastList([...toastList, response]);
+			})
 	}
 
 	function deActivatePolicy(uid: string) {
 		ApiService.get(ApiUrls.deActivatePolicy(uid))
-			.then(data => window.location.reload())
-			.catch(error => { })
+			.then(data => {
+				window.location.reload()
+
+				const response = showToast('success', 'Successfully de-activated Policy');
+				console.log('response: ', response);
+				setToastList([...toastList, response]);
+			})
+			.catch(error => {
+				console.error('Error: ', error);
+
+				const response = showToast('error', 'An Error has occured with de-activating Policy');
+				console.log('response: ', response);
+				setToastList([...toastList, response]);
+			})
 	}
 
 	function reOrderPolicies(uid: string, order: number, policyType: string) {
@@ -389,6 +424,12 @@ export default function Policies() {
 			.then(data => {
 				console.log(data)
 				window.location.reload()
+			}, error => {
+				console.error('Error: ', error);
+
+				const response = showToast('error', 'An Error has occured with re-ordering Policies');
+				console.log('response: ', response);
+				setToastList([...toastList, response]);
 			})
 	}
 
@@ -402,18 +443,23 @@ export default function Policies() {
 					history.push('/policies/pin/' + uid);
 					setPinDetails(data);
 				}
-				if (data.policy_type === "PASSWORD"){
+				if (data.policy_type === "PASSWORD") {
 					history.push('/policies/password/' + uid);
 					setPasswordDetails(data);
 				}
-				if (data.policy_type === "KIOSK"){
+				if (data.policy_type === "KIOSK") {
 					history.push('/policies/kiosk/' + uid);
 					setKioskDetails(data);
 				}
 				setLoadingDetails(false);
 			})
 			.catch(error => {
-				console.log(error);
+				console.error('Error: ', error);
+				setLoadingDetails(false);
+
+				const response = showToast('error', 'An Error has occured with getting Policy Details');
+				console.log('response: ', response);
+				setToastList([...toastList, response]);
 			})
 	}
 

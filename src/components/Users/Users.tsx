@@ -1,38 +1,42 @@
 import { Skeleton, Table, Button, Select } from "antd";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import ApiService from "../../Api.service"
 import ApiUrls from '../../ApiUtils';
 import { AddUser } from "./AddUser";
 import { User } from "./User";
 
+import { showToast } from "../Layout/Toast/Toast";
+import { StoreContext } from "../../helpers/Store";
+
 export default function Users() {
-	
+
 	const [userDetails, setUserDetails] = useState(undefined);
 	const [loadingDetails, setLoadingDetails] = useState(true);
-    const [arr, setArr]: any = useState([]);
+	const [arr, setArr]: any = useState([]);
 	const [page, setPage]: any = useState(1);
 	const [pageSize, setPageSize]: any = useState(10);
 	const [totalItems, setTotalItems]: any = useState(0);
 	const [statusList, setStatusList]: any = useState([]);
-	const [lifeCycleTypes, setLifeCycleTypes] :any = useState(undefined);
+	const [lifeCycleTypes, setLifeCycleTypes]: any = useState(undefined);
+	const [toastList, setToastList] = useContext(StoreContext);
 
-    const columns = [{
-        title: 'Username',
-        dataIndex: 'user_name',
-        width: '30%'
-    },
+	const columns = [{
+		title: 'Username',
+		dataIndex: 'user_name',
+		width: '30%'
+	},
 	{
-        title: 'Status',
-        dataIndex: 'status',
-        width: '20%'
-    },
+		title: 'Status',
+		dataIndex: 'status',
+		width: '20%'
+	},
 	{
 		title: 'Actions',
 		dataIndex: 'actions',
 		width: '20%',
 		render: (text: any, record: { uid: any; }) => (
 			<Button onClick={() => getUserDetails(record.uid)}>
-			  View
+				View
 			</Button>
 		)
 	},
@@ -41,11 +45,11 @@ export default function Users() {
 		dataIndex: 'change_status',
 		width: '35%',
 		render: (text: any, record: { uid: any; }) => (
-			<Select onChange = {(value) => {
+			<Select onChange={(value) => {
 				changeUserStatus(value, record.uid)
 			}}
-			placeholder= "Select status" 
-			style={{width:"100%"}}>
+				placeholder="Select status"
+				style={{ width: "100%" }}>
 				{statusList.map((eachStatus) => {
 					return <Select.Option key={eachStatus.key} value={eachStatus.key}>{eachStatus.value}</Select.Option>
 				})}
@@ -53,36 +57,36 @@ export default function Users() {
 		)
 	}]
 
-    useEffect(() => {
+	useEffect(() => {
 		console.log(`useEffect called:`);
 		const statusTypes = [{
-			key: 'ACTIVE', 
+			key: 'ACTIVE',
 			value: 'Activate'
 		}, {
-			key: 'INACTIVE', 
+			key: 'INACTIVE',
 			value: 'Inactivate'
 		},
 		{
-			key: 'DEACTIVATED', 
+			key: 'DEACTIVATED',
 			value: 'Deactivate'
 		},
 		{
-			key: 'STAGED', 
+			key: 'STAGED',
 			value: 'Stage'
 		},
 		{
-			key: 'SUSPENDED', 
+			key: 'SUSPENDED',
 			value: 'Suspend'
 		},
 		{
-			key: 'LOCKED_OUT', 
+			key: 'LOCKED_OUT',
 			value: 'Lock'
 		}]
 		setStatusList(statusTypes);
 		getLifeCycleOptions();
 	}, [])
 
-	useEffect(()=> {
+	useEffect(() => {
 		if (lifeCycleTypes) {
 			getUsersList(page, pageSize);
 		}
@@ -91,14 +95,18 @@ export default function Users() {
 	function getUserDetails(uid: string) {
 		setLoadingDetails(true);
 		const selectedUser = arr.find(user => user.uid === uid);
-		if(selectedUser) setUserDetails(selectedUser);
+		if (selectedUser) setUserDetails(selectedUser);
 		setLoadingDetails(false);
 	}
 
 	const getLifeCycleOptions = async () => {
 		if (lifeCycleTypes === undefined) {
 			let userStatusTypes = await ApiService.get(ApiUrls.lifeCycleOptions).catch(error => {
-				console.error(`Error in getting life cycle types: ${JSON.stringify(error)}`);
+				console.error('Error: ', error);
+
+				const response = showToast('error', 'An Error has occured with getting Life Cycle Types');
+				console.log('response: ', response);
+				setToastList([...toastList, response]);
 			});
 			setLifeCycleTypes(userStatusTypes);
 		}
@@ -106,8 +114,12 @@ export default function Users() {
 
 	const getUsersList = async (page, pageSize) => {
 		setLoadingDetails(true);
-		let data = await ApiService.get(ApiUrls.users, {start: page, limit: pageSize}).catch(error => {
-			console.error(`Error in getting users list by page: ${JSON.stringify(error)}`);
+		let data = await ApiService.get(ApiUrls.users, { start: page, limit: pageSize }).catch(error => {
+			console.error('Error: ', error);
+
+			const response = showToast('error', 'An Error has occured with getting User Lists by Page');
+			console.log('response: ', response);
+			setToastList([...toastList, response]);
 		}).finally(() => {
 			setLoadingDetails(false);
 		});
@@ -116,7 +128,7 @@ export default function Users() {
 		setTotalItems(data.total_items);
 	}
 
-	const getUpdatedUsersList = ()=> {
+	const getUpdatedUsersList = () => {
 		getUsersList(page, pageSize);
 	}
 
@@ -128,40 +140,44 @@ export default function Users() {
 		return usersList;
 	}
 
-    const changeUserStatus = async (status, userId: string) => {
+	const changeUserStatus = async (status, userId: string) => {
 		setLoadingDetails(true);
 		let statusObj = {
 			status: status
 		}
 		let result = await ApiService.post(ApiUrls.changeUserStatus(userId), statusObj).catch(error => {
-			console.error(`Error in updating status of ${userId}: ${JSON.stringify(error)}`)
-		}).finally(()=> {
+			console.error('Error: ', error);
+
+			const response = showToast('error', 'An Error has occured with Updating User Status');
+			console.log('response: ', response);
+			setToastList([...toastList, response]);
+		}).finally(() => {
 			setLoadingDetails(false);
 		});
 		console.log(`Status for ${userId} is updated successfully with ${status}.`);
 		getUpdatedUsersList();
 	}
 
-    return (
+	return (
 		<>
 			<div className='content-header'>
-				{userDetails?<span>User</span>: <span>Users</span>}
-				{userDetails? <Button style={{ marginLeft: 'auto', alignSelf: 'end' }} onClick={() => {setUserDetails(undefined)}}>Back</Button> : <></>}
+				{userDetails ? <span>User</span> : <span>Users</span>}
+				{userDetails ? <Button style={{ marginLeft: 'auto', alignSelf: 'end' }} onClick={() => { setUserDetails(undefined) }}>Back</Button> : <></>}
 			</div>
 
 			<Skeleton loading={loadingDetails}>
-				{userDetails? <User userDetails = {userDetails}></User>: <>
-				<AddUser onUserCreate = {getUpdatedUsersList}></AddUser>
-				 <Table
+				{userDetails ? <User userDetails={userDetails}></User> : <>
+					<AddUser onUserCreate={getUpdatedUsersList}></AddUser>
+					<Table
 						style={{ border: '1px solid #D7D7DC' }}
 						showHeader={true}
 						columns={columns}
 						dataSource={arr}
 						pagination={{
-							current: page, 
+							current: page,
 							pageSize: pageSize,
 							total: totalItems,
-							onChange:(page, pageSize) => {
+							onChange: (page, pageSize) => {
 								setPage(page);
 								setPageSize(pageSize);
 								getUsersList(page, pageSize);
@@ -171,6 +187,6 @@ export default function Users() {
 				</>}
 			</Skeleton>
 		</>
-		
+
 	);
 }

@@ -1,15 +1,19 @@
 import { Skeleton } from 'antd';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
 import './Settings.css'
 
 import { ClientConfiguration } from '../../models/Data.models';
+
+import { showToast } from "../Layout/Toast/Toast";
+import { StoreContext } from "../../helpers/Store";
 
 function Settings() {
     const [clientId, setClientId] = useState("");
     const [issuer, setIssuer] = useState("");
     const [accountId, setAccountId] = useState("");
     const [loading, setLoading] = useState(true);
+    const [toastList, setToastList] = useContext(StoreContext);
     const domain = localStorage.getItem('domain');
 
     useEffect(() => {
@@ -30,7 +34,11 @@ function Settings() {
                 setAccountId(data.uid);
                 setIssuer(data.issuer_url);
             }).catch((error) => {
-                console.log(error);
+                console.error('Error: ', error);
+
+                const response = showToast('error', 'An Error has occured with getting Settings');
+                console.log('response: ', response);
+                setToastList([...toastList, response]);
             })
     }, []);
 

@@ -1,5 +1,5 @@
 import { Divider, Checkbox, Button, InputNumber, Input, Select, Skeleton } from "antd";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import './Policies.css';
 
@@ -8,6 +8,9 @@ import { kioskPolicyType } from "../../models/Data.models";
 import ApiService from "../../Api.service";
 import ApiUrls from '../../ApiUtils';
 import TextArea from "antd/lib/input/TextArea";
+
+import { showToast } from "../Layout/Toast/Toast";
+import { StoreContext } from "../../helpers/Store";
 
 export const KioskPolicy = (props: any) => {
 
@@ -23,13 +26,14 @@ export const KioskPolicy = (props: any) => {
     const [kioskGroupsChange, setkioskGroupsChange]: any = useState([]);
     const [kioskGroupNames, setKioskGroupNames]: any = useState([]);
     const [kioskGroupUids, setKioskGroupUids]: any = useState([]);
+    const [toastList, setToastList] = useContext(StoreContext);
 
     useEffect(() => {
         if (kioskDisplayData.uid === undefined) {
             setIsEdit(true);
         }
 
-        ApiService.get(ApiUrls.groups, {type: "USER"})
+        ApiService.get(ApiUrls.groups, { type: "USER" })
             .then(data => {
                 for (var i = 0; i < data.length; i++) {
                     groups.push({
@@ -44,9 +48,15 @@ export const KioskPolicy = (props: any) => {
                 setGroups(groups);
                 groupsChange.push(object);
                 console.log(groups);
-            })        
+            }, error => {
+                console.error('Error: ', error);
 
-            ApiService.get(ApiUrls.groups, {type: "KIOSK"})
+                const response = showToast('error', 'An Error has occured with getting Groups');
+                console.log('response: ', response);
+                setToastList([...toastList, response]);
+            })
+
+        ApiService.get(ApiUrls.groups, { type: "KIOSK" })
             .then(data => {
                 for (var i = 0; i < data.length; i++) {
                     kioskGroups.push({
@@ -61,6 +71,12 @@ export const KioskPolicy = (props: any) => {
                 kioskGroupsChange.push(object);
                 console.log(kioskGroups);
                 setLoading(false);
+            }, error => {
+                console.error('Error: ', error);
+
+                const response = showToast('error', 'An Error has occured with getting Groups');
+                console.log('response: ', response);
+                setToastList([...toastList, response]);
             })
 
         if (kioskDisplayData.uid !== undefined) {
@@ -86,9 +102,17 @@ export const KioskPolicy = (props: any) => {
         ApiService.put(ApiUrls.policy(kioskDisplayData.uid), kioskEditData)
             .then(data => {
                 setKioskDisplayData({ ...kioskEditData });
+
+                const response = showToast('success', 'Successfully updated Kiosk Policy');
+                console.log('response: ', response);
+                setToastList([...toastList, response]);
             })
             .catch(error => {
-                console.log(error);
+                console.error('Error: ', error);
+
+                const response = showToast('error', 'An Error has occured with updating Kiosk Policy');
+                console.log('response: ', response);
+                setToastList([...toastList, response]);
             })
     }
 
@@ -111,8 +135,18 @@ export const KioskPolicy = (props: any) => {
         ApiService.post(ApiUrls.addPolicy, kioskEditData)
             .then(data => {
                 console.log(data);
+
+                const response = showToast('success', 'Successfully added Kiosk Policy');
+                console.log('response: ', response);
+                setToastList([...toastList, response]);
+            }, error => {
+                console.error('Error: ', error);
+
+                const response = showToast('error', 'An Error has occured with adding Kiosk Policy');
+                console.log('response: ', response);
+                setToastList([...toastList, response]);
             })
-        setTimeout(() => {  
+        setTimeout(() => {
             window.location.reload()
         }, 1000);
     }

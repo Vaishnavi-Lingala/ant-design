@@ -1,5 +1,5 @@
 import { Button, Skeleton, Table } from 'antd';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { MenuOutlined } from '@ant-design/icons';
 import { SortableContainer, SortableElement, SortableHandle, arrayMove } from 'react-sortable-hoc';
 import { arrayMoveImmutable } from 'array-move';
@@ -10,6 +10,9 @@ import './Mechanism.css';
 import ApiService from '../../Api.service';
 import ApiUrls from '../../ApiUtils';
 import Mechanism from './mechanism';
+
+import { showToast } from "../Layout/Toast/Toast";
+import { StoreContext } from "../../helpers/Store";
 
 export default function Mechanisms() {
 
@@ -89,6 +92,7 @@ export default function Mechanisms() {
 	const [activeMechanisms, setActiveMechanisms]: any = useState([]);
 	const [inActiveMechanisms, setInActiveMechanisms]: any = useState([]);
 	const [isModalVisible, setIsModalVisible] = useState(false);
+	const [toastList, setToastList] = useContext(StoreContext);
 	const history = useHistory();
 	const mechanism = {
 		challenge_factors: [
@@ -158,19 +162,49 @@ export default function Mechanisms() {
 				console.log(activeArray);
 				setInActiveMechanisms(inActiveArray);
 				setLoading(false);
+			}, error => {
+				console.error('Error: ', error);
+
+				const response = showToast('error', 'An Error has occured with getting Mechanisms');
+				console.log('response: ', response);
+				setToastList([...toastList, response]);
 			})
 	}, [])
 
 	function activateMechanism(uid: string) {
 		ApiService.get(ApiUrls.activateMechanism(uid))
-			.then(data => window.location.reload())
-			.catch(error => { })
+			.then(data => {
+				window.location.reload()
+
+				const response = showToast('success', 'Successfully activated Mechanism');
+				console.log('response: ', response);
+				setToastList([...toastList, response]);
+			})
+			.catch(error => {
+				console.error('Error: ', error);
+
+				const response = showToast('error', 'An Error has occured with activating Mechanism');
+				console.log('response: ', response);
+				setToastList([...toastList, response]);
+			})
 	}
 
 	function deActivateMechanism(uid: string) {
 		ApiService.get(ApiUrls.deActivateMechanism(uid))
-			.then(data => window.location.reload())
-			.catch(error => { })
+			.then(data => {
+				window.location.reload()
+
+				const response = showToast('success', 'Successfully de-activated Mechanism');
+				console.log('response: ', response);
+				setToastList([...toastList, response]);
+			})
+			.catch(error => {
+				console.error('Error: ', error);
+
+				const response = showToast('error', 'An Error has occured with de-activating Mechanism');
+				console.log('response: ', response);
+				setToastList([...toastList, response]);
+			})
 	}
 
 	function reOrderMechanisms(uid: string, order: number) {
@@ -182,6 +216,12 @@ export default function Mechanisms() {
 			.then(data => {
 				console.log(data)
 				// window.location.reload()
+			}, error => {
+				console.error('Error: ', error);
+
+				const response = showToast('error', 'An Error has occured with re-ordering Mechanism');
+				console.log('response: ', response);
+				setToastList([...toastList, response]);
 			})
 	}
 
@@ -196,7 +236,13 @@ export default function Mechanisms() {
 				setMechanismDetails(data);
 				setLoading(false);
 			})
-			.catch(error => console.log(error))
+			.catch(error => {
+				console.error('Error: ', error);
+
+				const response = showToast('error', 'An Error has occured with getting Mechanism Details');
+				console.log('response: ', response);
+				setToastList([...toastList, response]);
+			})
 	}
 
 
