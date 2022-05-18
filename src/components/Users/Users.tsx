@@ -68,9 +68,6 @@ export default function Users() {
 		const statusTypes = [{
 			key: 'ACTIVE', 
 			value: 'Activate'
-		}, {
-			key: 'INACTIVE', 
-			value: 'Inactivate'
 		},
 		{
 			key: 'DEACTIVATED', 
