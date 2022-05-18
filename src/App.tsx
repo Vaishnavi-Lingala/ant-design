@@ -42,22 +42,15 @@ function App() {
                 <Route path="/" exact component={Login} />
                 <Route path="/login/callback" component={LoginCallback} />
 
-                <Layout>
-                    <ProtectedRoute path={`/policies`} component={Policies} />
-                    <ProtectedRoute
-                        path={`/activitylogs`}
-                        component={ActivityLogs}
-                    />
-                    <ProtectedRoute path={`/dashboard`} component={Dashboard} />
-                    <ProtectedRoute
-                        path={`/mechanism`}
-                        component={Mechanisms}
-                    />
-                    <ProtectedRoute path={`/settings`} component={Settings} />
-                    <ProtectedRoute path={`/groups`} component={Groups} />
-                    <ProtectedRoute path={`/users`} component={Users} />
-                    <ProtectedRoute path={`/machines`} component={Machines} />
-                </Layout>
+                <ProtectedRoute path={`/policies`} component={Policies} />
+                <ProtectedRoute path={`/activitylogs`} component={ActivityLogs} />
+                <ProtectedRoute path={`/dashboard`} component={Dashboard} />
+                <ProtectedRoute path={`/mechanism`} component={Mechanisms} />
+                <ProtectedRoute path={`/settings`} component={Settings} />
+                <ProtectedRoute path={`/groups`} component={Groups} />
+                <ProtectedRoute path={`/users`} component={Users} />
+                <ProtectedRoute path={`/machines`} component={Machines} />
+
                 <Route component={PageNotFound} />
             </Switch>
         </Security>
