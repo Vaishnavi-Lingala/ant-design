@@ -26,17 +26,19 @@ export default function Machines() {
         title: 'Last known IP Address',
         dataIndex: 'local_ip',
         width: '20%'
-    },
-	{
-		title: 'Actions',
-		dataIndex: 'actions',
-		width: '20%',
-		render: (text: any, record: { uid: any; }) => (
-			<Button onClick={() => console.log(record.uid)}>
-			  View
-			</Button>
-		)
-	}]
+    }
+    ,
+	// {
+	// 	title: 'Actions',
+	// 	dataIndex: 'actions',
+	// 	width: '20%',
+	// 	render: (text: any, record: { uid: any; }) => (
+	// 		<Button onClick={() => console.log(record.uid)}>
+	// 		  View
+	// 		</Button>
+	// 	)
+	// }
+    ]
 
     useEffect(() => {
         getMachines();
@@ -69,7 +71,7 @@ export default function Machines() {
     return (
         <>
         <div className='content-header'>
-				{userDetails?<span>User</span>: <span>Users</span>}
+				{userDetails?<span>User</span>: <span>Machines</span>}
 				{userDetails? <Button style={{ marginLeft: 'auto', alignSelf: 'end' }} onClick={() => {setUserDetails(undefined)}}>Back</Button> : <></>}
 			</div>
 
