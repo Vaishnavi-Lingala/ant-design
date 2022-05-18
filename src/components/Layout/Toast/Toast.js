@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import PropTypes from 'prop-types';
 
 import checkIcon from '../../../assets/check.svg'
@@ -6,17 +6,22 @@ import errorIcon from '../../../assets/error.svg'
 import infoIcon from '../../../assets/info.svg'
 import warningIcon from '../../../assets/warning.svg'
 
+import { StoreContext } from '../../../helpers/Store';
+
 import './Toast.css';
 
 const Toast = (props) => {
-    const { toastList, position, autoDelete, autoDeleteTime } = props;
-    const [list, setList] = useState(toastList);
+    const { position, autoDelete, autoDeleteTime } = props;
+    const [list, setList] = useState([]);
+    const [toastList, setToastList] = useContext(StoreContext);
 
     useEffect(() => {
         setList(toastList);
     }, [toastList, list]);
 
     useEffect(() => {
+        console.log('toast list: ', toastList);
+        console.log('list: ', list);
         const interval = setInterval(() => {
             if (autoDelete && toastList.length && list.length) {
                 deleteToast(toastList[0].id);
@@ -28,7 +33,7 @@ const Toast = (props) => {
         }
 
         // eslint-disable-next-line
-    }, [toastList, autoDelete, autoDeleteTime, list]);
+    }, [autoDelete, autoDeleteTime, list]);
 
     const deleteToast = id => {
         const toastListItem = toastList.findIndex(e => e.id === id);
@@ -62,8 +67,7 @@ const Toast = (props) => {
     )
 };
 
-export function showToast(type) {
-    console.log('showToast');
+export function showToast(type, description) {
     let toastProperties = null;
     const id = Math.floor((Math.random() * 100) + 1);
 
@@ -72,16 +76,16 @@ export function showToast(type) {
             toastProperties = {
                 id,
                 title: 'Success',
-                description: 'This is a success toast component',
+                description,
                 backgroundColor: '#5cb85c',
                 icon: checkIcon
             }
             break;
-        case 'danger':
+        case 'error':
             toastProperties = {
                 id,
                 title: 'Danger',
-                description: 'This is an error toast component',
+                description,
                 backgroundColor: '#d9534f',
                 icon: errorIcon
             }
@@ -90,7 +94,7 @@ export function showToast(type) {
             toastProperties = {
                 id,
                 title: 'Info',
-                description: 'This is an info toast component',
+                description,
                 backgroundColor: '#5bc0de',
                 icon: infoIcon
             }
@@ -99,7 +103,7 @@ export function showToast(type) {
             toastProperties = {
                 id,
                 title: 'Warning',
-                description: 'This is a warning toast component',
+                description,
                 backgroundColor: '#f0ad4e',
                 icon: warningIcon
             }
@@ -107,17 +111,17 @@ export function showToast(type) {
         default:
             break;
     }
+
+    return toastProperties;
 }
 
 Toast.defaultProps = {
-    toastList: [],
     position: 'top-right',
     autoDelete: true,
-    autoDeleteTime: 3000
+    autoDeleteTime: 5000
 }
 
 Toast.propTypes = {
-    toastList: PropTypes.array.isRequired,
     position: PropTypes.string.isRequired,
     autoDelete: PropTypes.bool,
     autoDeleteTime: PropTypes.number

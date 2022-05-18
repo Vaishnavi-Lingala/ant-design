@@ -1,8 +1,12 @@
 import { Card, Skeleton, Statistic } from "antd";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import ApiService from "../../Api.service";
 import ApiUrls from '../../ApiUtils';
+
+// START TOAST IMPORT
 import { showToast } from "../Layout/Toast/Toast";
+import { StoreContext } from "../../helpers/Store";
+// END TOAST IMPORT
 
 import './Dashboard.css'
 
@@ -10,6 +14,9 @@ export default function Dashboard() {
 
     const [loadingDetails, setLoadingDetails] = useState(true);
     const [statsData, setStatsData] = useState({});
+    // START TOAST CONTEXT
+    const [toastList, setToastList] = useContext(StoreContext);
+    // END TOAST CONTEXT
     const titles = {
         users: 'Users',
         groups: 'Groups',
@@ -22,10 +29,18 @@ export default function Dashboard() {
                 console.log('Stats data: ', data);
                 setStatsData(data);
                 setLoadingDetails(false);
-                showToast('success');
+                const response = showToast('success', 'Successfully got Dashboard Data');
+                console.log('response: ', response);
+                setToastList([...toastList, response]);
             }, error => {
                 console.error('Stats error: ', error);
                 setLoadingDetails(false);
+
+                // START TOAST MESSAGE
+                const response = showToast('error', 'An Error has occured with getting Dashboard Data');
+                console.log('response: ', response);
+                setToastList([...toastList, response]);
+                // END TOAST MESSAGE
             })
     }, [])
 
