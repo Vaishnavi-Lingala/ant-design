@@ -16,14 +16,15 @@ import {
     start_time,
     end_date,
     end_time,
-    hiddenFields
+    hiddenFields,
+    fieldNames
 } from '../../constants';
 
-const DisplayField = ({ name, value }) => {
+const DisplayField = ({ field, value, fieldNames }) => {
     return (
         <>
             <div>
-                <b>{name}</b>
+                <b>{fieldNames[field]}</b>
             </div>
             <div>{value}</div>
         </>
@@ -31,18 +32,19 @@ const DisplayField = ({ name, value }) => {
 };
 
 const ExpandedRows = ({ activity, user, machine, uid }) => {
-    const filteredActivity = Object.fromEntries(Object.entries(activity).filter(([key]) => !hiddenFields.includes(key)));;
-    const filteredMachine = Object.fromEntries(Object.entries(machine).filter(([key]) => !hiddenFields.includes(key)));;
-    const filteredUser = Object.fromEntries(Object.entries(user).filter(([key]) => !hiddenFields.includes(key)));;
+    const filteredActivity = Object.fromEntries(Object.entries(activity).filter(([key]) => !hiddenFields.activity.includes(key)));;
+    const filteredMachine = Object.fromEntries(Object.entries(machine).filter(([key]) => !hiddenFields.machine.includes(key)));;
+    const filteredUser = Object.fromEntries(Object.entries(user).filter(([key]) => !hiddenFields.user.includes(key)));;
 
     return <>
         <h5>Activity</h5>
         <div className="expanded-row-container">
             {Object.keys(filteredActivity).map((recordKey) => (
                 <DisplayField
-                    name={recordKey}
+                    field={recordKey}
                     value={filteredActivity[recordKey]}
                     key={recordKey}
+                    fieldNames={fieldNames.activity}
                 />
             ))}
         </div>
@@ -51,9 +53,10 @@ const ExpandedRows = ({ activity, user, machine, uid }) => {
 
             {Object.keys(filteredMachine).map((recordKey) => (
                 <DisplayField
-                    name={recordKey}
+                    field={recordKey}
                     value={filteredMachine[recordKey]}
                     key={recordKey}
+                    fieldNames={fieldNames.machine}
                 />
             ))}
         </div>
@@ -61,9 +64,10 @@ const ExpandedRows = ({ activity, user, machine, uid }) => {
         <div className="expanded-row-container">
             {Object.keys(filteredUser).map((recordKey) => (
                 <DisplayField
-                    name={recordKey}
+                    field={recordKey}
                     value={filteredUser[recordKey]}
                     key={recordKey}
+                    fieldNames={fieldNames.user}
                 />
             ))}
         </div>
@@ -308,7 +312,7 @@ export default function ActivityLogs() {
                         dataSource={logResponse.results}
                         title={() => (
                             <>
-                                Events: <b> {logResponse.total_items} </b>{" "}
+                                Events: <b> {logResponse.total_items ? logResponse.total_items : 0} </b>{" "}
                             </>
                         )}
                         footer={() =>
