@@ -1,4 +1,5 @@
-import { Button, Skeleton } from "antd";
+import { Button, Collapse, Skeleton } from "antd";
+import { CaretRightOutlined } from '@ant-design/icons';
 import { useEffect, useState } from "react";
 import { DatePicker, Table } from "antd";
 import moment from "moment";
@@ -20,6 +21,8 @@ import {
     fieldNames
 } from '../../constants';
 
+const { Panel } = Collapse;
+
 const DisplayField = ({ field, value, fieldNames }) => {
     return (
         <>
@@ -37,40 +40,49 @@ const ExpandedRows = ({ activity, user, machine, uid }) => {
     const filteredUser = Object.fromEntries(Object.entries(user).filter(([key]) => !hiddenFields.user.includes(key)));;
 
     return <>
-        <h5>Activity</h5>
-        <div className="expanded-row-container">
-            {Object.keys(filteredActivity).map((recordKey) => (
-                <DisplayField
-                    field={recordKey}
-                    value={filteredActivity[recordKey]}
-                    key={recordKey}
-                    fieldNames={fieldNames.activity}
-                />
-            ))}
-        </div>
-        <h5>Machine</h5>
-        <div className="expanded-row-container">
-
-            {Object.keys(filteredMachine).map((recordKey) => (
-                <DisplayField
-                    field={recordKey}
-                    value={filteredMachine[recordKey]}
-                    key={recordKey}
-                    fieldNames={fieldNames.machine}
-                />
-            ))}
-        </div>
-        <h5>User</h5>
-        <div className="expanded-row-container">
-            {Object.keys(filteredUser).map((recordKey) => (
-                <DisplayField
-                    field={recordKey}
-                    value={filteredUser[recordKey]}
-                    key={recordKey}
-                    fieldNames={fieldNames.user}
-                />
-            ))}
-        </div>
+        <Collapse
+            bordered={false}
+            defaultActiveKey={['1']}
+            expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 90 : 0} />}
+            className="site-collapse-custom-collapse"
+        >
+            <Panel header="Activity" key="1">
+                <div className="log-field-container">
+                    {Object.keys(filteredActivity).map((recordKey) => (
+                        <DisplayField
+                            field={recordKey}
+                            value={filteredActivity[recordKey]}
+                            key={recordKey}
+                            fieldNames={fieldNames.activity}
+                        />
+                    ))}
+                </div>
+            </Panel>
+            <Panel header="Machine" key="2">
+                <div className="log-field-container">
+                    {Object.keys(filteredMachine).map((recordKey) => (
+                        <DisplayField
+                            field={recordKey}
+                            value={filteredMachine[recordKey]}
+                            key={recordKey}
+                            fieldNames={fieldNames.machine}
+                        />
+                    ))}
+                </div>
+            </Panel>
+            <Panel header="User" key="3">
+                <div className="log-field-container">
+                    {Object.keys(filteredUser).map((recordKey) => (
+                        <DisplayField
+                            field={recordKey}
+                            value={filteredUser[recordKey]}
+                            key={recordKey}
+                            fieldNames={fieldNames.user}
+                        />
+                    ))}
+                </div>
+            </Panel>
+        </Collapse>
     </>;
 };
 
