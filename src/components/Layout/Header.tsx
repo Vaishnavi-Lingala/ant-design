@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import './Layout.css';
 
 import config from "../../config";
-import ApiUrls, { productId } from '../../ApiUtils';
+import ApiUrls from '../../ApiUtils';
 import ApiService from "../../Api.service";
 
 const { SubMenu } = Menu;
@@ -22,7 +22,6 @@ function AppHeader() {
     useEffect(() => {
         ApiService.get(ApiUrls.getProducts)
             .then(data => {
-                console.log(data);
                 var object = {};
                 for (var i = 0; i < data.length; i++) {
                     object[data[i].sku] = data[i].uid
@@ -67,20 +66,15 @@ function AppHeader() {
         <Header className="header">
             <div className="logo">
                 TecConnect
-                {/* <img src="Credenti_Logo.png" alt="Credenti TecConnect"/> */}
+                {/* <img src="Credenti_Logo.png" alt="Credenti TecConnect" width={150}/> */}
             </div>
 
             <Menu className="border-bottom-0" theme="light" mode="horizontal"
                 selectedKeys={[String(localStorage.getItem("productName"))]} onClick={(e) => {
                     Object.keys(products).map(product => {
-                        console.log(e.key)
                         if (e.key === product) {
                             localStorage.setItem("productName", product)
                             localStorage.setItem("productId", products[product])
-                            console.log(window.location.pathname.split('/').length)
-                            // if (window.location.pathname.split('/').length >= 3) {
-                            //     history.goBack();
-                            // }
                             history.push("/dashboard");
                             window.location.reload()
                         }

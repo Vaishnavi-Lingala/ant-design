@@ -16,7 +16,7 @@
     grid-row-gap: 15px;
 }
 
-.ant-checkbox-disabled + span {
+.ant-checkbox-disabled+span {
     color: rgba(0, 0, 0, 0.85) !important;
 }
 
@@ -28,8 +28,21 @@
     width: 100px;
 }
 
-.checkbox-container > div {
+.checkbox-container>div {
     padding: 5px;
+}
+
+.row-dragging {
+    background: #fafafa;
+    border: 1px solid #ccc;
+}
+
+.row-dragging td {
+    padding: 18px 50px 0 15px;
+}
+
+.row-dragging .drag-visible {
+    visibility: visible;
 }
 
 .content-header {
