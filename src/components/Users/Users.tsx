@@ -1,4 +1,4 @@
-import { Skeleton, Table, Button,  Dropdown, Menu, Space } from "antd";
+import { Skeleton, Table, Button, Dropdown, Menu, Space } from "antd";
 import { useContext, useEffect, useState } from "react";
 import ApiService from "../../Api.service"
 import ApiUrls from '../../ApiUtils';
@@ -44,31 +44,31 @@ export default function Users() {
 		title: 'Actions',
 		dataIndex: 'actions',
 		width: '35%',
-		render: (text: any, record: { uid: any; }) => (
+		render: (text: any, record: { uid: any; user_name: any}) => (
 			<Dropdown overlay={<Menu
-				onClick={({key}) => {
-				 changeUserStatus(key, record.uid)
+				onClick={({ key }) => {
+					changeUserStatus(key, record.uid, record.user_name)
 				}}>
-					{
+				{
 					statusList.map(item => {
 						return <Menu.Item key={item.key}>
-						{item.value}
-					</Menu.Item> 
+							{item.value}
+						</Menu.Item>
 					})
 				}
 
-				</Menu>
+			</Menu>
 			}>
-				{ <Button onClick={e => e.preventDefault()}>
-				  <Space>
-					Change Status
-				  </Space>
-				</Button> }
-			  </Dropdown>
+				{<Button onClick={e => e.preventDefault()}>
+					<Space>
+						Change Status
+					</Space>
+				</Button>}
+			</Dropdown>
 		)
 	}]
 
-    useEffect(() => {
+	useEffect(() => {
 		const statusTypes = [{
 			key: 'ACTIVE',
 			value: 'Activate'
@@ -123,7 +123,6 @@ export default function Users() {
 		setLoadingDetails(true);
 		let data = await ApiService.get(ApiUrls.users, { start: page, limit: pageSize }).catch(error => {
 			console.error('Error: ', error);
-
 			const response = showToast('error', 'An Error has occured with getting User Lists by Page');
 			console.log('response: ', response);
 			setToastList([...toastList, response]);
@@ -131,6 +130,7 @@ export default function Users() {
 			setLoadingDetails(false);
 		});
 		const updatedUsers = updateUsersListWithStatusAndKey(data.results);
+		console.log(updatedUsers);
 		setArr(updatedUsers);
 		setTotalItems(data.total_items);
 	}
@@ -147,21 +147,26 @@ export default function Users() {
 		return usersList;
 	}
 
-	const changeUserStatus = async (status, userId: string) => {
+	const changeUserStatus = async (status, userId: string, user_name: string) => {
 		setLoadingDetails(true);
 		let statusObj = {
 			status: status
 		}
-		let result = await ApiService.post(ApiUrls.changeUserStatus(userId), statusObj).catch(error => {
-			console.error('Error: ', error);
-
-			const response = showToast('error', 'An Error has occured with Updating User Status');
-			console.log('response: ', response);
-			setToastList([...toastList, response]);
-		}).finally(() => {
-			setLoadingDetails(false);
-		});
-		console.log(`Status for ${userId} is updated successfully with ${status}.`);
+		let result = await ApiService.post(ApiUrls.changeUserStatus(userId), statusObj)
+			.then(data => {
+				const response = showToast('success', `Status for ${user_name.split('@')[0]} has been updated successfully with ${status.toLowerCase()}.`);
+				console.log('response: ', response);
+				setToastList([...toastList, response]);
+			})
+			.catch(error => {
+				console.error('Error: ', error);
+				const response = showToast('error', 'An Error has occured with Updating User Status');
+				console.log('response: ', response);
+				setToastList([...toastList, response]);
+			}).finally(() => {
+				setLoadingDetails(false);
+			});
+		console.log(`Status for ${user_name} is updated successfully with ${status}.`);
 		getUpdatedUsersList();
 	}
 

@@ -27,7 +27,6 @@ export function User(props: any) {
             setGroups(userGroups);
         }).catch(error => {
             console.error('Error: ', error);
-
             const response = showToast('error', 'An Error has occured with getting Groups');
             console.log('response: ', response);
             setToastList([...toastList, response]);

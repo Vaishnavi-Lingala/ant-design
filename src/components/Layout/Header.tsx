@@ -3,13 +3,15 @@ import { UserOutlined } from '@ant-design/icons';
 import { useHistory } from "react-router-dom";
 import { useOktaAuth } from "@okta/okta-react";
 import { OktaAuth } from "@okta/okta-auth-js";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import './Layout.css';
 
 import config from "../../config";
 import ApiUrls from '../../ApiUtils';
 import ApiService from "../../Api.service";
+import { StoreContext } from "../../helpers/Store";
+import { showToast } from "./Toast/Toast";
 
 const { SubMenu } = Menu;
 const { Header } = Layout;
@@ -18,6 +20,7 @@ function AppHeader() {
     const history = useHistory();
     const { authState } = useOktaAuth();
     const [products, setProducts]: any = useState([]);
+    const [toastList, setToastList] = useContext(StoreContext);
 
     useEffect(() => {
         ApiService.get(ApiUrls.getProducts)
@@ -33,7 +36,13 @@ function AppHeader() {
                 }
                 setProducts(object);
             })
-    }, [])
+            .catch((error) => {
+                console.error('Error: ', error);
+                const response = showToast('error', 'An Error has occured with getting Products');
+                console.log('response: ', response);
+                setToastList([...toastList, response]);
+            })
+    }, [])    
 
     console.log(products);
 

@@ -84,7 +84,7 @@ export function showToast(type, description) {
         case 'error':
             toastProperties = {
                 id,
-                title: 'Danger',
+                title: 'Error',
                 description,
                 backgroundColor: '#d9534f',
                 icon: errorIcon
