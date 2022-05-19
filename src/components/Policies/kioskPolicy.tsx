@@ -104,15 +104,20 @@ export const KioskPolicy = (props: any) => {
     function updateKioskPolicy() {
         ApiService.put(ApiUrls.policy(kioskDisplayData.uid), kioskEditData)
             .then(data => {
-                setKioskDisplayData({ ...kioskEditData });
-
-                const response = showToast('success', 'Successfully updated Kiosk Policy');
-                console.log('response: ', response);
-                setToastList([...toastList, response]);
+                if (!data.errorSummary) {
+                    setKioskDisplayData({ ...kioskEditData });
+                    const response = showToast('success', 'Successfully updated Kiosk Policy');
+                    console.log('response: ', response);
+                    setToastList([...toastList, response]);
+                }
+                else {
+                    const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
+                    console.log('response: ', response);
+                    setToastList([...toastList, response]);
+                }
             })
             .catch(error => {
                 console.error('Error: ', error);
-
                 const response = showToast('error', 'An Error has occured with updating Kiosk Policy');
                 console.log('response: ', response);
                 setToastList([...toastList, response]);
@@ -137,21 +142,26 @@ export const KioskPolicy = (props: any) => {
         console.log(kioskEditData)
         ApiService.post(ApiUrls.addPolicy, kioskEditData)
             .then(data => {
-                console.log(data);
-
-                const response = showToast('success', 'Successfully added Kiosk Policy');
-                console.log('response: ', response);
-                setToastList([...toastList, response]);
+                if (!data.errorSummary) {
+                    console.log(data);
+                    const response = showToast('success', 'Successfully added Kiosk Policy');
+                    console.log('response: ', response);
+                    setToastList([...toastList, response]);
+                    setTimeout(() => {
+                        window.location.reload()
+                    }, 2000);
+                }
+                else {
+                    const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
+                    console.log('response: ', response);
+                    setToastList([...toastList, response]);
+                }
             }, error => {
                 console.error('Error: ', error);
-
                 const response = showToast('error', 'An Error has occured with adding Kiosk Policy');
                 console.log('response: ', response);
                 setToastList([...toastList, response]);
             })
-        setTimeout(() => {
-            window.location.reload()
-        }, 1000);
     }
 
     function setCancelClick() {

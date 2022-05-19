@@ -32,18 +32,24 @@ export default function AddGroup(props: any) {
         setLoading(true);
         console.log('New group: ', newGroup);
         ApiService.post(ApiUrls.groups, newGroup).then(data => {
-            console.log('Post group response: ', data);
-            setLoading(false);
-            setIsModalVisible(false);
-            props.onGroupCreate();
-
-            const response = showToast('success', 'Successfully added Group');
-            console.log('response: ', response);
-            setToastList([...toastList, response]);
+            if(!data.errorSummary){
+                console.log('Post group response: ', data);
+                setLoading(false);
+                setIsModalVisible(false);
+                props.onGroupCreate();
+                const response = showToast('success', 'Successfully added Group');
+                console.log('response: ', response);
+                setToastList([...toastList, response]);
+            }
+            else {
+                const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
+                console.log('response: ', response);
+                setToastList([...toastList, response]);
+                setLoading(false);
+            }
         }, error => {
             console.error('Error: ', error);
             setLoading(false);
-
             const response = showToast('error', 'An Error has occured with adding Group');
             console.log('response: ', response);
             setToastList([...toastList, response]);
@@ -89,6 +95,7 @@ export default function AddGroup(props: any) {
 
                         </span>
                     </Col>
+
                     <Col span={6}>
                         <h6>Description</h6>
                     </Col>

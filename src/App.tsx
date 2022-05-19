@@ -21,6 +21,7 @@ import Layout from "./components/Layout/Layout";
 import Machines from "./components/Machines/Machines";
 
 import { StoreContextProvider } from "./helpers/Store";
+import { MachineDetails } from "./components/Machines/MachineDetails";
 
 const oktaAuth = new OktaAuth(config.oidc);
 
@@ -29,7 +30,7 @@ function App() {
 
 	ConfigProvider.config({
 		theme: {
-			// primaryColor: 'green'
+			// primaryColor: 'yellow'
 		},
 	});
 
@@ -54,7 +55,8 @@ function App() {
 						<ProtectedRoute path={`/settings`} component={Settings} />
 						<ProtectedRoute path={`/groups`} component={Groups} />
 						<ProtectedRoute path={`/users`} component={Users} />
-						<ProtectedRoute path={`/machines`} component={Machines} />
+						<ProtectedRoute path={`/machines`} exact component={Machines} />
+						<ProtectedRoute path={`/machines/:id`} component={MachineDetails} />
 
 					</Layout>
 					<Route component={PageNotFound} />

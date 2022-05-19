@@ -22,17 +22,22 @@ export default function Dashboard() {
     useEffect(() => {
         ApiService.get(ApiUrls.stats)
             .then(data => {
-                console.log('Stats data: ', data);
-                setStatsData(data);
-                setLoadingDetails(false);
-
-                // const response = showToast('success', 'Successfully got Dashboard Data');
-                // console.log('response: ', response);
-                // setToastList([...toastList, response]);
+                if(!data.detail){
+                    console.log('Stats data: ', data);
+                    setStatsData(data);
+                    setLoadingDetails(false);
+                    // const response = showToast('success', 'Successfully got Dashboard Data');
+                    // console.log('response: ', response);
+                    // setToastList([...toastList, response]);
+                }
+                else {
+					const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
+					console.log('response: ', response);
+					setToastList([...toastList, response]);
+				}
             }, error => {
                 console.error('Error: ', error);
                 setLoadingDetails(false);
-
                 const response = showToast('error', 'An Error has occured with getting Dashboard Data');
                 console.log('response: ', response);
                 setToastList([...toastList, response]);

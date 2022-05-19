@@ -1,6 +1,8 @@
 import { Menu } from "antd";
 import Sider from "antd/lib/layout/Sider";
 import { useHistory } from "react-router-dom";
+import { UserOutlined, DesktopOutlined, TeamOutlined, SettingOutlined, PieChartOutlined, 
+	AreaChartOutlined, SolutionOutlined, LockOutlined } from '@ant-design/icons';
 
 function AppSider() {
 	const history = useHistory();
@@ -18,15 +20,15 @@ function AppSider() {
 				selectedKeys={[window.location.pathname.split("/")[1]]}
 				className="sider-menu"
 			>
-				<Menu.Item key="dashboard">Dashboard</Menu.Item>
-				<Menu.Item key="mechanism">Mechanisms</Menu.Item>
-				<Menu.Item key="policies" >Policies</Menu.Item>
+				<Menu.Item key="dashboard"><AreaChartOutlined /> Dashboard</Menu.Item>
+				<Menu.Item key="mechanism"><LockOutlined /> Mechanisms</Menu.Item>
+				<Menu.Item key="policies"><SolutionOutlined /> Policies</Menu.Item>
 				{/* <Menu.Item key="config">Configuration</Menu.Item> */}
-				<Menu.Item key="users">Users</Menu.Item>
-				<Menu.Item key="machines">Machines</Menu.Item>
-				<Menu.Item key="groups">Groups</Menu.Item>
-				<Menu.Item key="activityLogs" >Activity Logs</Menu.Item>
-				<Menu.Item key="settings" >Settings</Menu.Item>
+				<Menu.Item key="users"><UserOutlined /> Users</Menu.Item>
+				<Menu.Item key="machines"><DesktopOutlined /> Machines</Menu.Item>
+				<Menu.Item key="groups"><TeamOutlined /> Groups</Menu.Item>
+				<Menu.Item key="activityLogs"><PieChartOutlined /> Activity Logs</Menu.Item>
+				<Menu.Item key="settings"><SettingOutlined /> Settings</Menu.Item>
 			</Menu>
 		</Sider>
 	);

@@ -41,7 +41,6 @@ export const PasswordPolicy = (props: any) => {
                 setLoading(false);
             }, error => {
                 console.error('Error: ', error);
-
                 const response = showToast('error', 'An Error has occured with getting Groups');
                 console.log('response: ', response);
                 setToastList([...toastList, response]);
@@ -91,21 +90,26 @@ export const PasswordPolicy = (props: any) => {
     function createPasswordPolicy() {
         ApiService.post(ApiUrls.addPolicy, passwordEditData)
             .then(data => {
-                console.log(data);
-
-                const response = showToast('success', 'Successfully added Password Policy');
-                console.log('response: ', response);
-                setToastList([...toastList, response]);
+                if (!data.errorSummary) {
+                    console.log(data);
+                    const response = showToast('success', 'Successfully added Password Policy');
+                    console.log('response: ', response);
+                    setToastList([...toastList, response]);
+                    setTimeout(() => {
+                        window.location.reload()
+                    }, 2000);
+                }
+                else {
+                    const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
+                    console.log('response: ', response);
+                    setToastList([...toastList, response]);
+                }
             }, error => {
                 console.error('Error: ', error);
-
                 const response = showToast('error', 'An Error has occured with adding Password Policy');
                 console.log('response: ', response);
                 setToastList([...toastList, response]);
             })
-        setTimeout(() => {
-            window.location.reload()
-        }, 1000);
     }
 
     function setCancelClick() {
@@ -115,15 +119,20 @@ export const PasswordPolicy = (props: any) => {
     function updatePasswordPolicy() {
         ApiService.put(ApiUrls.policy(passwordDisplayData.uid), passwordEditData)
             .then(data => {
-                setPasswordDisplayData({ ...passwordEditData });
-
-                const response = showToast('success', 'Successfully updated Password Policy');
-                console.log('response: ', response);
-                setToastList([...toastList, response]);
+                if (!data.errorSummary) {
+                    setPasswordDisplayData({ ...passwordEditData });
+                    const response = showToast('success', 'Successfully updated Password Policy');
+                    console.log('response: ', response);
+                    setToastList([...toastList, response]);
+                }
+                else {
+                    const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
+                    console.log('response: ', response);
+                    setToastList([...toastList, response]);
+                }
             })
             .catch(error => {
                 console.error('Error: ', error);
-
                 const response = showToast('error', 'An Error has occured with updating Password Policy');
                 console.log('response: ', response);
                 setToastList([...toastList, response]);
