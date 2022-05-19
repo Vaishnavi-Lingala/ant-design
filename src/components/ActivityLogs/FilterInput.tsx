@@ -1,5 +1,6 @@
 import { Input, Row, Col, Select, Button } from "antd";
 import { FunctionComponent } from "react";
+import { filterableFieldNames } from "../../constants";
 
 interface FilterInputProps {
     filterInput: { field: string, value: string },
@@ -9,11 +10,11 @@ interface FilterInputProps {
     onFilterValueChange: (value) => void,
     onCloseClick: () => void
 }
- 
+
 const FilterInput: FunctionComponent<FilterInputProps> = (props: FilterInputProps) => {
     const { index, filterInput, filterableFields, onFilterFieldChange, onFilterValueChange, onCloseClick } = props;
 
-    return ( <Input.Group key={index}>
+    return (<Input.Group key={index}>
         <Row style={{ marginTop: "10px" }} gutter={10}>
             <Col span={9}>
                 <Select
@@ -30,7 +31,7 @@ const FilterInput: FunctionComponent<FilterInputProps> = (props: FilterInputProp
                 >
                     {filterableFields.map((d) => (
                         <Select.Option key={d} value={d}>
-                            {d}
+                            {filterableFieldNames[d]}
                         </Select.Option>
                     ))}
                 </Select>
@@ -59,7 +60,7 @@ const FilterInput: FunctionComponent<FilterInputProps> = (props: FilterInputProp
                 </Button>
             </Col>
         </Row>
-    </Input.Group> );
+    </Input.Group>);
 }
- 
+
 export default FilterInput;

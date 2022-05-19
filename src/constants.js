@@ -5,13 +5,13 @@ export const ts_format = `${date_format} ${time_format}`;
 
 export const hiddenFields = {
     activity: [
-    'user_agent',
-    'auth_profile_id',
-    'updated_ts',
-    'product_id',
-    'machine_id',
-    'account_id',
-    'created_ts'
+        'user_agent',
+        'auth_profile_id',
+        'updated_ts',
+        'product_id',
+        'machine_id',
+        'account_id',
+        'created_ts'
     ],
     machine: [
         ""
@@ -21,7 +21,8 @@ export const hiddenFields = {
     ]
 };
 
-export const fieldNames = {
+export const logFieldNames = {
+    uid: "Uid",
     machine: {
         "os": "OS",
         "x_client": "X client",
@@ -36,7 +37,8 @@ export const fieldNames = {
         "machine_name": "Machine name",
         "mac_address": "Mac adress",
         "reader_name": "Reader name",
-        "uid": "Uid"
+        "uid": "Machine Id",
+        "machine_id": "Machine Id"
     },
     activity: {
         "account_id": "Account Id",
@@ -73,15 +75,48 @@ export const fieldNames = {
         "login_domain": "Login domain",
         "login_user_name": "Login username",
         "is_technical_contact": "Is technical contact",
-        "uid": "Uid",
+        "uid": "User Id",
+        "user_id": "User Id",
         "is_billing_contact": "Is billing contact",
         "last_invite_sent": "Last invite sent",
         "eula_accepted_date": "Eula accepted date",
         "is_portal_admin": "Is portal admin",
         "sam": "Sam",
         "idp_user_id": "Idp user Id"
-    },
-    uid: "Uid"
+    }
+}
+
+export const filterableFieldNames = {
+    "user_id": logFieldNames.user.uid,
+    "mechanism_id": logFieldNames.activity.mechanism_id,
+    "idp_user_id": logFieldNames.user.idp_user_id,
+    "product_name": logFieldNames.activity.product_name,
+    "api_end_point": logFieldNames.activity.api_end_point,
+    "auth_profile_id": logFieldNames.activity.auth_profile_id,
+    "machine_name": logFieldNames.machine.machine_name,
+    "serial_number": logFieldNames.machine.serial_number,
+    "public_machine_ip": logFieldNames.machine.public_ip,
+    "mechanism_name": logFieldNames.activity.mechanism_name,
+    "display_name": logFieldNames.activity.display_name
+};
+
+
+export const machineFieldNames = {
+    "account_id": "Account Id",
+    "os": "OS",
+    "local_ip": "Last known Ip",
+    "mac_address": "Mac address",
+    "uid": "Uid",
+    "group_type": "Group type",
+    "domain": "Domain",
+    "reader_type": "Reader type",
+    "serial_number": "Serial number",
+    "x_client": "X Client",
+    "public_ip": "Public Ip",
+    "reader_name": "Reader name",
+    "reader_serial": "Reader serial",
+    "products": "Products",
+    "machine_name": "Machine name"
 }
 
 // Literal Constants
