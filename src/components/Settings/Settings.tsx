@@ -33,9 +33,9 @@ function Settings() {
                 setClientId(data.portal_oidc_client_id);
                 setAccountId(data.uid);
                 setIssuer(data.issuer_url);
-            }).catch((error) => {
+            })
+            .catch((error) => {
                 console.error('Error: ', error);
-
                 const response = showToast('error', 'An Error has occured with getting Settings');
                 console.log('response: ', response);
                 setToastList([...toastList, response]);

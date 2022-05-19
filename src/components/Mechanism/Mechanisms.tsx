@@ -164,7 +164,6 @@ export default function Mechanisms() {
 				setLoading(false);
 			}, error => {
 				console.error('Error: ', error);
-
 				const response = showToast('error', 'An Error has occured with getting Mechanisms');
 				console.log('response: ', response);
 				setToastList([...toastList, response]);
@@ -174,15 +173,22 @@ export default function Mechanisms() {
 	function activateMechanism(uid: string) {
 		ApiService.get(ApiUrls.activateMechanism(uid))
 			.then(data => {
-				window.location.reload()
-
-				const response = showToast('success', 'Successfully activated Mechanism');
-				console.log('response: ', response);
-				setToastList([...toastList, response]);
+				if (!data.errorSummary) {
+					const response = showToast('success', 'Successfully activated Mechanism');
+					console.log('response: ', response);
+					setToastList([...toastList, response]);
+					setInterval(() => {
+						window.location.reload()
+					}, 2000)
+				}
+				else {
+					const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
+					console.log('response: ', response);
+					setToastList([...toastList, response]);
+				}
 			})
 			.catch(error => {
 				console.error('Error: ', error);
-
 				const response = showToast('error', 'An Error has occured with activating Mechanism');
 				console.log('response: ', response);
 				setToastList([...toastList, response]);
@@ -192,15 +198,22 @@ export default function Mechanisms() {
 	function deActivateMechanism(uid: string) {
 		ApiService.get(ApiUrls.deActivateMechanism(uid))
 			.then(data => {
-				window.location.reload()
-
-				const response = showToast('success', 'Successfully de-activated Mechanism');
-				console.log('response: ', response);
-				setToastList([...toastList, response]);
+				if (!data.errorSummary) {
+					const response = showToast('success', 'Successfully de-activated Mechanism');
+					console.log('response: ', response);
+					setToastList([...toastList, response]);
+					setInterval(() => {
+						window.location.reload()
+					}, 2000)
+				}
+				else {
+					const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
+					console.log('response: ', response);
+					setToastList([...toastList, response]);
+				}
 			})
 			.catch(error => {
 				console.error('Error: ', error);
-
 				const response = showToast('error', 'An Error has occured with de-activating Mechanism');
 				console.log('response: ', response);
 				setToastList([...toastList, response]);
@@ -214,15 +227,23 @@ export default function Mechanisms() {
 		}
 		ApiService.post(ApiUrls.reOrderMechanisms, data)
 			.then(data => {
-				console.log(data)
-				window.location.reload()
-			}, error => {
+				if (!data.errorSummary) {
+					console.log(data)
+					window.location.reload()
+				}
+				else {
+					const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
+					console.log('response: ', response);
+					setToastList([...toastList, response]);
+				}
+			})
+			.catch(error => {
 				console.error('Error: ', error);
-
 				const response = showToast('error', 'An Error has occured with re-ordering Mechanism');
 				console.log('response: ', response);
 				setToastList([...toastList, response]);
 			})
+
 	}
 
 	function getMechanismDetails(uid: string) {
@@ -230,15 +251,21 @@ export default function Mechanisms() {
 		setLoading(true);
 		ApiService.get(ApiUrls.mechanism(uid))
 			.then(data => {
-				history.push('/mechanism/' + uid);
-				console.log(data);
-				console.log(mechanism);
-				setMechanismDetails(data);
-				setLoading(false);
+				if (!data.errorSummary) {
+					history.push('/mechanism/' + uid);
+					console.log(data);
+					console.log(mechanism);
+					setMechanismDetails(data);
+					setLoading(false);
+				}
+				else {
+					const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
+					console.log('response: ', response);
+					setToastList([...toastList, response]);
+				}
 			})
 			.catch(error => {
 				console.error('Error: ', error);
-
 				const response = showToast('error', 'An Error has occured with getting Mechanism Details');
 				console.log('response: ', response);
 				setToastList([...toastList, response]);

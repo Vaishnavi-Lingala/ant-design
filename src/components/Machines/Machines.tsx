@@ -69,7 +69,6 @@ export default function Machines() {
         }, error => {
             console.error('Error: ', error);
             setLoadingDetails(false);
-
             const response = showToast('error', 'An Error has occured with getting Machines');
             console.log('response: ', response);
             setToastList([...toastList, response]);

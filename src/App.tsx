@@ -29,7 +29,7 @@ function App() {
 
 	ConfigProvider.config({
 		theme: {
-			// primaryColor: 'green'
+			// primaryColor: 'yellow'
 		},
 	});
 

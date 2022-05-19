@@ -43,23 +43,28 @@ export default function Groups() {
         setLoadingDetails(true);
         ApiService.get(ApiUrls.group(uid))
             .then(data => {
-                console.log('GROUP_DETAILS: ', data);
-                if (data.type === 'USER') {
-                    history.push('/groups/users/' + uid);
-                    setGroupDetails(data);
-                    setLoadingDetails(false);
+                if (!data.errorSummary) {
+                    console.log('GROUP_DETAILS: ', data);
+                    if (data.type === 'USER') {
+                        history.push('/groups/users/' + uid);
+                        setGroupDetails(data);
+                        setLoadingDetails(false);
+                    }
+                    if (data.type === 'KIOSK') {
+                        history.push('/groups/kiosk/' + uid);
+                        setKioskGroupDetails(data);
+                        setLoadingDetails(false);
+                    }
                 }
-                if (data.type === 'KIOSK') {
-                    history.push('/groups/kiosk/' + uid);
-                    setKioskGroupDetails(data);
-                    setLoadingDetails(false);
+                else {
+                    const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
+                    console.log('response: ', response);
+                    setToastList([...toastList, response]);
                 }
-
             }, error => {
                 console.error('Error: ', error);
                 setLoadingDetails(false);
-
-                const response = showToast('error', 'An Error has occured with getting Groups');
+                const response = showToast('error', 'An Error has occured with getting Group');
                 console.log('response: ', response);
                 setToastList([...toastList, response]);
             })
@@ -98,7 +103,6 @@ export default function Groups() {
             }, error => {
                 console.error('Error: ', error);
                 setLoadingDetails(false);
-
                 const response = showToast('error', 'An Error has occured with getting Groups');
                 console.log('response: ', response);
                 setToastList([...toastList, response]);

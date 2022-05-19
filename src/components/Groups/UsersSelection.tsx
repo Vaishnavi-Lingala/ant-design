@@ -21,7 +21,6 @@ export default function UsersSelection(props: any) {
             dataIndex: 'email',
             width: '40%'
         }
-
     ];
 
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
@@ -88,7 +87,6 @@ export default function UsersSelection(props: any) {
         }, error => {
             console.error('Error: ', error);
             setLoadingDetails(false);
-
             const response = showToast('error', 'An Error has occured with getting Users not in Group');
             console.log('response: ', response);
             setToastList([...toastList, response]);

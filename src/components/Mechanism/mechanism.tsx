@@ -92,13 +92,19 @@ function Mechanism(props: any) {
     function updateMechanism() {
         ApiService.put(ApiUrls.mechanism(displayDetails.uid), editData)
             .then(data => {
-                setDisplayDetails({ ...editData });
-
-                const response = showToast('success', 'Successfully updated Mechanism');
-                console.log('response: ', response);
-                setToastList([...toastList, response]);
-            })
-            .catch(error => {
+                if (!data.errorSummary) {
+                    setDisplayDetails({ ...editData });
+                    const response = showToast('success', 'Successfully updated Mechanism');
+                    console.log('response: ', response);
+                    setToastList([...toastList, response]);
+                    setIsEdit(false);
+                }
+                else {
+                    const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
+                    console.log('response: ', response);
+                    setToastList([...toastList, response]);
+                }
+            }, error => {
                 console.error('Error: ', error);
 
                 const response = showToast('error', 'An Error has occured with updating Mechanism');
@@ -118,7 +124,6 @@ function Mechanism(props: any) {
 
     function handleSaveClick() {
         updateMechanism();
-        setIsEdit(false);
     }
 
     function showDisabled(e: any, array: any) {
@@ -136,21 +141,26 @@ function Mechanism(props: any) {
     function createMechanism() {
         ApiService.post(ApiUrls.addMechanism, editData)
             .then(data => {
-                console.log(data);
-
-                const response = showToast('success', 'Successfully added Mechanism');
-                console.log('response: ', response);
-                setToastList([...toastList, response]);
+                if (!data.errorSummary) {
+                    console.log(data);
+                    const response = showToast('success', 'Successfully added Mechanism');
+                    console.log('response: ', response);
+                    setToastList([...toastList, response]);
+                    setTimeout(() => {
+                        window.location.reload()
+                    }, 2000);
+                }
+                else {
+                    const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
+                    console.log('response: ', response);
+                    setToastList([...toastList, response]);
+                }
             }, error => {
-                console.error('Error: ', error);
-
+                console.error('Add mechanism error: ', error);
                 const response = showToast('error', 'An Error has occured with adding Mechanism');
                 console.log('response: ', response);
                 setToastList([...toastList, response]);
             })
-        setTimeout(() => {
-            window.location.reload()
-        }, 1000);
     }
 
     function setCancelClick() {
