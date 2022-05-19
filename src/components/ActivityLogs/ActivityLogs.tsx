@@ -18,7 +18,7 @@ import {
     end_date,
     end_time,
     hiddenFields,
-    fieldNames
+    logFieldNames
 } from '../../constants';
 
 const { Panel } = Collapse;
@@ -26,11 +26,11 @@ const { Panel } = Collapse;
 import { showToast } from "../Layout/Toast/Toast";
 import { StoreContext } from "../../helpers/Store";
 
-const DisplayField = ({ field, value, fieldNames }) => {
+const DisplayField = ({ field, value, logFieldNames }) => {
     return (
         <>
             <div>
-                <b>{fieldNames[field]}</b>
+                <b>{logFieldNames[field]}</b>
             </div>
             <div>{value}</div>
         </>
@@ -56,7 +56,7 @@ const ExpandedRows = ({ activity, user, machine, uid }) => {
                             field={recordKey}
                             value={filteredActivity[recordKey]}
                             key={recordKey}
-                            fieldNames={fieldNames.activity}
+                            logFieldNames={logFieldNames.activity}
                         />
                     ))}
                 </div>
@@ -68,7 +68,7 @@ const ExpandedRows = ({ activity, user, machine, uid }) => {
                             field={recordKey}
                             value={filteredMachine[recordKey]}
                             key={recordKey}
-                            fieldNames={fieldNames.machine}
+                            logFieldNames={logFieldNames.machine}
                         />
                     ))}
                 </div>
@@ -80,7 +80,7 @@ const ExpandedRows = ({ activity, user, machine, uid }) => {
                             field={recordKey}
                             value={filteredUser[recordKey]}
                             key={recordKey}
-                            fieldNames={fieldNames.user}
+                            logFieldNames={logFieldNames.user}
                         />
                     ))}
                 </div>
