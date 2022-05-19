@@ -1,7 +1,10 @@
 import { Skeleton, Table, Button, Select } from "antd";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import ApiService from "../../Api.service"
 import ApiUrls from '../../ApiUtils';
+
+import { showToast } from "../Layout/Toast/Toast";
+import { StoreContext } from "../../helpers/Store";
 
 export default function Machines() {
 
@@ -11,6 +14,7 @@ export default function Machines() {
 	const [page, setPage]: any = useState(1);
 	const [pageSize, setPageSize]: any = useState(10);
 	const [totalItems, setTotalItems]: any = useState(0);
+    const [toastList, setToastList] = useContext(StoreContext);
 
     const columns = [{
         title: 'Machine name',
@@ -63,7 +67,12 @@ export default function Machines() {
             setTotalItems(data.total_items);
             setLoadingDetails(false);
         }, error => {
+            console.error('Error: ', error);
             setLoadingDetails(false);
+
+            const response = showToast('error', 'An Error has occured with getting Machines');
+            console.log('response: ', response);
+            setToastList([...toastList, response]);
         })
     }
 

@@ -1,6 +1,6 @@
 import { Button, Collapse, Skeleton } from "antd";
 import { CaretRightOutlined } from '@ant-design/icons';
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { DatePicker, Table } from "antd";
 import moment from "moment";
 
@@ -18,16 +18,19 @@ import {
     end_date,
     end_time,
     hiddenFields,
-    fieldNames
+    logFieldNames
 } from '../../constants';
 
 const { Panel } = Collapse;
 
-const DisplayField = ({ field, value, fieldNames }) => {
+import { showToast } from "../Layout/Toast/Toast";
+import { StoreContext } from "../../helpers/Store";
+
+const DisplayField = ({ field, value, logFieldNames }) => {
     return (
         <>
             <div>
-                <b>{fieldNames[field]}</b>
+                <b>{logFieldNames[field]}</b>
             </div>
             <div>{value}</div>
         </>
@@ -53,7 +56,7 @@ const ExpandedRows = ({ activity, user, machine, uid }) => {
                             field={recordKey}
                             value={filteredActivity[recordKey]}
                             key={recordKey}
-                            fieldNames={fieldNames.activity}
+                            logFieldNames={logFieldNames.activity}
                         />
                     ))}
                 </div>
@@ -65,7 +68,7 @@ const ExpandedRows = ({ activity, user, machine, uid }) => {
                             field={recordKey}
                             value={filteredMachine[recordKey]}
                             key={recordKey}
-                            fieldNames={fieldNames.machine}
+                            logFieldNames={logFieldNames.machine}
                         />
                     ))}
                 </div>
@@ -77,7 +80,7 @@ const ExpandedRows = ({ activity, user, machine, uid }) => {
                             field={recordKey}
                             value={filteredUser[recordKey]}
                             key={recordKey}
-                            fieldNames={fieldNames.user}
+                            logFieldNames={logFieldNames.user}
                         />
                     ))}
                 </div>
@@ -90,6 +93,7 @@ export default function ActivityLogs() {
     const [logResponse, setLogResponse] = useState<any>({});
     const [loading, setLoading] = useState(true);
     const [tableLoading, setTableLoading] = useState(false);
+    const [toastList, setToastList] = useContext(StoreContext);
 
     const initialDateTimeFilters = {
         start: {
@@ -150,7 +154,11 @@ export default function ActivityLogs() {
                 );
                 setLogResponse(data);
             } catch (error) {
-                console.log({ error });
+                console.error('Error: ', error);
+
+                const response = showToast('error', 'An Error has occured with getting Activity Logs');
+                console.log('response: ', response);
+                setToastList([...toastList, response]);
             }
             setLoading(false);
             setTableLoading(false);
@@ -161,17 +169,25 @@ export default function ActivityLogs() {
         if (logResponse.next) {
             var url = new URL(`https://${logResponse.next}`);
             setTableLoading(true);
-            var response = await ApiService.post(
-                `${url.pathname}${url.search}`,
-                generateFilterPayload()
-            );
-            setTableLoading(false);
+            try {
+                var response = await ApiService.post(
+                    `${url.pathname}${url.search}`,
+                    generateFilterPayload()
+                );
+                setTableLoading(false);
 
-            console.log({ response });
-            setLogResponse((logRes) => {
-                response.results = logRes.results.concat(response.results);
-                return { ...response };
-            });
+                console.log({ response });
+                setLogResponse((logRes) => {
+                    response.results = logRes.results.concat(response.results);
+                    return { ...response };
+                });
+            } catch (error) {
+                console.error('Error: ', error);
+
+                const response = showToast('error', 'An Error has occured with getting Activity Logs');
+                console.log('response: ', response);
+                setToastList([...toastList, response]);
+            }
         }
     }
 
