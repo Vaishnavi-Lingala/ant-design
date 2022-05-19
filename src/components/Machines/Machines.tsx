@@ -5,16 +5,18 @@ import ApiUrls from '../../ApiUtils';
 
 import { showToast } from "../Layout/Toast/Toast";
 import { StoreContext } from "../../helpers/Store";
+import { useHistory } from 'react-router-dom';
+
 
 export default function Machines() {
 
-    const [userDetails, setUserDetails] = useState(undefined);
 	const [loadingDetails, setLoadingDetails] = useState(false);
     const [machines, setMachines]: any = useState([]);
 	const [page, setPage]: any = useState(1);
 	const [pageSize, setPageSize]: any = useState(10);
 	const [totalItems, setTotalItems]: any = useState(0);
     const [toastList, setToastList] = useContext(StoreContext);
+    const history = useHistory();
 
     const columns = [{
         title: 'Machine name',
@@ -32,16 +34,16 @@ export default function Machines() {
         width: '20%'
     }
     ,
-	// {
-	// 	title: 'Actions',
-	// 	dataIndex: 'actions',
-	// 	width: '20%',
-	// 	render: (text: any, record: { uid: any; }) => (
-	// 		<Button onClick={() => console.log(record.uid)}>
-	// 		  View
-	// 		</Button>
-	// 	)
-	// }
+	{
+		title: 'Actions',
+		dataIndex: 'actions',
+		width: '20%',
+		render: (text: any, record: { uid: any; }) => (
+			<Button onClick={() => history.push('/machines/' + record.uid)}>
+			  View
+			</Button>
+		)
+	}
     ]
 
     useEffect(() => {
@@ -79,9 +81,8 @@ export default function Machines() {
 
     return (
         <>
-        <div className='content-header'>
-				{userDetails?<span>User</span>: <span>Machines</span>}
-				{userDetails? <Button style={{ marginLeft: 'auto', alignSelf: 'end' }} onClick={() => {setUserDetails(undefined)}}>Back</Button> : <></>}
+            <div className='content-header'>
+				<span>Machines</span>
 			</div>
 
 			<Skeleton loading={loadingDetails}>

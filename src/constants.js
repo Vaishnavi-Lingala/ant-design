@@ -100,6 +100,25 @@ export const filterableFieldNames = {
     "display_name": logFieldNames.activity.display_name
 };
 
+
+export const machineFieldNames = {
+    "account_id": "Account Id",
+    "os": "OS",
+    "local_ip": "Last known Ip",
+    "mac_address": "Mac address",
+    "uid": "Uid",
+    "group_type": "Group type",
+    "domain": "Domain",
+    "reader_type": "Reader type",
+    "serial_number": "Serial number",
+    "x_client": "X Client",
+    "public_ip": "Public Ip",
+    "reader_name": "Reader name",
+    "reader_serial": "Reader serial",
+    "products": "Products",
+    "machine_name": "Machine name"
+}
+
 // Literal Constants
 export const start_date = "start_date";
 export const start_time = "start_time";
