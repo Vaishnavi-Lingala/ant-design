@@ -44,7 +44,9 @@ function Settings() {
 
     return (
         <>
-            <div><h2>Settings</h2></div>
+            <div className='content-header'>
+                Settings
+            </div>
             <Skeleton loading={loading}>
                 <div className="content-container rounded-grey-border">
                     <div className="row-container">

@@ -33,8 +33,9 @@ export function AddUser(props) {
     const handleOk = () => {
         setLoading(true);
         newUser.login_domain = 'WORK_GROUP';
+        console.log(newUser);
         ApiService.post(ApiUrls.users, newUser).then(data => {
-            if(!data.errorSummary){
+            if (!data.errorSummary) {
                 console.log('Post user response: ', JSON.stringify(data));
                 props.onUserCreate();
                 setIsModalVisible(false);
@@ -42,7 +43,7 @@ export function AddUser(props) {
             else {
                 // console.log(data.errorCauses[0].errorSummary.split('errorSummary')[2].slice(4));
                 console.log(data);
-                const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary['errorCauses'] : data.errorSummary);
+                const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
                 console.log('response: ', response);
                 setToastList([...toastList, response]);
             }
@@ -76,7 +77,7 @@ export function AddUser(props) {
         >
             <Row gutter={16}>
                 <Col span={6}>
-                    <h6>First Name</h6>
+                    <p style={{ fontWeight: 600, fontSize: 'medium' }}>First Name:</p>
                 </Col>
                 <Col span={18}>
                     <span style={{ paddingRight: '20px' }}>
@@ -95,7 +96,7 @@ export function AddUser(props) {
                     </span>
                 </Col>
                 <Col span={6}>
-                    <h6>Last Name</h6>
+                    <p style={{ fontWeight: 600, fontSize: 'medium' }}>Last Name:</p>
                 </Col>
                 <Col span={18}>
                     <span style={{ paddingRight: '20px' }}>
@@ -115,7 +116,7 @@ export function AddUser(props) {
                 </Col>
 
                 <Col span={6}>
-                    <h6>Username</h6>
+                    <p style={{ fontWeight: 600, fontSize: 'medium' }}>Username:</p>
                 </Col>
                 <Col span={18}>
                     <span style={{ paddingRight: '20px' }}>
@@ -135,11 +136,10 @@ export function AddUser(props) {
                 </Col>
 
                 <Col span={6}>
-                    <h6>Email</h6>
+                    <p style={{ fontWeight: 600, fontSize: 'medium' }}>Email:</p>
                 </Col>
                 <Col span={18}>
                     <span style={{ paddingRight: '20px' }}>
-
                         <Input
                             name="email"
                             type="text"

@@ -133,8 +133,8 @@ export default function KioskGroupDetails(props: any) {
                         Back
                     </Button>
                 </div>
-                <div>
-                    <h6>Created: {Moment(groupDetails.created_ts).format('MM/DD/YYYY')}</h6>
+                <div style={{ fontWeight: 600, fontSize: 'medium'}}>
+                    Created: {Moment(groupDetails.created_ts).format('MM/DD/YYYY')}
                 </div>
                 <Divider style={{ borderTop: '1px solid #d7d7dc' }} />
                 <Skeleton loading={loadingDetails}>

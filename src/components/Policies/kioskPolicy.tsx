@@ -201,8 +201,8 @@ export const KioskPolicy = (props: any) => {
             <div className="content-container-policy">
                 <div className="row-container">
                     <div>
-                        {kioskDisplayData.uid === undefined ? <h3>Create kiosk Policy</h3> :
-                            <h3>Edit kiosk Policy</h3>
+                        {kioskDisplayData.uid === undefined ? <div className="content-heading">Create kiosk Policy</div> :
+                            <div className="content-heading">Edit kiosk Policy</div>
                         }
                     </div>
                     <div>
@@ -211,8 +211,8 @@ export const KioskPolicy = (props: any) => {
                         </Button> : <></>
                         }
                     </div>
-                    <div style={{ paddingTop: '20px' }}>
-                        <h6>Policy Name</h6>
+                    <div className="content-policy-key-header" style={{ paddingTop: '20px' }}>
+                        Policy Name:
                     </div>
                     <div style={{ paddingTop: '20px' }}>
                         {isEdit ? <Input className="form-control"
@@ -227,8 +227,8 @@ export const KioskPolicy = (props: any) => {
                         }
                     </div>
 
-                    <div>
-                        <h6>Description</h6>
+                    <div className="content-policy-key-header">
+                        Description:
                     </div>
                     <div>
                         {isEdit ? <TextArea className="form-control"
@@ -243,8 +243,8 @@ export const KioskPolicy = (props: any) => {
                         }
                     </div>
 
-                    <div>
-                        <h6>Assigned to user groups</h6>
+                    <div className="content-policy-key-header">
+                        Assigned to user groups:
                     </div>
                     <div>
                         <Select
@@ -260,8 +260,8 @@ export const KioskPolicy = (props: any) => {
                         />
                     </div>
 
-                    <div>
-                        <h6>Assigned to kiosk machine</h6>
+                    <div className="content-policy-key-header">
+                        Assigned to kiosk machine:
                     </div>
                     <div>
                         <Select
@@ -277,8 +277,8 @@ export const KioskPolicy = (props: any) => {
                         />
                     </div>
 
-                    <div>
-                        <h6>Policy Type</h6>
+                    <div className="content-policy-key-header">
+                        Policy Type:
                     </div>
                     <div>
                         {kioskDisplayData.policy_type}
@@ -287,7 +287,7 @@ export const KioskPolicy = (props: any) => {
 
                 <Divider style={{ borderTop: '1px solid #d7d7dc' }} />
 
-                <h6 style={{ padding: '10px 0 10px 0' }}>Kiosk Settings:</h6>
+                <p className="content-policy-key-header" style={{ padding: '10px 0 10px 0' }}>Kiosk Settings:</p>
 
                 <div className="row-container">
                     <div>

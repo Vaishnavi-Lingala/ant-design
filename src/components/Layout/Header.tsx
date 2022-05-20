@@ -101,15 +101,15 @@ function AppHeader() {
 
             <Menu className="border-bottom-0" theme="light" mode="horizontal" id="logout-menu">
                 <SubMenu title={authState?.idToken?.claims.name?.split(" ")[0]}
-                    icon={<UserOutlined style={{ position: 'relative', bottom: '3px' }} />}
+                    icon={<UserOutlined />}
                     key={'sub'}
                 >
                     <Menu.Item key="name" className="menu-item-disabled"
                         style={{ userSelect: 'text' }} disabled
                     >
-                        <h6 style={{ position: 'relative', top: '8px', padding: '10px 0px 0px 10px' }}>
+                        <p style={{ fontWeight: 600, fontSize: 'medium', position: 'relative', top: '8px', padding: '0px 0px 0px 10px' }}>
                             {authState?.idToken?.claims.name}
-                        </h6>
+                        </p>
                     </Menu.Item>
 
                     <Menu.Item key="email" className="menu-item-disabled" style={{
@@ -123,7 +123,7 @@ function AppHeader() {
 
                     <Menu.Item key="logout" onClick={logout} style={{
                         marginTop: '-16px',
-                        padding: '0 0 30px 26px'
+                        padding: '0 0 30px 27px'
                     }}
                     >
                         {'Logout'}

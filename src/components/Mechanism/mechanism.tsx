@@ -186,8 +186,8 @@ function Mechanism(props: any) {
             <div className="content-container rounded-grey-border">
                 <div className="row-container">
                     <div>
-                        {displayDetails.uid === undefined ? <h3>Create Mechanism</h3> :
-                            <h3>Edit Mechanism</h3>
+                        {displayDetails.uid === undefined ? <div className="content-heading">Create Mechanism</div> :
+                            <div className="content-heading">Edit Mechanism</div>
                         }
                     </div>
                     <div style={{ paddingRight: '50px', paddingBottom: '20px' }}>
@@ -197,8 +197,8 @@ function Mechanism(props: any) {
                         }
                     </div>
 
-                    <div>
-                        <h6>Mechanism name</h6>
+                    <div className="content-mechanism-key-header">
+                        Mechanism name:
                     </div>
                     <div>
                         {isEdit ?
@@ -217,8 +217,8 @@ function Mechanism(props: any) {
                         }
                     </div>
 
-                    <div>
-                        <h6>Assigned to groups</h6>
+                    <div className="content-mechanism-key-header">
+                        Assigned to groups:
                     </div>
                     <div>
                         <Select
@@ -233,8 +233,8 @@ function Mechanism(props: any) {
                         />
                     </div>
 
-                    <div>
-                        <h6>Primary Challenge</h6>
+                    <div className="content-mechanism-key-header">
+                        Primary Challenge:
                     </div>
                     <div>
                         {localStorage.getItem("productName") === 'TecTANGO' ?
@@ -250,8 +250,8 @@ function Mechanism(props: any) {
                         }
                     </div>
 
-                    <div style={{ paddingTop: '20px' }}>
-                        <h6>Tapout Action</h6>
+                    <div className="content-mechanism-key-header" style={{ paddingTop: '20px' }}>
+                        Tapout Action:
                     </div>
                     <div style={{ paddingTop: '20px' }}>
                         <Radio.Group name="Tapout Action" defaultValue={displayDetails?.on_tap_out}
@@ -276,8 +276,8 @@ function Mechanism(props: any) {
                     </div>
                     {/* {localStorage.getItem("productName") === 'TecTANGO' ?
                         <>
-                            <div style={{ paddingTop: '20px', paddingBottom: '40px' }}>
-                                <h6>Reader Type</h6>
+                            <div className="content-mechanism-key-header" style={{ paddingTop: '20px', paddingBottom: '40px' }}>
+                                Reader Type:
                             </div>
                             <div style={{ paddingTop: '20px' }}>
                                 <Radio.Group name="Reader" defaultValue={displayDetails?.reader_type}
@@ -304,11 +304,11 @@ function Mechanism(props: any) {
 
                     {displayDetails.challenge_factors.length === 2 ?
                         <>
-                            <div className="card shadow mb-4" style={{ width: '90%' }}>
-                                <div className="card-header py-3">
-                                    <h6 className="m-0 font-weight-bold text-gray-900 text-lg" style={{ float: 'left', padding: '2px 5px' }}>Challenge 1</h6>
+                            <div>
+                                <div className="card-header" style={{ width: '90%' }}>
+                                    Challenge 1
                                 </div>
-                                <div className="card-body">
+                                <div className="card" style={{ width: '90%' }}>
                                     <Radio.Group value={disabledFactors !== disabledFactors1 ? displayDetails?.challenge_factors[0].factor : ""}
                                         disabled={!isEdit}
                                         onChange={(e) => {
@@ -337,11 +337,11 @@ function Mechanism(props: any) {
                                 </div>
                             </div>
 
-                            <div className="card shadow mb-4" style={{ width: '90%' }}>
-                                <div className="card-header py-3" >
-                                    <h6 className="m-0 font-weight-bold text-gray-900 text-lg" style={{ float: 'left', padding: '2px 5px' }}>Challenge 2</h6>
+                            <div>
+                                <div className="card-header" style={{ width: '90%' }}>
+                                    Challenge 2
                                 </div>
-                                <div className="card-body">
+                                <div className="card" style={{ width: '90%' }}>
                                     <div>
                                         <Radio.Group value={displayDetails.name !== "" ? editData?.challenge_factors[0].factor === "NONE" ? value : displayDetails?.challenge_factors[1].factor : value}
                                             disabled={displayDetails.challenge_factors[0].factor === "NONE" || !isEdit}
