@@ -242,8 +242,8 @@ export default function ActivityLogs() {
 
     return (
         <>
-            <div>
-                <h2>Activity Logs</h2>
+            <div className="content-header">
+                Activity Logs
             </div>
             <Skeleton loading={loading}>
                 <div className="filter-container">

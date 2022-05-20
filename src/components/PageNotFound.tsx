@@ -6,9 +6,9 @@ const PageNotFound = () => {
 
     return (
         <div style={{textAlign: 'center', paddingTop: '100px'}}>
-            <h3>
+            <div style={{textAlign: 'center', fontSize: 'xx-large', fontWeight: '600'}}>
                 404 page not found
-            </h3>
+            </div>
 
             <p>
                 We are sorry but the page you are looking for does not exist.

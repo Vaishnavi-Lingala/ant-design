@@ -386,9 +386,7 @@ export default function Policies() {
 					const response = showToast('success', 'Successfully activated Policy');
 					console.log('response: ', response);
 					setToastList([...toastList, response]);
-					setInterval(() => {
-						window.location.reload()
-					}, 2000);
+					getPolicies();
 				}
 				else {
 					const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
@@ -411,9 +409,7 @@ export default function Policies() {
 					const response = showToast('success', 'Successfully de-activated Policy');
 					console.log('response: ', response);
 					setToastList([...toastList, response]);
-					setInterval(() => {
-						window.location.reload()
-					}, 2000)
+					getPolicies();
 				}
 				else {
 					const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
@@ -439,7 +435,7 @@ export default function Policies() {
 			.then(data => {
 				if (!data.errorSummary) {
 					console.log(data)
-					window.location.reload()
+					getPolicies();
 				}
 				else {
 					const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
@@ -538,13 +534,14 @@ export default function Policies() {
 										</Button>
 									</div>
 
-									<div style={{
+									<div style={{ fontWeight: 600, fontSize: 'x-large',
 										width: '100%', border: '1px solid #D7D7DC',
 										borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
 									}}
 									>
-										<h4>ACTIVE</h4>
+										ACTIVE
 									</div>
+
 									<Table
 										style={{ border: '1px solid #D7D7DC' }}
 										showHeader={true}
@@ -562,12 +559,12 @@ export default function Policies() {
 
 									<br />
 
-									<div style={{
+									<div style={{ fontWeight: 600, fontSize: 'x-large',
 										width: '100%', border: '1px solid #D7D7DC',
 										borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
 									}}
 									>
-										<h4>INACTIVE</h4>
+										INACTIVE
 									</div>
 									<Table
 										style={{ border: '1px solid #D7D7DC' }}
@@ -595,12 +592,12 @@ export default function Policies() {
 										</Button>
 									</div>
 
-									<div style={{
+									<div style={{ fontWeight: 600, fontSize: 'x-large',
 										width: '100%', border: '1px solid #D7D7DC',
 										borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
 									}}
 									>
-										<h4>ACTIVE</h4>
+										ACTIVE
 									</div>
 									<Table
 										style={{ border: '1px solid #D7D7DC' }}
@@ -619,12 +616,12 @@ export default function Policies() {
 
 									<br />
 
-									<div style={{
+									<div style={{ fontWeight: 600, fontSize: 'x-large',
 										width: '100%', border: '1px solid #D7D7DC',
 										borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
 									}}
 									>
-										<h4>INACTIVE</h4>
+										INACTIVE
 									</div>
 									<Table
 										style={{ border: '1px solid #D7D7DC' }}
@@ -652,12 +649,12 @@ export default function Policies() {
 										</Button>
 									</div>
 
-									<div style={{
+									<div style={{ fontWeight: 600, fontSize: 'x-large',
 										width: '100%', border: '1px solid #D7D7DC',
 										borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
 									}}
 									>
-										<h4>ACTIVE</h4>
+										ACTIVE
 									</div>
 									<Table
 										style={{ border: '1px solid #D7D7DC' }}
@@ -676,12 +673,12 @@ export default function Policies() {
 
 									<br />
 
-									<div style={{
+									<div style={{ fontWeight: 600, fontSize: 'x-large',
 										width: '100%', border: '1px solid #D7D7DC',
 										borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
 									}}
 									>
-										<h4>INACTIVE</h4>
+										INACTIVE
 									</div>
 									<Table
 										style={{ border: '1px solid #D7D7DC' }}

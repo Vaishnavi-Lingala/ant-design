@@ -148,8 +148,8 @@ export const PinPolicy = (props: any) => {
 			<div className="content-container-policy">
 				<div className="row-container">
 					<div>
-						{pinDisplayData.uid === undefined ? <h3>Create Pin Policy</h3> :
-							<h3>Edit Pin Policy</h3>
+						{pinDisplayData.uid === undefined ? <div className="content-heading">Create Pin Policy</div> :
+							<div className="content-heading">Edit Pin Policy</div>
 						}
 					</div>
 					<div>
@@ -158,8 +158,8 @@ export const PinPolicy = (props: any) => {
 						</Button> : <></>
 						}
 					</div>
-					<div style={{ paddingTop: '20px' }}>
-						<h6>Policy Name</h6>
+					<div className="content-policy-key-header" style={{ paddingTop: '20px' }}>
+						Policy Name:
 					</div>
 					<div style={{ paddingTop: '20px' }}>
 						{isEdit ? <Input className="form-control"
@@ -174,8 +174,8 @@ export const PinPolicy = (props: any) => {
 						}
 					</div>
 
-					<div>
-						<h6>Description</h6>
+					<div className="content-policy-key-header">
+						Description:
 					</div>
 					<div>
 						{isEdit ? <TextArea className="form-control"
@@ -190,8 +190,8 @@ export const PinPolicy = (props: any) => {
 						}
 					</div>
 
-					<div>
-						<h6>Assigned to groups</h6>
+					<div className="content-policy-key-header">
+						Assigned to groups:
 					</div>
 					<div>
 						<Select
@@ -207,8 +207,8 @@ export const PinPolicy = (props: any) => {
 						/>
 					</div>
 
-					<div>
-						<h6>Policy Type</h6>
+					<div className="content-policy-key-header">
+						Policy Type:
 					</div>
 					<div>
 						{pinDisplayData.policy_type}
@@ -217,10 +217,10 @@ export const PinPolicy = (props: any) => {
 
 				<Divider style={{ borderTop: '1px solid #d7d7dc' }} />
 
-				<h6 style={{ padding: '10px 0 10px 0' }}>Pin Settings:</h6>
+				<p className="content-policy-key-header" style={{ padding: '10px 0 10px 0' }}>Pin Settings:</p>
 
 				<div className="row-container">
-					<div>Minimum Length</div>
+					<div>Minimum Length:</div>
 					<div>
 						{
 							isEdit ? <InputNumber
@@ -229,7 +229,7 @@ export const PinPolicy = (props: any) => {
 						}
 					</div>
 
-					<div>Maxium Length</div>
+					<div>Maxium Length:</div>
 					<div>
 						{
 							isEdit ? <InputNumber
@@ -240,8 +240,8 @@ export const PinPolicy = (props: any) => {
 				</div>
 
 				<div className="row-container">
-					<div>
-						<h6 style={{ padding: '20px 0 10px 0' }}>Complexity Requirements:</h6>
+					<div className="content-policy-key-header" style={{ padding: '20px 0 10px 0' }}>
+						Complexity Requirements:
 					</div>
 					<div className="checkbox-container" style={{ padding: '20px 0 10px 0' }}>
 						<div>
@@ -301,7 +301,7 @@ export const PinPolicy = (props: any) => {
 					</div>
 
 					<div>
-						PIN expires in
+						PIN expires in:
 					</div>
 					<div>
 						<div>

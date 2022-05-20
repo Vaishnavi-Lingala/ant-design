@@ -98,7 +98,7 @@ export default function FiltersModal({ onFilterApply, onResetClick }) {
                 footer={false}
                 width={700}
             >
-                <h4>Advanced Filters</h4>
+                <p style={{ fontWeight: 600, fontSize: 'medium'}}>Advanced Filters</p>
 
                 <Button
                     onClick={() => {

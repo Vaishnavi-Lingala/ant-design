@@ -8,6 +8,7 @@ import { StoreContext } from "../../helpers/Store";
 
 export function User(props: any) {
     let userDetails = props.userDetails;
+    console.log(userDetails);
     const {TabPane} = Tabs;
     //@ts-ignore
     const accessToken = JSON.parse(localStorage.getItem("okta-token-storage")).accessToken.accessToken;
@@ -24,6 +25,7 @@ export function User(props: any) {
         let userId = props.userDetails.uid;
         ApiService.get(ApiUrls.userGroups(userId)).then((groupsResponse:any) => {
             let userGroups = appendKeyToGivenList(groupsResponse);
+            console.log(userGroups);
             setGroups(userGroups);
         }).catch(error => {
             console.error('Error: ', error);

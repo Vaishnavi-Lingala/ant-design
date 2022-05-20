@@ -22,19 +22,12 @@ export default function Dashboard() {
     useEffect(() => {
         ApiService.get(ApiUrls.stats)
             .then(data => {
-                if(!data.detail){
-                    console.log('Stats data: ', data);
-                    setStatsData(data);
-                    setLoadingDetails(false);
-                    // const response = showToast('success', 'Successfully got Dashboard Data');
-                    // console.log('response: ', response);
-                    // setToastList([...toastList, response]);
-                }
-                else {
-					const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
-					console.log('response: ', response);
-					setToastList([...toastList, response]);
-				}
+                console.log('Stats data: ', data);
+                setStatsData(data);
+                setLoadingDetails(false);
+                // const response = showToast('success', 'Successfully got Dashboard Data');
+                // console.log('response: ', response);
+                // setToastList([...toastList, response]);
             }, error => {
                 console.error('Error: ', error);
                 setLoadingDetails(false);
@@ -50,8 +43,8 @@ export default function Dashboard() {
 
     return (
         <>
-            <div>
-                <h2>Dashboard</h2>
+            <div className='content-header'>
+                Dashboard
                 <br />
             </div>
 
@@ -60,7 +53,7 @@ export default function Dashboard() {
                     return <div key={statsData[type].count}>
                         <Card key={type} style={{ border: '1px solid #d7d7dc', width: '550px' }}>
                             <Statistic key={titles[type]}
-                                title={<h5>{titles[type]}</h5>} value={statsData[type].count}
+                                title={<div className="content-dashboard-key-header">{titles[type]}</div>} value={statsData[type].count}
                             />
                             <br />
                             <div className="overview-stat-container">
