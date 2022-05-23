@@ -120,10 +120,7 @@ export default function Mechanisms() {
 		account_id: "ooa46c499ccb"
 	}
 
-	useEffect(() => {
-		if (window.location.pathname.split("/").length === 3) {
-			getMechanismDetails(window.location.pathname.split('/')[2]);
-		}
+	function getMechanisms() {
 		setLoading(true);
 		ApiService.get(ApiUrls.mechanisms)
 			.then(data => {
@@ -168,6 +165,13 @@ export default function Mechanisms() {
 				console.log('response: ', response);
 				setToastList([...toastList, response]);
 			})
+	}
+
+	useEffect(() => {
+		if (window.location.pathname.split("/").length === 3) {
+			getMechanismDetails(window.location.pathname.split('/')[2]);
+		}
+		getMechanisms();
 	}, [])
 
 	function activateMechanism(uid: string) {
@@ -177,9 +181,7 @@ export default function Mechanisms() {
 					const response = showToast('success', 'Successfully activated Mechanism');
 					console.log('response: ', response);
 					setToastList([...toastList, response]);
-					setInterval(() => {
-						window.location.reload()
-					}, 2000)
+					getMechanisms();
 				}
 				else {
 					const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
@@ -202,9 +204,7 @@ export default function Mechanisms() {
 					const response = showToast('success', 'Successfully de-activated Mechanism');
 					console.log('response: ', response);
 					setToastList([...toastList, response]);
-					setInterval(() => {
-						window.location.reload()
-					}, 2000)
+					getMechanisms();
 				}
 				else {
 					const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
@@ -229,7 +229,7 @@ export default function Mechanisms() {
 			.then(data => {
 				if (!data.errorSummary) {
 					console.log(data)
-					window.location.reload()
+					getMechanisms();
 				}
 				else {
 					const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
@@ -329,12 +329,12 @@ export default function Mechanisms() {
 							</Button>
 						</div>
 
-						<div style={{
+						<div style={{ fontWeight: 600, fontSize: 'x-large',
 							width: '100%', border: '1px solid #D7D7DC',
 							borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
 						}}
 						>
-							<h4>ACTIVE</h4>
+							ACTIVE
 						</div>
 
 						<Table
@@ -353,12 +353,12 @@ export default function Mechanisms() {
 						/>
 						<br />
 
-						<div style={{
+						<div style={{ fontWeight: 600, fontSize: 'x-large',
 							width: '100%', border: '1px solid #D7D7DC',
 							borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
 						}}
 						>
-							<h4>INACTIVE</h4>
+							INACTIVE
 						</div>
 						<Table
 							style={{ border: '1px solid #D7D7DC' }}

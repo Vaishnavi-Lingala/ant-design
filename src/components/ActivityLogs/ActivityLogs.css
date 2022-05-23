@@ -20,6 +20,14 @@
     margin-top: 40px;
 }
 
+.content-header {
+    display: flex;
+    font-size: xx-large;
+    font-weight: 600;
+    padding: 5px 0 0 5px;
+    margin-bottom: 20px;
+}
+
 .log-field-container {
     display: grid;
     grid-template-columns: 35% 65%;

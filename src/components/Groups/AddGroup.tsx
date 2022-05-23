@@ -32,7 +32,7 @@ export default function AddGroup(props: any) {
         setLoading(true);
         console.log('New group: ', newGroup);
         ApiService.post(ApiUrls.groups, newGroup).then(data => {
-            if(!data.errorSummary){
+            if (!data.errorSummary) {
                 console.log('Post group response: ', data);
                 setLoading(false);
                 setIsModalVisible(false);
@@ -77,7 +77,7 @@ export default function AddGroup(props: any) {
             >
                 <Row gutter={16}>
                     <Col span={6}>
-                        <h6>Name</h6>
+                        <p style={{ fontWeight: 600, fontSize: 'medium', marginTop: '-5px' }}>Name:</p>
                     </Col>
                     <Col span={18}>
                         <span style={{ paddingRight: '20px' }}>
@@ -97,7 +97,7 @@ export default function AddGroup(props: any) {
                     </Col>
 
                     <Col span={6}>
-                        <h6>Description</h6>
+                        <p style={{ fontWeight: 600, fontSize: 'medium', marginTop: '-5px' }}>Description:</p>
                     </Col>
                     <Col span={18}>
                         <span style={{ paddingRight: '20px' }}>
