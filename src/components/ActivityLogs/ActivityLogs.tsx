@@ -73,18 +73,20 @@ const ExpandedRows = ({ activity, user, machine, uid }) => {
                     ))}
                 </div>
             </Panel>
-            <Panel header="User" key="3">
-                <div className="log-field-container">
-                    {Object.keys(filteredUser).map((recordKey) => (
-                        <DisplayField
-                            field={recordKey}
-                            value={filteredUser[recordKey]}
-                            key={recordKey}
-                            logFieldNames={logFieldNames.user}
-                        />
-                    ))}
-                </div>
-            </Panel>
+            {
+                user ? <Panel header="User" key="3">
+                    <div className="log-field-container">
+                        {Object.keys(filteredUser).map((recordKey) => (
+                            <DisplayField
+                                field={recordKey}
+                                value={filteredUser[recordKey]}
+                                key={recordKey}
+                                logFieldNames={logFieldNames.user}
+                            />
+                        ))}
+                    </div>
+                </Panel> : null
+            }
         </Collapse>
     </>;
 };
@@ -128,7 +130,7 @@ export default function ActivityLogs() {
         },
         {
             title: "Actor",
-            render: (text, record) => <>{record.activity?.display_name}</>
+            render: (text, record) => <>{record.activity?.display_name ? record.activity?.display_name : "System"}</>
         },
         {
             title: "Event Info",
