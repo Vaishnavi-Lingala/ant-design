@@ -60,7 +60,7 @@ const Urls = {
     reOrderMechanisms: `account/${accountId}/product/${productId}/mechanism/reorder`,
 
     // Activity Log Urls
-    activityLog: `account/${accountId}/activitylog`,
+    activityLog: `account/${accountId}/product/${productId}/activitylog`,
     filterableFields: `/activitylog/filterable-fields`
 }
 
