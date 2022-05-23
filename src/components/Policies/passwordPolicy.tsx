@@ -1,11 +1,12 @@
 import { Button, Divider, Input, Radio, Select, Skeleton } from "antd";
 import { useContext, useEffect, useState } from "react";
-import { PasswordPolicyType } from "../../models/Data.models";
-
-import ApiService from "../../Api.service";
-import ApiUrls from '../../ApiUtils';
 import TextArea from "antd/lib/input/TextArea";
 
+import './Policies.css'
+
+import { PasswordPolicyType } from "../../models/Data.models";
+import ApiService from "../../Api.service";
+import ApiUrls from '../../ApiUtils';
 import { showToast } from "../Layout/Toast/Toast";
 import { StoreContext } from "../../helpers/Store";
 
@@ -41,7 +42,6 @@ export const PasswordPolicy = (props: any) => {
                 setLoading(false);
             }, error => {
                 console.error('Error: ', error);
-
                 const response = showToast('error', 'An Error has occured with getting Groups');
                 console.log('response: ', response);
                 setToastList([...toastList, response]);
@@ -91,21 +91,26 @@ export const PasswordPolicy = (props: any) => {
     function createPasswordPolicy() {
         ApiService.post(ApiUrls.addPolicy, passwordEditData)
             .then(data => {
-                console.log(data);
-
-                const response = showToast('success', 'Successfully added Password Policy');
-                console.log('response: ', response);
-                setToastList([...toastList, response]);
+                if (!data.errorSummary) {
+                    console.log(data);
+                    const response = showToast('success', 'Successfully added Password Policy');
+                    console.log('response: ', response);
+                    setToastList([...toastList, response]);
+                    setTimeout(() => {
+                        window.location.reload()
+                    }, 2000);
+                }
+                else {
+                    const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
+                    console.log('response: ', response);
+                    setToastList([...toastList, response]);
+                }
             }, error => {
                 console.error('Error: ', error);
-
                 const response = showToast('error', 'An Error has occured with adding Password Policy');
                 console.log('response: ', response);
                 setToastList([...toastList, response]);
             })
-        setTimeout(() => {
-            window.location.reload()
-        }, 1000);
     }
 
     function setCancelClick() {
@@ -115,15 +120,20 @@ export const PasswordPolicy = (props: any) => {
     function updatePasswordPolicy() {
         ApiService.put(ApiUrls.policy(passwordDisplayData.uid), passwordEditData)
             .then(data => {
-                setPasswordDisplayData({ ...passwordEditData });
-
-                const response = showToast('success', 'Successfully updated Password Policy');
-                console.log('response: ', response);
-                setToastList([...toastList, response]);
+                if (!data.errorSummary) {
+                    setPasswordDisplayData({ ...passwordEditData });
+                    const response = showToast('success', 'Successfully updated Password Policy');
+                    console.log('response: ', response);
+                    setToastList([...toastList, response]);
+                }
+                else {
+                    const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
+                    console.log('response: ', response);
+                    setToastList([...toastList, response]);
+                }
             })
             .catch(error => {
                 console.error('Error: ', error);
-
                 const response = showToast('error', 'An Error has occured with updating Password Policy');
                 console.log('response: ', response);
                 setToastList([...toastList, response]);
@@ -148,8 +158,8 @@ export const PasswordPolicy = (props: any) => {
         <div className="content-container-policy">
             <div className="row-container">
                 <div>
-                    {passwordDisplayData.uid === undefined ? <h3>Create Password Policy</h3> :
-                        <h3>Edit Password Policy</h3>
+                    {passwordDisplayData.uid === undefined ? <div className="content-heading">Create Password Policy</div> :
+                        <div className="content-heading">Edit Password Policy</div>
                     }
                 </div>
                 <div>
@@ -159,8 +169,8 @@ export const PasswordPolicy = (props: any) => {
                     }
                 </div>
 
-                <div style={{ paddingTop: '20px' }}>
-                    <h6>Policy Name</h6>
+                <div className="content-policy-key-header" style={{ paddingTop: '20px' }}>
+                    Policy Name:
                 </div>
                 <div style={{ paddingTop: '20px' }}>
                     {isEdit ? <Input className="form-control"
@@ -175,8 +185,8 @@ export const PasswordPolicy = (props: any) => {
                     }
                 </div>
 
-                <div>
-                    <h6>Description</h6>
+                <div className="content-policy-key-header">
+                    Description:
                 </div>
                 <div>
                     {isEdit ? <TextArea className="form-control"
@@ -191,8 +201,8 @@ export const PasswordPolicy = (props: any) => {
                     }
                 </div>
 
-                <div>
-                    <h6>Assigned to groups</h6>
+                <div className="content-policy-key-header">
+                    Assigned to groups:
                 </div>
                 <div>
                     <Select
@@ -207,8 +217,8 @@ export const PasswordPolicy = (props: any) => {
                     />
                 </div>
 
-                <div>
-                    <h6>Policy Type</h6>
+                <div className="content-policy-key-header">
+                    Policy Type:
                 </div>
                 <div>
                     {passwordDisplayData.policy_type}
@@ -218,8 +228,8 @@ export const PasswordPolicy = (props: any) => {
             <Divider style={{ borderTop: '1px solid #d7d7dc' }} />
 
             <div className="row-container">
-                <div style={{ padding: '10px 0 10px 0' }}>
-                    <h6>Grace Period</h6>
+                <div className="content-policy-key-header" style={{ padding: '10px 0 10px 0' }}>
+                    Grace Period:
                 </div>
                 <div style={{ padding: '12px 0 10px 0' }}>
                     <Radio.Group defaultValue={passwordDisplayData.policy_req.grace_period}
@@ -241,8 +251,8 @@ export const PasswordPolicy = (props: any) => {
             </div>
             <br />
             <div style={{ display: 'grid', gridTemplateColumns: '6% 85%' }}>
-                <div>
-                    <h6>Help:</h6>
+                <div className="content-policy-key-header" style={{ marginTop: '-5px' }}>
+                    Help:
                 </div>
                 <div>
                     Grace Period is the amount of time the user can tap in and out until they are required to re-enter their password after tapping badge.

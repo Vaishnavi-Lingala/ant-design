@@ -3,13 +3,15 @@ import { UserOutlined } from '@ant-design/icons';
 import { useHistory } from "react-router-dom";
 import { useOktaAuth } from "@okta/okta-react";
 import { OktaAuth } from "@okta/okta-auth-js";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import './Layout.css';
 
 import config from "../../config";
 import ApiUrls from '../../ApiUtils';
 import ApiService from "../../Api.service";
+import { StoreContext } from "../../helpers/Store";
+import { showToast } from "./Toast/Toast";
 
 const { SubMenu } = Menu;
 const { Header } = Layout;
@@ -18,6 +20,7 @@ function AppHeader() {
     const history = useHistory();
     const { authState } = useOktaAuth();
     const [products, setProducts]: any = useState([]);
+    const [toastList, setToastList] = useContext(StoreContext);
 
     useEffect(() => {
         ApiService.get(ApiUrls.getProducts)
@@ -33,7 +36,13 @@ function AppHeader() {
                 }
                 setProducts(object);
             })
-    }, [])
+            .catch((error) => {
+                console.error('Error: ', error);
+                const response = showToast('error', 'An Error has occured with getting Products');
+                console.log('response: ', response);
+                setToastList([...toastList, response]);
+            })
+    }, [])    
 
     console.log(products);
 
@@ -92,15 +101,15 @@ function AppHeader() {
 
             <Menu className="border-bottom-0" theme="light" mode="horizontal" id="logout-menu">
                 <SubMenu title={authState?.idToken?.claims.name?.split(" ")[0]}
-                    icon={<UserOutlined style={{ position: 'relative', bottom: '3px' }} />}
+                    icon={<UserOutlined />}
                     key={'sub'}
                 >
                     <Menu.Item key="name" className="menu-item-disabled"
                         style={{ userSelect: 'text' }} disabled
                     >
-                        <h6 style={{ position: 'relative', top: '8px', padding: '10px 0px 0px 10px' }}>
+                        <p style={{ fontWeight: 600, fontSize: 'medium', position: 'relative', top: '8px', padding: '0px 0px 0px 10px' }}>
                             {authState?.idToken?.claims.name}
-                        </h6>
+                        </p>
                     </Menu.Item>
 
                     <Menu.Item key="email" className="menu-item-disabled" style={{
@@ -114,7 +123,7 @@ function AppHeader() {
 
                     <Menu.Item key="logout" onClick={logout} style={{
                         marginTop: '-16px',
-                        padding: '0 0 30px 26px'
+                        padding: '0 0 30px 27px'
                     }}
                     >
                         {'Logout'}

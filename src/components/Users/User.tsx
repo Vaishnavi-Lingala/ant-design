@@ -8,6 +8,7 @@ import { StoreContext } from "../../helpers/Store";
 
 export function User(props: any) {
     let userDetails = props.userDetails;
+    console.log(userDetails);
     const {TabPane} = Tabs;
     //@ts-ignore
     const accessToken = JSON.parse(localStorage.getItem("okta-token-storage")).accessToken.accessToken;
@@ -24,10 +25,10 @@ export function User(props: any) {
         let userId = props.userDetails.uid;
         ApiService.get(ApiUrls.userGroups(userId)).then((groupsResponse:any) => {
             let userGroups = appendKeyToGivenList(groupsResponse);
+            console.log(userGroups);
             setGroups(userGroups);
         }).catch(error => {
             console.error('Error: ', error);
-
             const response = showToast('error', 'An Error has occured with getting Groups');
             console.log('response: ', response);
             setToastList([...toastList, response]);
@@ -44,26 +45,27 @@ export function User(props: any) {
 	}
 
     return (
-        <Skeleton loading={loadingDetails}>
             <Tabs defaultActiveKey="profile" type="card" size={"middle"} animated={false} tabBarStyle={{ marginBottom: '0px' }}>
                 <TabPane tab="Profile" key="profile">
-                    <div className="row" style={{paddingTop: "20px"}}>
-                        <div style={{width: "100%", display: "flex", marginBottom: "10px"}}>
-                            <div style={{width: "50%"}}>Username</div>
-                            <div>{userDetails.user_name}</div>
+                    <Skeleton loading={loadingDetails}>
+                        <div className="content-container-policy">
+                            <div style={{width: "100%", display: "flex", marginBottom: "10px"}}>
+                            <div style={{width: "50%"}}><b>Username</b></div>
+                                <div>{userDetails.user_name}</div>
+                            </div>
+                            <div style={{width: "100%", display: "flex", marginBottom: "10px"}}>
+                            <div style={{width: "50%"}}><b>Email</b></div>
+                                <div>{userDetails.email}</div>
+                            </div>
+                            <div style={{width: "100%", display: "flex", marginBottom: "10px"}}>
+                            <div style={{width: "50%"}}><b>Status</b></div>
+                                <div>{userDetails.status}</div>
+                            </div>    
                         </div>
-                        <div style={{width: "100%", display: "flex", marginBottom: "10px"}}>
-                            <div style={{width: "50%"}}>Email</div>
-                            <div>{userDetails.email}</div>
-                        </div>
-                        <div style={{width: "100%", display: "flex", marginBottom: "10px"}}>
-                            <div style={{width: "50%"}}>Status</div>
-                            <div>{userDetails.status}</div>
-                        </div>    
-                    </div>
+                    </Skeleton>
                 </TabPane>
                 <TabPane tab="Groups" key="groups">
-                    <div className="row" style={{paddingTop: "20px"}}>
+                    <Skeleton loading={loadingDetails}>
                         <Table style={{ border: '1px solid #D7D7DC' }}
 						showHeader={true}
 						columns={columns}
@@ -76,9 +78,9 @@ export function User(props: any) {
                                 setPageSize(pageSize);
                             }
                          }}></Table>
-                    </div>
+                    </Skeleton>
                 </TabPane>
             </Tabs>
-        </Skeleton>
+        
     )
 }

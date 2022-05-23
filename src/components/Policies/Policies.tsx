@@ -358,9 +358,7 @@ export default function Policies() {
 				setInActiveKioskPolicies(kioskInActive);
 				setLoadingDetails(false);
 			}, error => {
-				console.error('Error: ', error);
-				setLoadingDetails(false);
-
+				console.log(error)
 				const response = showToast('error', 'An Error has occured with getting Policies');
 				console.log('response: ', response);
 				setToastList([...toastList, response]);
@@ -384,15 +382,20 @@ export default function Policies() {
 	function activatePolicy(uid: string) {
 		ApiService.get(ApiUrls.activatePolicy(uid))
 			.then(data => {
-				window.location.reload()
-
-				const response = showToast('success', 'Successfully activated Policy');
-				console.log('response: ', response);
-				setToastList([...toastList, response]);
+				if (!data.errorSummary) {
+					const response = showToast('success', 'Successfully activated Policy');
+					console.log('response: ', response);
+					setToastList([...toastList, response]);
+					getPolicies();
+				}
+				else {
+					const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
+					console.log('response: ', response);
+					setToastList([...toastList, response]);
+				}
 			})
 			.catch(error => {
 				console.error('Error: ', error);
-
 				const response = showToast('error', 'An Error has occured with activating Policy');
 				console.log('response: ', response);
 				setToastList([...toastList, response]);
@@ -402,15 +405,20 @@ export default function Policies() {
 	function deActivatePolicy(uid: string) {
 		ApiService.get(ApiUrls.deActivatePolicy(uid))
 			.then(data => {
-				window.location.reload()
-
-				const response = showToast('success', 'Successfully de-activated Policy');
-				console.log('response: ', response);
-				setToastList([...toastList, response]);
+				if (!data.errorSummary) {
+					const response = showToast('success', 'Successfully de-activated Policy');
+					console.log('response: ', response);
+					setToastList([...toastList, response]);
+					getPolicies();
+				}
+				else {
+					const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
+					console.log('response: ', response);
+					setToastList([...toastList, response]);
+				}
 			})
 			.catch(error => {
 				console.error('Error: ', error);
-
 				const response = showToast('error', 'An Error has occured with de-activating Policy');
 				console.log('response: ', response);
 				setToastList([...toastList, response]);
@@ -425,11 +433,17 @@ export default function Policies() {
 		}
 		ApiService.post(ApiUrls.reOrderPolicies, data)
 			.then(data => {
-				console.log(data)
-				window.location.reload()
+				if (!data.errorSummary) {
+					console.log(data)
+					getPolicies();
+				}
+				else {
+					const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
+					console.log('response: ', response);
+					setToastList([...toastList, response]);
+				}
 			}, error => {
 				console.error('Error: ', error);
-
 				const response = showToast('error', 'An Error has occured with re-ordering Policies');
 				console.log('response: ', response);
 				setToastList([...toastList, response]);
@@ -441,25 +455,34 @@ export default function Policies() {
 		setLoadingDetails(true);
 		ApiService.get(ApiUrls.policy(uid))
 			.then(data => {
-				console.log(data);
-				if (data.policy_type === "PIN") {
-					history.push('/policies/pin/' + uid);
-					setPinDetails(data);
+				if(!data.errorSummary){
+					console.log(data);
+					if (data.policy_type === "PIN") {
+						history.push('/policies/pin/' + uid);
+						setPinDetails(data);
+					}
+					if (data.policy_type === "PASSWORD") {
+						history.push('/policies/password/' + uid);
+						setPasswordDetails(data);
+					}
+					if (data.policy_type === "KIOSK") {
+						history.push('/policies/kiosk/' + uid);
+						setKioskDetails(data);
+					}
+					setLoadingDetails(false);
 				}
-				if (data.policy_type === "PASSWORD") {
-					history.push('/policies/password/' + uid);
-					setPasswordDetails(data);
-				}
-				if (data.policy_type === "KIOSK") {
-					history.push('/policies/kiosk/' + uid);
-					setKioskDetails(data);
-				}
-				setLoadingDetails(false);
+				else {
+                    const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
+                    console.log('response: ', response);
+                    setToastList([...toastList, response]);
+					setInterval(() => {
+						history.goBack();
+					}, 2000)
+                }
 			})
 			.catch(error => {
 				console.error('Error: ', error);
 				setLoadingDetails(false);
-
 				const response = showToast('error', 'An Error has occured with getting Policy Details');
 				console.log('response: ', response);
 				setToastList([...toastList, response]);
@@ -511,13 +534,14 @@ export default function Policies() {
 										</Button>
 									</div>
 
-									<div style={{
+									<div style={{ fontWeight: 600, fontSize: 'x-large',
 										width: '100%', border: '1px solid #D7D7DC',
 										borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
 									}}
 									>
-										<h4>ACTIVE</h4>
+										ACTIVE
 									</div>
+
 									<Table
 										style={{ border: '1px solid #D7D7DC' }}
 										showHeader={true}
@@ -535,12 +559,12 @@ export default function Policies() {
 
 									<br />
 
-									<div style={{
+									<div style={{ fontWeight: 600, fontSize: 'x-large',
 										width: '100%', border: '1px solid #D7D7DC',
 										borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
 									}}
 									>
-										<h4>INACTIVE</h4>
+										INACTIVE
 									</div>
 									<Table
 										style={{ border: '1px solid #D7D7DC' }}
@@ -568,12 +592,12 @@ export default function Policies() {
 										</Button>
 									</div>
 
-									<div style={{
+									<div style={{ fontWeight: 600, fontSize: 'x-large',
 										width: '100%', border: '1px solid #D7D7DC',
 										borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
 									}}
 									>
-										<h4>ACTIVE</h4>
+										ACTIVE
 									</div>
 									<Table
 										style={{ border: '1px solid #D7D7DC' }}
@@ -592,12 +616,12 @@ export default function Policies() {
 
 									<br />
 
-									<div style={{
+									<div style={{ fontWeight: 600, fontSize: 'x-large',
 										width: '100%', border: '1px solid #D7D7DC',
 										borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
 									}}
 									>
-										<h4>INACTIVE</h4>
+										INACTIVE
 									</div>
 									<Table
 										style={{ border: '1px solid #D7D7DC' }}
@@ -625,12 +649,12 @@ export default function Policies() {
 										</Button>
 									</div>
 
-									<div style={{
+									<div style={{ fontWeight: 600, fontSize: 'x-large',
 										width: '100%', border: '1px solid #D7D7DC',
 										borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
 									}}
 									>
-										<h4>ACTIVE</h4>
+										ACTIVE
 									</div>
 									<Table
 										style={{ border: '1px solid #D7D7DC' }}
@@ -649,12 +673,12 @@ export default function Policies() {
 
 									<br />
 
-									<div style={{
+									<div style={{ fontWeight: 600, fontSize: 'x-large',
 										width: '100%', border: '1px solid #D7D7DC',
 										borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
 									}}
 									>
-										<h4>INACTIVE</h4>
+										INACTIVE
 									</div>
 									<Table
 										style={{ border: '1px solid #D7D7DC' }}

@@ -60,7 +60,7 @@ export interface kioskPolicyType {
 export interface MechanismType{
     uid: string,
     on_tap_out: string,
-    reader_type: string,
+    // reader_type: string,
     order: number,
     product_id: string,
     name: string,

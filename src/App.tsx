@@ -17,51 +17,50 @@ import Dashboard from "./components/Dashboard/Dashboard";
 import Mechanisms from "./components/Mechanism/Mechanisms";
 import Groups from "./components/Groups/Groups";
 import Users from "./components/Users/Users";
-import Layout from "./components/Layout/Layout";
 import Machines from "./components/Machines/Machines";
 
 import { StoreContextProvider } from "./helpers/Store";
+import { MachineDetails } from "./components/Machines/MachineDetails";
 
 const oktaAuth = new OktaAuth(config.oidc);
 
 function App() {
-	const history = useHistory();
+    const history = useHistory();
 
-	ConfigProvider.config({
-		theme: {
-			// primaryColor: 'green'
-		},
-	});
+    ConfigProvider.config({
+        theme: {
+            // primaryColor: 'yellow'
+        },
+    });
 
-	const restoreOriginalUri = async (_oktaAuth: any, originalUri: any) => {
-		history.replace(
-			toRelativeUrl(originalUri || "/", window.location.origin)
-		);
-	};
+    const restoreOriginalUri = async (_oktaAuth: any, originalUri: any) => {
+        history.replace(
+            toRelativeUrl(originalUri || "/", window.location.origin)
+        );
+    };
 
-	return (
-		<StoreContextProvider>
-			<Security oktaAuth={oktaAuth} restoreOriginalUri={restoreOriginalUri}>
-				<Switch>
-					<Route path="/" exact component={Login} />
-					<Route path="/login/callback" component={LoginCallback} />
+    return (
+        <StoreContextProvider>
+            <Security oktaAuth={oktaAuth} restoreOriginalUri={restoreOriginalUri}>
+                <Switch>
+                    <Route path="/" exact component={Login} />
+                    <Route path="/login/callback" component={LoginCallback} />
 
-					<Layout>
-						<ProtectedRoute path={`/policies`} component={Policies} />
-						<ProtectedRoute path={`/activitylogs`} component={ActivityLogs} />
-						<ProtectedRoute path={`/dashboard`} component={Dashboard} />
-						<ProtectedRoute path={`/mechanism`} component={Mechanisms} />
-						<ProtectedRoute path={`/settings`} component={Settings} />
-						<ProtectedRoute path={`/groups`} component={Groups} />
-						<ProtectedRoute path={`/users`} component={Users} />
-						<ProtectedRoute path={`/machines`} component={Machines} />
+                    <ProtectedRoute path={`/policies`} component={Policies} />
+                    <ProtectedRoute path={`/activitylogs`} component={ActivityLogs} />
+                    <ProtectedRoute path={`/dashboard`} component={Dashboard} />
+                    <ProtectedRoute path={`/mechanism`} component={Mechanisms} />
+                    <ProtectedRoute path={`/settings`} component={Settings} />
+                    <ProtectedRoute path={`/groups`} component={Groups} />
+                    <ProtectedRoute path={`/users`} component={Users} />
+                    <ProtectedRoute path={`/machines`} exact component={Machines} />
+                    <ProtectedRoute path={`/machines/:id`} component={MachineDetails} />
 
-					</Layout>
-					<Route component={PageNotFound} />
-				</Switch>
-			</Security>
-		</StoreContextProvider>
-	);
+                    <Route component={PageNotFound} />
+                </Switch>
+            </Security>
+        </StoreContextProvider>
+    );
 }
 
 export default App;

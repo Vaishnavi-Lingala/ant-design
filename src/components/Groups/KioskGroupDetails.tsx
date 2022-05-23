@@ -57,7 +57,6 @@ export default function KioskGroupDetails(props: any) {
             }, error => {
                 console.error('Error: ', error);
                 setLoadingDetails(false);
-
                 const response = showToast('error', 'An Error has occured with getting Machines');
                 console.log('response: ', response);
                 setToastList([...toastList, response]);
@@ -76,7 +75,6 @@ export default function KioskGroupDetails(props: any) {
         }, error => {
             console.error('Error: ', error);
             setLoadingDetails(false);
-
             const response = showToast('error', 'An Error has occured with getting Machines');
             console.log('response: ', response);
             setToastList([...toastList, response]);
@@ -87,26 +85,30 @@ export default function KioskGroupDetails(props: any) {
         console.log('Action: ', action);
         setLoadingDetails(true);
         ApiService.post(ApiUrls.groupMachines(groupDetails.uid), selectedUsers).then(data => {
-            if (data.results !== undefined) {
-                data.results.forEach(machine => {
-                    machine.key = machine.uid;
-                })
-                setMachines(data.results);
-                setTotalItems(data.total_items);
+            if(!data.errorSummary){
+                if (data.results !== undefined) {
+                    data.results.forEach(machine => {
+                        machine.key = machine.uid;
+                    })
+                    setMachines(data.results);
+                    setTotalItems(data.total_items);
+                }
+                setLoadingDetails(false);
+                const response = showToast('success', 'Successfully added Group Machines');
+                console.log('response: ', response);
+                setToastList([...toastList, response]);
             }
-            setLoadingDetails(false);
-
-            const response = showToast('success', 'Successfully added Group Machines');
-            console.log('response: ', response);
-            setToastList([...toastList, response]);
+            else {
+                const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
+                console.log('response: ', response);
+                setToastList([...toastList, response]);
+            }
         }, error => {
             console.error('Error: ', error);
             setLoadingDetails(false);
-
             const response = showToast('error', 'An Error has occured with adding Group Machines');
             console.log('response: ', response);
             setToastList([...toastList, response]);
-
         })
     };
 
@@ -131,8 +133,8 @@ export default function KioskGroupDetails(props: any) {
                         Back
                     </Button>
                 </div>
-                <div>
-                    <h6>Created: {Moment(groupDetails.created_ts).format('MM/DD/YYYY')}</h6>
+                <div style={{ fontWeight: 600, fontSize: 'medium'}}>
+                    Created: {Moment(groupDetails.created_ts).format('MM/DD/YYYY')}
                 </div>
                 <Divider style={{ borderTop: '1px solid #d7d7dc' }} />
                 <Skeleton loading={loadingDetails}>

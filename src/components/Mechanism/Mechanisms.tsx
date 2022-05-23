@@ -109,7 +109,7 @@ export default function Mechanisms() {
 				password_grace_period: null
 			}
 		],
-		reader_type: "",
+		// reader_type: "",
 		product_id: "oprc735871d0",
 		name: "",
 		on_tap_out: null,
@@ -120,10 +120,7 @@ export default function Mechanisms() {
 		account_id: "ooa46c499ccb"
 	}
 
-	useEffect(() => {
-		if (window.location.pathname.split("/").length === 3) {
-			getMechanismDetails(window.location.pathname.split('/')[2]);
-		}
+	function getMechanisms() {
 		setLoading(true);
 		ApiService.get(ApiUrls.mechanisms)
 			.then(data => {
@@ -164,25 +161,36 @@ export default function Mechanisms() {
 				setLoading(false);
 			}, error => {
 				console.error('Error: ', error);
-
 				const response = showToast('error', 'An Error has occured with getting Mechanisms');
 				console.log('response: ', response);
 				setToastList([...toastList, response]);
 			})
+	}
+
+	useEffect(() => {
+		if (window.location.pathname.split("/").length === 3) {
+			getMechanismDetails(window.location.pathname.split('/')[2]);
+		}
+		getMechanisms();
 	}, [])
 
 	function activateMechanism(uid: string) {
 		ApiService.get(ApiUrls.activateMechanism(uid))
 			.then(data => {
-				window.location.reload()
-
-				const response = showToast('success', 'Successfully activated Mechanism');
-				console.log('response: ', response);
-				setToastList([...toastList, response]);
+				if (!data.errorSummary) {
+					const response = showToast('success', 'Successfully activated Mechanism');
+					console.log('response: ', response);
+					setToastList([...toastList, response]);
+					getMechanisms();
+				}
+				else {
+					const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
+					console.log('response: ', response);
+					setToastList([...toastList, response]);
+				}
 			})
 			.catch(error => {
 				console.error('Error: ', error);
-
 				const response = showToast('error', 'An Error has occured with activating Mechanism');
 				console.log('response: ', response);
 				setToastList([...toastList, response]);
@@ -192,15 +200,20 @@ export default function Mechanisms() {
 	function deActivateMechanism(uid: string) {
 		ApiService.get(ApiUrls.deActivateMechanism(uid))
 			.then(data => {
-				window.location.reload()
-
-				const response = showToast('success', 'Successfully de-activated Mechanism');
-				console.log('response: ', response);
-				setToastList([...toastList, response]);
+				if (!data.errorSummary) {
+					const response = showToast('success', 'Successfully de-activated Mechanism');
+					console.log('response: ', response);
+					setToastList([...toastList, response]);
+					getMechanisms();
+				}
+				else {
+					const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
+					console.log('response: ', response);
+					setToastList([...toastList, response]);
+				}
 			})
 			.catch(error => {
 				console.error('Error: ', error);
-
 				const response = showToast('error', 'An Error has occured with de-activating Mechanism');
 				console.log('response: ', response);
 				setToastList([...toastList, response]);
@@ -214,15 +227,23 @@ export default function Mechanisms() {
 		}
 		ApiService.post(ApiUrls.reOrderMechanisms, data)
 			.then(data => {
-				console.log(data)
-				window.location.reload()
-			}, error => {
+				if (!data.errorSummary) {
+					console.log(data)
+					getMechanisms();
+				}
+				else {
+					const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
+					console.log('response: ', response);
+					setToastList([...toastList, response]);
+				}
+			})
+			.catch(error => {
 				console.error('Error: ', error);
-
 				const response = showToast('error', 'An Error has occured with re-ordering Mechanism');
 				console.log('response: ', response);
 				setToastList([...toastList, response]);
 			})
+
 	}
 
 	function getMechanismDetails(uid: string) {
@@ -230,15 +251,21 @@ export default function Mechanisms() {
 		setLoading(true);
 		ApiService.get(ApiUrls.mechanism(uid))
 			.then(data => {
-				history.push('/mechanism/' + uid);
-				console.log(data);
-				console.log(mechanism);
-				setMechanismDetails(data);
-				setLoading(false);
+				if (!data.errorSummary) {
+					history.push('/mechanism/' + uid);
+					console.log(data);
+					console.log(mechanism);
+					setMechanismDetails(data);
+					setLoading(false);
+				}
+				else {
+					const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
+					console.log('response: ', response);
+					setToastList([...toastList, response]);
+				}
 			})
 			.catch(error => {
 				console.error('Error: ', error);
-
 				const response = showToast('error', 'An Error has occured with getting Mechanism Details');
 				console.log('response: ', response);
 				setToastList([...toastList, response]);
@@ -302,12 +329,12 @@ export default function Mechanisms() {
 							</Button>
 						</div>
 
-						<div style={{
+						<div style={{ fontWeight: 600, fontSize: 'x-large',
 							width: '100%', border: '1px solid #D7D7DC',
 							borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
 						}}
 						>
-							<h4>ACTIVE</h4>
+							ACTIVE
 						</div>
 
 						<Table
@@ -326,12 +353,12 @@ export default function Mechanisms() {
 						/>
 						<br />
 
-						<div style={{
+						<div style={{ fontWeight: 600, fontSize: 'x-large',
 							width: '100%', border: '1px solid #D7D7DC',
 							borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
 						}}
 						>
-							<h4>INACTIVE</h4>
+							INACTIVE
 						</div>
 						<Table
 							style={{ border: '1px solid #D7D7DC' }}
