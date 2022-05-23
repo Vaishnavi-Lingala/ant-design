@@ -38,9 +38,9 @@ const DisplayField = ({ field, value, logFieldNames }) => {
 };
 
 const ExpandedRows = ({ activity, user, machine, uid }) => {
-    const filteredActivity = Object.fromEntries(Object.entries(activity).filter(([key]) => !hiddenFields.activity.includes(key)));;
-    const filteredMachine = Object.fromEntries(Object.entries(machine).filter(([key]) => !hiddenFields.machine.includes(key)));;
-    const filteredUser = Object.fromEntries(Object.entries(user).filter(([key]) => !hiddenFields.user.includes(key)));;
+    const filteredActivity = Object.fromEntries(Object.entries(activity ? activity : {}).filter(([key]) => !hiddenFields.activity.includes(key)));;
+    const filteredMachine = Object.fromEntries(Object.entries(machine ? machine : {}).filter(([key]) => !hiddenFields.machine.includes(key)));;
+    const filteredUser = Object.fromEntries(Object.entries(user ? user : {}).filter(([key]) => !hiddenFields.user.includes(key)));;
 
     return <>
         <Collapse
