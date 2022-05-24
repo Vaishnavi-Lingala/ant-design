@@ -9,7 +9,7 @@ import { useHistory } from "react-router-dom";
 import { showToast } from "../Layout/Toast/Toast";
 import { StoreContext } from "../../helpers/Store";
 
-export default function KioskGroupDetails(props: any) {
+export default function MachineGroupDetails(props: any) {
     const [groupDetails, setGroupDetails] = useState(props.groupDetails);
     const [loadingDetails, setLoadingDetails] = useState(false);
     const [action, setAction] = useState('');
@@ -92,6 +92,7 @@ export default function KioskGroupDetails(props: any) {
                     })
                     setMachines(data.results);
                     setTotalItems(data.total_items);
+                    setAction('');
                 }
                 setLoadingDetails(false);
                 const response = showToast('success', 'Successfully added Group Machines');
