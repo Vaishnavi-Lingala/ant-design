@@ -111,7 +111,7 @@ export default function MachinesSelection(props: any) {
 
     return(
         <>
-            <Modal title={<Title level={2}>{props.action} Users</Title>} visible={true} onOk={handleOk} onCancel={handleCancel} width={1000}
+            <Modal title={<Title level={2}>{props.action} Machines</Title>} visible={true} onOk={handleOk} onCancel={handleCancel} width={1000}
                 footer={[
                     <Button key="cancel" onClick={handleCancel}>
                         Cancel

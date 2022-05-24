@@ -21,16 +21,22 @@ export default function Machines() {
     const columns = [{
         title: 'Machine name',
         dataIndex: 'machine_name',
-        width: '30%'
+        width: '20%'
     },
     {
         title: 'Mac address',
         dataIndex: 'mac_address',
-        width: '30%'
+        width: '20%'
     },
 	{
         title: 'Last known IP Address',
         dataIndex: 'local_ip',
+        width: '20%'
+    }
+    ,
+    {
+        title: 'Type',
+        dataIndex: 'group_type',
         width: '20%'
     }
     ,
