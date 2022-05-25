@@ -24,12 +24,12 @@ export default function MachineGroupDetails(props: any) {
             width: '25%'
         },
         {
-            title: 'Mac Address',
+            title: 'MAC',
             dataIndex: 'mac_address',
             width: '25%'
         },
         {
-            title: 'Last Know IP Address',
+            title: 'Last Known IP',
             dataIndex: 'local_ip',
             width: '25%'
         },
