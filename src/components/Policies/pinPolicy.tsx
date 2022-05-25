@@ -7,8 +7,8 @@ import './Policies.css';
 import { PinPolicyType } from "../../models/Data.models";
 import ApiService from "../../Api.service";
 import ApiUrls from '../../ApiUtils';
-import { showToast } from "../Layout/Toast/Toast";
-import { StoreContext } from "../../helpers/Store";
+
+import { openNotification } from "../Layout/Notification";
 
 export const PinPolicy = (props: any) => {
 
@@ -20,7 +20,6 @@ export const PinPolicy = (props: any) => {
 	const [groupNames, setGroupNames]: any = useState([]);
 	const [groupUids, setGroupUids]: any = useState([]);
 	const [groupsChange, setGroupsChange]: any = useState([]);
-	const [toastList, setToastList] = useContext(StoreContext);
 
 	useEffect(() => {
 		if (pinDisplayData.uid === undefined) {
@@ -45,10 +44,8 @@ export const PinPolicy = (props: any) => {
 				setLoading(false);
 			}, error => {
 				console.error('Error: ', error);
+                openNotification('error', 'An Error has occured with getting Groups');
 				setLoading(false);
-				const response = showToast('error', 'An Error has occured with getting Groups');
-				console.log('response: ', response);
-				setToastList([...toastList, response]);
 			})
 
 		if (pinDisplayData.uid !== undefined) {
@@ -67,21 +64,15 @@ export const PinPolicy = (props: any) => {
 			.then(data => {
 				if (!data.errorSummary) {
 					setPinDisplayData({ ...pinEditData });
-					const response = showToast('success', 'Successfully updated PIN Policy');
-					console.log('response: ', response);
-					setToastList([...toastList, response]);
+					openNotification('success', 'Successfully updated PIN Policy');
 				}
 				else {
-					const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
-					console.log('response: ', response);
-					setToastList([...toastList, response]);
+					openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
 				}
 			})
 			.catch(error => {
 				console.error('Error: ', error);
-				const response = showToast('error', 'An Error has occured with updating PIN Policy');
-				console.log('response: ', response);
-				setToastList([...toastList, response]);
+                openNotification('error', 'An Error has occured with updating PIN Policy');
 			})
 	}
 
@@ -105,23 +96,17 @@ export const PinPolicy = (props: any) => {
 			.then(data => {
 				if (!data.errorSummary) {
 					console.log(data);
-					const response = showToast('success', 'Successfully added PIN Policy');
-					console.log('response: ', response);
-					setToastList([...toastList, response]);
+					openNotification('success', 'Successfully added PIN Policy');
 					setTimeout(() => {
 						window.location.reload()
 					}, 2000);
 				}
 				else {
-					const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
-					console.log('response: ', response);
-					setToastList([...toastList, response]);
+					openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
 				}
 			}, error => {
 				console.error('Error: ', error);
-				const response = showToast('error', 'An Error has occured with adding PIN Policy');
-				console.log('response: ', response);
-				setToastList([...toastList, response]);
+                openNotification('error', 'An Error has occured with adding PIN Policy');
 			})
 	}
 

@@ -9,8 +9,7 @@ import ApiService from "../../Api.service";
 import ApiUrls from '../../ApiUtils';
 import TextArea from "antd/lib/input/TextArea";
 
-import { showToast } from "../Layout/Toast/Toast";
-import { StoreContext } from "../../helpers/Store";
+import { openNotification } from "../Layout/Notification";
 
 export const KioskPolicy = (props: any) => {
 
@@ -27,7 +26,6 @@ export const KioskPolicy = (props: any) => {
     const [kioskGroupsChange, setkioskGroupsChange]: any = useState([]);
     const [kioskGroupNames, setKioskGroupNames]: any = useState([]);
     const [kioskGroupUids, setKioskGroupUids]: any = useState([]);
-    const [toastList, setToastList] = useContext(StoreContext);
 
     useEffect(() => {
         if (kioskDisplayData.uid === undefined) {
@@ -52,11 +50,8 @@ export const KioskPolicy = (props: any) => {
                 setLoadingDetails(false);
             }, error => {
                 console.error('Error: ', error);
+				openNotification('error', 'An Error has occured with getting Groups');
                 setLoadingDetails(false);
-
-                const response = showToast('error', 'An Error has occured with getting Groups');
-                console.log('response: ', response);
-                setToastList([...toastList, response]);
             })
 
         ApiService.get(ApiUrls.groups, { type: "KIOSK" })
@@ -76,10 +71,7 @@ export const KioskPolicy = (props: any) => {
                 setLoading(false);
             }, error => {
                 console.error('Error: ', error);
-
-                const response = showToast('error', 'An Error has occured with getting Groups');
-                console.log('response: ', response);
-                setToastList([...toastList, response]);
+				openNotification('error', 'An Error has occured with getting Groups');
             })
 
         if (kioskDisplayData.uid !== undefined) {
@@ -106,21 +98,15 @@ export const KioskPolicy = (props: any) => {
             .then(data => {
                 if (!data.errorSummary) {
                     setKioskDisplayData({ ...kioskEditData });
-                    const response = showToast('success', 'Successfully updated Kiosk Policy');
-                    console.log('response: ', response);
-                    setToastList([...toastList, response]);
+                    openNotification('success', 'Successfully updated Kiosk Policy');
                 }
                 else {
-                    const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
-                    console.log('response: ', response);
-                    setToastList([...toastList, response]);
+                    openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
                 }
             })
             .catch(error => {
                 console.error('Error: ', error);
-                const response = showToast('error', 'An Error has occured with updating Kiosk Policy');
-                console.log('response: ', response);
-                setToastList([...toastList, response]);
+                openNotification('error', 'An Error has occured with updating Kiosk Policy');
             })
     }
 
@@ -144,23 +130,17 @@ export const KioskPolicy = (props: any) => {
             .then(data => {
                 if (!data.errorSummary) {
                     console.log(data);
-                    const response = showToast('success', 'Successfully added Kiosk Policy');
-                    console.log('response: ', response);
-                    setToastList([...toastList, response]);
+                    openNotification('success', 'Successfully added Kiosk Policy');
                     setTimeout(() => {
                         window.location.reload()
                     }, 2000);
                 }
                 else {
-                    const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
-                    console.log('response: ', response);
-                    setToastList([...toastList, response]);
+                    openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
                 }
             }, error => {
                 console.error('Error: ', error);
-                const response = showToast('error', 'An Error has occured with adding Kiosk Policy');
-                console.log('response: ', response);
-                setToastList([...toastList, response]);
+                openNotification('error', 'An Error has occured with adding Kiosk Policy');
             })
     }
 

@@ -3,8 +3,7 @@ import { Table, Button, Modal, Typography, Input } from "antd";
 import ApiService from "../../Api.service";
 import ApiUrls from '../../ApiUtils';
 
-import { showToast } from "../Layout/Toast/Toast";
-import { StoreContext } from "../../helpers/Store";
+import { openNotification } from "../Layout/Notification";
 
 export default function UsersSelection(props: any) {
 
@@ -30,7 +29,6 @@ export default function UsersSelection(props: any) {
     const [page, setPage]: any = useState(1);
     const [pageSize, setPageSize]: any = useState(10);
     const [totalItems, setTotalItems]: any = useState(0);
-    const [toastList, setToastList] = useContext(StoreContext);
 
     useEffect(() => {
         if (props.action === 'Add') {
@@ -67,11 +65,8 @@ export default function UsersSelection(props: any) {
             setLoadingDetails(false);
         }, error => {
             console.error('Error: ', error);
+            openNotification('error', 'An Error has occured with getting Group Users');
             setLoadingDetails(false);
-
-            const response = showToast('error', 'An Error has occured with getting Group Users');
-            console.log('response: ', response);
-            setToastList([...toastList, response]);
         })
     }
 
@@ -86,10 +81,8 @@ export default function UsersSelection(props: any) {
             setLoadingDetails(false);
         }, error => {
             console.error('Error: ', error);
+            openNotification('error', 'An Error has occured with getting Users not in Group');
             setLoadingDetails(false);
-            const response = showToast('error', 'An Error has occured with getting Users not in Group');
-            console.log('response: ', response);
-            setToastList([...toastList, response]);
         })
     }
 

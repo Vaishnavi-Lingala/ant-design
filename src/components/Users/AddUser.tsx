@@ -3,8 +3,7 @@ import { useContext, useState } from "react";
 import ApiService from "../../Api.service";
 import ApiUrls from "../../ApiUtils"
 
-import { showToast } from "../Layout/Toast/Toast";
-import { StoreContext } from "../../helpers/Store";
+import { openNotification } from "../Layout/Notification";
 
 export function AddUser(props) {
     const { Title } = Typography;
@@ -17,7 +16,6 @@ export function AddUser(props) {
     });
     const [loading, setLoading] = useState(false);
     const [isModalVisible, setIsModalVisible] = useState(false);
-    const [toastList, setToastList] = useContext(StoreContext);
 
     const showModal = () => {
         setNewUser({
@@ -43,15 +41,11 @@ export function AddUser(props) {
             else {
                 // console.log(data.errorCauses[0].errorSummary.split('errorSummary')[2].slice(4));
                 console.log(data);
-                const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
-                console.log('response: ', response);
-                setToastList([...toastList, response]);
+				openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
             }
         }).catch(error => {
             console.error('Error: ', error);
-            const response = showToast('error', 'An Error has occured with adding User');
-            console.log('response: ', response);
-            setToastList([...toastList, response]);
+            openNotification('error', 'An Error has occured with adding User');
         }).finally(() => {
             setLoading(false);
         });
