@@ -24,12 +24,12 @@ export default function Machines() {
         width: '20%'
     },
     {
-        title: 'Mac address',
+        title: 'MAC',
         dataIndex: 'mac_address',
         width: '20%'
     },
 	{
-        title: 'Last known IP Address',
+        title: 'Last known IP',
         dataIndex: 'local_ip',
         width: '20%'
     }
