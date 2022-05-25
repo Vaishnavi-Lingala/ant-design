@@ -11,8 +11,7 @@ import ApiService from '../../Api.service';
 import ApiUrls from '../../ApiUtils';
 import Mechanism from './mechanism';
 
-import { showToast } from "../Layout/Toast/Toast";
-import { StoreContext } from "../../helpers/Store";
+import { openNotification } from '../Layout/Notification';
 
 export default function Mechanisms() {
 
@@ -92,7 +91,6 @@ export default function Mechanisms() {
 	const [activeMechanisms, setActiveMechanisms]: any = useState([]);
 	const [inactiveMechanisms, setInactiveMechanisms]: any = useState([]);
 	const [isModalVisible, setIsModalVisible] = useState(false);
-	const [toastList, setToastList] = useContext(StoreContext);
 	const history = useHistory();
 	const mechanism = {
 		challenge_factors: [
@@ -161,9 +159,7 @@ export default function Mechanisms() {
 				setLoading(false);
 			}, error => {
 				console.error('Error: ', error);
-				const response = showToast('error', 'An Error has occured with getting Mechanisms');
-				console.log('response: ', response);
-				setToastList([...toastList, response]);
+				openNotification('error', 'An Error has occured with getting Mechanisms');
 			})
 	}
 
@@ -178,22 +174,16 @@ export default function Mechanisms() {
 		ApiService.get(ApiUrls.activateMechanism(uid))
 			.then(data => {
 				if (!data.errorSummary) {
-					const response = showToast('success', 'Successfully activated Mechanism');
-					console.log('response: ', response);
-					setToastList([...toastList, response]);
+					openNotification('success', 'Successfully activated Mechanism');
 					getMechanisms();
 				}
 				else {
-					const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
-					console.log('response: ', response);
-					setToastList([...toastList, response]);
+					openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
 				}
 			})
 			.catch(error => {
 				console.error('Error: ', error);
-				const response = showToast('error', 'An Error has occured with activating Mechanism');
-				console.log('response: ', response);
-				setToastList([...toastList, response]);
+				openNotification('error', 'An Error has occured with activating Mechanism');
 			})
 	}
 
@@ -201,22 +191,16 @@ export default function Mechanisms() {
 		ApiService.get(ApiUrls.deActivateMechanism(uid))
 			.then(data => {
 				if (!data.errorSummary) {
-					const response = showToast('success', 'Successfully de-activated Mechanism');
-					console.log('response: ', response);
-					setToastList([...toastList, response]);
+					openNotification('success', 'Successfully de-activated Mechanism');
 					getMechanisms();
 				}
 				else {
-					const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
-					console.log('response: ', response);
-					setToastList([...toastList, response]);
+					openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
 				}
 			})
 			.catch(error => {
 				console.error('Error: ', error);
-				const response = showToast('error', 'An Error has occured with de-activating Mechanism');
-				console.log('response: ', response);
-				setToastList([...toastList, response]);
+				openNotification('error', 'An Error has occured with de-activating Mechanism');
 			})
 	}
 
@@ -232,16 +216,12 @@ export default function Mechanisms() {
 					getMechanisms();
 				}
 				else {
-					const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
-					console.log('response: ', response);
-					setToastList([...toastList, response]);
+					openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
 				}
 			})
 			.catch(error => {
 				console.error('Error: ', error);
-				const response = showToast('error', 'An Error has occured with re-ordering Mechanism');
-				console.log('response: ', response);
-				setToastList([...toastList, response]);
+				openNotification('error', 'An Error has occured with re-ordering Mechanism');
 			})
 
 	}
@@ -259,16 +239,12 @@ export default function Mechanisms() {
 					setLoading(false);
 				}
 				else {
-					const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
-					console.log('response: ', response);
-					setToastList([...toastList, response]);
+					openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
 				}
 			})
 			.catch(error => {
 				console.error('Error: ', error);
-				const response = showToast('error', 'An Error has occured with getting Mechanism Details');
-				console.log('response: ', response);
-				setToastList([...toastList, response]);
+				openNotification('error', 'An Error has occured with getting Mechanism Details');
 			})
 	}
 

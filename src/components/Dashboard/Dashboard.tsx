@@ -1,10 +1,9 @@
-import { Card, Skeleton, Statistic } from "antd";
+import { Card, notification, Skeleton, Statistic } from "antd";
 import { useContext, useEffect, useState } from "react";
 import ApiService from "../../Api.service";
 import ApiUrls from '../../ApiUtils';
 
-import { showToast } from "../Layout/Toast/Toast";
-import { StoreContext } from "../../helpers/Store";
+import { openNotification } from "../Layout/Notification";
 
 import './Dashboard.css'
 
@@ -12,7 +11,6 @@ export default function Dashboard() {
 
     const [loadingDetails, setLoadingDetails] = useState(true);
     const [statsData, setStatsData] = useState({});
-    const [toastList, setToastList] = useContext(StoreContext);
     const titles = {
         users: 'Users',
         groups: 'Groups',
@@ -24,16 +22,12 @@ export default function Dashboard() {
             .then(data => {
                 console.log('Stats data: ', data);
                 setStatsData(data);
+                openNotification('success', 'Successfully Obtained Dashboard Data');
                 setLoadingDetails(false);
-                // const response = showToast('success', 'Successfully got Dashboard Data');
-                // console.log('response: ', response);
-                // setToastList([...toastList, response]);
             }, error => {
                 console.error('Error: ', error);
+                openNotification('error', 'An error has occured with getting Dashboard Info');
                 setLoadingDetails(false);
-                const response = showToast('error', 'An Error has occured with getting Dashboard Data');
-                console.log('response: ', response);
-                setToastList([...toastList, response]);
             })
     }, [])
 

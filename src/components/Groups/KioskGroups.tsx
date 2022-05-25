@@ -6,13 +6,11 @@ import ApiUrls from '../../ApiUtils';
 import AddGroup from "./AddGroup";
 import { useHistory } from 'react-router-dom';
 
-import { showToast } from "../Layout/Toast/Toast";
-import { StoreContext } from "../../helpers/Store";
+import { openNotification } from "../Layout/Notification";
 
 export default function KioskGroups() {
     const [kioskMachineGroups, setKioskMachineGroups] = useState<Group[]>([]);
     const [loadingDetails, setLoadingDetails] = useState(false);
-    const [toastList, setToastList] = useContext(StoreContext);
     const history = useHistory();
 
     const columns = [
@@ -54,11 +52,8 @@ export default function KioskGroups() {
                 // setLoadingDetails(false);
             }, error => {
                 console.error('Error: ', error);
+                openNotification('error', 'An Error has occured with getting Groups');
                 setLoadingDetails(false);
-
-                const response = showToast('error', 'An Error has occured with getting Groups');
-                console.log('response: ', response);
-                setToastList([...toastList, response]);
             })
     }
 

@@ -10,8 +10,8 @@ import './Layout.css';
 import config from "../../config";
 import ApiUrls from '../../ApiUtils';
 import ApiService from "../../Api.service";
-import { StoreContext } from "../../helpers/Store";
-import { showToast } from "./Toast/Toast";
+
+import { openNotification } from "./Notification";
 
 const { SubMenu } = Menu;
 const { Header } = Layout;
@@ -20,7 +20,6 @@ function AppHeader() {
     const history = useHistory();
     const { authState } = useOktaAuth();
     const [products, setProducts]: any = useState([]);
-    const [toastList, setToastList] = useContext(StoreContext);
 
     useEffect(() => {
         ApiService.get(ApiUrls.getProducts)
@@ -38,9 +37,7 @@ function AppHeader() {
             })
             .catch((error) => {
                 console.error('Error: ', error);
-                const response = showToast('error', 'An Error has occured with getting Products');
-                console.log('response: ', response);
-                setToastList([...toastList, response]);
+                openNotification('error', 'An Error has occured with getting Products');
             })
     }, [])    
 

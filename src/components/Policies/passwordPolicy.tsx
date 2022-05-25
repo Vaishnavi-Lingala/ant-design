@@ -7,8 +7,8 @@ import './Policies.css'
 import { PasswordPolicyType } from "../../models/Data.models";
 import ApiService from "../../Api.service";
 import ApiUrls from '../../ApiUtils';
-import { showToast } from "../Layout/Toast/Toast";
-import { StoreContext } from "../../helpers/Store";
+
+import { openNotification } from "../Layout/Notification";
 
 export const PasswordPolicy = (props: any) => {
     const [isEdit, setIsEdit] = useState(false);
@@ -21,7 +21,6 @@ export const PasswordPolicy = (props: any) => {
     const [groupNames, setGroupNames]: any = useState([]);
     const [groupUids, setGroupUids]: any = useState([]);
     const [groupsChange, setGroupsChange]: any = useState([]);
-    const [toastList, setToastList] = useContext(StoreContext);
 
     useEffect(() => {
         ApiService.get(ApiUrls.groups, { type: "USER" })
@@ -42,9 +41,7 @@ export const PasswordPolicy = (props: any) => {
                 setLoading(false);
             }, error => {
                 console.error('Error: ', error);
-                const response = showToast('error', 'An Error has occured with getting Groups');
-                console.log('response: ', response);
-                setToastList([...toastList, response]);
+                openNotification('error', 'An Error has occured with getting Groups');
             })
 
         ApiService.get(ApiUrls.mechanismPasswordGraceOptions)
@@ -53,10 +50,7 @@ export const PasswordPolicy = (props: any) => {
                 setGraceOptions(data.password_grace_options);
             }, error => {
                 console.error('Error: ', error);
-
-                const response = showToast('error', 'An Error has occured with getting Password Grace Options');
-                console.log('response: ', response);
-                setToastList([...toastList, response]);
+                openNotification('error', 'An Error has occured with getting Password Grace Options');
             })
 
         if (passwordDisplayData.uid === undefined) {
@@ -93,23 +87,17 @@ export const PasswordPolicy = (props: any) => {
             .then(data => {
                 if (!data.errorSummary) {
                     console.log(data);
-                    const response = showToast('success', 'Successfully added Password Policy');
-                    console.log('response: ', response);
-                    setToastList([...toastList, response]);
+                    openNotification('success', 'Successfully added Password Policy');
                     setTimeout(() => {
                         window.location.reload()
                     }, 2000);
                 }
                 else {
-                    const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
-                    console.log('response: ', response);
-                    setToastList([...toastList, response]);
+                    openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
                 }
             }, error => {
                 console.error('Error: ', error);
-                const response = showToast('error', 'An Error has occured with adding Password Policy');
-                console.log('response: ', response);
-                setToastList([...toastList, response]);
+                openNotification('error', 'An Error has occured with adding Password Policy');
             })
     }
 
@@ -122,21 +110,15 @@ export const PasswordPolicy = (props: any) => {
             .then(data => {
                 if (!data.errorSummary) {
                     setPasswordDisplayData({ ...passwordEditData });
-                    const response = showToast('success', 'Successfully updated Password Policy');
-                    console.log('response: ', response);
-                    setToastList([...toastList, response]);
+                    openNotification('success', 'Successfully updated Password Policy');
                 }
                 else {
-                    const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
-                    console.log('response: ', response);
-                    setToastList([...toastList, response]);
+                    openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
                 }
             })
             .catch(error => {
                 console.error('Error: ', error);
-                const response = showToast('error', 'An Error has occured with updating Password Policy');
-                console.log('response: ', response);
-                setToastList([...toastList, response]);
+                openNotification('error', 'An Error has occured with updating Password Policy');
             })
     }
 
