@@ -22,7 +22,7 @@ export default function Dashboard() {
             .then(data => {
                 console.log('Stats data: ', data);
                 setStatsData(data);
-                openNotification('success', 'Successfully Obtained Dashboard Data');
+                // openNotification('success', 'Successfully Obtained Dashboard Data');
                 setLoadingDetails(false);
             }, error => {
                 console.error('Error: ', error);
