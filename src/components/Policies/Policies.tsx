@@ -15,6 +15,7 @@ import { KioskPolicy } from './kioskPolicy';
 
 import { showToast } from "../Layout/Toast/Toast";
 import { StoreContext } from "../../helpers/Store";
+import { TecTANGO } from '../../constants';
 
 export default function Policies() {
 
@@ -100,9 +101,12 @@ export default function Policies() {
 		}
 	];
 
+	const currentSeletedProduct = localStorage.getItem("productName");
+
 	const [pinDetails, setPinDetails] = useState(undefined);
 	const [passwordDetails, setPasswordDetails] = useState(undefined);
 	const [kioskDetails, setKioskDetails] = useState(undefined);
+	const [cardEnrollPolicy, setCardEnrollPolicy] = useState(undefined);
 	const [loadingDetails, setLoadingDetails] = useState(false);
 	const [activePinPolicies, setActivePinPolicies]: any = useState([]);
 	const [inActivePinPolicies, setInActivePinPolicies]: any = useState([]);
@@ -110,10 +114,14 @@ export default function Policies() {
 	const [inActivepasswordPolicies, setInActivePasswordPolicies]: any = useState([]);
 	const [activeKioskPolicies, setActiveKioskPolicies]: any = useState([]);
 	const [inActiveKioskPolicies, setInActiveKioskPolicies]: any = useState([]);
+	const [activeCardEnrollmentPolicies, setActiveCardEnrollmentPolicies] = useState([]);
+	const [inActiveCardEnrollmentPolicies, setInActiveCardEnrollmentPolicies] = useState([]);
 	const [isPinModalVisible, setIsPinModalVisible] = useState(false);
 	const [isPasswordModalVisible, setIsPasswordModalVisible] = useState(false);
 	const [isKioskModalVisible, setIsKioskModalVisible] = useState(false);
+	const [isCardEnrollmentModalVisible, setIsCardEnrollmentModalVisible] = useState(false);
 	const [toastList, setToastList] = useContext(StoreContext);
+	const [maxEnroll, setMaxEnroll] = useState(null);
 	const { TabPane } = Tabs;
 
 	const pinData = {
@@ -245,6 +253,35 @@ export default function Policies() {
 		/>
 	);
 
+	const CardEnrollmentDraggableBodyRow = ({ className, style, ...restProps }) => {
+		const index = activeKioskPolicies.findIndex(x => x.index === restProps['data-row-key']);
+		return <SortableItem index={index} {...restProps} />;
+	};
+
+	const handleCardEnrollmentSortEnd = ({ oldIndex, newIndex }) => {
+		if (oldIndex !== newIndex && newIndex != activeCardEnrollmentPolicies.length - 1) {
+			const newData = arrayMoveImmutable([].concat(activeCardEnrollmentPolicies), oldIndex, newIndex).filter(
+				el => !!el,
+			);
+			console.log('Sorted items: ', newData);
+			setActiveCardEnrollmentPolicies(newData);
+			//@ts-ignore
+			console.log(newData[newIndex].policy_id, newData.length - newIndex - 1);
+			//@ts-ignore
+			reOrderPolicies(newData[newIndex].policy_id, newData.length - newIndex - 1, "KIOSK");
+		}
+	};
+
+	const CardEnrollmentDraggableContainer = (props) => (
+		<SortableBody
+			useDragHandle
+			disableAutoscroll
+			helperClass="row-dragging"
+			onSortEnd={handleCardEnrollmentSortEnd}
+			{...props}
+		/>
+	);
+
 	const kioskDraggableBodyRow = ({ className, style, ...restProps }) => {
 		const index = activeKioskPolicies.findIndex(x => x.index === restProps['data-row-key']);
 		return <SortableItem index={index} {...restProps} />;
@@ -258,12 +295,15 @@ export default function Policies() {
 				var pinCounter = 0;
 				var passwordCounter = 0;
 				var kioskCounter = 0;
+				var cardEnrollCounter = 0;
 				var pinActive: any = [];
 				var pinInActive: any = [];
 				var passwordActive: any = [];
 				var passwordInActive: any = [];
 				var kioskActive: any = [];
 				var kioskInActive: any = [];
+				var cardEnrollActive: any = [];
+				var cardEnrollInActive: any = [];
 				for (var i = 0; i < data.length; i++) {
 					var object;
 					if (data[i].policy_type === "PIN") {
@@ -349,6 +389,34 @@ export default function Policies() {
 							kioskInActive.push(object);
 						}
 					}
+
+					if (data[i].policy_type === "CARD_ENROLL") {
+						if (data[i].active === true) {
+							object = {
+								key: cardEnrollCounter + 1,
+								policy_name: data[i].name,
+								policy_id: data[i].uid,
+								policy_description: data[i].description,
+								order: data[i].order,
+								default: data[i].default,
+								index: cardEnrollCounter + 1
+							}
+							cardEnrollCounter = cardEnrollCounter + 1;
+							cardEnrollActive.push(object);
+						}
+						else {
+							object = {
+								key: cardEnrollCounter + 1,
+								policy_name: data[i].name,
+								policy_id: data[i].uid,
+								policy_description: data[i].description,
+								default: data[i].default,
+								index: cardEnrollCounter + 1
+							}
+							cardEnrollCounter = cardEnrollCounter + 1;
+							cardEnrollInActive.push(object);
+						}
+					}
 				}
 				setActivePinPolicies(pinActive);
 				setInActivePinPolicies(pinInActive);
@@ -356,6 +424,8 @@ export default function Policies() {
 				setInActivePasswordPolicies(passwordInActive);
 				setActiveKioskPolicies(kioskActive);
 				setInActiveKioskPolicies(kioskInActive);
+				setActiveCardEnrollmentPolicies(cardEnrollActive);
+				setInActiveCardEnrollmentPolicies(cardEnrollInActive);
 				setLoadingDetails(false);
 			}, error => {
 				console.log(error)
@@ -375,7 +445,25 @@ export default function Policies() {
 		}
 
 		getPolicies();
-	}, [])
+	}, []);
+
+	useEffect(() => {
+		(async function () {
+			if (currentSeletedProduct === TecTANGO) {
+				try {
+					let licenses = await ApiService.get(ApiUrls.licences);
+					licenses.forEach(license => {
+						if (license.product.sku === TecTANGO && license.max_enroll_allowed) {
+							setMaxEnroll(license.max_enroll_allowed);
+						}
+					})
+				}
+				catch (err) {
+					console.log(err);
+				}
+			}
+		})();
+	}, []);
 
 	const history = useHistory();
 
@@ -455,7 +543,7 @@ export default function Policies() {
 		setLoadingDetails(true);
 		ApiService.get(ApiUrls.policy(uid))
 			.then(data => {
-				if(!data.errorSummary){
+				if (!data.errorSummary) {
 					console.log(data);
 					if (data.policy_type === "PIN") {
 						history.push('/policies/pin/' + uid);
@@ -472,13 +560,13 @@ export default function Policies() {
 					setLoadingDetails(false);
 				}
 				else {
-                    const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
-                    console.log('response: ', response);
-                    setToastList([...toastList, response]);
+					const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
+					console.log('response: ', response);
+					setToastList([...toastList, response]);
 					setInterval(() => {
 						history.goBack();
 					}, 2000)
-                }
+				}
 			})
 			.catch(error => {
 				console.error('Error: ', error);
@@ -534,7 +622,8 @@ export default function Policies() {
 										</Button>
 									</div>
 
-									<div style={{ fontWeight: 600, fontSize: 'x-large',
+									<div style={{
+										fontWeight: 600, fontSize: 'x-large',
 										width: '100%', border: '1px solid #D7D7DC',
 										borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
 									}}
@@ -559,7 +648,8 @@ export default function Policies() {
 
 									<br />
 
-									<div style={{ fontWeight: 600, fontSize: 'x-large',
+									<div style={{
+										fontWeight: 600, fontSize: 'x-large',
 										width: '100%', border: '1px solid #D7D7DC',
 										borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
 									}}
@@ -592,7 +682,8 @@ export default function Policies() {
 										</Button>
 									</div>
 
-									<div style={{ fontWeight: 600, fontSize: 'x-large',
+									<div style={{
+										fontWeight: 600, fontSize: 'x-large',
 										width: '100%', border: '1px solid #D7D7DC',
 										borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
 									}}
@@ -616,7 +707,8 @@ export default function Policies() {
 
 									<br />
 
-									<div style={{ fontWeight: 600, fontSize: 'x-large',
+									<div style={{
+										fontWeight: 600, fontSize: 'x-large',
 										width: '100%', border: '1px solid #D7D7DC',
 										borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
 									}}
@@ -649,7 +741,8 @@ export default function Policies() {
 										</Button>
 									</div>
 
-									<div style={{ fontWeight: 600, fontSize: 'x-large',
+									<div style={{
+										fontWeight: 600, fontSize: 'x-large',
 										width: '100%', border: '1px solid #D7D7DC',
 										borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
 									}}
@@ -673,7 +766,8 @@ export default function Policies() {
 
 									<br />
 
-									<div style={{ fontWeight: 600, fontSize: 'x-large',
+									<div style={{
+										fontWeight: 600, fontSize: 'x-large',
 										width: '100%', border: '1px solid #D7D7DC',
 										borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
 									}}
@@ -691,6 +785,66 @@ export default function Policies() {
 						}
 					</Skeleton>
 				</TabPane>
+				{currentSeletedProduct === TecTANGO && maxEnroll ?
+					<TabPane tab="Card enrollment" key="card-enrollment">
+						<Skeleton loading={loadingDetails}>
+							{cardEnrollPolicy ? <KioskPolicy kioskDetails={cardEnrollPolicy} /> :
+								isKioskModalVisible ? <KioskPolicy kioskDetails={kioskData} /> :
+									<>
+										<div style={{ width: '100%', border: '1px solid #D7D7DC', borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6' }}>
+											<Button type='primary' size='large' onClick={() => {
+												setIsCardEnrollmentModalVisible(true)
+												history.push('/policies/card-enrollment')
+											}}
+											>
+												Add Card Enrollment Policy
+											</Button>
+										</div>
+
+										<div style={{
+											fontWeight: 600, fontSize: 'x-large',
+											width: '100%', border: '1px solid #D7D7DC',
+											borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
+										}}
+										>
+											ACTIVE
+										</div>
+										<Table
+											style={{ border: '1px solid #D7D7DC' }}
+											showHeader={true}
+											columns={activateColumns}
+											dataSource={activeCardEnrollmentPolicies}
+											rowKey={"index"}
+											components={{
+												body: {
+													wrapper: CardEnrollmentDraggableContainer,
+													row: CardEnrollmentDraggableBodyRow,
+												},
+											}}
+											pagination={{ position: [] }}
+										/>
+
+										<br />
+
+										<div style={{
+											fontWeight: 600, fontSize: 'x-large',
+											width: '100%', border: '1px solid #D7D7DC',
+											borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
+										}}
+										>
+											INACTIVE
+										</div>
+										<Table
+											style={{ border: '1px solid #D7D7DC' }}
+											showHeader={true}
+											columns={deActivateColumns}
+											dataSource={inActiveCardEnrollmentPolicies}
+											pagination={{ position: [] }}
+										/>
+									</>
+							}
+						</Skeleton>
+					</TabPane> : null}
 			</Tabs>
 		</>
 	);
