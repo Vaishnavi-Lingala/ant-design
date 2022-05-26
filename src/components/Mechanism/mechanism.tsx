@@ -169,7 +169,7 @@ function Mechanism(props: any) {
                         }
                     </div>
                     <div style={{ paddingRight: '50px', paddingBottom: '20px' }}>
-                        {displayDetails.default === false && displayDetails.name !== "" ? <Button style={{ float: 'right' }} onClick={handleEditClick}>
+                        {displayDetails.name !== "" ? <Button style={{ float: 'right' }} onClick={handleEditClick}>
                             {!isEdit ? 'Edit' : 'Cancel'}
                         </Button> : <></>
                         }
@@ -179,7 +179,7 @@ function Mechanism(props: any) {
                         Mechanism name:
                     </div>
                     <div>
-                        {isEdit ?
+                        {displayDetails.default === false && isEdit ?
                             <Input
                                 name="machanismName"
                                 type="text"
@@ -199,7 +199,7 @@ function Mechanism(props: any) {
                         Assigned to groups:
                     </div>
                     <div>
-                        {isEdit ? <Select
+                        {displayDetails.default === false && isEdit ? <Select
                             mode="multiple"
                             size={"large"}
                             placeholder="Please select groups"
