@@ -6,10 +6,7 @@ import UsersSelection from "./UsersSelection";
 import Moment from 'moment';
 import { useHistory } from "react-router-dom";
 
-// START TOAST IMPORT
-import { showToast } from "../Layout/Toast/Toast";
-import { StoreContext } from "../../helpers/Store";
-// END TOAST IMPORT
+import { openNotification } from "../Layout/Notification";
 
 export default function GroupDetails(props: any) {
 
@@ -25,9 +22,6 @@ export default function GroupDetails(props: any) {
     const [totalItems, setTotalItems]: any = useState(0);
     const history = useHistory();
     const { Title } = Typography;
-    // START TOAST CONTEXT
-    const [toastList, setToastList] = useContext(StoreContext);
-    // END TOAST CONTEXT
 
     const columns = [
         {
@@ -56,21 +50,15 @@ export default function GroupDetails(props: any) {
                     setTotalItems(data.total_items);
                     setAction('');
                     setLoadingDetails(false);
-                    const response = showToast('success', 'Successfully added Group User');
-                    console.log('response: ', response);
-                    setToastList([...toastList, response]);
+                    openNotification('success', 'Successfully added Group User');
                 }
                 else {
-                    const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
-                    console.log('response: ', response);
-                    setToastList([...toastList, response]);
+                    openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
                 }
             }, error => {
                 console.error('Error: ', error);
+                openNotification('error', 'An Error has occured with adding Group User');
                 setLoadingDetails(false);
-                const response = showToast('error', 'An Error has occured with adding Group User');
-                console.log('response: ', response);
-                setToastList([...toastList, response]);
             })
         } else if (action === 'Remove') {
             ApiService.delete(ApiUrls.groupUsers(groupDetails.uid), selectedUsers).then(data => {
@@ -81,22 +69,16 @@ export default function GroupDetails(props: any) {
                     setUsers(data.results);
                     setTotalItems(data.total_items);
                     setAction('');
+                    openNotification('success', 'Successfully removed Group User');
                     setLoadingDetails(false);
-                    const response = showToast('success', 'Successfully removed Group User');
-                    console.log('response: ', response);
-                    setToastList([...toastList, response]);
                 }
                 else {
-                    const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
-                    console.log('response: ', response);
-                    setToastList([...toastList, response]);
+                    openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
                 }
             }, error => {
                 console.error('Error: ', error);
+                openNotification('error', 'An Error has occured with removing Group User');
                 setLoadingDetails(false);
-                const response = showToast('error', 'An Error has occured with removing Group User');
-                console.log('response: ', response);
-                setToastList([...toastList, response]);
             })
         }
 
@@ -119,10 +101,8 @@ export default function GroupDetails(props: any) {
                 setLoadingDetails(false);
             }, error => {
                 console.error('Error: ', error);
+                openNotification('error', 'An Error has occured with getting Group Users');
                 setLoadingDetails(false);
-                const response = showToast('error', 'An Error has occured with getting Group Users');
-                console.log('response: ', response);
-                setToastList([...toastList, response]);
             })
     }, [])
 
@@ -138,10 +118,8 @@ export default function GroupDetails(props: any) {
             setLoadingDetails(false);
         }, error => {
             console.error('Error: ', error);
+            openNotification('error', 'An Error has occured with getting Group Users');
             setLoadingDetails(false);
-            const response = showToast('error', 'An Error has occured with getting Group Users');
-            console.log('response: ', response);
-            setToastList([...toastList, response]);
         })
     }
 

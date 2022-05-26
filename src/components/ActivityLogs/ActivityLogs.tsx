@@ -1,6 +1,6 @@
 import { Button, Collapse, Skeleton } from "antd";
 import { CaretRightOutlined } from '@ant-design/icons';
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { DatePicker, Table } from "antd";
 import moment from "moment";
 
@@ -20,11 +20,9 @@ import {
     hiddenFields,
     logFieldNames
 } from '../../constants';
+import { openNotification } from "../Layout/Notification";
 
 const { Panel } = Collapse;
-
-import { showToast } from "../Layout/Toast/Toast";
-import { StoreContext } from "../../helpers/Store";
 
 const DisplayField = ({ field, value, logFieldNames }) => {
     return (
@@ -95,7 +93,6 @@ export default function ActivityLogs() {
     const [logResponse, setLogResponse] = useState<any>({});
     const [loading, setLoading] = useState(true);
     const [tableLoading, setTableLoading] = useState(false);
-    const [toastList, setToastList] = useContext(StoreContext);
 
     const initialDateTimeFilters = {
         start: {
@@ -157,10 +154,7 @@ export default function ActivityLogs() {
                 setLogResponse(data);
             } catch (error) {
                 console.error('Error: ', error);
-
-                const response = showToast('error', 'An Error has occured with getting Activity Logs');
-                console.log('response: ', response);
-                setToastList([...toastList, response]);
+                openNotification('error', 'An error has occured with getting Activity Logs');
             }
             setLoading(false);
             setTableLoading(false);
@@ -185,10 +179,7 @@ export default function ActivityLogs() {
                 });
             } catch (error) {
                 console.error('Error: ', error);
-
-                const response = showToast('error', 'An Error has occured with getting Activity Logs');
-                console.log('response: ', response);
-                setToastList([...toastList, response]);
+                openNotification('error', 'An error has occured with getting Activity Logs');
             }
         }
     }

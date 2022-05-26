@@ -13,8 +13,7 @@ import ApiUrls from '../../ApiUtils';
 import ApiService from '../../Api.service';
 import { KioskPolicy } from './kioskPolicy';
 
-import { showToast } from "../Layout/Toast/Toast";
-import { StoreContext } from "../../helpers/Store";
+import { openNotification } from '../Layout/Notification';
 
 export default function Policies() {
 
@@ -113,7 +112,7 @@ export default function Policies() {
 	const [isPinModalVisible, setIsPinModalVisible] = useState(false);
 	const [isPasswordModalVisible, setIsPasswordModalVisible] = useState(false);
 	const [isKioskModalVisible, setIsKioskModalVisible] = useState(false);
-	const [toastList, setToastList] = useContext(StoreContext);
+	const [tabname, setTabname] = useState("");
 	const { TabPane } = Tabs;
 
 	const pinData = {
@@ -123,7 +122,7 @@ export default function Policies() {
 		policy_type: 'PIN',
 		auth_policy_groups: [],
 		policy_req: {
-			expires_in_x_days: 0,
+			expires_in_x_days: 1,
 			is_special_char_req: false,
 			pin_history_period: 0,
 			min_length: 4,
@@ -359,15 +358,14 @@ export default function Policies() {
 				setLoadingDetails(false);
 			}, error => {
 				console.log(error)
-				const response = showToast('error', 'An Error has occured with getting Policies');
-				console.log('response: ', response);
-				setToastList([...toastList, response]);
+				openNotification('error', 'An Error has occured with getting Policies');
 			})
 	}
 
 	useEffect(() => {
 		if (window.location.pathname.split("/")[2] !== 'password' && window.location.pathname.split("/")[2] !== 'kiosk' && window.location.pathname.split("/").length !== 4) {
 			history.push('/policies/pin');
+			setTabname(window.location.pathname.split('/')[2].toUpperCase());
 		}
 
 		if (window.location.pathname.split("/").length === 4) {
@@ -383,22 +381,16 @@ export default function Policies() {
 		ApiService.get(ApiUrls.activatePolicy(uid))
 			.then(data => {
 				if (!data.errorSummary) {
-					const response = showToast('success', 'Successfully activated Policy');
-					console.log('response: ', response);
-					setToastList([...toastList, response]);
+					openNotification('success', 'Successfully activated Policy');
 					getPolicies();
 				}
 				else {
-					const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
-					console.log('response: ', response);
-					setToastList([...toastList, response]);
+					openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
 				}
 			})
 			.catch(error => {
 				console.error('Error: ', error);
-				const response = showToast('error', 'An Error has occured with activating Policy');
-				console.log('response: ', response);
-				setToastList([...toastList, response]);
+				openNotification('error', 'An Error has occured with activating Policy');
 			})
 	}
 
@@ -406,22 +398,16 @@ export default function Policies() {
 		ApiService.get(ApiUrls.deActivatePolicy(uid))
 			.then(data => {
 				if (!data.errorSummary) {
-					const response = showToast('success', 'Successfully de-activated Policy');
-					console.log('response: ', response);
-					setToastList([...toastList, response]);
+					openNotification('success', 'Successfully de-activated Policy');
 					getPolicies();
 				}
 				else {
-					const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
-					console.log('response: ', response);
-					setToastList([...toastList, response]);
+					openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
 				}
 			})
 			.catch(error => {
 				console.error('Error: ', error);
-				const response = showToast('error', 'An Error has occured with de-activating Policy');
-				console.log('response: ', response);
-				setToastList([...toastList, response]);
+				openNotification('error', 'An Error has occured with de-activating Policy');
 			})
 	}
 
@@ -438,15 +424,11 @@ export default function Policies() {
 					getPolicies();
 				}
 				else {
-					const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
-					console.log('response: ', response);
-					setToastList([...toastList, response]);
+					openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
 				}
 			}, error => {
 				console.error('Error: ', error);
-				const response = showToast('error', 'An Error has occured with re-ordering Policies');
-				console.log('response: ', response);
-				setToastList([...toastList, response]);
+				openNotification('error', 'An Error has occured with re-ordering Policies');
 			})
 	}
 
@@ -455,7 +437,7 @@ export default function Policies() {
 		setLoadingDetails(true);
 		ApiService.get(ApiUrls.policy(uid))
 			.then(data => {
-				if(!data.errorSummary){
+				if (!data.errorSummary) {
 					console.log(data);
 					if (data.policy_type === "PIN") {
 						history.push('/policies/pin/' + uid);
@@ -472,21 +454,53 @@ export default function Policies() {
 					setLoadingDetails(false);
 				}
 				else {
-                    const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
-                    console.log('response: ', response);
-                    setToastList([...toastList, response]);
+					openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
 					setInterval(() => {
 						history.goBack();
 					}, 2000)
-                }
+				}
 			})
 			.catch(error => {
 				console.error('Error: ', error);
+				openNotification('error', 'An Error has occured with getting Policy Details');
 				setLoadingDetails(false);
-				const response = showToast('error', 'An Error has occured with getting Policy Details');
-				console.log('response: ', response);
-				setToastList([...toastList, response]);
 			})
+	}
+
+	const handleOk = (policyType: string, object: object) => {
+		ApiService.post(ApiUrls.addPolicy, object)
+			.then(data => {
+				if (!data.errorSummary) {
+					console.log(data);
+					openNotification('success', `Successfully added ${policyType.slice(0, 1) + policyType.slice(1).toLowerCase()} Policy`);
+					getPolicies();
+					if (policyType === "PIN") {
+						setIsPinModalVisible(false);
+					}
+					if (policyType === "PASSWORD") {
+						setIsPasswordModalVisible(false);
+					} if (policyType === "KIOSK") {
+						setIsKioskModalVisible(false);
+					}
+				}
+				else {
+					openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
+				}
+			}, error => {
+				console.error('Error: ', error);
+				openNotification('error', `An Error has occured with adding ${policyType.slice(0, 1) + policyType.slice(1).toLowerCase()} Policy`);
+			})
+	}
+
+	const handleCancel = (policyType: string) => {
+		if (policyType === "PIN") {
+			setIsPinModalVisible(false);
+		}
+		if (policyType === "PASSWORD") {
+			setIsPasswordModalVisible(false);
+		} if (policyType === "KIOSK") {
+			setIsKioskModalVisible(false);
+		}
 	}
 
 	return (
@@ -516,13 +530,33 @@ export default function Policies() {
 			<Tabs defaultActiveKey={window.location.pathname.split("/")[2]}
 				type="card" size={"middle"} animated={false}
 				tabBarStyle={{ marginBottom: '0px' }}
-				onChange={(key) => history.push("/policies/" + key)}
+				onChange={(key) => {
+					history.push("/policies/" + key);
+					setTabname(key.toUpperCase());
+				}}
+				onClick={() => {
+					if(tabname === "PIN")
+					{
+						setPasswordDetails(undefined);
+						setKioskDetails(undefined);
+					}
+					if(tabname === "PASSWORD")
+					{
+						setPinDetails(undefined);
+						setKioskDetails(undefined);
+					}
+					if(tabname === "KIOSK")
+					{
+						setPasswordDetails(undefined);
+						setPinDetails(undefined);
+					}
+				}}
 			// style={{border: '1px solid #d7d7dc', margin: 0}} 
 			>
 				<TabPane tab="Pin" key="pin">
 					<Skeleton loading={loadingDetails}>
 						{pinDetails ? <PinPolicy pinDetails={pinDetails} /> :
-							isPinModalVisible ? <PinPolicy pinDetails={pinData} /> :
+							isPinModalVisible ? <PinPolicy pinDetails={pinData} handleOk={handleOk} handleCancel={handleCancel} /> :
 								<>
 									<div style={{ width: '100%', border: '1px solid #D7D7DC', borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6' }}>
 										<Button type='primary' size='large' onClick={() => {
@@ -534,7 +568,8 @@ export default function Policies() {
 										</Button>
 									</div>
 
-									<div style={{ fontWeight: 600, fontSize: 'x-large',
+									<div style={{
+										fontWeight: 600, fontSize: 'x-large',
 										width: '100%', border: '1px solid #D7D7DC',
 										borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
 									}}
@@ -554,12 +589,13 @@ export default function Policies() {
 												row: pinDraggableBodyRow,
 											},
 										}}
-										pagination={{ position: [] }}
+										pagination={false}
 									/>
 
 									<br />
 
-									<div style={{ fontWeight: 600, fontSize: 'x-large',
+									<div style={{
+										fontWeight: 600, fontSize: 'x-large',
 										width: '100%', border: '1px solid #D7D7DC',
 										borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
 									}}
@@ -571,7 +607,7 @@ export default function Policies() {
 										showHeader={true}
 										columns={deActivateColumns}
 										dataSource={inActivePinPolicies}
-										pagination={{ position: [] }}
+										pagination={false}
 									/>
 								</>
 						}
@@ -580,7 +616,7 @@ export default function Policies() {
 				<TabPane tab="Password" key="password">
 					<Skeleton loading={loadingDetails}>
 						{passwordDetails ? <PasswordPolicy passwordDetails={passwordDetails} /> :
-							isPasswordModalVisible ? <PasswordPolicy passwordDetails={passwordData} /> :
+							isPasswordModalVisible ? <PasswordPolicy passwordDetails={passwordData} handleOk={handleOk} handleCancel={handleCancel} /> :
 								<>
 									<div style={{ width: '100%', border: '1px solid #D7D7DC', borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6' }}>
 										<Button type='primary' size='large' onClick={() => {
@@ -592,7 +628,8 @@ export default function Policies() {
 										</Button>
 									</div>
 
-									<div style={{ fontWeight: 600, fontSize: 'x-large',
+									<div style={{
+										fontWeight: 600, fontSize: 'x-large',
 										width: '100%', border: '1px solid #D7D7DC',
 										borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
 									}}
@@ -611,12 +648,13 @@ export default function Policies() {
 												row: passwordDraggableBodyRow,
 											},
 										}}
-										pagination={{ position: [] }}
+										pagination={false}
 									/>
 
 									<br />
 
-									<div style={{ fontWeight: 600, fontSize: 'x-large',
+									<div style={{
+										fontWeight: 600, fontSize: 'x-large',
 										width: '100%', border: '1px solid #D7D7DC',
 										borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
 									}}
@@ -628,7 +666,7 @@ export default function Policies() {
 										showHeader={true}
 										columns={deActivateColumns}
 										dataSource={inActivepasswordPolicies}
-										pagination={{ position: [] }}
+										pagination={false}
 									/>
 								</>
 						}
@@ -637,7 +675,7 @@ export default function Policies() {
 				<TabPane tab="Kiosk" key="kiosk">
 					<Skeleton loading={loadingDetails}>
 						{kioskDetails ? <KioskPolicy kioskDetails={kioskDetails} /> :
-							isKioskModalVisible ? <KioskPolicy kioskDetails={kioskData} /> :
+							isKioskModalVisible ? <KioskPolicy kioskDetails={kioskData} handleOk={handleOk} handleCancel={handleCancel} /> :
 								<>
 									<div style={{ width: '100%', border: '1px solid #D7D7DC', borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6' }}>
 										<Button type='primary' size='large' onClick={() => {
@@ -649,7 +687,8 @@ export default function Policies() {
 										</Button>
 									</div>
 
-									<div style={{ fontWeight: 600, fontSize: 'x-large',
+									<div style={{
+										fontWeight: 600, fontSize: 'x-large',
 										width: '100%', border: '1px solid #D7D7DC',
 										borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
 									}}
@@ -668,12 +707,13 @@ export default function Policies() {
 												row: kioskDraggableBodyRow,
 											},
 										}}
-										pagination={{ position: [] }}
+										pagination={false}
 									/>
 
 									<br />
 
-									<div style={{ fontWeight: 600, fontSize: 'x-large',
+									<div style={{
+										fontWeight: 600, fontSize: 'x-large',
 										width: '100%', border: '1px solid #D7D7DC',
 										borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
 									}}
@@ -685,7 +725,7 @@ export default function Policies() {
 										showHeader={true}
 										columns={deActivateColumns}
 										dataSource={inActiveKioskPolicies}
-										pagination={{ position: [] }}
+										pagination={false}
 									/>
 								</>
 						}
