@@ -27,7 +27,7 @@ export default function ProtectedRoute({
 
     if (oktaStorage !== null && oktaStorage !== "") {
         if (oktaStorage !== "{}") {
-            if (JSON.parse(oktaStorage).idToken) {
+            if (JSON.parse(oktaStorage).idToken && JSON.parse(oktaStorage).accessToken) {
                 const idToken = JSON.parse(oktaStorage).idToken;
                 localStorage.setItem("clientId", idToken.clientId);
                 localStorage.setItem("issuer", idToken.issuer);
@@ -45,7 +45,7 @@ export default function ProtectedRoute({
     }
 
     return (
-        <Route
+        <Route exact
             {...restOfProps}
             render={(props) =>
                 oktaStorage !== null ? (

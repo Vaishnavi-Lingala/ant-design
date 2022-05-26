@@ -77,7 +77,6 @@ export default function Machines() {
         })
     }
 
-
     return (
         <>
             <div className='content-header'>

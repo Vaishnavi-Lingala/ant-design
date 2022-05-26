@@ -30,7 +30,7 @@ function Mechanism(props: any) {
 
     useEffect(() => {
         Promise.all(([
-            //     ApiService.get(ApiUrls.mechanism(window.location.pathname.split('/')[2])),
+            // ApiService.get(ApiUrls.mechanism(window.location.pathname.split('/')[2])),
             ApiService.get(ApiUrls.groups, { type: "USER" }),
             ApiService.get(ApiUrls.mechanismOptions),
             ApiService.get(ApiUrls.mechanismChallengeFactors)
@@ -93,10 +93,16 @@ function Mechanism(props: any) {
         ApiService.put(ApiUrls.mechanism(displayDetails.uid), editData)
             .then(data => {
                 if (!data.errorSummary) {
+                    groupNames.length = 0;
                     setDisplayDetails({ ...editData });
                     const response = showToast('success', 'Successfully updated Mechanism');
                     console.log('response: ', response);
                     setToastList([...toastList, response]);
+                    Object.keys(data.mechanism_groups).map(index => {
+                        groupNames.push(data.mechanism_groups[index].name);
+                    });
+                    console.log(groupNames);
+                    setGroupNames(groupNames);
                     setIsEdit(false);
                 }
                 else {
@@ -106,7 +112,6 @@ function Mechanism(props: any) {
                 }
             }, error => {
                 console.error('Error: ', error);
-
                 const response = showToast('error', 'An Error has occured with updating Mechanism');
                 console.log('response: ', response);
                 setToastList([...toastList, response]);
@@ -139,44 +144,25 @@ function Mechanism(props: any) {
     }
 
     function createMechanism() {
-        ApiService.post(ApiUrls.addMechanism, editData)
-            .then(data => {
-                if (!data.errorSummary) {
-                    console.log(data);
-                    const response = showToast('success', 'Successfully added Mechanism');
-                    console.log('response: ', response);
-                    setToastList([...toastList, response]);
-                    setTimeout(() => {
-                        window.location.reload()
-                    }, 2000);
-                }
-                else {
-                    const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
-                    console.log('response: ', response);
-                    setToastList([...toastList, response]);
-                }
-            }, error => {
-                console.error('Add mechanism error: ', error);
-                const response = showToast('error', 'An Error has occured with adding Mechanism');
-                console.log('response: ', response);
-                setToastList([...toastList, response]);
-            })
+        props.handleOk(editData);
     }
 
     function setCancelClick() {
-        window.location.reload();
+        props.handleCancel();
     }
 
     function handleGroups(value: any) {
+        console.log(value);
         Object.keys(groupsChange[0]).map(key => {
             if (value.includes(key)) {
-                console.log(key)
+                console.log(value)
                 var index = value.indexOf(key)
                 console.log(index)
                 value.splice(index, 1)
                 value.push(groupsChange[0][key]);
             }
         })
+
         editData.mechanism_groups = value;
         console.log(editData.mechanism_groups);
     }
@@ -184,7 +170,7 @@ function Mechanism(props: any) {
     return (
         <Skeleton loading={loading}>
             <div className="content-container rounded-grey-border">
-                <div className="row-container">
+                <div className="row-containers">
                     <div>
                         {displayDetails.uid === undefined ? <div className="content-heading">Create Mechanism</div> :
                             <div className="content-heading">Edit Mechanism</div>
@@ -221,16 +207,18 @@ function Mechanism(props: any) {
                         Assigned to groups:
                     </div>
                     <div>
-                        <Select
+                        {isEdit ? <Select
                             mode="multiple"
                             size={"large"}
                             placeholder="Please select groups"
                             defaultValue={displayDetails.name !== "" ? groupNames : []}
                             onChange={handleGroups}
-                            disabled={!isEdit}
+                            // disabled={!isEdit}
                             style={{ width: '275px' }}
                             options={groups}
-                        />
+                        /> : Object.keys(groupNames).map(name =>
+                            <><Button style={{cursor: 'text'}}>{groupNames[name]}</Button>&nbsp;</>)
+                        }
                     </div>
 
                     <div className="content-mechanism-key-header">

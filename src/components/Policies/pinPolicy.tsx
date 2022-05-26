@@ -66,10 +66,16 @@ export const PinPolicy = (props: any) => {
 		ApiService.put(ApiUrls.policy(pinDisplayData.uid), pinEditData)
 			.then(data => {
 				if (!data.errorSummary) {
+					groupNames.length = 0;
 					setPinDisplayData({ ...pinEditData });
 					const response = showToast('success', 'Successfully updated PIN Policy');
 					console.log('response: ', response);
 					setToastList([...toastList, response]);
+					Object.keys(data.auth_policy_groups).map(index => {
+                        groupNames.push(data.auth_policy_groups[index].name);
+                    });
+                    setGroupNames(groupNames);
+					setIsEdit(false);
 				}
 				else {
 					const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
@@ -96,37 +102,14 @@ export const PinPolicy = (props: any) => {
 
 	function handleSaveClick() {
 		updatePinPolicy();
-		setIsEdit(false);
 	}
 
 	function createPinPolicy() {
-		console.log(pinEditData)
-		ApiService.post(ApiUrls.addPolicy, pinEditData)
-			.then(data => {
-				if (!data.errorSummary) {
-					console.log(data);
-					const response = showToast('success', 'Successfully added PIN Policy');
-					console.log('response: ', response);
-					setToastList([...toastList, response]);
-					setTimeout(() => {
-						window.location.reload()
-					}, 2000);
-				}
-				else {
-					const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
-					console.log('response: ', response);
-					setToastList([...toastList, response]);
-				}
-			}, error => {
-				console.error('Error: ', error);
-				const response = showToast('error', 'An Error has occured with adding PIN Policy');
-				console.log('response: ', response);
-				setToastList([...toastList, response]);
-			})
+		props.handleOk("PIN", pinEditData);
 	}
 
 	function setCancelClick() {
-		window.location.reload();
+		props.handleCancel("PIN");
 	}
 
 	function handleGroups(value: any) {
@@ -146,7 +129,7 @@ export const PinPolicy = (props: any) => {
 	return (
 		<Skeleton loading={loading}>
 			<div className="content-container-policy">
-				<div className="row-container">
+				<div className="row-policy-container">
 					<div>
 						{pinDisplayData.uid === undefined ? <div className="content-heading">Create Pin Policy</div> :
 							<div className="content-heading">Edit Pin Policy</div>
@@ -194,17 +177,18 @@ export const PinPolicy = (props: any) => {
 						Assigned to groups:
 					</div>
 					<div>
-						<Select
-							mode="multiple"
-							size={"large"}
-							placeholder="Please select groups"
-							defaultValue={pinDisplayData.name !== "" ? groupNames : []}
-							onChange={handleGroups}
-							disabled={!isEdit}
-							style={{ width: '275px' }}
-							options={groups}
-							listHeight={120}
-						/>
+						{isEdit ?
+							<Select
+								mode="multiple"
+								size={"large"}
+								placeholder={<div>Please select groups</div>}
+								defaultValue={pinDisplayData.name !== "" ? groupNames : []}
+								onChange={handleGroups}
+								style={{ width: '275px' }}
+								options={groups}
+							/> : Object.keys(groupNames).map(name =>
+								<><Button style={{cursor: 'text'}}>{groupNames[name]}</Button>&nbsp;</>)
+						}
 					</div>
 
 					<div className="content-policy-key-header">
@@ -219,7 +203,7 @@ export const PinPolicy = (props: any) => {
 
 				<p className="content-policy-key-header" style={{ padding: '10px 0 10px 0' }}>Pin Settings:</p>
 
-				<div className="row-container">
+				<div className="row-policy-container">
 					<div>Minimum Length:</div>
 					<div>
 						{
@@ -239,7 +223,7 @@ export const PinPolicy = (props: any) => {
 					</div>
 				</div>
 
-				<div className="row-container">
+				<div className="row-policy-container">
 					<div className="content-policy-key-header" style={{ padding: '20px 0 10px 0' }}>
 						Complexity Requirements:
 					</div>

@@ -23,6 +23,10 @@ function AppHeader() {
     const [toastList, setToastList] = useContext(StoreContext);
 
     useEffect(() => {
+        getProducts();
+    }, [])
+    
+    function getProducts() {
         ApiService.get(ApiUrls.getProducts)
             .then(data => {
                 var object = {};
@@ -42,7 +46,7 @@ function AppHeader() {
                 console.log('response: ', response);
                 setToastList([...toastList, response]);
             })
-    }, [])    
+    }
 
     console.log(products);
 

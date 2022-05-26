@@ -21,6 +21,7 @@ import Machines from "./components/Machines/Machines";
 
 import { StoreContextProvider } from "./helpers/Store";
 import { MachineDetails } from "./components/Machines/MachineDetails";
+import Layout from "./components/Layout/Layout";
 
 const oktaAuth = new OktaAuth(config.oidc);
 
@@ -46,15 +47,17 @@ function App() {
                     <Route path="/" exact component={Login} />
                     <Route path="/login/callback" component={LoginCallback} />
 
-                    <ProtectedRoute path={`/policies`} component={Policies} />
-                    <ProtectedRoute path={`/activitylogs`} component={ActivityLogs} />
-                    <ProtectedRoute path={`/dashboard`} component={Dashboard} />
-                    <ProtectedRoute path={`/mechanism`} component={Mechanisms} />
-                    <ProtectedRoute path={`/settings`} component={Settings} />
-                    <ProtectedRoute path={`/groups`} component={Groups} />
-                    <ProtectedRoute path={`/users`} component={Users} />
-                    <ProtectedRoute path={`/machines`} exact component={Machines} />
-                    <ProtectedRoute path={`/machines/:id`} component={MachineDetails} />
+                    {/* <Layout> */}
+                        <ProtectedRoute path={`/policies`} component={Policies} />
+                        <ProtectedRoute path={`/activitylogs`} component={ActivityLogs} />
+                        <ProtectedRoute path={`/dashboard`} component={Dashboard} />
+                        <ProtectedRoute path={`/mechanism`} component={Mechanisms} />
+                        <ProtectedRoute path={`/settings`} component={Settings} />
+                        <ProtectedRoute path={`/groups`} component={Groups} />
+                        <ProtectedRoute path={`/users`} component={Users} />
+                        <ProtectedRoute path={`/machines`} exact component={Machines} />
+                        <ProtectedRoute path={`/machines/:id`} component={MachineDetails} />
+                    {/* </Layout> */}
 
                     <Route component={PageNotFound} />
                 </Switch>
