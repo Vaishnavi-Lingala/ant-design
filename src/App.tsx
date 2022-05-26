@@ -20,6 +20,7 @@ import Users from "./components/Users/Users";
 import Machines from "./components/Machines/Machines";
 
 import { MachineDetails } from "./components/Machines/MachineDetails";
+import Layout from "./components/Layout/Layout";
 
 const oktaAuth = new OktaAuth(config.oidc);
 

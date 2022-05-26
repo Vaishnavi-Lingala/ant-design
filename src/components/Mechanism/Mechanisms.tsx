@@ -170,6 +170,28 @@ export default function Mechanisms() {
 		getMechanisms();
 	}, [])
 
+	const handleOk = (object: object) => {
+		ApiService.post(ApiUrls.addMechanism, object)
+			.then(data => {
+				if (!data.errorSummary) {
+					console.log(data);
+					openNotification('success', 'Successfully updated Mechanism');
+					setIsModalVisible(false)
+					getMechanisms();	
+				}
+				else {
+					openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
+				}
+			}, error => {
+				console.error('Add mechanism error: ', error);
+				openNotification('error', 'An Error has occured with adding Mechanism');
+			})
+	}
+
+	const handleCancel = () => {
+		setIsModalVisible(false)
+	}
+
 	function activateMechanism(uid: string) {
 		ApiService.get(ApiUrls.activateMechanism(uid))
 			.then(data => {
@@ -240,6 +262,7 @@ export default function Mechanisms() {
 				}
 				else {
 					openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
+					setLoading(false);
 				}
 			})
 			.catch(error => {
@@ -254,7 +277,7 @@ export default function Mechanisms() {
 	const SortableBody = SortableContainer(props => <tbody {...props} />);
 
 	const onSortEnd = ({ oldIndex, newIndex }) => {
-		if (oldIndex !== newIndex && newIndex != activeMechanisms.length - 1) {
+		if (oldIndex !== newIndex && newIndex !== activeMechanisms.length - 1) {
 			const newData = arrayMoveImmutable([].concat(activeMechanisms), oldIndex, newIndex).filter(
 				el => !!el,
 			);
@@ -294,7 +317,7 @@ export default function Mechanisms() {
 
 			<Skeleton loading={loading}>
 				{mechanismDetails ? <Mechanism mechanismDetails={mechanismDetails} /> :
-					isModalVisible ? <Mechanism mechanismDetails={mechanism} /> : <>
+					isModalVisible ? <Mechanism mechanismDetails={mechanism} handleOk={handleOk} handleCancel={handleCancel} /> : <>
 						<div style={{
 							width: '100%', border: '1px solid #D7D7DC',
 							borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
@@ -305,13 +328,15 @@ export default function Mechanisms() {
 							</Button>
 						</div>
 
-						<div style={{ fontWeight: 600, fontSize: 'x-large',
+						<div style={{
+							fontWeight: 600, fontSize: 'x-large',
 							width: '100%', border: '1px solid #D7D7DC',
 							borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
 						}}
 						>
 							ACTIVE
 						</div>
+
 
 						<Table
 							style={{ border: '1px solid #D7D7DC' }}
@@ -325,11 +350,12 @@ export default function Mechanisms() {
 									row: DraggableBodyRow,
 								},
 							}}
-							pagination={{ position: [] }}
+							pagination={false}
 						/>
 						<br />
 
-						<div style={{ fontWeight: 600, fontSize: 'x-large',
+						<div style={{
+							fontWeight: 600, fontSize: 'x-large',
 							width: '100%', border: '1px solid #D7D7DC',
 							borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
 						}}
@@ -341,7 +367,7 @@ export default function Mechanisms() {
 							showHeader={true}
 							columns={inactiveColumns}
 							dataSource={inactiveMechanisms}
-							pagination={{ position: [] }}
+							pagination={false}
 						/>
 					</>
 				}
