@@ -3,8 +3,7 @@ import { useContext, useEffect, useState } from "react";
 import ApiService from "../../Api.service"
 import ApiUrls from "../../ApiUtils"
 
-import { showToast } from "../Layout/Toast/Toast";
-import { StoreContext } from "../../helpers/Store";
+import { openNotification } from "../Layout/Notification";
 
 export function User(props: any) {
     let userDetails = props.userDetails;
@@ -15,7 +14,6 @@ export function User(props: any) {
     const [groups, setGroups]: any = useState([]);
     const [loadingDetails, setLoadingDetails] = useState(false);
     const [page, setPage]: any = useState(1);
-    const [toastList, setToastList] = useContext(StoreContext);
     const [pageSize, setPageSize]: any = useState(10);
     const columns = [{title: "Group Name", dataIndex: "name", width:"40%" },
     {title: "Status", dataIndex: "status", width:"40%" }];
@@ -29,9 +27,7 @@ export function User(props: any) {
             setGroups(userGroups);
         }).catch(error => {
             console.error('Error: ', error);
-            const response = showToast('error', 'An Error has occured with getting Groups');
-            console.log('response: ', response);
-            setToastList([...toastList, response]);
+            openNotification('error', 'An Error has occured with getting Groups');
         }).finally(() => {
             setLoadingDetails(false);
         });  

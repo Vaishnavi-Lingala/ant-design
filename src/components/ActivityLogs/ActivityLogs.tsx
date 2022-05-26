@@ -1,6 +1,6 @@
 import { Button, Collapse, Skeleton } from "antd";
 import { CaretRightOutlined } from '@ant-design/icons';
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { DatePicker, Table } from "antd";
 import moment from "moment";
 
@@ -20,11 +20,9 @@ import {
     hiddenFields,
     logFieldNames
 } from '../../constants';
+import { openNotification } from "../Layout/Notification";
 
 const { Panel } = Collapse;
-
-import { showToast } from "../Layout/Toast/Toast";
-import { StoreContext } from "../../helpers/Store";
 
 const DisplayField = ({ field, value, logFieldNames }) => {
     return (
@@ -38,9 +36,9 @@ const DisplayField = ({ field, value, logFieldNames }) => {
 };
 
 const ExpandedRows = ({ activity, user, machine, uid }) => {
-    const filteredActivity = Object.fromEntries(Object.entries(activity).filter(([key]) => !hiddenFields.activity.includes(key)));;
-    const filteredMachine = Object.fromEntries(Object.entries(machine).filter(([key]) => !hiddenFields.machine.includes(key)));;
-    const filteredUser = Object.fromEntries(Object.entries(user).filter(([key]) => !hiddenFields.user.includes(key)));;
+    const filteredActivity = Object.fromEntries(Object.entries(activity ? activity : {}).filter(([key]) => !hiddenFields.activity.includes(key)));;
+    const filteredMachine = Object.fromEntries(Object.entries(machine ? machine : {}).filter(([key]) => !hiddenFields.machine.includes(key)));;
+    const filteredUser = Object.fromEntries(Object.entries(user ? user : {}).filter(([key]) => !hiddenFields.user.includes(key)));;
 
     return <>
         <Collapse
@@ -73,18 +71,20 @@ const ExpandedRows = ({ activity, user, machine, uid }) => {
                     ))}
                 </div>
             </Panel>
-            <Panel header="User" key="3">
-                <div className="log-field-container">
-                    {Object.keys(filteredUser).map((recordKey) => (
-                        <DisplayField
-                            field={recordKey}
-                            value={filteredUser[recordKey]}
-                            key={recordKey}
-                            logFieldNames={logFieldNames.user}
-                        />
-                    ))}
-                </div>
-            </Panel>
+            {
+                user ? <Panel header="User" key="3">
+                    <div className="log-field-container">
+                        {Object.keys(filteredUser).map((recordKey) => (
+                            <DisplayField
+                                field={recordKey}
+                                value={filteredUser[recordKey]}
+                                key={recordKey}
+                                logFieldNames={logFieldNames.user}
+                            />
+                        ))}
+                    </div>
+                </Panel> : null
+            }
         </Collapse>
     </>;
 };
@@ -93,7 +93,6 @@ export default function ActivityLogs() {
     const [logResponse, setLogResponse] = useState<any>({});
     const [loading, setLoading] = useState(true);
     const [tableLoading, setTableLoading] = useState(false);
-    const [toastList, setToastList] = useContext(StoreContext);
 
     const initialDateTimeFilters = {
         start: {
@@ -128,7 +127,7 @@ export default function ActivityLogs() {
         },
         {
             title: "Actor",
-            render: (text, record) => <>{record.activity?.display_name}</>
+            render: (text, record) => <>{record.activity?.display_name ? record.activity?.display_name : "System"}</>
         },
         {
             title: "Event Info",
@@ -155,10 +154,7 @@ export default function ActivityLogs() {
                 setLogResponse(data);
             } catch (error) {
                 console.error('Error: ', error);
-
-                const response = showToast('error', 'An Error has occured with getting Activity Logs');
-                console.log('response: ', response);
-                setToastList([...toastList, response]);
+                openNotification('error', 'An error has occured with getting Activity Logs');
             }
             setLoading(false);
             setTableLoading(false);
@@ -183,10 +179,7 @@ export default function ActivityLogs() {
                 });
             } catch (error) {
                 console.error('Error: ', error);
-
-                const response = showToast('error', 'An Error has occured with getting Activity Logs');
-                console.log('response: ', response);
-                setToastList([...toastList, response]);
+                openNotification('error', 'An error has occured with getting Activity Logs');
             }
         }
     }

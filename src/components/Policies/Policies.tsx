@@ -13,8 +13,7 @@ import ApiUrls from '../../ApiUtils';
 import ApiService from '../../Api.service';
 import { KioskPolicy } from './kioskPolicy';
 
-import { showToast } from "../Layout/Toast/Toast";
-import { StoreContext } from "../../helpers/Store";
+import { openNotification } from '../Layout/Notification';
 
 export default function Policies() {
 
@@ -113,7 +112,6 @@ export default function Policies() {
 	const [isPinModalVisible, setIsPinModalVisible] = useState(false);
 	const [isPasswordModalVisible, setIsPasswordModalVisible] = useState(false);
 	const [isKioskModalVisible, setIsKioskModalVisible] = useState(false);
-	const [toastList, setToastList] = useContext(StoreContext);
 	const [tabname, setTabname] = useState("");
 	const { TabPane } = Tabs;
 
@@ -360,9 +358,7 @@ export default function Policies() {
 				setLoadingDetails(false);
 			}, error => {
 				console.log(error)
-				const response = showToast('error', 'An Error has occured with getting Policies');
-				console.log('response: ', response);
-				setToastList([...toastList, response]);
+				openNotification('error', 'An Error has occured with getting Policies');
 			})
 	}
 
@@ -385,22 +381,16 @@ export default function Policies() {
 		ApiService.get(ApiUrls.activatePolicy(uid))
 			.then(data => {
 				if (!data.errorSummary) {
-					const response = showToast('success', 'Successfully activated Policy');
-					console.log('response: ', response);
-					setToastList([...toastList, response]);
+					openNotification('success', 'Successfully activated Policy');
 					getPolicies();
 				}
 				else {
-					const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
-					console.log('response: ', response);
-					setToastList([...toastList, response]);
+					openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
 				}
 			})
 			.catch(error => {
 				console.error('Error: ', error);
-				const response = showToast('error', 'An Error has occured with activating Policy');
-				console.log('response: ', response);
-				setToastList([...toastList, response]);
+				openNotification('error', 'An Error has occured with activating Policy');
 			})
 	}
 
@@ -408,22 +398,16 @@ export default function Policies() {
 		ApiService.get(ApiUrls.deActivatePolicy(uid))
 			.then(data => {
 				if (!data.errorSummary) {
-					const response = showToast('success', 'Successfully de-activated Policy');
-					console.log('response: ', response);
-					setToastList([...toastList, response]);
+					openNotification('success', 'Successfully de-activated Policy');
 					getPolicies();
 				}
 				else {
-					const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
-					console.log('response: ', response);
-					setToastList([...toastList, response]);
+					openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
 				}
 			})
 			.catch(error => {
 				console.error('Error: ', error);
-				const response = showToast('error', 'An Error has occured with de-activating Policy');
-				console.log('response: ', response);
-				setToastList([...toastList, response]);
+				openNotification('error', 'An Error has occured with de-activating Policy');
 			})
 	}
 
@@ -440,15 +424,11 @@ export default function Policies() {
 					getPolicies();
 				}
 				else {
-					const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
-					console.log('response: ', response);
-					setToastList([...toastList, response]);
+					openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
 				}
 			}, error => {
 				console.error('Error: ', error);
-				const response = showToast('error', 'An Error has occured with re-ordering Policies');
-				console.log('response: ', response);
-				setToastList([...toastList, response]);
+				openNotification('error', 'An Error has occured with re-ordering Policies');
 			})
 	}
 
@@ -474,9 +454,7 @@ export default function Policies() {
 					setLoadingDetails(false);
 				}
 				else {
-					const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
-					console.log('response: ', response);
-					setToastList([...toastList, response]);
+					openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
 					setInterval(() => {
 						history.goBack();
 					}, 2000)
@@ -484,10 +462,8 @@ export default function Policies() {
 			})
 			.catch(error => {
 				console.error('Error: ', error);
+				openNotification('error', 'An Error has occured with getting Policy Details');
 				setLoadingDetails(false);
-				const response = showToast('error', 'An Error has occured with getting Policy Details');
-				console.log('response: ', response);
-				setToastList([...toastList, response]);
 			})
 	}
 
@@ -496,9 +472,7 @@ export default function Policies() {
 			.then(data => {
 				if (!data.errorSummary) {
 					console.log(data);
-					const response = showToast('success', `Successfully added ${policyType.slice(0, 1) + policyType.slice(1).toLowerCase()} Policy`);
-					console.log('response: ', response);
-					setToastList([...toastList, response]);
+					openNotification('success', `Successfully added ${policyType.slice(0, 1) + policyType.slice(1).toLowerCase()} Policy`);
 					getPolicies();
 					if (policyType === "PIN") {
 						setIsPinModalVisible(false);
@@ -508,18 +482,13 @@ export default function Policies() {
 					} if (policyType === "KIOSK") {
 						setIsKioskModalVisible(false);
 					}
-
 				}
 				else {
-					const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
-					console.log('response: ', response);
-					setToastList([...toastList, response]);
+					openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
 				}
 			}, error => {
 				console.error('Error: ', error);
-				const response = showToast('error', `An Error has occured with adding ${policyType.slice(0, 1) + policyType.slice(1).toLowerCase()} Policy`);
-				console.log('response: ', response);
-				setToastList([...toastList, response]);
+				openNotification('error', `An Error has occured with adding ${policyType.slice(0, 1) + policyType.slice(1).toLowerCase()} Policy`);
 			})
 	}
 

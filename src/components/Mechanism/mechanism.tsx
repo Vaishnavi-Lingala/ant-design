@@ -7,8 +7,7 @@ import ApiService from "../../Api.service";
 import { MechanismType } from "../../models/Data.models";
 import ApiUrls from '../../ApiUtils';
 
-import { showToast } from "../Layout/Toast/Toast";
-import { StoreContext } from "../../helpers/Store";
+import { openNotification } from "../Layout/Notification";
 
 function Mechanism(props: any) {
     const [displayDetails, setDisplayDetails] = useState<MechanismType>(props.mechanismDetails);
@@ -26,7 +25,6 @@ function Mechanism(props: any) {
     const [groupUids, setGroupUids]: any = useState([]);
     const [groupsChange, setGroupsChange]: any = useState([]);
     const [value, setValue] = useState("");
-    const [toastList, setToastList] = useContext(StoreContext);
 
     useEffect(() => {
         Promise.all(([
@@ -95,9 +93,7 @@ function Mechanism(props: any) {
                 if (!data.errorSummary) {
                     groupNames.length = 0;
                     setDisplayDetails({ ...editData });
-                    const response = showToast('success', 'Successfully updated Mechanism');
-                    console.log('response: ', response);
-                    setToastList([...toastList, response]);
+                    openNotification('success', 'Successfully updated Mechanism');
                     Object.keys(data.mechanism_groups).map(index => {
                         groupNames.push(data.mechanism_groups[index].name);
                     });
@@ -106,15 +102,11 @@ function Mechanism(props: any) {
                     setIsEdit(false);
                 }
                 else {
-                    const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
-                    console.log('response: ', response);
-                    setToastList([...toastList, response]);
+                    openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
                 }
             }, error => {
                 console.error('Error: ', error);
-                const response = showToast('error', 'An Error has occured with updating Mechanism');
-                console.log('response: ', response);
-                setToastList([...toastList, response]);
+                openNotification('error', 'An Error has occured with updating Mechanism');
             })
     }
 

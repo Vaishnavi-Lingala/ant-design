@@ -5,15 +5,13 @@ import './Settings.css'
 
 import { ClientConfiguration } from '../../models/Data.models';
 
-import { showToast } from "../Layout/Toast/Toast";
-import { StoreContext } from "../../helpers/Store";
+import { openNotification } from '../Layout/Notification';
 
 function Settings() {
     const [clientId, setClientId] = useState("");
     const [issuer, setIssuer] = useState("");
     const [accountId, setAccountId] = useState("");
     const [loading, setLoading] = useState(true);
-    const [toastList, setToastList] = useContext(StoreContext);
     const domain = localStorage.getItem('domain');
 
     useEffect(() => {
@@ -36,9 +34,7 @@ function Settings() {
             })
             .catch((error) => {
                 console.error('Error: ', error);
-                const response = showToast('error', 'An Error has occured with getting Settings');
-                console.log('response: ', response);
-                setToastList([...toastList, response]);
+				openNotification('error', 'An Error has occured with getting Settings');
             })
     }, []);
 
