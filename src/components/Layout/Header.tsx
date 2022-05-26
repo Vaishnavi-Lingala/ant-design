@@ -22,6 +22,10 @@ function AppHeader() {
     const [products, setProducts]: any = useState([]);
 
     useEffect(() => {
+        getProducts();
+    }, [])
+    
+    function getProducts() {
         ApiService.get(ApiUrls.getProducts)
             .then(data => {
                 var object = {};
@@ -39,7 +43,7 @@ function AppHeader() {
                 console.error('Error: ', error);
                 openNotification('error', 'An Error has occured with getting Products');
             })
-    }, [])    
+    }
 
     console.log(products);
 

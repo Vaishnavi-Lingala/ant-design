@@ -44,7 +44,8 @@ export interface PasswordPolicyType {
 export interface kioskPolicyType {
     policy_req: {
         access_key_id: string,
-        assay: string
+        assay: string,
+        confirm_assay: string
     },
     auth_policy_groups: string[],
     kiosk_machine_groups: [],
