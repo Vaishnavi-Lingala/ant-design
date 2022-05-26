@@ -333,7 +333,7 @@ export default function ActivityLogs() {
                         dataSource={logResponse.results}
                         title={() => (
                             <>
-                                Events: <b> {logResponse.total_items ? logResponse.total_items : 0} </b>{" "}
+                                Activities: <b> {logResponse.total_items ? logResponse.total_items : 0} </b>{" "}
                             </>
                         )}
                         footer={() =>
