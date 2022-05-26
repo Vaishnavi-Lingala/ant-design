@@ -1,15 +1,15 @@
 import { Menu } from "antd";
 import Sider from "antd/lib/layout/Sider";
 import { useHistory } from "react-router-dom";
-import { UserOutlined, DesktopOutlined, TeamOutlined, SettingOutlined, PieChartOutlined, 
+import { AppstoreOutlined, UserOutlined, DesktopOutlined, TeamOutlined, SettingOutlined, PieChartOutlined, 
 	AreaChartOutlined, SolutionOutlined, LockOutlined } from '@ant-design/icons';
 
 function AppSider() {
 	const history = useHistory();
 	
 	function openScreen(screen: string) {
-        history.push('/' + screen);
-    }
+    history.push('/' + screen);
+  }
 
 	return (
 		<Sider width='250'
@@ -29,6 +29,10 @@ function AppSider() {
 				<Menu.Item key="groups"><TeamOutlined /> Groups</Menu.Item>
 				<Menu.Item key="activityLogs"><PieChartOutlined /> Activity Logs</Menu.Item>
 				<Menu.Item key="settings"><SettingOutlined /> Settings</Menu.Item>
+        {
+        (localStorage.getItem('productName') === 'TecUnify') && 
+          <Menu.Item key='apps'><AppstoreOutlined/> Applications</Menu.Item> 
+        }
 			</Menu>
 		</Sider>
 	);

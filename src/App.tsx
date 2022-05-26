@@ -6,6 +6,7 @@ import { ConfigProvider } from "antd";
 import "antd/dist/antd.variable.min.css";
 import "./App.css";
 
+// TecTango
 import config from "./config";
 import Login from "./components/Login";
 import Policies from "./components/Policies/Policies";
@@ -18,6 +19,9 @@ import Mechanisms from "./components/Mechanism/Mechanisms";
 import Groups from "./components/Groups/Groups";
 import Users from "./components/Users/Users";
 import Machines from "./components/Machines/Machines";
+
+// TecUnify
+import Applications from "./components/tecUnify/Applications";
 
 import { StoreContextProvider } from "./helpers/Store";
 import { MachineDetails } from "./components/Machines/MachineDetails";
@@ -53,6 +57,7 @@ function App() {
                     <ProtectedRoute path={`/settings`} component={Settings} />
                     <ProtectedRoute path={`/groups`} component={Groups} />
                     <ProtectedRoute path={`/users`} component={Users} />
+                    <ProtectedRoute path={`/apps`} component={Applications} />
                     <ProtectedRoute path={`/machines`} exact component={Machines} />
                     <ProtectedRoute path={`/machines/:id`} component={MachineDetails} />
 

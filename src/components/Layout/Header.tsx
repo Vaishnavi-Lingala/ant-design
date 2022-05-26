@@ -34,6 +34,11 @@ function AppHeader() {
                     localStorage.setItem("productName", data[0].sku)
                     window.location.reload();
                 }
+                // NOTE: TEMP!!
+                object = {
+                  TecUnify: 'oprc773399d0c',
+                  ...object
+                }
                 setProducts(object);
             })
             .catch((error) => {
