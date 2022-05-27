@@ -273,7 +273,7 @@ export const KioskPolicy = (props: any) => {
 
                 <div className="row-policy-container">
                     <div>
-                        Kiosk username
+                        Username
                     </div>
                     <div>
                         {
@@ -286,7 +286,7 @@ export const KioskPolicy = (props: any) => {
                         }
                     </div>
                     <div>
-                        Kiosk password
+                        Password
                     </div>
                     <div>
                         {
@@ -298,19 +298,24 @@ export const KioskPolicy = (props: any) => {
                             /> : kioskDisplayData.policy_req.assay
                         }
                     </div>
-                    <div>
-                        Kiosk confirm password
-                    </div>
-                    <div>
-                        {
-                            isEdit ? <Input className="form-control"
-                                style={{ width: "275px" }}
-                                onChange={(e) => kioskEditData.policy_req.confirm_assay = e.target.value}
-                                defaultValue={kioskDisplayData.policy_req.confirm_assay}
-                                placeholder='Enter confirm password'
-                            /> : kioskDisplayData.policy_req.confirm_assay
-                        }
-                    </div>
+                    {
+                        isEdit ?
+                            <>
+                                <div>
+                                    Confirm password
+                                </div>
+                                <div>
+                                    {
+                                        isEdit ? <Input className="form-control"
+                                            style={{ width: "275px" }}
+                                            onChange={(e) => kioskEditData.policy_req.confirm_assay = e.target.value}
+                                            defaultValue={kioskDisplayData.policy_req.confirm_assay}
+                                            placeholder='Enter confirm password'
+                                        /> : kioskDisplayData.policy_req.confirm_assay
+                                    }
+                                </div>
+                            </> : <></>
+                    }
                 </div>
             </div>
             {kioskDisplayData.uid !== undefined ?

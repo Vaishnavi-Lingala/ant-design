@@ -149,7 +149,8 @@ export default function Policies() {
 	const kioskData = {
 		policy_req: {
 			access_key_id: "",
-			assay: ""
+			assay: "",
+			confirm_assay: ""
 		},
 		auth_policy_groups: [],
 		policy_type: 'KIOSK',
