@@ -1,5 +1,5 @@
 import { Card, Input } from 'antd';
-import { mockType, mockApiRes } from './mockApiCall';
+import type { mockType } from './mockApiCall';
 
 const { Search } = Input;
 
@@ -7,10 +7,10 @@ interface SProps {
   data: mockType[];
 }
 
-function SupportedIntegrations({data}: SProps) {
+function SupportedIntegrations({data}: SProps): JSX.Element {
 
-  const handleClick = (e) => {
-  };
+  function handleClick(e) {
+  }
 
   return (
     <>
@@ -24,19 +24,17 @@ function SupportedIntegrations({data}: SProps) {
 
         <div className='flex-container flex-wrap'>
         { 
-          data.map((item) => {
-            return (
-              <Card key={item.app_id} title={item.app_name} className='flex-adjust card-unify' onClick={handleClick}>
-                <div className='flex-container flex-between'>
-                  <div className='info-container'>
-                    <p>App Id: {item.app_id}</p>
-                    <p>Window Title: {item.window_title}</p>
-                  </div>
-                  <img className='img-hide' alt='app logo' src='https://placeholder.pics/svg/100'/>
+          data.map((item): JSX.Element => (
+            <Card key={item.app_id} title={item.app_name} className='flex-adjust card-unify' onClick={handleClick}>
+              <div className='flex-container flex-between'>
+                <div className='info-container'>
+                  <p>App Id: {item.app_id}</p>
+                  <p>Window Title: {item.window_title}</p>
                 </div>
-              </Card>
-            )
-          })
+                <img className='img-hide' alt='app logo' src='https://placeholder.pics/svg/100' />
+              </div>
+            </Card>
+          ))
         }
         </div>
       </div>

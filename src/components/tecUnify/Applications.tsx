@@ -2,52 +2,67 @@ import { useState, useEffect } from 'react';
 import { Button, Skeleton } from 'antd';
 
 import './tecUnify.css';
-import { mockType, mockApiRes } from './mockApiCall';
+import { mockApiRes } from './mockApiCall';
 
 import SupportedIntegrations from './SupportedIntegrations';
 import AccountIntegrations from './AccountIntegrations';
+import BulkAssignment from './BulkAssignment';
 
-interface LoadingState {
-  page: boolean;
-  content: boolean;
+interface PageType {
+  name: string;
+  isLoading: boolean;
 }
 
-interface ComponentTrack {
-  current: string;
-  previous: string;
+interface PageStateType {
+  current: PageType;
+  previous: PageType;
 }
 
-const home: ComponentTrack = {
-  current: 'configured',
-  previous: ''
+const homeComponent: PageStateType = {
+  current: {
+    name: 'configured',
+    isLoading: false,
+  },
+  previous: {
+    name: '',
+    isLoading: false,
+  }
 };
 
-function Applications() {
-  const [isLoading, setIsLoading] = useState<LoadingState>({page: true, content: false});
-  const [componentTrack, setComponentTrack] = useState<ComponentTrack>(home);
-  useEffect(() => setIsLoading((currVal) => {return {...currVal, page: false}}), [componentTrack]);
+function capitalizeFirst(s: string): string {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
 
-  const handleClick = (e: any) => {
-    setComponentTrack((currVal) => {
-      return {
-        current: e.target.parentNode.id,
-        previous: currVal.current
-      }
-    });
-  };
+function Applications(): JSX.Element {
+  const [pageState, setPageState] = useState<PageStateType>(homeComponent);
 
-  const handleBack = () => {
-    setComponentTrack(home);
-  };
+  const isBulkAssignmentPage = (pageState.current.name === 'assignment');
+  const isConfiguredPage= (pageState.current.name === 'configured');
 
-  function SwitchTrack(): JSX.Element | null {
-    switch(componentTrack.current) {
+  const handleClick = (e: any): void  => {
+    const currentPage = {
+      name: e.target.parentNode.id,
+      isLoading: false
+    };
+
+    setPageState((currVal) => ({
+      current: currentPage,
+      previous: currVal.current
+    }));
+  }
+
+  const handleBack = (): void => {
+    setPageState(homeComponent);
+  }
+
+  const SwitchTrack = (): JSX.Element | null  => {
+    switch(pageState.current.name) {
       case 'configured':
         return <AccountIntegrations/>;
       case 'supported':
         return <SupportedIntegrations data={mockApiRes}/>;
       case 'assignment':
-        return <>TODD</>;
+        return <BulkAssignment/>;
       default:
         return null;
     }
@@ -56,23 +71,28 @@ function Applications() {
   return (
     <>
       <div className='content-header'>
-        Configured Applications
+        {
+          !isBulkAssignmentPage ? 
+            <>{capitalizeFirst(pageState.current.name)} Applications</> : <span>Bulk Assignment</span>
+        }
+
         { 
-          (componentTrack.current !== 'configured') &&
+          !isConfiguredPage &&
             <Button style={{ marginLeft: 'auto', alignSelf: 'end' }} onClick={handleBack}>Back</Button>
         }
       </div>
 
-      <Skeleton loading={isLoading.page}>
+      <Skeleton loading={pageState.current.isLoading}>
         <div className='header-container border'>
           <Button id='supported' size='large' type='primary' onClick={handleClick}>
             Browse Supported apps 
           </Button>
 
-          <Button id='assigment' size='large' type='primary' onClick={handleClick}>
+          <Button id='assignment' size='large' type='primary' onClick={handleClick}>
             Bulk assign apps
           </Button>
         </div>
+
         <div className='content-container-unify border'>
           <Skeleton loading={false}>
             <SwitchTrack/>
