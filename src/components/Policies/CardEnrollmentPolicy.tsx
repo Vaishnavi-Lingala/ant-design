@@ -157,7 +157,7 @@ const CardEnrollmentPolicy = (props) => {
                 <div className="row-policy-container">
                     <div>
                         {cardEnrollDisplayData.uid === undefined ? <div className="content-heading">Create Card Enrollment Policy</div> :
-                            <div className="content-heading">Edit Card Enrollment Policy</div>
+                            <div className="content-heading">{ isEdit ? 'Edit' : null } Card Enrollment Policy</div>
                         }
                     </div>
                     <div>
