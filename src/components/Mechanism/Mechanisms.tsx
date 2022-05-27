@@ -97,13 +97,13 @@ export default function Mechanisms() {
 			{
 				order: 0,
 				factor: "",
-				name: "Challenge_Test_1",
+				name: "Challenge_1",
 				password_grace_period: "TWO_HOURS"
 			},
 			{
 				order: 1,
 				factor: "",
-				name: "Challenge_Test_2",
+				name: "Challenge_2",
 				password_grace_period: null
 			}
 		],

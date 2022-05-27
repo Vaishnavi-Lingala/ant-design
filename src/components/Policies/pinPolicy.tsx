@@ -44,7 +44,7 @@ export const PinPolicy = (props: any) => {
 				setLoading(false);
 			}, error => {
 				console.error('Error: ', error);
-                openNotification('error', 'An Error has occured with getting Groups');
+				openNotification('error', 'An Error has occured with getting Groups');
 				setLoading(false);
 			})
 
@@ -67,9 +67,9 @@ export const PinPolicy = (props: any) => {
 					setPinDisplayData({ ...pinEditData });
 					openNotification('success', 'Successfully updated PIN Policy');
 					Object.keys(data.auth_policy_groups).map(index => {
-                        groupNames.push(data.auth_policy_groups[index].name);
-                    });
-                    setGroupNames(groupNames);
+						groupNames.push(data.auth_policy_groups[index].name);
+					});
+					setGroupNames(groupNames);
 					setIsEdit(false);
 				}
 				else {
@@ -78,7 +78,7 @@ export const PinPolicy = (props: any) => {
 			})
 			.catch(error => {
 				console.error('Error: ', error);
-                openNotification('error', 'An Error has occured with updating PIN Policy');
+				openNotification('error', 'An Error has occured with updating PIN Policy');
 			})
 	}
 
@@ -178,7 +178,10 @@ export const PinPolicy = (props: any) => {
 								style={{ width: '275px' }}
 								options={groups}
 							/> : Object.keys(groupNames).map(name =>
-								<><Button style={{cursor: 'text'}}>{groupNames[name]}</Button>&nbsp;</>)
+								<div style={{ display: 'inline-block', marginRight: '3px', paddingBottom: '3px' }}>
+									<Button style={{ cursor: 'text' }}>{groupNames[name]}</Button>
+								</div>
+							)
 						}
 					</div>
 

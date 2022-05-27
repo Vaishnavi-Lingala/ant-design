@@ -136,6 +136,9 @@ function Mechanism(props: any) {
     }
 
     function createMechanism() {
+        if (editData.challenge_factors[0].factor !== "" && editData.challenge_factors[1].factor === "") {
+            editData.challenge_factors[1].factor = "NONE";
+        }
         props.handleOk(editData);
     }
 
@@ -199,18 +202,21 @@ function Mechanism(props: any) {
                         Assigned to groups:
                     </div>
                     <div>
-                        {displayDetails.default === false && isEdit ? <Select
-                            mode="multiple"
-                            size={"large"}
-                            placeholder="Please select groups"
-                            defaultValue={displayDetails.name !== "" ? groupNames : []}
-                            onChange={handleGroups}
-                            // disabled={!isEdit}
-                            style={{ width: '275px' }}
-                            options={groups}
-                        /> : Object.keys(groupNames).map(name =>
-                            <><Button style={{cursor: 'text'}}>{groupNames[name]}</Button>&nbsp;</>)
-                        }
+                        {displayDetails.default === false && isEdit ?
+                            <Select
+                                mode="multiple"
+                                size={"large"}
+                                placeholder="Please select groups"
+                                defaultValue={displayDetails.name !== "" ? groupNames : []}
+                                onChange={handleGroups}
+                                // disabled={!isEdit}
+                                style={{ width: '275px' }}
+                                options={groups}
+                            /> : Object.keys(groupNames).map(name =>
+                                <div style={{ display: 'inline-block', marginRight: '3px', paddingBottom: '3px' }}>
+                                    <Button style={{ cursor: 'text' }}>{groupNames[name]}</Button>
+                                </div>
+                            )}
                     </div>
 
                     <div className="content-mechanism-key-header">

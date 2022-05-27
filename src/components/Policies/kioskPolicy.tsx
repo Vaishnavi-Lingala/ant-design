@@ -50,7 +50,7 @@ export const KioskPolicy = (props: any) => {
                 setLoadingDetails(false);
             }, error => {
                 console.error('Error: ', error);
-				openNotification('error', 'An Error has occured with getting Groups');
+                openNotification('error', 'An Error has occured with getting Groups');
                 setLoadingDetails(false);
             })
 
@@ -71,7 +71,7 @@ export const KioskPolicy = (props: any) => {
                 setLoading(false);
             }, error => {
                 console.error('Error: ', error);
-				openNotification('error', 'An Error has occured with getting Groups');
+                openNotification('error', 'An Error has occured with getting Groups');
             })
 
         if (kioskDisplayData.uid !== undefined) {
@@ -234,8 +234,10 @@ export const KioskPolicy = (props: any) => {
                             style={{ width: '275px' }}
                             options={groups}
                         /> : Object.keys(groupNames).map(name =>
-                            <><Button style={{cursor: 'text'}}>{groupNames[name]}</Button>&nbsp;</>)
-                        }
+                            <div style={{ display: 'inline-block', marginRight: '3px', paddingBottom: '3px' }}>
+                                <Button style={{ cursor: 'text' }}>{groupNames[name]}</Button>
+                            </div>
+                        )}
                     </div>
 
                     <div className="content-policy-key-header">
@@ -253,7 +255,7 @@ export const KioskPolicy = (props: any) => {
                             options={kioskGroups}
                             listHeight={120}
                         /> : Object.keys(kioskGroupNames).map(name =>
-                            <><Button style={{cursor: 'text'}}>{kioskGroupNames[name]}</Button>&nbsp;</>)
+                            <><Button style={{ cursor: 'text' }}>{kioskGroupNames[name]}</Button>&nbsp;</>)
                         }
                     </div>
 
