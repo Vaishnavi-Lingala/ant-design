@@ -145,3 +145,12 @@ export const start_date = "start_date";
 export const start_time = "start_time";
 export const end_date = "end_date";
 export const end_time = "end_time";
+
+// Product names
+export const TecTANGO = "TecTANGO";
+
+// Policy types
+export const PIN = "PIN";
+export const PASSWORD = "PASSWORD";
+export const KIOSK = "KIOSK";
+export const CARD_ENROLL = "CARD_ENROLL";
