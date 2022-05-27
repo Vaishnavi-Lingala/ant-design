@@ -3,8 +3,7 @@ import {Table,  Button, Modal, Typography, Input } from "antd";
 import ApiService from "../../Api.service";
 import ApiUrls from '../../ApiUtils';
 
-import { showToast } from "../Layout/Toast/Toast";
-import { StoreContext } from "../../helpers/Store";
+import { openNotification } from "../Layout/Notification";
 
 
 export default function MachinesSelection(props: any) {
@@ -38,7 +37,6 @@ export default function MachinesSelection(props: any) {
     const [page, setPage]: any = useState(1);
 	const [pageSize, setPageSize]: any = useState(10);
 	const [totalItems, setTotalItems]: any = useState(0);
-    const [toastList, setToastList] = useContext(StoreContext);
 
     const onSelectChange = selectedRowKeys => {
         console.log('selectedRowKeys changed: ', selectedRowKeys);
@@ -86,10 +84,8 @@ export default function MachinesSelection(props: any) {
             setLoadingDetails(false);
         }, error => {
             console.error('Error: ', error);
+            openNotification('error', 'An Error has occured with getting Machines');
             setLoadingDetails(false);
-            const response = showToast('error', 'An Error has occured with getting Machines');
-            console.log('response: ', response);
-            setToastList([...toastList, response]);
         })
     }
 
@@ -111,7 +107,7 @@ export default function MachinesSelection(props: any) {
 
     return(
         <>
-            <Modal title={<Title level={2}>{props.action} Users</Title>} visible={true} onOk={handleOk} onCancel={handleCancel} width={1000}
+            <Modal title={<Title level={2}>{props.action} Machines</Title>} visible={true} onOk={handleOk} onCancel={handleCancel} width={1000}
                 footer={[
                     <Button key="cancel" onClick={handleCancel}>
                         Cancel

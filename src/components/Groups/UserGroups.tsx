@@ -5,13 +5,11 @@ import ApiService from "../../Api.service";
 import ApiUrls from '../../ApiUtils';
 import AddGroup from "./AddGroup";
 
-import { showToast } from "../Layout/Toast/Toast";
-import { StoreContext } from "../../helpers/Store";
+import { openNotification } from "../Layout/Notification";
 
 export default function UserGroups() {
     const [userGroups, setUserGroups] = useState<Group[]>([]);
     const [loadingDetails, setLoadingDetails] = useState(false);
-    const [toastList, setToastList] = useContext(StoreContext);
     const columns = [
         {
             title: 'Name',
@@ -51,11 +49,8 @@ export default function UserGroups() {
                 // setLoadingDetails(false);
             }, error => {
                 console.error('Error: ', error);
+                openNotification('error', 'An Error has occured with getting Groups');
                 setLoadingDetails(false);
-
-                const response = showToast('error', 'An Error has occured with getting Groups');
-                console.log('response: ', response);
-                setToastList([...toastList, response]);
             })
     }
 

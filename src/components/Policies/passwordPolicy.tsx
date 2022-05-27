@@ -7,8 +7,8 @@ import './Policies.css'
 import { PasswordPolicyType } from "../../models/Data.models";
 import ApiService from "../../Api.service";
 import ApiUrls from '../../ApiUtils';
-import { showToast } from "../Layout/Toast/Toast";
-import { StoreContext } from "../../helpers/Store";
+
+import { openNotification } from "../Layout/Notification";
 
 export const PasswordPolicy = (props: any) => {
     const [isEdit, setIsEdit] = useState(false);
@@ -21,7 +21,6 @@ export const PasswordPolicy = (props: any) => {
     const [groupNames, setGroupNames]: any = useState([]);
     const [groupUids, setGroupUids]: any = useState([]);
     const [groupsChange, setGroupsChange]: any = useState([]);
-    const [toastList, setToastList] = useContext(StoreContext);
 
     useEffect(() => {
         ApiService.get(ApiUrls.groups, { type: "USER" })
@@ -42,9 +41,7 @@ export const PasswordPolicy = (props: any) => {
                 setLoading(false);
             }, error => {
                 console.error('Error: ', error);
-                const response = showToast('error', 'An Error has occured with getting Groups');
-                console.log('response: ', response);
-                setToastList([...toastList, response]);
+                openNotification('error', 'An Error has occured with getting Groups');
             })
 
         ApiService.get(ApiUrls.mechanismPasswordGraceOptions)
@@ -53,10 +50,7 @@ export const PasswordPolicy = (props: any) => {
                 setGraceOptions(data.password_grace_options);
             }, error => {
                 console.error('Error: ', error);
-
-                const response = showToast('error', 'An Error has occured with getting Password Grace Options');
-                console.log('response: ', response);
-                setToastList([...toastList, response]);
+                openNotification('error', 'An Error has occured with getting Password Grace Options');
             })
 
         if (passwordDisplayData.uid === undefined) {
@@ -85,58 +79,36 @@ export const PasswordPolicy = (props: any) => {
 
     function handleSaveClick() {
         updatePasswordPolicy();
-        setIsEdit(false);
     }
 
     function createPasswordPolicy() {
-        ApiService.post(ApiUrls.addPolicy, passwordEditData)
-            .then(data => {
-                if (!data.errorSummary) {
-                    console.log(data);
-                    const response = showToast('success', 'Successfully added Password Policy');
-                    console.log('response: ', response);
-                    setToastList([...toastList, response]);
-                    setTimeout(() => {
-                        window.location.reload()
-                    }, 2000);
-                }
-                else {
-                    const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
-                    console.log('response: ', response);
-                    setToastList([...toastList, response]);
-                }
-            }, error => {
-                console.error('Error: ', error);
-                const response = showToast('error', 'An Error has occured with adding Password Policy');
-                console.log('response: ', response);
-                setToastList([...toastList, response]);
-            })
+        props.handleOk("PASSWORD", passwordEditData);
     }
 
     function setCancelClick() {
-        window.location.reload();
+        props.handleCancel("PASSWORD");
     }
 
     function updatePasswordPolicy() {
         ApiService.put(ApiUrls.policy(passwordDisplayData.uid), passwordEditData)
             .then(data => {
                 if (!data.errorSummary) {
+                    groupNames.length = 0;
                     setPasswordDisplayData({ ...passwordEditData });
-                    const response = showToast('success', 'Successfully updated Password Policy');
-                    console.log('response: ', response);
-                    setToastList([...toastList, response]);
+                    openNotification('success', 'Successfully updated Password Policy');
+                    Object.keys(data.auth_policy_groups).map(index => {
+                        groupNames.push(data.auth_policy_groups[index].name);
+                    });
+                    setGroupNames(groupNames);
+                    setIsEdit(false);
                 }
                 else {
-                    const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
-                    console.log('response: ', response);
-                    setToastList([...toastList, response]);
+                    openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
                 }
             })
             .catch(error => {
                 console.error('Error: ', error);
-                const response = showToast('error', 'An Error has occured with updating Password Policy');
-                console.log('response: ', response);
-                setToastList([...toastList, response]);
+                openNotification('error', 'An Error has occured with updating Password Policy');
             })
     }
 
@@ -156,7 +128,7 @@ export const PasswordPolicy = (props: any) => {
 
     return <Skeleton loading={loading}>
         <div className="content-container-policy">
-            <div className="row-container">
+            <div className="row-policy-container">
                 <div>
                     {passwordDisplayData.uid === undefined ? <div className="content-heading">Create Password Policy</div> :
                         <div className="content-heading">Edit Password Policy</div>
@@ -205,16 +177,18 @@ export const PasswordPolicy = (props: any) => {
                     Assigned to groups:
                 </div>
                 <div>
-                    <Select
-                        mode="multiple"
-                        size={"large"}
-                        placeholder={<div>Please select groups</div>}
-                        defaultValue={passwordDisplayData.name !== "" ? groupNames : []}
-                        onChange={handleGroups}
-                        disabled={!isEdit}
-                        style={{ width: '275px' }}
-                        options={groups}
-                    />
+                    {isEdit ?
+                        <Select
+                            mode="multiple"
+                            size={"large"}
+                            placeholder={<div>Please select groups</div>}
+                            defaultValue={passwordDisplayData.name !== "" ? groupNames : []}
+                            onChange={handleGroups}
+                            style={{ width: '275px' }}
+                            options={groups}
+                        /> : Object.keys(groupNames).map(name =>
+                            <><Button style={{cursor: 'text'}}>{groupNames[name]}</Button>&nbsp;</>)
+                    }
                 </div>
 
                 <div className="content-policy-key-header">
@@ -227,7 +201,7 @@ export const PasswordPolicy = (props: any) => {
 
             <Divider style={{ borderTop: '1px solid #d7d7dc' }} />
 
-            <div className="row-container">
+            <div className="row-policy-container">
                 <div className="content-policy-key-header" style={{ padding: '10px 0 10px 0' }}>
                     Grace Period:
                 </div>
@@ -251,7 +225,7 @@ export const PasswordPolicy = (props: any) => {
             </div>
             <br />
             <div style={{ display: 'grid', gridTemplateColumns: '6% 85%' }}>
-                <div className="content-policy-key-header" style={{ marginTop: '-5px' }}>
+                <div className="content-policy-key-header" style={{ marginTop: '-3px' }}>
                     Help:
                 </div>
                 <div>
