@@ -1,6 +1,6 @@
-import { Button, Input, Modal, Skeleton, Table, Tabs } from 'antd';
+import { Button, Skeleton, Table, Tabs } from 'antd';
 import { MenuOutlined } from '@ant-design/icons';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { arrayMoveImmutable } from 'array-move';
@@ -168,15 +168,14 @@ export default function Policies() {
 	}
 
 	const cardEnrollData = {
-		policy_req: {
-			access_key_id: "",
-			assay: ""
-		},
-		auth_policy_groups: [],
-		policy_type: CARD_ENROLL.replace("_", " "),
-		kiosk_machine_groups: [],
-		name: "",
 		description: "",
+		name: "",
+		policy_req: {
+			max_card_enrollment: 1
+		},
+		kiosk_machine_groups: [],
+		policy_type: "CARD_ENROLL",
+		auth_policy_groups: [],
 	}
 
 	const DragHandle = SortableHandle(() => <MenuOutlined style={{ cursor: 'grab', color: '#999' }} />);
@@ -471,6 +470,7 @@ export default function Policies() {
 				}
 				catch (err) {
 					console.log(err);
+					openNotification("error", "Error has occured while getting licences");
 				}
 			}
 		})();
@@ -579,13 +579,15 @@ export default function Policies() {
 					console.log(data);
 					openNotification('success', `Successfully added ${policyType.slice(0, 1) + policyType.slice(1).toLowerCase()} Policy`);
 					getPolicies();
-					if (policyType === "PIN") {
+					if (policyType === PIN) {
 						setIsPinModalVisible(false);
 					}
-					if (policyType === "PASSWORD") {
+					if (policyType === PASSWORD) {
 						setIsPasswordModalVisible(false);
-					} if (policyType === "KIOSK") {
+					} if (policyType === KIOSK) {
 						setIsKioskModalVisible(false);
+					} if (policyType === CARD_ENROLL) {
+						setIsCardEnrollmentModalVisible(false);
 					}
 				}
 				else {
@@ -598,13 +600,16 @@ export default function Policies() {
 	}
 
 	const handleCancel = (policyType: string) => {
-		if (policyType === "PIN") {
+		if (policyType === PIN) {
 			setIsPinModalVisible(false);
 		}
-		if (policyType === "PASSWORD") {
+		if (policyType === PASSWORD) {
 			setIsPasswordModalVisible(false);
-		} if (policyType === "KIOSK") {
+		} if (policyType === KIOSK) {
 			setIsKioskModalVisible(false);
+		}
+		if (policyType === CARD_ENROLL) {
+			setIsCardEnrollmentModalVisible(false);
 		}
 	}
 
@@ -646,20 +651,20 @@ export default function Policies() {
 					setTabname(key.toUpperCase());
 				}}
 				onClick={() => {
-					if(tabname === "PIN")
-					{
+					if (tabname === PIN) {
 						setPasswordDetails(undefined);
 						setKioskDetails(undefined);
 					}
-					if(tabname === "PASSWORD")
-					{
+					if (tabname === PASSWORD) {
 						setPinDetails(undefined);
 						setKioskDetails(undefined);
 					}
-					if(tabname === "KIOSK")
-					{
+					if (tabname === KIOSK) {
 						setPasswordDetails(undefined);
 						setPinDetails(undefined);
+					}
+					if (tabname === CARD_ENROLL) {
+						setCardEnrollPolicy(undefined);
 					}
 				}}
 			// style={{border: '1px solid #d7d7dc', margin: 0}} 
