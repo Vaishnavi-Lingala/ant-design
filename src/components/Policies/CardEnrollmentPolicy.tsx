@@ -6,7 +6,7 @@ import './Policies.css';
 
 import ApiService from "../../Api.service";
 import ApiUrls from '../../ApiUtils';
-import { TecTANGO } from "../../constants";
+import { CARD_ENROLL, TecTANGO } from "../../constants";
 import { openNotification } from "../Layout/Notification";
 
 const CardEnrollmentPolicy = (props) => {
@@ -110,32 +110,15 @@ const CardEnrollmentPolicy = (props) => {
 
     function handleSaveClick() {
         updateCardEnrollPolicy();
-        setIsEdit(false);
     }
 
     function createCardEnrollPolicy() {
-        console.log(cardEnrollEditData)
-        ApiService.post(ApiUrls.addPolicy, cardEnrollEditData)
-            .then(data => {
-                if (!data.errorSummary) {
-                    console.log(data);
-                    openNotification('success', 'Successfully added CARD ENROLL Policy');
-                    setTimeout(() => {
-                        window.location.reload()
-                    }, 2000);
-                }
-                else {
-                    const response = openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
-                }
-            }, error => {
-                console.error('Error: ', error);
-                openNotification('error', 'An Error has occured with adding CARD ENROLL Policy');
-            })
-    }
+		props.handleOk(CARD_ENROLL, cardEnrollEditData);
+	}
 
-    function setCancelClick() {
-        window.location.reload();
-    }
+	function setCancelClick() {
+		props.handleCancel(CARD_ENROLL);
+	}
 
     function handleGroups(value: any) {
         Object.keys(groupsChange[0]).map(key => {

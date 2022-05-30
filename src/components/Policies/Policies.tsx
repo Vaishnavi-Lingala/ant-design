@@ -851,7 +851,7 @@ export default function Policies() {
 					<TabPane tab="Card enrollment" key="card-enrollment">
 						<Skeleton loading={loadingDetails}>
 							{cardEnrollPolicy ? <CardEnrollmentPolicy policyDetails={cardEnrollPolicy} /> :
-								isCardEnrollmentModalVisible ? <CardEnrollmentPolicy policyDetails={cardEnrollData} /> :
+								isCardEnrollmentModalVisible ? <CardEnrollmentPolicy policyDetails={cardEnrollData} handleOk={handleOk} handleCancel={handleCancel} /> :
 									<>
 										<div style={{ width: '100%', border: '1px solid #D7D7DC', borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6' }}>
 											<Button type='primary' size='large' onClick={() => {
