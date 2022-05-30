@@ -4,7 +4,7 @@ export const accountId = localStorage.getItem('accountId');
 export const productId = localStorage.getItem("productId");
 console.log(productId);
 
-export const base_url = 'https://credenti-portal-api.credenti.xyz';
+export const base_url = 'https://api.credenti.xyz/admin';
 
 export function getAccessToken() {
     const okta_token_storage = localStorage.getItem("okta-token-storage");
@@ -62,7 +62,10 @@ const Urls = {
 
     // Activity Log Urls
     activityLog: `account/${accountId}/product/${productId}/activitylog`,
-    filterableFields: `/activitylog/filterable-fields`
+    filterableFields: `/activitylog/filterable-fields`,
+
+    // Licenses
+    licences: `account/${accountId}/license`
 }
 
 export default Urls;

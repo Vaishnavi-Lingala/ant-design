@@ -2,10 +2,11 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: credenti-admin-portal
+  namespace: ct-dev
   labels:
     app: credenti-admin-portal
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: credenti-admin-portal
@@ -16,19 +17,20 @@ spec:
     spec:
       containers:
         - name: credenti-admin-portal
-          image: 823298410396.dkr.ecr.us-east-1.amazonaws.com/credenti-admin-portal:$BUILD_NUMBER
+          image: $ACCOUNT_NUMBER.dkr.ecr.us-east-1.amazonaws.com/credenti-admin-portal:$BUILD_NUMBER
           ports:
             - containerPort: 80
           envFrom:
             - secretRef:
-                name: dbcreds
+                name: app-config
       imagePullSecrets:
-        - name: regcred
+        - name: ecrcred
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: credenti-admin-service
+  namespace: ct-dev
 spec:
   type: NodePort
   selector:
