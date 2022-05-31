@@ -155,7 +155,7 @@ export default function ActivityLogs() {
                     ApiUrls.activityLog,
                     generateFilterPayload()
                 );
-                console.log({ data });
+
                 setLogResponse(data);
             } catch (error) {
                 console.error('Error: ', error);
