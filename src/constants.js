@@ -52,8 +52,8 @@ export const logFieldNames = {
         "mac_address": "MAC",
         "serial_number": "Serial number",
         "domain": "Domain",
-        "public_ip": "Public Ip",
-        "local_ip": "Last Known Ip",
+        "public_ip": "Public IP",
+        "local_ip": "Last Known IP",
         "group_type": "Group type",
         "os": "OS",
         "x_client": "X client",
@@ -90,7 +90,7 @@ export const logFieldNames = {
         "email": "Email",
         "sam": "samAccount Name",
         "upn": "UPN",
-        "idp_user_id": "Idp user ID",
+        "idp_user_id": "IDP user ID",
         "account_id": "Account ID",
         "is_shipping_contact": "Is shipping contact",
         "last_invite_accepted": "Last invite accepted",
@@ -126,7 +126,7 @@ export const filterableFieldNames = {
 export const machineFieldNames = {
     "account_id": "Account ID",
     "os": "OS",
-    "local_ip": "Last known Ip",
+    "local_ip": "Last known IP",
     "mac_address": "Mac address",
     "uid": "Uid",
     "group_type": "Group type",
@@ -134,11 +134,18 @@ export const machineFieldNames = {
     "reader_type": "Reader type",
     "serial_number": "Serial number",
     "x_client": "X Client",
-    "public_ip": "Public Ip",
+    "public_ip": "Public IP",
     "reader_name": "Reader name",
     "reader_serial": "Reader serial",
     "products": "Products",
     "machine_name": "Machine name"
+}
+
+export const settingsFieldNames = {
+    uid: "Account ID",
+    name: "Company Name",
+    portal_oidc_client_id: "Client ID",
+    issuer_url: "Issuer"
 }
 
 // Literal Constants
