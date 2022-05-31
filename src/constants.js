@@ -141,6 +141,13 @@ export const machineFieldNames = {
     "machine_name": "Machine name"
 }
 
+export const settingsFieldNames = {
+    uid: "Account ID",
+    name: "Company Name",
+    portal_oidc_client_id: "Client ID",
+    issuer_url: "Issuer"
+}
+
 // Literal Constants
 export const start_date = "start_date";
 export const start_time = "start_time";
