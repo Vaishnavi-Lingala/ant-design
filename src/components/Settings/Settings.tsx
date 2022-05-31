@@ -6,37 +6,41 @@ import './Settings.css'
 import { ClientConfiguration } from '../../models/Data.models';
 
 import { openNotification } from '../Layout/Notification';
+import Urls, { base_url } from '../../ApiUtils';
+import ApiService from '../../Api.service';
+import { settingsFieldNames } from '../../constants';
 
 function Settings() {
-    const [clientId, setClientId] = useState("");
-    const [issuer, setIssuer] = useState("");
-    const [accountId, setAccountId] = useState("");
+    const [settings, setSettings] = useState({});
     const [loading, setLoading] = useState(true);
     const domain = localStorage.getItem('domain');
 
     useEffect(() => {
-        fetch('https://credenti-portal-api.credenti.xyz/client/info',
-            {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    "domain": domain
-                })
-            })
-            .then(response => response.json())
+        ApiService.post(Urls.client_info, { domain: domain })
             .then((data: ClientConfiguration) => {
+                console.log(data);
                 setLoading(false);
-                setClientId(data.portal_oidc_client_id);
-                setAccountId(data.uid);
-                setIssuer(data.issuer_url);
+                setSettings(data);
             })
             .catch((error) => {
                 console.error('Error: ', error);
-				openNotification('error', 'An Error has occured with getting Settings');
+                openNotification('error', 'An Error has occured with getting Settings');
             })
     }, []);
+
+    const DisplayField = ({ displayName, value }) => {
+        return (
+            <>
+                <div style={{ width: "100%", display: "flex", marginBottom: "10px" }}>
+                    <div style={{ width: "50%" }}>
+                        <b>{displayName}</b>
+                    </div>
+                    <div>{value}</div>
+                </div>
+
+            </>
+        );
+    };
 
     return (
         <>
@@ -45,26 +49,12 @@ function Settings() {
             </div>
             <Skeleton loading={loading}>
                 <div className="content-container rounded-grey-border">
-                    <div className="row-container">
-                        <div>
-                            Account_id:
-                        </div>
-                        <div>
-                            {accountId}
-                        </div>
-                        <div>
-                            Client_id:
-                        </div>
-                        <div>
-                            {clientId}
-                        </div>
-                        <div>
-                            Issuer:
-                        </div>
-                        <div>
-                            {issuer}
-                        </div>
-                    </div>
+                    {
+                        Object.keys(settingsFieldNames).map(key => <DisplayField
+                            displayName={settingsFieldNames[key]}
+                            value={settings[key]}
+                        />)
+                    }
                 </div>
             </Skeleton>
         </>
