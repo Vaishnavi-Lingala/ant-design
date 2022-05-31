@@ -1,4 +1,4 @@
-import { Button, Input, InputNumber, Select } from "antd";
+import { Button, Input, InputNumber, Select, Skeleton } from "antd";
 import TextArea from "antd/lib/input/TextArea";
 import { useState, useEffect } from "react";
 
@@ -8,7 +8,6 @@ import ApiService from "../../Api.service";
 import ApiUrls from '../../ApiUtils';
 import { CARD_ENROLL, TecTANGO } from "../../constants";
 import { openNotification } from "../Layout/Notification";
-import { max } from "moment";
 
 const CardEnrollmentPolicy = (props) => {
     const [isEdit, setIsEdit] = useState(false);
@@ -137,7 +136,7 @@ const CardEnrollmentPolicy = (props) => {
     }
 
     return (
-        <>
+        <Skeleton loading={loading}>
             <div className="content-container-policy">
                 <div className="row-policy-container">
                     <div>
@@ -246,7 +245,7 @@ const CardEnrollmentPolicy = (props) => {
                     <Button type='primary' style={{ float: 'right' }}
                         onClick={createCardEnrollPolicy}>create</Button></div>
             }
-        </>
+        </Skeleton>
     );
 }
 
