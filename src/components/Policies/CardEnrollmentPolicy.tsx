@@ -8,6 +8,7 @@ import ApiService from "../../Api.service";
 import ApiUrls from '../../ApiUtils';
 import { CARD_ENROLL, TecTANGO } from "../../constants";
 import { openNotification } from "../Layout/Notification";
+import { max } from "moment";
 
 const CardEnrollmentPolicy = (props) => {
     const [isEdit, setIsEdit] = useState(false);
@@ -18,7 +19,8 @@ const CardEnrollmentPolicy = (props) => {
     const [groupNames, setGroupNames]: any = useState([]);
     const [groupUids, setGroupUids]: any = useState([]);
     const [groupsChange, setGroupsChange]: any = useState([]);
-	const [maxEnroll, setMaxEnroll] = useState(null);
+    const [maxEnroll, setMaxEnroll] = useState(null);
+    const [isLimitReached, setIsLimitReached] = useState(false);
 
     useEffect(() => {
         if (cardEnrollDisplayData.uid === undefined) {
@@ -59,39 +61,39 @@ const CardEnrollmentPolicy = (props) => {
     }, []);
 
     useEffect(() => {
-		(async function () {
-				try {
-					let licenses = await ApiService.get(ApiUrls.licences);
-					licenses.forEach(license => {
-						if (license.product.sku === TecTANGO && license.max_enroll_allowed) {
-							setMaxEnroll(license.max_enroll_allowed);
-						}
-					})
-				}
-				catch (err) {
-					console.log(err);
-					openNotification("error", "Error has occured while getting licences");
-				}
-		})();
-	}, []);
+        (async function () {
+            try {
+                let licenses = await ApiService.get(ApiUrls.licences);
+                licenses.forEach(license => {
+                    if (license.product.sku === TecTANGO && license.max_enroll_allowed) {
+                        setMaxEnroll(license.max_enroll_allowed);
+                    }
+                })
+            }
+            catch (err) {
+                console.log(err);
+                openNotification("error", "Error has occured while getting licences");
+            }
+        })();
+    }, []);
 
 
     function updateCardEnrollPolicy() {
         ApiService.put(ApiUrls.policy(cardEnrollDisplayData.uid), cardEnrollEditData)
             .then(data => {
                 if (!data.errorSummary) {
-					groupNames.length = 0;
-					setCardEnrollDisplayData({ ...cardEnrollEditData });
-					openNotification('success', 'Successfully updated Card Enroll Policy');
-					Object.keys(data.auth_policy_groups).map(index => {
+                    groupNames.length = 0;
+                    setCardEnrollDisplayData({ ...cardEnrollEditData });
+                    openNotification('success', 'Successfully updated Card Enroll Policy');
+                    Object.keys(data.auth_policy_groups).map(index => {
                         groupNames.push(data.auth_policy_groups[index].name);
                     });
                     setGroupNames(groupNames);
-					setIsEdit(false);
-				}
-				else {
-					openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
-				}
+                    setIsEdit(false);
+                }
+                else {
+                    openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
+                }
             })
             .catch(error => {
                 console.error('Error: ', error);
@@ -113,12 +115,12 @@ const CardEnrollmentPolicy = (props) => {
     }
 
     function createCardEnrollPolicy() {
-		props.handleOk(CARD_ENROLL, cardEnrollEditData);
-	}
+        props.handleOk(CARD_ENROLL, cardEnrollEditData);
+    }
 
-	function setCancelClick() {
-		props.handleCancel(CARD_ENROLL);
-	}
+    function setCancelClick() {
+        props.handleCancel(CARD_ENROLL);
+    }
 
     function handleGroups(value: any) {
         Object.keys(groupsChange[0]).map(key => {
@@ -140,7 +142,7 @@ const CardEnrollmentPolicy = (props) => {
                 <div className="row-policy-container">
                     <div>
                         {cardEnrollDisplayData.uid === undefined ? <div className="content-heading">Create Card Enrollment Policy</div> :
-                            <div className="content-heading">{ isEdit ? 'Edit' : null } Card Enrollment Policy</div>
+                            <div className="content-heading">{isEdit ? 'Edit' : null} Card Enrollment Policy</div>
                         }
                     </div>
                     <div>
@@ -185,18 +187,18 @@ const CardEnrollmentPolicy = (props) => {
                         Assigned to groups:
                     </div>
                     <div>
-                    {isEdit ?
-							<Select
-								mode="multiple"
-								size={"large"}
-								placeholder={<div>Please select groups</div>}
-								defaultValue={cardEnrollDisplayData.name !== "" ? groupNames : []}
-								onChange={handleGroups}
-								style={{ width: '275px' }}
-								options={groups}
-							/> : Object.keys(groupNames).map(name =>
-								<><Button style={{cursor: 'text'}}>{groupNames[name]}</Button>&nbsp;</>)
-						}
+                        {isEdit ?
+                            <Select
+                                mode="multiple"
+                                size={"large"}
+                                placeholder={<div>Please select groups</div>}
+                                defaultValue={cardEnrollDisplayData.name !== "" ? groupNames : []}
+                                onChange={handleGroups}
+                                style={{ width: '275px' }}
+                                options={groups}
+                            /> : Object.keys(groupNames).map(name =>
+                                <><Button style={{ cursor: 'text' }}>{groupNames[name]}</Button>&nbsp;</>)
+                        }
                     </div>
 
                     <div className="content-policy-key-header">
@@ -210,16 +212,24 @@ const CardEnrollmentPolicy = (props) => {
                         Max Card Enrollment:
                     </div>
                     <div style={{ paddingTop: '20px' }}>
-                        {isEdit ? <InputNumber className="form-control"
-                            max={maxEnroll}
-                            min={1}
-                            style={{ width: "275px" }}
-                            onChange={(e) => setCardEnrollEditedData({
-                                ...cardEnrollEditData,
-                                policy_req: { max_card_enrollment: parseInt(e) }
-                            })}
-                            defaultValue={cardEnrollDisplayData.policy_req.max_card_enrollment}
-                        /> : cardEnrollDisplayData.policy_req.max_card_enrollment
+                        {isEdit ? <>
+                            <InputNumber className="form-control"
+                                max={maxEnroll}
+                                min={1}
+                                style={{ width: "275px" }}
+                                onChange={(e) => {
+                                    setIsLimitReached(parseInt(e) === maxEnroll);
+                                    setCardEnrollEditedData({
+                                        ...cardEnrollEditData,
+                                        policy_req: { max_card_enrollment: parseInt(e) }
+                                    })
+                                }}
+                                defaultValue={cardEnrollDisplayData.policy_req.max_card_enrollment}
+                            />
+                            {isLimitReached ? <div style={{ padding: '5px', color: 'red' }}>
+                            Max card enrollment limit is {maxEnroll}. Please contact Tecnics to update it.
+                            </div> : null}
+                        </> : cardEnrollDisplayData.policy_req.max_card_enrollment
                         }
                     </div>
                 </div>
