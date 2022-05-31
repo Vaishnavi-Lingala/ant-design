@@ -6,8 +6,7 @@ import Moment from 'moment';
 import MachinesSelection from "./MachinesSelection";
 import { useHistory } from "react-router-dom";
 
-import { showToast } from "../Layout/Toast/Toast";
-import { StoreContext } from "../../helpers/Store";
+import { openNotification } from "../Layout/Notification";
 
 export default function MachineGroupDetails(props: any) {
     const [groupDetails, setGroupDetails] = useState(props.groupDetails);
@@ -17,7 +16,6 @@ export default function MachineGroupDetails(props: any) {
     const [page, setPage]: any = useState(1);
     const [pageSize, setPageSize]: any = useState(10);
     const [totalItems, setTotalItems]: any = useState(0);
-    const [toastList, setToastList] = useContext(StoreContext);
     const history = useHistory();
     const columns = [
         {
@@ -26,12 +24,12 @@ export default function MachineGroupDetails(props: any) {
             width: '25%'
         },
         {
-            title: 'Mac Address',
+            title: 'MAC',
             dataIndex: 'mac_address',
             width: '25%'
         },
         {
-            title: 'Last Know IP Address',
+            title: 'Last Known IP',
             dataIndex: 'local_ip',
             width: '25%'
         },
@@ -56,10 +54,8 @@ export default function MachineGroupDetails(props: any) {
                 setLoadingDetails(false);
             }, error => {
                 console.error('Error: ', error);
+                openNotification('error', 'An Error has occured with getting Machines');
                 setLoadingDetails(false);
-                const response = showToast('error', 'An Error has occured with getting Machines');
-                console.log('response: ', response);
-                setToastList([...toastList, response]);
             })
     }, [])
 
@@ -74,10 +70,8 @@ export default function MachineGroupDetails(props: any) {
             setLoadingDetails(false);
         }, error => {
             console.error('Error: ', error);
+            openNotification('error', 'An Error has occured with getting Machines');
             setLoadingDetails(false);
-            const response = showToast('error', 'An Error has occured with getting Machines');
-            console.log('response: ', response);
-            setToastList([...toastList, response]);
         })
     }
 
@@ -94,22 +88,16 @@ export default function MachineGroupDetails(props: any) {
                     setTotalItems(data.total_items);
                     setAction('');
                 }
+                openNotification('success', 'Successfully added Group Machines');
                 setLoadingDetails(false);
-                const response = showToast('success', 'Successfully added Group Machines');
-                console.log('response: ', response);
-                setToastList([...toastList, response]);
             }
             else {
-                const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
-                console.log('response: ', response);
-                setToastList([...toastList, response]);
+                openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
             }
         }, error => {
             console.error('Error: ', error);
+            openNotification('error', 'An Error has occured with adding Group Machines');
             setLoadingDetails(false);
-            const response = showToast('error', 'An Error has occured with adding Group Machines');
-            console.log('response: ', response);
-            setToastList([...toastList, response]);
         })
     };
 

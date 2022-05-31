@@ -8,8 +8,7 @@ import { Group } from "../../models/Data.models";
 import MachineGroupDetails from "./MachineGroupDetails";
 import { useHistory } from "react-router-dom";
 
-import { showToast } from "../Layout/Toast/Toast";
-import { StoreContext } from "../../helpers/Store";
+import { openNotification } from "../Layout/Notification";
 
 export default function Groups() {
 
@@ -21,7 +20,6 @@ export default function Groups() {
     const [groupDetails, setGroupDetails] = useState(undefined);
     const [kioskGroupDetails, setKioskGroupDetails] = useState(undefined);
     const [standardGroupDetails, setStandardGroupDetails] = useState(undefined);
-    const [toastList, setToastList] = useContext(StoreContext);
     const { TabPane } = Tabs;
     const columns = [
         {
@@ -64,16 +62,12 @@ export default function Groups() {
                     }
                 }
                 else {
-                    const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
-                    console.log('response: ', response);
-                    setToastList([...toastList, response]);
+                    openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
                 }
             }, error => {
                 console.error('Error: ', error);
+                openNotification('error', 'An Error has occured with getting Group');
                 setLoadingDetails(false);
-                const response = showToast('error', 'An Error has occured with getting Group');
-                console.log('response: ', response);
-                setToastList([...toastList, response]);
             })
     }
 
@@ -114,10 +108,8 @@ export default function Groups() {
                 setLoadingDetails(false);
             }, error => {
                 console.error('Error: ', error);
+                openNotification('error', 'An Error has occured with getting Groups');
                 setLoadingDetails(false);
-                const response = showToast('error', 'An Error has occured with getting Groups');
-                console.log('response: ', response);
-                setToastList([...toastList, response]);
             })
     }
 

@@ -9,8 +9,7 @@ import ApiService from "../../Api.service";
 import ApiUrls from '../../ApiUtils';
 import TextArea from "antd/lib/input/TextArea";
 
-import { showToast } from "../Layout/Toast/Toast";
-import { StoreContext } from "../../helpers/Store";
+import { openNotification } from "../Layout/Notification";
 
 export const KioskPolicy = (props: any) => {
 
@@ -27,7 +26,6 @@ export const KioskPolicy = (props: any) => {
     const [kioskGroupsChange, setkioskGroupsChange]: any = useState([]);
     const [kioskGroupNames, setKioskGroupNames]: any = useState([]);
     const [kioskGroupUids, setKioskGroupUids]: any = useState([]);
-    const [toastList, setToastList] = useContext(StoreContext);
 
     useEffect(() => {
         if (kioskDisplayData.uid === undefined) {
@@ -52,11 +50,8 @@ export const KioskPolicy = (props: any) => {
                 setLoadingDetails(false);
             }, error => {
                 console.error('Error: ', error);
+				openNotification('error', 'An Error has occured with getting Groups');
                 setLoadingDetails(false);
-
-                const response = showToast('error', 'An Error has occured with getting Groups');
-                console.log('response: ', response);
-                setToastList([...toastList, response]);
             })
 
         ApiService.get(ApiUrls.groups, { type: "KIOSK" })
@@ -76,10 +71,7 @@ export const KioskPolicy = (props: any) => {
                 setLoading(false);
             }, error => {
                 console.error('Error: ', error);
-
-                const response = showToast('error', 'An Error has occured with getting Groups');
-                console.log('response: ', response);
-                setToastList([...toastList, response]);
+				openNotification('error', 'An Error has occured with getting Groups');
             })
 
         if (kioskDisplayData.uid !== undefined) {
@@ -104,23 +96,30 @@ export const KioskPolicy = (props: any) => {
     function updateKioskPolicy() {
         ApiService.put(ApiUrls.policy(kioskDisplayData.uid), kioskEditData)
             .then(data => {
+                console.log(data);
                 if (!data.errorSummary) {
+                    groupNames.length = 0;
+                    kioskGroupNames.length = 0;
                     setKioskDisplayData({ ...kioskEditData });
-                    const response = showToast('success', 'Successfully updated Kiosk Policy');
-                    console.log('response: ', response);
-                    setToastList([...toastList, response]);
+                    openNotification('success', 'Successfully updated Kiosk Policy');
+                    Object.keys(data.auth_policy_groups).map(index => {
+                        groupNames.push(data.auth_policy_groups[index].name);
+                    });
+                    Object.keys(data.kiosk_machine_groups).map(index => {
+                        kioskGroupNames.push(data.kiosk_machine_groups[index].name);
+                    });
+                    console.log(kioskGroupNames);
+                    setGroupNames(groupNames);
+                    setKioskGroupNames(kioskGroupNames);
+                    setIsEdit(false);
                 }
                 else {
-                    const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
-                    console.log('response: ', response);
-                    setToastList([...toastList, response]);
+                    openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
                 }
             })
             .catch(error => {
                 console.error('Error: ', error);
-                const response = showToast('error', 'An Error has occured with updating Kiosk Policy');
-                console.log('response: ', response);
-                setToastList([...toastList, response]);
+                openNotification('error', 'An Error has occured with updating Kiosk Policy');
             })
     }
 
@@ -135,37 +134,15 @@ export const KioskPolicy = (props: any) => {
 
     function handleSaveClick() {
         updateKioskPolicy();
-        setIsEdit(false);
+        // setIsEdit(false);
     }
 
     function createkioskPolicy() {
-        console.log(kioskEditData)
-        ApiService.post(ApiUrls.addPolicy, kioskEditData)
-            .then(data => {
-                if (!data.errorSummary) {
-                    console.log(data);
-                    const response = showToast('success', 'Successfully added Kiosk Policy');
-                    console.log('response: ', response);
-                    setToastList([...toastList, response]);
-                    setTimeout(() => {
-                        window.location.reload()
-                    }, 2000);
-                }
-                else {
-                    const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
-                    console.log('response: ', response);
-                    setToastList([...toastList, response]);
-                }
-            }, error => {
-                console.error('Error: ', error);
-                const response = showToast('error', 'An Error has occured with adding Kiosk Policy');
-                console.log('response: ', response);
-                setToastList([...toastList, response]);
-            })
+        props.handleOk("KIOSK", kioskEditData);
     }
 
     function setCancelClick() {
-        window.location.reload();
+        props.handleCancel("KIOSK");
     }
 
     function handleMachineGroups(value: any) {
@@ -199,7 +176,7 @@ export const KioskPolicy = (props: any) => {
     return (
         <Skeleton loading={loading || loadingDetails}>
             <div className="content-container-policy">
-                <div className="row-container">
+                <div className="row-policy-container">
                     <div>
                         {kioskDisplayData.uid === undefined ? <div className="content-heading">Create kiosk Policy</div> :
                             <div className="content-heading">Edit kiosk Policy</div>
@@ -247,34 +224,37 @@ export const KioskPolicy = (props: any) => {
                         Assigned to user groups:
                     </div>
                     <div>
-                        <Select
+                        {isEdit ? <Select
                             mode="multiple"
                             size={"large"}
                             placeholder="Please select groups"
                             defaultValue={kioskDisplayData.name !== "" ? groupNames : []}
                             onChange={handleGroups}
-                            disabled={!isEdit}
+                            // disabled={!isEdit}
                             style={{ width: '275px' }}
                             options={groups}
-                            listHeight={120}
-                        />
+                        /> : Object.keys(groupNames).map(name =>
+                            <><Button style={{cursor: 'text'}}>{groupNames[name]}</Button>&nbsp;</>)
+                        }
                     </div>
 
                     <div className="content-policy-key-header">
                         Assigned to kiosk machine:
                     </div>
                     <div>
-                        <Select
+                        {isEdit ? <Select
                             mode="multiple"
                             size={"large"}
                             placeholder="Please select groups"
                             defaultValue={kioskDisplayData.name !== "" ? kioskGroupNames : []}
                             onChange={handleMachineGroups}
-                            disabled={!isEdit}
+                            // disabled={!isEdit}
                             style={{ width: '275px' }}
                             options={kioskGroups}
                             listHeight={120}
-                        />
+                        /> : Object.keys(kioskGroupNames).map(name =>
+                            <><Button style={{cursor: 'text'}}>{kioskGroupNames[name]}</Button>&nbsp;</>)
+                        }
                     </div>
 
                     <div className="content-policy-key-header">
@@ -289,7 +269,7 @@ export const KioskPolicy = (props: any) => {
 
                 <p className="content-policy-key-header" style={{ padding: '10px 0 10px 0' }}>Kiosk Settings:</p>
 
-                <div className="row-container">
+                <div className="row-policy-container">
                     <div>
                         Kiosk username
                     </div>
@@ -314,6 +294,19 @@ export const KioskPolicy = (props: any) => {
                                 defaultValue={kioskDisplayData.policy_req.assay}
                                 placeholder='Enter password'
                             /> : kioskDisplayData.policy_req.assay
+                        }
+                    </div>
+                    <div>
+                        Kiosk confirm password
+                    </div>
+                    <div>
+                        {
+                            isEdit ? <Input className="form-control"
+                                style={{ width: "275px" }}
+                                onChange={(e) => kioskEditData.policy_req.confirm_assay = e.target.value}
+                                defaultValue={kioskDisplayData.policy_req.confirm_assay}
+                                placeholder='Enter confirm password'
+                            /> : kioskDisplayData.policy_req.confirm_assay
                         }
                     </div>
                 </div>

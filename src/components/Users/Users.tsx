@@ -5,8 +5,7 @@ import ApiUrls from '../../ApiUtils';
 import { AddUser } from "./AddUser";
 import { User } from "./User";
 
-import { showToast } from "../Layout/Toast/Toast";
-import { StoreContext } from "../../helpers/Store";
+import { openNotification } from "../Layout/Notification";
 
 export default function Users() {
 
@@ -18,7 +17,6 @@ export default function Users() {
 	const [totalItems, setTotalItems]: any = useState(0);
 	const [statusList, setStatusList]: any = useState([]);
 	const [lifeCycleTypes, setLifeCycleTypes]: any = useState(undefined);
-	const [toastList, setToastList] = useContext(StoreContext);
 
 	const columns = [{
 		title: 'Username',
@@ -110,10 +108,7 @@ export default function Users() {
 		if (lifeCycleTypes === undefined) {
 			let userStatusTypes = await ApiService.get(ApiUrls.lifeCycleOptions).catch(error => {
 				console.error('Error: ', error);
-
-				const response = showToast('error', 'An Error has occured with getting Life Cycle Types');
-				console.log('response: ', response);
-				setToastList([...toastList, response]);
+				openNotification('error', 'An Error has occured with getting Life Cycle Types');
 			});
 			setLifeCycleTypes(userStatusTypes);
 		}
@@ -123,9 +118,7 @@ export default function Users() {
 		setLoadingDetails(true);
 		let data = await ApiService.get(ApiUrls.users, { start: page, limit: pageSize }).catch(error => {
 			console.error('Error: ', error);
-			const response = showToast('error', 'An Error has occured with getting User Lists by Page');
-			console.log('response: ', response);
-			setToastList([...toastList, response]);
+			openNotification('error', 'An Error has occured with getting User Lists by Page');
 		}).finally(() => {
 			setLoadingDetails(false);
 		});
@@ -154,15 +147,11 @@ export default function Users() {
 		}
 		let result = await ApiService.post(ApiUrls.changeUserStatus(userId), statusObj)
 			.then(data => {
-				const response = showToast('success', `Status for ${user_name.split('@')[0]} has been updated successfully with ${status.toLowerCase()}.`);
-				console.log('response: ', response);
-				setToastList([...toastList, response]);
+				openNotification('success', `Status for ${user_name.split('@')[0]} has been updated successfully with ${status.toLowerCase()}.`);
 			})
 			.catch(error => {
 				console.error('Error: ', error);
-				const response = showToast('error', 'An Error has occured with Updating User Status');
-				console.log('response: ', response);
-				setToastList([...toastList, response]);
+				openNotification('error', 'An Error has occured with Updating User Status');
 			}).finally(() => {
 				setLoadingDetails(false);
 			});

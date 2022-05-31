@@ -6,8 +6,6 @@ import './Layout.css';
 
 const { Content } = AntLayout;
 
-import Toast from "./Toast/Toast";
-
 function Layout(props: any) {
 
 	return (
@@ -20,8 +18,6 @@ function Layout(props: any) {
 				<AntLayout className="content-layout">
 					<Content className="content">
 						{props.children}
-
-						<Toast />
 					</Content>
 				</AntLayout>
 

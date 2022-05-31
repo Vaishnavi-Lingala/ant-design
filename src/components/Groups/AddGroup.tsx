@@ -3,8 +3,7 @@ import { Button, Skeleton, Table, Modal, Input, Row, Col, Typography } from 'ant
 import ApiService from "../../Api.service";
 import ApiUrls from '../../ApiUtils';
 
-import { showToast } from "../Layout/Toast/Toast";
-import { StoreContext } from "../../helpers/Store";
+import { openNotification } from "../Layout/Notification";
 
 export default function AddGroup(props: any) {
 
@@ -17,7 +16,6 @@ export default function AddGroup(props: any) {
     });
     const [loading, setLoading] = useState(false);
     const [isModalVisible, setIsModalVisible] = useState(false);
-    const [toastList, setToastList] = useContext(StoreContext);
 
     const showModal = () => {
         setNewGroup({
@@ -37,22 +35,16 @@ export default function AddGroup(props: any) {
                 setLoading(false);
                 setIsModalVisible(false);
                 props.onGroupCreate();
-                const response = showToast('success', 'Successfully added Group');
-                console.log('response: ', response);
-                setToastList([...toastList, response]);
+                openNotification('success', 'Successfully added Group');
             }
             else {
-                const response = showToast('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
-                console.log('response: ', response);
-                setToastList([...toastList, response]);
+                openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
                 setLoading(false);
             }
         }, error => {
             console.error('Error: ', error);
             setLoading(false);
-            const response = showToast('error', 'An Error has occured with adding Group');
-            console.log('response: ', response);
-            setToastList([...toastList, response]);
+            openNotification('error', 'An error has occured with adding Group');
         })
     };
 

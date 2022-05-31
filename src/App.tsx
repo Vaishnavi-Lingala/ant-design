@@ -22,8 +22,6 @@ import Machines from "./components/Machines/Machines";
 
 // TecUnify
 import Applications from "./components/tecUnify/Applications";
-
-import { StoreContextProvider } from "./helpers/Store";
 import { MachineDetails } from "./components/Machines/MachineDetails";
 
 const oktaAuth = new OktaAuth(config.oidc);
@@ -44,11 +42,10 @@ function App() {
     };
 
     return (
-        <StoreContextProvider>
-            <Security oktaAuth={oktaAuth} restoreOriginalUri={restoreOriginalUri}>
-                <Switch>
-                    <Route path="/" exact component={Login} />
-                    <Route path="/login/callback" component={LoginCallback} />
+        <Security oktaAuth={oktaAuth} restoreOriginalUri={restoreOriginalUri}>
+            <Switch>
+                <Route path="/" exact component={Login} />
+                <Route path="/login/callback" component={LoginCallback} />
 
                     <ProtectedRoute path={`/policies`} component={Policies} />
                     <ProtectedRoute path={`/activitylogs`} component={ActivityLogs} />
@@ -61,10 +58,9 @@ function App() {
                     <ProtectedRoute path={`/machines`} exact component={Machines} />
                     <ProtectedRoute path={`/machines/:id`} component={MachineDetails} />
 
-                    <Route component={PageNotFound} />
-                </Switch>
-            </Security>
-        </StoreContextProvider>
+                <Route component={PageNotFound} />
+            </Switch>
+        </Security>
     );
 }
 
