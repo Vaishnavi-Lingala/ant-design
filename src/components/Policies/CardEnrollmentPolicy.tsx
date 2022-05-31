@@ -1,4 +1,4 @@
-import { Button, Input, InputNumber, Select } from "antd";
+import { Button, Input, InputNumber, Select, Skeleton } from "antd";
 import TextArea from "antd/lib/input/TextArea";
 import { useState, useEffect } from "react";
 
@@ -6,7 +6,7 @@ import './Policies.css';
 
 import ApiService from "../../Api.service";
 import ApiUrls from '../../ApiUtils';
-import { TecTANGO } from "../../constants";
+import { CARD_ENROLL, TecTANGO } from "../../constants";
 import { openNotification } from "../Layout/Notification";
 
 const CardEnrollmentPolicy = (props) => {
@@ -18,7 +18,8 @@ const CardEnrollmentPolicy = (props) => {
     const [groupNames, setGroupNames]: any = useState([]);
     const [groupUids, setGroupUids]: any = useState([]);
     const [groupsChange, setGroupsChange]: any = useState([]);
-	const [maxEnroll, setMaxEnroll] = useState(null);
+    const [maxEnroll, setMaxEnroll] = useState(null);
+    const [isLimitReached, setIsLimitReached] = useState(false);
 
     useEffect(() => {
         if (cardEnrollDisplayData.uid === undefined) {
@@ -59,39 +60,39 @@ const CardEnrollmentPolicy = (props) => {
     }, []);
 
     useEffect(() => {
-		(async function () {
-				try {
-					let licenses = await ApiService.get(ApiUrls.licences);
-					licenses.forEach(license => {
-						if (license.product.sku === TecTANGO && license.max_enroll_allowed) {
-							setMaxEnroll(license.max_enroll_allowed);
-						}
-					})
-				}
-				catch (err) {
-					console.log(err);
-					openNotification("error", "Error has occured while getting licences");
-				}
-		})();
-	}, []);
+        (async function () {
+            try {
+                let licenses = await ApiService.get(ApiUrls.licences);
+                licenses.forEach(license => {
+                    if (license.product.sku === TecTANGO && license.max_enroll_allowed) {
+                        setMaxEnroll(license.max_enroll_allowed);
+                    }
+                })
+            }
+            catch (err) {
+                console.log(err);
+                openNotification("error", "Error has occured while getting licences");
+            }
+        })();
+    }, []);
 
 
     function updateCardEnrollPolicy() {
         ApiService.put(ApiUrls.policy(cardEnrollDisplayData.uid), cardEnrollEditData)
             .then(data => {
                 if (!data.errorSummary) {
-					groupNames.length = 0;
-					setCardEnrollDisplayData({ ...cardEnrollEditData });
-					openNotification('success', 'Successfully updated Card Enroll Policy');
-					Object.keys(data.auth_policy_groups).map(index => {
+                    groupNames.length = 0;
+                    setCardEnrollDisplayData({ ...cardEnrollEditData });
+                    openNotification('success', 'Successfully updated Card Enroll Policy');
+                    Object.keys(data.auth_policy_groups).map(index => {
                         groupNames.push(data.auth_policy_groups[index].name);
                     });
                     setGroupNames(groupNames);
-					setIsEdit(false);
-				}
-				else {
-					openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
-				}
+                    setIsEdit(false);
+                }
+                else {
+                    openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
+                }
             })
             .catch(error => {
                 console.error('Error: ', error);
@@ -110,31 +111,14 @@ const CardEnrollmentPolicy = (props) => {
 
     function handleSaveClick() {
         updateCardEnrollPolicy();
-        setIsEdit(false);
     }
 
     function createCardEnrollPolicy() {
-        console.log(cardEnrollEditData)
-        ApiService.post(ApiUrls.addPolicy, cardEnrollEditData)
-            .then(data => {
-                if (!data.errorSummary) {
-                    console.log(data);
-                    openNotification('success', 'Successfully added CARD ENROLL Policy');
-                    setTimeout(() => {
-                        window.location.reload()
-                    }, 2000);
-                }
-                else {
-                    const response = openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
-                }
-            }, error => {
-                console.error('Error: ', error);
-                openNotification('error', 'An Error has occured with adding CARD ENROLL Policy');
-            })
+        props.handleOk(CARD_ENROLL, cardEnrollEditData);
     }
 
     function setCancelClick() {
-        window.location.reload();
+        props.handleCancel(CARD_ENROLL);
     }
 
     function handleGroups(value: any) {
@@ -152,12 +136,12 @@ const CardEnrollmentPolicy = (props) => {
     }
 
     return (
-        <>
+        <Skeleton loading={loading}>
             <div className="content-container-policy">
                 <div className="row-policy-container">
                     <div>
                         {cardEnrollDisplayData.uid === undefined ? <div className="content-heading">Create Card Enrollment Policy</div> :
-                            <div className="content-heading">{ isEdit ? 'Edit' : null } Card Enrollment Policy</div>
+                            <div className="content-heading">{isEdit ? 'Edit' : null} Card Enrollment Policy</div>
                         }
                     </div>
                     <div>
@@ -202,18 +186,18 @@ const CardEnrollmentPolicy = (props) => {
                         Assigned to groups:
                     </div>
                     <div>
-                    {isEdit ?
-							<Select
-								mode="multiple"
-								size={"large"}
-								placeholder={<div>Please select groups</div>}
-								defaultValue={cardEnrollDisplayData.name !== "" ? groupNames : []}
-								onChange={handleGroups}
-								style={{ width: '275px' }}
-								options={groups}
-							/> : Object.keys(groupNames).map(name =>
-								<><Button style={{cursor: 'text'}}>{groupNames[name]}</Button>&nbsp;</>)
-						}
+                        {isEdit ?
+                            <Select
+                                mode="multiple"
+                                size={"large"}
+                                placeholder={<div>Please select groups</div>}
+                                defaultValue={cardEnrollDisplayData.name !== "" ? groupNames : []}
+                                onChange={handleGroups}
+                                style={{ width: '275px' }}
+                                options={groups}
+                            /> : Object.keys(groupNames).map(name =>
+                                <><Button style={{ cursor: 'text' }}>{groupNames[name]}</Button>&nbsp;</>)
+                        }
                     </div>
 
                     <div className="content-policy-key-header">
@@ -227,16 +211,24 @@ const CardEnrollmentPolicy = (props) => {
                         Max Card Enrollment:
                     </div>
                     <div style={{ paddingTop: '20px' }}>
-                        {isEdit ? <InputNumber className="form-control"
-                            max={maxEnroll}
-                            min={1}
-                            style={{ width: "275px" }}
-                            onChange={(e) => setCardEnrollEditedData({
-                                ...cardEnrollEditData,
-                                policy_req: { max_card_enrollment: parseInt(e) }
-                            })}
-                            defaultValue={cardEnrollDisplayData.policy_req.max_card_enrollment}
-                        /> : cardEnrollDisplayData.policy_req.max_card_enrollment
+                        {isEdit ? <>
+                            <InputNumber className="form-control"
+                                max={maxEnroll}
+                                min={1}
+                                style={{ width: "275px" }}
+                                onChange={(e) => {
+                                    setIsLimitReached(parseInt(e) === maxEnroll);
+                                    setCardEnrollEditedData({
+                                        ...cardEnrollEditData,
+                                        policy_req: { max_card_enrollment: parseInt(e) }
+                                    })
+                                }}
+                                defaultValue={cardEnrollDisplayData.policy_req.max_card_enrollment}
+                            />
+                            {isLimitReached ? <div style={{ padding: '5px', color: 'red' }}>
+                            Max card enrollment limit is {maxEnroll}. Please contact Tecnics to update it.
+                            </div> : null}
+                        </> : cardEnrollDisplayData.policy_req.max_card_enrollment
                         }
                     </div>
                 </div>
@@ -253,7 +245,7 @@ const CardEnrollmentPolicy = (props) => {
                     <Button type='primary' style={{ float: 'right' }}
                         onClick={createCardEnrollPolicy}>create</Button></div>
             }
-        </>
+        </Skeleton>
     );
 }
 

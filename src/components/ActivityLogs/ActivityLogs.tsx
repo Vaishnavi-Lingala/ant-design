@@ -36,9 +36,9 @@ const DisplayField = ({ field, value, logFieldNames }) => {
 };
 
 const ExpandedRows = ({ activity, user, machine, uid }) => {
-    const filteredActivity = Object.fromEntries(Object.entries(activity ? activity : {}).filter(([key]) => !hiddenFields.activity.includes(key)));;
-    const filteredMachine = Object.fromEntries(Object.entries(machine ? machine : {}).filter(([key]) => !hiddenFields.machine.includes(key)));;
-    const filteredUser = Object.fromEntries(Object.entries(user ? user : {}).filter(([key]) => !hiddenFields.user.includes(key)));;
+    const filteredActivity = Object.fromEntries(Object.entries(logFieldNames?.activity ? logFieldNames?.activity : {}).filter(([key]) => !hiddenFields.activity.includes(key)));;
+    const filteredMachine = Object.fromEntries(Object.entries(logFieldNames?.machine ? logFieldNames?.machine : {}).filter(([key]) => !hiddenFields.machine.includes(key)));;
+    const filteredUser = Object.fromEntries(Object.entries(logFieldNames?.user ? logFieldNames?.user : {}).filter(([key]) => !hiddenFields.user.includes(key)));;
 
     return <>
         <Collapse
@@ -47,37 +47,41 @@ const ExpandedRows = ({ activity, user, machine, uid }) => {
             expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 90 : 0} />}
             className="site-collapse-custom-collapse"
         >
-            <Panel header="Activity" key="1">
-                <div className="log-field-container">
-                    {Object.keys(filteredActivity).map((recordKey) => (
-                        <DisplayField
-                            field={recordKey}
-                            value={filteredActivity[recordKey]}
-                            key={recordKey}
-                            logFieldNames={logFieldNames.activity}
-                        />
-                    ))}
-                </div>
-            </Panel>
-            <Panel header="Machine" key="2">
-                <div className="log-field-container">
-                    {Object.keys(filteredMachine).map((recordKey) => (
-                        <DisplayField
-                            field={recordKey}
-                            value={filteredMachine[recordKey]}
-                            key={recordKey}
-                            logFieldNames={logFieldNames.machine}
-                        />
-                    ))}
-                </div>
-            </Panel>
+            {
+                activity ? <Panel header="Activity" key="1">
+                    <div className="log-field-container">
+                        {Object.keys(filteredActivity).map((recordKey) => (
+                            <DisplayField
+                                field={recordKey}
+                                value={activity?.[recordKey]}
+                                key={recordKey}
+                                logFieldNames={logFieldNames.activity}
+                            />
+                        ))}
+                    </div>
+                </Panel> : null
+            }
+            {
+                machine ? <Panel header="Machine" key="2">
+                    <div className="log-field-container">
+                        {Object.keys(filteredMachine).map((recordKey) => (
+                            <DisplayField
+                                field={recordKey}
+                                value={machine?.[recordKey]}
+                                key={recordKey}
+                                logFieldNames={logFieldNames.machine}
+                            />
+                        ))}
+                    </div>
+                </Panel> : null
+            }
             {
                 user ? <Panel header="User" key="3">
                     <div className="log-field-container">
                         {Object.keys(filteredUser).map((recordKey) => (
                             <DisplayField
                                 field={recordKey}
-                                value={filteredUser[recordKey]}
+                                value={user?.[recordKey]}
                                 key={recordKey}
                                 logFieldNames={logFieldNames.user}
                             />
@@ -151,6 +155,7 @@ export default function ActivityLogs() {
                     ApiUrls.activityLog,
                     generateFilterPayload()
                 );
+
                 setLogResponse(data);
             } catch (error) {
                 console.error('Error: ', error);
@@ -229,7 +234,6 @@ export default function ActivityLogs() {
             advancedFilters
         );
 
-        console.log("Activitylog Payload: ", payload);
         return payload;
     }
 
