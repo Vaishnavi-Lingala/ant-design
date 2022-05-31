@@ -446,7 +446,7 @@ export default function Policies() {
 	}
 
 	useEffect(() => {
-		if (window.location.pathname.split("/")[2] !== 'password' && window.location.pathname.split("/")[2] !== 'kiosk' && window.location.pathname.split("/").length !== 4) {
+		if (window.location.pathname.split("/")[2] !== 'password' && window.location.pathname.split("/")[2] !== 'kiosk' && window.location.pathname.split("/")[2] !== 'card-enrollment' && window.location.pathname.split("/").length !== 4) {
 			history.push('/policies/pin');
 			setTabname(window.location.pathname.split('/')[2].toUpperCase());
 		}
@@ -643,35 +643,35 @@ export default function Policies() {
 					Back
 				</Button> : <></>}
 			</div>
-
-			<Tabs defaultActiveKey={window.location.pathname.split("/")[2]}
-				type="card" size={"middle"} animated={false}
-				tabBarStyle={{ marginBottom: '0px' }}
-				onChange={(key) => {
-					history.push("/policies/" + key);
-					setTabname(key.toUpperCase());
-				}}
-				onClick={() => {
-					if (tabname === PIN) {
-						setPasswordDetails(undefined);
-						setKioskDetails(undefined);
-					}
-					if (tabname === PASSWORD) {
-						setPinDetails(undefined);
-						setKioskDetails(undefined);
-					}
-					if (tabname === KIOSK) {
-						setPasswordDetails(undefined);
-						setPinDetails(undefined);
-					}
-					if (tabname === CARD_ENROLL) {
-						setCardEnrollPolicy(undefined);
-					}
-				}}
-			// style={{border: '1px solid #d7d7dc', margin: 0}} 
-			>
-				<TabPane tab="Pin" key="pin">
-					<Skeleton loading={loadingDetails}>
+			
+			<Skeleton loading={loadingDetails}>
+				<Tabs defaultActiveKey={window.location.pathname.split("/")[2]}
+					type="card" size={"middle"} animated={false}
+					tabBarStyle={{ marginBottom: '0px' }}
+					onChange={(key) => {
+						history.push("/policies/" + key);
+						setTabname(key.toUpperCase());
+					}}
+					onClick={() => {
+						if (tabname === PIN) {
+							setPasswordDetails(undefined);
+							setKioskDetails(undefined);
+						}
+						if (tabname === PASSWORD) {
+							setPinDetails(undefined);
+							setKioskDetails(undefined);
+						}
+						if (tabname === KIOSK) {
+							setPasswordDetails(undefined);
+							setPinDetails(undefined);
+						}
+						if (tabname === CARD_ENROLL) {
+							setCardEnrollPolicy(undefined);
+						}
+					}}
+				// style={{border: '1px solid #d7d7dc', margin: 0}} 
+				>
+					<TabPane tab="Pin" key="pin">
 						{pinDetails ? <PinPolicy pinDetails={pinDetails} /> :
 							isPinModalVisible ? <PinPolicy pinDetails={pinData} handleOk={handleOk} handleCancel={handleCancel} /> :
 								<>
@@ -728,10 +728,8 @@ export default function Policies() {
 									/>
 								</>
 						}
-					</Skeleton>
-				</TabPane>
-				<TabPane tab="Password" key="password">
-					<Skeleton loading={loadingDetails}>
+					</TabPane>
+					<TabPane tab="Password" key="password">
 						{passwordDetails ? <PasswordPolicy passwordDetails={passwordDetails} /> :
 							isPasswordModalVisible ? <PasswordPolicy passwordDetails={passwordData} handleOk={handleOk} handleCancel={handleCancel} /> :
 								<>
@@ -787,10 +785,8 @@ export default function Policies() {
 									/>
 								</>
 						}
-					</Skeleton>
-				</TabPane>
-				<TabPane tab="Kiosk" key="kiosk">
-					<Skeleton loading={loadingDetails}>
+					</TabPane>
+					<TabPane tab="Kiosk" key="kiosk">
 						{kioskDetails ? <KioskPolicy kioskDetails={kioskDetails} /> :
 							isKioskModalVisible ? <KioskPolicy kioskDetails={kioskData} handleOk={handleOk} handleCancel={handleCancel} /> :
 								<>
@@ -846,11 +842,9 @@ export default function Policies() {
 									/>
 								</>
 						}
-					</Skeleton>
-				</TabPane>
-				{currentSeletedProduct === TecTANGO && maxEnroll ?
-					<TabPane tab="Card enrollment" key="card-enrollment">
-						<Skeleton loading={loadingDetails}>
+					</TabPane>
+					{currentSeletedProduct === TecTANGO && maxEnroll ?
+						<TabPane tab="Card enrollment" key="card-enrollment">
 							{cardEnrollPolicy ? <CardEnrollmentPolicy policyDetails={cardEnrollPolicy} /> :
 								isCardEnrollmentModalVisible ? <CardEnrollmentPolicy policyDetails={cardEnrollData} /> :
 									<>
@@ -906,9 +900,9 @@ export default function Policies() {
 										/>
 									</>
 							}
-						</Skeleton>
-					</TabPane> : null}
-			</Tabs>
+						</TabPane> : null}
+				</Tabs>
+			</Skeleton>
 		</>
 	);
 }

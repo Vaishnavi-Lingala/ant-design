@@ -8,6 +8,8 @@ import config from "../config";
 import Register from "./Register";
 import ReactDOM from "react-dom";
 import { ClientConfiguration } from "../models/Data.models";
+import ApiService from "../Api.service";
+import ApiUrls from '../ApiUtils';
 
 function Login() {
     const [email, setEmail] = useState("");
@@ -17,17 +19,7 @@ function Login() {
     const domain = email.split('@')[1];
 
     const validateEmail = async () => {
-        fetch('https://credenti-portal-api.credenti.xyz/client/info', 
-            {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    "domain": domain
-                })
-            })
-			.then(response => response.json())
+        ApiService.post(ApiUrls.client_info, { domain: domain })
             .then((data: ClientConfiguration) => {
                 //@ts-ignore
                 if(!data.errorSummary){

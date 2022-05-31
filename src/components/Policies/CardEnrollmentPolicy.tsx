@@ -1,4 +1,4 @@
-import { Button, Input, InputNumber, Select } from "antd";
+import { Button, Input, InputNumber, Select, Skeleton } from "antd";
 import TextArea from "antd/lib/input/TextArea";
 import { useState, useEffect } from "react";
 
@@ -152,7 +152,7 @@ const CardEnrollmentPolicy = (props) => {
     }
 
     return (
-        <>
+        <Skeleton loading={loading}>
             <div className="content-container-policy">
                 <div className="row-policy-container">
                     <div>
@@ -253,7 +253,7 @@ const CardEnrollmentPolicy = (props) => {
                     <Button type='primary' style={{ float: 'right' }}
                         onClick={createCardEnrollPolicy}>create</Button></div>
             }
-        </>
+        </Skeleton>
     );
 }
 

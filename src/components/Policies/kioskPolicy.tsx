@@ -290,7 +290,7 @@ export const KioskPolicy = (props: any) => {
                     </div>
                     <div>
                         {
-                            isEdit ? <Input className="form-control"
+                            isEdit ? <Input.Password className="form-control"
                                 style={{ width: "275px" }}
                                 onChange={(e) => kioskEditData.policy_req.assay = e.target.value}
                                 defaultValue={kioskDisplayData.policy_req.assay}
@@ -306,7 +306,7 @@ export const KioskPolicy = (props: any) => {
                                 </div>
                                 <div>
                                     {
-                                        isEdit ? <Input className="form-control"
+                                        isEdit ? <Input.Password className="form-control"
                                             style={{ width: "275px" }}
                                             onChange={(e) => kioskEditData.policy_req.confirm_assay = e.target.value}
                                             defaultValue={kioskDisplayData.policy_req.confirm_assay}

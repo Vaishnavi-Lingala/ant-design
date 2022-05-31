@@ -4,95 +4,158 @@ import { useContext, useEffect, useState } from "react";
 import './Mechanism.css'
 
 import ApiService from "../../Api.service";
-import { MechanismType } from "../../models/Data.models";
+// import { MechanismType } from "../../models/Data.models";
 import ApiUrls from '../../ApiUtils';
 
 import { openNotification } from "../Layout/Notification";
+import { useHistory } from "react-router-dom";
+import { MechanismType } from "../../models/Data.models";
+
 
 function Mechanism(props: any) {
-    const [displayDetails, setDisplayDetails] = useState<MechanismType>(props.mechanismDetails);
+    // var displayDetails = {};
     const [loading, setLoading] = useState(true);
+    const [loadingDetails, setLoadingDetails] = useState(true);
     const [isEdit, setIsEdit] = useState(false);
-    const [editData, setEditData]: any = useState(props.mechanismDetails);
+    const [displayDetails, setDisplayDetails] = useState({});
+    const [editData, setEditData]: any = useState();
     const [groups, setGroups]: any = useState([]);
+    const [challengeFactors, setChallengeFactors] = useState([]);
     const [tapOutOptions, setTapOutOption]: any = useState({});
-    const [readerOptions, setReaderOptions]: any = useState({});
+    // const [readerOptions, setReaderOptions]: any = useState({});
     const [factorOptions, setFactorOptions]: any = useState({});
     const [render, setRender] = useState(false);
-    const [disabledFactors]: any = useState([displayDetails.challenge_factors[1].factor]);
-    const [disabledFactors1]: any = useState([displayDetails.challenge_factors[0].factor]);
     const [groupNames, setGroupNames]: any = useState([]);
     const [groupUids, setGroupUids]: any = useState([]);
     const [groupsChange, setGroupsChange]: any = useState([]);
     const [value, setValue] = useState("");
+    const [disabledFactors]: any = useState([]);
+    const [disabledFactors1]: any = useState([]);
+    const history = useHistory();
+    const mechanism = {
+        challenge_factors: [
+            {
+                order: 0,
+                factor: "",
+                name: "Challenge_1",
+                password_grace_period: "TWO_HOURS"
+            },
+            {
+                order: 1,
+                factor: "",
+                name: "Challenge_2",
+                password_grace_period: null
+            }
+        ],
+        // reader_type: "",
+        product_id: "oprc735871d0",
+        name: "",
+        on_tap_out: null,
+        mechanism_groups: [],
+        default: false,
+        order: null,
+        active: false,
+        account_id: "ooa46c499ccb"
+    }
 
     useEffect(() => {
         Promise.all(([
-            // ApiService.get(ApiUrls.mechanism(window.location.pathname.split('/')[2])),
             ApiService.get(ApiUrls.groups, { type: "USER" }),
             ApiService.get(ApiUrls.mechanismOptions),
-            ApiService.get(ApiUrls.mechanismChallengeFactors)
-        ])).then(data => {
+            ApiService.get(ApiUrls.mechanismChallengeFactors),
+            ApiService.get(ApiUrls.mechanism(window.location.pathname.split('/')[2]))
+        ]))
+            .then(data => {
+                for (var i = 0; i < data[0].length; i++) {
+                    groups.push({
+                        label: data[0][i].name,
+                        value: data[0][i].uid
+                    })
+                }
+                setGroups(groups);
+                var object = {};
+                for (var i = 0; i < data[0].length; i++) {
+                    object[data[0][i].name] = data[0][i].uid
+                }
+                groupsChange.push(object);
+                setGroupsChange(groupsChange);
+                console.log(groups);
 
-            // console.log(allData[0].data);
-            // setDisplayDetails(allData[0].data);
-            // setEditData(allData[0].data);
-            // disabledFactors.push(allData[0].data.challenge_factors[1].factor);
-            // disabledFactors1.push(allData[0].challenge_factors[0].factor);
-            for (var i = 0; i < data[0].length; i++) {
-                groups.push({
-                    label: data[0][i].name,
-                    value: data[0][i].uid
-                })
-            }
-            var object = {};
-            for (var i = 0; i < data[0].length; i++) {
-                object[data[0][i].name] = data[0][i].uid
-            }
-            groupsChange.push(object);
-            console.log(groups);
+                console.log(data[1]);
+                setTapOutOption(data[1].tap_out_options);
+                // setReaderOptions(data[1].readers);
 
-            console.log(data[1]);
-            setTapOutOption(data[1].tap_out_options);
-            setReaderOptions(data[1].readers);
+                console.log(data[2]);
+                setFactorOptions(data[2]);
 
-            console.log(data[2]);
-            setFactorOptions(data[2]);
-            setLoading(false);
-        })
+                if (!data[3].errorSummary) {
+                    console.log(data[3]);
+                    setDisplayDetails(data[3]);
+                    // displayDetails = data[3];
+                    setChallengeFactors(data[3].challenge_factors)
+                    setEditData(data[3]);
+                    disabledFactors.push(data[3].challenge_factors[1].factor);
+                    disabledFactors1.push(data[3].challenge_factors[0].factor);
+                    if (data[3]['uid'] === undefined) {
+                        setIsEdit(true);
+                    }
 
-        if (displayDetails.uid === undefined) {
-            setIsEdit(true);
-        }
+                    if (disabledFactors.includes("NONE")) {
+                        disabledFactors.pop();
+                    }
 
-        if (disabledFactors.includes("NONE")) {
-            disabledFactors.pop();
-        }
+                    if (disabledFactors1.includes("NONE")) {
+                        disabledFactors1.pop();
+                        disabledFactors.pop();
+                        setValue("NONE")
+                        data[3]['challenge_factors'][1].factor = "NONE";
+                        console.log(data[3]['challenge_factors'][1].factor);
+                    }
 
-        if (disabledFactors1.includes("NONE")) {
-            disabledFactors1.pop();
-            disabledFactors.pop();
-            setValue("NONE")
-            displayDetails.challenge_factors[1].factor = "NONE";
-        }
+                    if (data[3]['uid'] !== undefined) {
+                        Object.keys(data[3].mechanism_groups).map(result => {
+                            groupNames.push(data[3].mechanism_groups[result].name);
+                            groupUids.push(data[3].mechanism_groups[result].uid)
+                            console.log(groupNames);
+                            console.log(groupUids);
+                        });
+                        setGroupNames(groupNames);
+                        setGroupUids(groupUids);
+                    }
+                    setLoading(false);
+                }
+                else if(window.location.pathname.split('/').length === 2) {
+                    setDisplayDetails(mechanism);
+                    setEditData(mechanism);
+                    setIsEdit(true);
+                    //@ts-ignore
+                    setChallengeFactors(mechanism.challenge_factors)
+                    setLoading(false);
+                }
+                else {
+                    console.log('else: ', data[3]);
+                    openNotification('error', data[3].errorCauses.length !== 0 ? data[3].errorCauses[0].errorSummary : data[3].errorSummary);
+                    // setInterval(() => {
+                    //     history.goBack();
+                    // }, 2000)
+                }
+            })
+            .catch(error => {
+                openNotification('error', error.message)
+            })
+            
+            console.log(editData);
 
-        if (displayDetails.uid !== undefined) {
-            Object.keys(displayDetails.mechanism_groups).map(data => {
-                groupNames.push(displayDetails.mechanism_groups[data].name);
-                groupUids.push(displayDetails.mechanism_groups[data].uid)
-                console.log(groupNames);
-                console.log(groupUids);
-            });
-        }
-        editData.mechanism_groups = groupUids;
-    }, [])
-
-    function updateMechanism() {
-        ApiService.put(ApiUrls.mechanism(displayDetails.uid), editData)
+            setEditData({...editData, mechanism_groups: groupUids});
+            console.log(displayDetails);
+        }, [])
+        
+        function updateMechanism() {
+            ApiService.put(ApiUrls.mechanism(displayDetails['uid']), editData)
             .then(data => {
                 if (!data.errorSummary) {
                     groupNames.length = 0;
-                    setDisplayDetails({ ...editData });
+                    // setDisplayDetails({ ...editData });
                     openNotification('success', 'Successfully updated Mechanism');
                     Object.keys(data.mechanism_groups).map(index => {
                         groupNames.push(data.mechanism_groups[index].name);
@@ -157,22 +220,27 @@ function Mechanism(props: any) {
                 value.push(groupsChange[0][key]);
             }
         })
-
-        editData.mechanism_groups = value;
+        setEditData({...editData, mechanism_groups: value});
         console.log(editData.mechanism_groups);
     }
 
-    return (
+    return (<>
+        <div className='content-header'>
+            Mechanism
+            {displayDetails['uid'] !== undefined ? <Button style={{ marginLeft: 'auto', alignSelf: 'end' }} onClick={() => {
+                history.push('/mechanism')
+            }}>Back</Button> : <></>}
+        </div>
         <Skeleton loading={loading}>
             <div className="content-container rounded-grey-border">
                 <div className="row-containers">
-                    <div>
-                        {displayDetails.uid === undefined ? <div className="content-heading">Create Mechanism</div> :
+                    <div>{console.log(challengeFactors)}
+                        {displayDetails['uid'] === undefined ? <div className="content-heading">Create Mechanism</div> :
                             <div className="content-heading">Edit Mechanism</div>
                         }
                     </div>
                     <div style={{ paddingRight: '50px', paddingBottom: '20px' }}>
-                        {displayDetails.name !== "" ? <Button style={{ float: 'right' }} onClick={handleEditClick}>
+                        {displayDetails['name'] !== "" ? <Button style={{ float: 'right' }} onClick={handleEditClick}>
                             {!isEdit ? 'Edit' : 'Cancel'}
                         </Button> : <></>
                         }
@@ -182,7 +250,7 @@ function Mechanism(props: any) {
                         Mechanism name:
                     </div>
                     <div>
-                        {displayDetails.default === false && isEdit ?
+                        {displayDetails['default'] === false && isEdit ?
                             <Input
                                 name="machanismName"
                                 type="text"
@@ -193,8 +261,8 @@ function Mechanism(props: any) {
                                 style={{ width: "275px" }}
                                 className="form-control"
                                 placeholder="Enter mechanism name"
-                                defaultValue={displayDetails.name !== "" ? displayDetails.name : ""}
-                            /> : displayDetails.name
+                                defaultValue={displayDetails['name'] !== "" ? displayDetails['name'] : ""}
+                            /> : displayDetails['name']
                         }
                     </div>
 
@@ -202,12 +270,12 @@ function Mechanism(props: any) {
                         Assigned to groups:
                     </div>
                     <div>
-                        {displayDetails.default === false && isEdit ?
+                        {displayDetails['default'] === false && isEdit ?
                             <Select
                                 mode="multiple"
                                 size={"large"}
                                 placeholder="Please select groups"
-                                defaultValue={displayDetails.name !== "" ? groupNames : []}
+                                defaultValue={displayDetails['name'] !== "" ? groupNames : []}
                                 onChange={handleGroups}
                                 // disabled={!isEdit}
                                 style={{ width: '275px' }}
@@ -240,7 +308,7 @@ function Mechanism(props: any) {
                         Tapout Action:
                     </div>
                     <div style={{ paddingTop: '20px' }}>
-                        <Radio.Group name="Tapout Action" defaultValue={displayDetails?.on_tap_out}
+                        <Radio.Group name="Tapout Action" defaultValue={displayDetails['on_tap_out']}
                             onChange={(e) => {
                                 setEditData({
                                     ...editData,
@@ -260,7 +328,7 @@ function Mechanism(props: any) {
                             }
                         </Radio.Group>
                     </div>
-                    {/* {localStorage.getItem("productName") === 'TecTANGO' ?
+                    {/*{localStorage.getItem("productName") === 'TecTANGO' ?
                         <>
                             <div className="content-mechanism-key-header" style={{ paddingTop: '20px', paddingBottom: '40px' }}>
                                 Reader Type:
@@ -288,21 +356,21 @@ function Mechanism(props: any) {
                         </> : <></>
                     } */}
 
-                    {displayDetails.challenge_factors.length === 2 ?
+                    {challengeFactors.length === 2 ?
                         <>
                             <div>
                                 <div className="card-header" style={{ width: '90%' }}>
                                     Challenge 1
                                 </div>
                                 <div className="card" style={{ width: '90%' }}>
-                                    <Radio.Group value={disabledFactors !== disabledFactors1 ? displayDetails?.challenge_factors[0].factor : ""}
+                                    <Radio.Group value={disabledFactors !== disabledFactors1 ? challengeFactors[0]['factor'] : ""}
                                         disabled={!isEdit}
                                         onChange={(e) => {
-                                            editData.challenge_factors[0].factor = e.target.value
+                                            editData.challenge_factors[0]["factor"] = e.target.value
                                             showDisabled(e, disabledFactors1)
-                                            if (editData.challenge_factors[0].factor === "NONE") {
+                                            if (editData.challenge_factors[0]["factor"] === "NONE") {
                                                 disabledFactors.pop();
-                                                editData.challenge_factors[1].factor = "NONE"
+                                                editData.challenge_factors[1]["factor"] = "NONE"
                                                 setValue("NONE")
                                             }
                                         }}
@@ -329,8 +397,8 @@ function Mechanism(props: any) {
                                 </div>
                                 <div className="card" style={{ width: '90%' }}>
                                     <div>
-                                        <Radio.Group value={displayDetails.name !== "" ? editData?.challenge_factors[0].factor === "NONE" ? value : displayDetails?.challenge_factors[1].factor : value}
-                                            disabled={displayDetails.challenge_factors[0].factor === "NONE" || !isEdit}
+                                        <Radio.Group value={displayDetails["name"] !== "" ? challengeFactors[0]['factor'] === "NONE" ? value : challengeFactors[1]['factor'] : value}
+                                            disabled={challengeFactors[0]['factor'] === "NONE" || !isEdit}
                                             onChange={(e) => {
                                                 setValue(e.target.value)
                                                 editData.challenge_factors[1].factor = e.target.value
@@ -353,11 +421,12 @@ function Mechanism(props: any) {
                                     </div>
                                 </div>
                             </div>
-                        </> : <></>}
+                        </>
+                        : <></>}
                 </div>
             </div>
 
-            {displayDetails.uid !== undefined ?
+            {displayDetails['uid'] !== undefined ?
                 (isEdit ? <div style={{ paddingTop: '10px', paddingRight: '45px' }}>
                     <Button style={{ float: 'right', marginLeft: '10px' }}
                         onClick={handleCancelClick}>Cancel</Button>
@@ -370,6 +439,7 @@ function Mechanism(props: any) {
                         onClick={createMechanism}>Create</Button></div>
             }
         </Skeleton>
+    </>
     );
 }
 
