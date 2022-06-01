@@ -19,7 +19,8 @@ export const hiddenFields = {
         'x_client',
         'reader_serial',
         'reader_type',
-        'reader_name'
+        'reader_name',
+        'uid'
     ],
     user: [
         'account_id',
@@ -37,7 +38,8 @@ export const hiddenFields = {
         'is_portal_admin',
         'idp_login_hint',
         'active_session',
-        'windows_login_hint'
+        'windows_login_hint',
+        'uid'
 
     ]
 };
@@ -71,7 +73,7 @@ export const logFieldNames = {
         "mechanism_name": "Mechanism name",
         "display_name": "Display name",
         "event_context": "Event context",
-        "event_display_message": "Event display Message",
+        "event_display_message": "Event display message",
         "event_outcome": "Event outcome",
         "session_id": "Session ID",
         "state_token": "State token",
@@ -84,9 +86,10 @@ export const logFieldNames = {
     user: {
         "uid": "User ID",
         "user_id": "User ID",
-        "first_name": "Firstname",
-        "last_name": "Lastname",
-        "user_name": "Username",
+        "first_name": "First name",
+        "last_name": "Last name",
+        "display_name": "Display name",
+        "user_name": "User name",
         "email": "Email",
         "sam": "samAccount Name",
         "upn": "UPN",
@@ -97,7 +100,6 @@ export const logFieldNames = {
         "sourced_by": "Sourced by",
         "last_portal_login": "Last portal login",
         "status": "Status",
-        "display_name": "Display name",
         "login_domain": "Login domain",
         "login_user_name": "Login username",
         "is_technical_contact": "Is technical contact",
