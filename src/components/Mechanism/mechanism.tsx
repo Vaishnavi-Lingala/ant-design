@@ -59,11 +59,68 @@ function Mechanism(props: any) {
     }
 
     useEffect(() => {
+        ApiService.get(ApiUrls.mechanism(window.location.pathname.split('/')[2]))
+            .then((data: MechanismType) => {
+                //@ts-ignore
+                if (!data.errorSummary) {
+                    console.log(data);
+                    setDisplayDetails(data);
+                    //@ts-ignore
+                    setChallengeFactors(data.challenge_factors)
+                    setEditData(data);
+                    disabledFactors.push(data.challenge_factors[1].factor);
+                    disabledFactors1.push(data.challenge_factors[0].factor);
+                    if (data.uid === undefined) {
+                        setIsEdit(true);
+                    }
+            
+                    if (disabledFactors.includes("NONE")) {
+                        disabledFactors.pop();
+                    }
+            
+                    if (disabledFactors1.includes("NONE")) {
+                        disabledFactors1.pop();
+                        disabledFactors.pop();
+                        setValue("NONE")
+                        data.challenge_factors[1].factor = "NONE";
+                        console.log(data.challenge_factors[1].factor);
+                    }
+            
+                    if (data.uid !== undefined) {
+                        Object.keys(data.mechanism_groups).map(result => {
+                            groupNames.push(data.mechanism_groups[result].name);
+                            groupUids.push(data.mechanism_groups[result].uid)
+                            console.log(groupNames);
+                            console.log(groupUids);
+                        });
+                        setGroupNames(groupNames);
+                        setGroupUids(groupUids);
+                    }
+                    setLoading(false);
+                }
+                else if (window.location.pathname.split('/').length === 2) {
+                    setDisplayDetails(mechanism);
+                    setEditData(mechanism);
+                    setIsEdit(true);
+                    //@ts-ignore
+                    setChallengeFactors(mechanism.challenge_factors)
+                    setLoading(false);
+                }
+                else {
+                    console.log('else: ', data[3]);
+                    openNotification('error', data[3].errorCauses.length !== 0 ? data[3].errorCauses[0].errorSummary : data[3].errorSummary);
+                    // setInterval(() => {
+                    //     history.goBack();
+                    // }, 2000)
+                }
+            })
+    }, [])
+
+    useEffect(() => {
         Promise.all(([
             ApiService.get(ApiUrls.groups, { type: "USER" }),
             ApiService.get(ApiUrls.mechanismOptions),
             ApiService.get(ApiUrls.mechanismChallengeFactors),
-            ApiService.get(ApiUrls.mechanism(window.location.pathname.split('/')[2]))
         ]))
             .then(data => {
                 for (var i = 0; i < data[0].length; i++) {
@@ -88,70 +145,50 @@ function Mechanism(props: any) {
                 console.log(data[2]);
                 setFactorOptions(data[2]);
 
-                if (!data[3].errorSummary) {
-                    console.log(data[3]);
-                    setDisplayDetails(data[3]);
-                    // displayDetails = data[3];
-                    setChallengeFactors(data[3].challenge_factors)
-                    setEditData(data[3]);
-                    disabledFactors.push(data[3].challenge_factors[1].factor);
-                    disabledFactors1.push(data[3].challenge_factors[0].factor);
-                    if (data[3]['uid'] === undefined) {
-                        setIsEdit(true);
-                    }
-
-                    if (disabledFactors.includes("NONE")) {
-                        disabledFactors.pop();
-                    }
-
-                    if (disabledFactors1.includes("NONE")) {
-                        disabledFactors1.pop();
-                        disabledFactors.pop();
-                        setValue("NONE")
-                        data[3]['challenge_factors'][1].factor = "NONE";
-                        console.log(data[3]['challenge_factors'][1].factor);
-                    }
-
-                    if (data[3]['uid'] !== undefined) {
-                        Object.keys(data[3].mechanism_groups).map(result => {
-                            groupNames.push(data[3].mechanism_groups[result].name);
-                            groupUids.push(data[3].mechanism_groups[result].uid)
-                            console.log(groupNames);
-                            console.log(groupUids);
-                        });
-                        setGroupNames(groupNames);
-                        setGroupUids(groupUids);
-                    }
-                    setLoading(false);
-                }
-                else if(window.location.pathname.split('/').length === 2) {
-                    setDisplayDetails(mechanism);
-                    setEditData(mechanism);
-                    setIsEdit(true);
-                    //@ts-ignore
-                    setChallengeFactors(mechanism.challenge_factors)
-                    setLoading(false);
-                }
-                else {
-                    console.log('else: ', data[3]);
-                    openNotification('error', data[3].errorCauses.length !== 0 ? data[3].errorCauses[0].errorSummary : data[3].errorSummary);
-                    // setInterval(() => {
-                    //     history.goBack();
-                    // }, 2000)
-                }
+                console.log(displayDetails);
+                setLoadingDetails(false);
             })
             .catch(error => {
-                openNotification('error', error.message)
+                // openNotification('error', 'No internet connection');
+                openNotification('error', error.message);
             })
-            
-            console.log(editData);
 
-            setEditData({...editData, mechanism_groups: groupUids});
-            console.log(displayDetails);
-        }, [])
-        
-        function updateMechanism() {
-            ApiService.put(ApiUrls.mechanism(displayDetails['uid']), editData)
+        console.log(editData);
+        // if (data[3]['uid'] === undefined) {
+        //     setIsEdit(true);
+        // }
+
+        // if (disabledFactors.includes("NONE")) {
+        //     disabledFactors.pop();
+        // }
+
+        // if (disabledFactors1.includes("NONE")) {
+        //     disabledFactors1.pop();
+        //     disabledFactors.pop();
+        //     setValue("NONE")
+        //     data[3]['challenge_factors'][1].factor = "NONE";
+        //     console.log(data[3]['challenge_factors'][1].factor);
+        // }
+
+        // if (data[3]['uid'] !== undefined) {
+        //     Object.keys(data[3].mechanism_groups).map(result => {
+        //         groupNames.push(data[3].mechanism_groups[result].name);
+        //         groupUids.push(data[3].mechanism_groups[result].uid)
+        //         console.log(groupNames);
+        //         console.log(groupUids);
+        //     });
+        //     setGroupNames(groupNames);
+        //     setGroupUids(groupUids);
+        // }
+        // editData.mechanism_groups = groupUids;
+        // setEditData({...editData, mechanism_groups: groupUids});
+        console.log(displayDetails);
+    }, [])
+
+    function updateMechanism() {
+        console.log(groupUids);
+        editData.mechanism_groups = groupUids
+        ApiService.put(ApiUrls.mechanism(displayDetails['uid']), editData)
             .then(data => {
                 if (!data.errorSummary) {
                     groupNames.length = 0;
@@ -220,7 +257,9 @@ function Mechanism(props: any) {
                 value.push(groupsChange[0][key]);
             }
         })
-        setEditData({...editData, mechanism_groups: value});
+        groupUids.length = 0;
+        setGroupUids(value);
+        editData.mechanism_groups = value;
         console.log(editData.mechanism_groups);
     }
 
@@ -231,10 +270,10 @@ function Mechanism(props: any) {
                 history.push('/mechanism')
             }}>Back</Button> : <></>}
         </div>
-        <Skeleton loading={loading}>
+        <Skeleton loading={loading || loadingDetails}>
             <div className="content-container rounded-grey-border">
                 <div className="row-containers">
-                    <div>{console.log(challengeFactors)}
+                    <div>
                         {displayDetails['uid'] === undefined ? <div className="content-heading">Create Mechanism</div> :
                             <div className="content-heading">Edit Mechanism</div>
                         }
