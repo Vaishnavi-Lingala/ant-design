@@ -24,7 +24,7 @@ const Urls = {
     stats:`account/${accountId}/stats`,
 
     //Machine Urls
-    machines: `account/${accountId}/machines`,
+    machines: `account/${accountId}/product/${productId}/machines`,
     machineDetails: (uid) =>  `account/${accountId}/machines/${uid}`,
 
     // Users Urls
@@ -62,7 +62,7 @@ const Urls = {
 
     // Activity Log Urls
     activityLog: `account/${accountId}/product/${productId}/activitylog`,
-    filterableFields: `/activitylog/filterable-fields`,
+    filterableFields: `activitylog/filterable-fields`,
 
     // Licenses
     licences: `account/${accountId}/license`

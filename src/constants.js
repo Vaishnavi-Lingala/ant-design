@@ -42,34 +42,34 @@ export const hiddenFields = {
     ]
 };
 
+// Field in activity logs are displayed in this order with the below names
 export const logFieldNames = {
     uid: "Uid",
     machine: {
+        "uid": "Machine ID",
+        "machine_id": "Machine ID",
+        "machine_name": "Machine name",
+        "mac_address": "MAC",
+        "serial_number": "Serial number",
+        "domain": "Domain",
+        "public_ip": "Public IP",
+        "local_ip": "Last Known IP",
+        "group_type": "Group type",
         "os": "OS",
         "x_client": "X client",
         "reader_serial": "Reader serial",
         "account_id": "Account ID",
-        "domain": "Domain",
-        "group_type": "Group type",
-        "public_ip": "Public Ip",
-        "serial_number": "Serial number",
         "reader_type": "Reader type",
-        "local_ip": "Last Known Ip",
-        "machine_name": "Machine name",
-        "mac_address": "MAC",
-        "reader_name": "Reader name",
-        "uid": "Machine ID",
-        "machine_id": "Machine ID"
+        "reader_name": "Reader name"
     },
     activity: {
         "account_id": "Account ID",
+        "product_id": "Product ID",
         "product_name": "Product name",
+        "api_end_point": "API end point",
         "mechanism_id": "Mechanism ID",
         "mechanism_name": "Mechanism name",
         "display_name": "Display name",
-        "product_id": "Product ID",
-        "api_end_point": "API end point",
-        "user_agent": "User agent",
         "event_context": "Event context",
         "event_display_message": "Event display Message",
         "event_outcome": "Event outcome",
@@ -77,33 +77,34 @@ export const logFieldNames = {
         "state_token": "State token",
         "auth_profile_id": "Auth profile ID",
         "machine_type": "Machine type",
+        "user_agent": "User agent",
         "created_ts": "Created timestamp",
         "updated_ts": "Updated timestamp"
     },
     user: {
+        "uid": "User ID",
+        "user_id": "User ID",
+        "first_name": "Firstname",
+        "last_name": "Lastname",
+        "user_name": "Username",
+        "email": "Email",
+        "sam": "samAccount Name",
+        "upn": "UPN",
+        "idp_user_id": "IDP user ID",
         "account_id": "Account ID",
         "is_shipping_contact": "Is shipping contact",
-        "user_name": "Username",
-        "upn": "UPN",
         "last_invite_accepted": "Last invite accepted",
-        "first_name": "Firstname",
-        "email": "Email",
         "sourced_by": "Sourced by",
         "last_portal_login": "Last portal login",
         "status": "Status",
         "display_name": "Display name",
-        "last_name": "Lastname",
         "login_domain": "Login domain",
         "login_user_name": "Login username",
         "is_technical_contact": "Is technical contact",
-        "uid": "User ID",
-        "user_id": "User ID",
         "is_billing_contact": "Is billing contact",
         "last_invite_sent": "Last invite sent",
         "eula_accepted_date": "Eula accepted date",
-        "is_portal_admin": "Is portal admin",
-        "sam": "samAccount Name",
-        "idp_user_id": "Idp user ID"
+        "is_portal_admin": "Is portal admin"
     }
 }
 
@@ -125,7 +126,7 @@ export const filterableFieldNames = {
 export const machineFieldNames = {
     "account_id": "Account ID",
     "os": "OS",
-    "local_ip": "Last known Ip",
+    "local_ip": "Last known IP",
     "mac_address": "Mac address",
     "uid": "Uid",
     "group_type": "Group type",
@@ -133,11 +134,18 @@ export const machineFieldNames = {
     "reader_type": "Reader type",
     "serial_number": "Serial number",
     "x_client": "X Client",
-    "public_ip": "Public Ip",
+    "public_ip": "Public IP",
     "reader_name": "Reader name",
     "reader_serial": "Reader serial",
     "products": "Products",
     "machine_name": "Machine name"
+}
+
+export const settingsFieldNames = {
+    uid: "Account ID",
+    name: "Company Name",
+    portal_oidc_client_id: "Client ID",
+    issuer_url: "Issuer"
 }
 
 // Literal Constants
