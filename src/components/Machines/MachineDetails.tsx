@@ -52,6 +52,7 @@ export function MachineDetails(props: any) {
             </div>
             <Skeleton loading={loadingDetails}>
                 <div className="content-container rounded-grey-border">
+                    <div style={{ fontWeight: '600', fontSize: '30px'}}>Details</div>
                     {
                         Object.keys(machineDetails).map((machineField) => (
                             machineField !== 'products' && machineDetails[machineField] !== 'object' ?
@@ -69,12 +70,19 @@ export function MachineDetails(props: any) {
 
                     {
                         typeof machineDetails['cert_details'] === 'object' ?
-                            Object.keys(machineFieldNames.cert_details)?.map(key =>
-                                <DisplayField
-                                    displayName={machineFieldNames.cert_details[key]}
-                                    value={machineDetails['cert_details'][key]}
-                                    key={machineDetails['cert_details'][key]}
-                                />) : <></>
+                            <>
+                                {Object.keys(machineFieldNames.cert_details)?.map(key =>
+                                    <DisplayField
+                                        displayName={machineFieldNames.cert_details[key]}
+                                        value={machineDetails['cert_details'][key]}
+                                        key={machineDetails['cert_details'][key]}
+                                    />)}
+                                {/* <DisplayField
+                                    displayName={'Expiry days'}
+                                    value={}
+                                    key="expiry-days"
+                                /> */}
+                            </> : <></>
                     }
 
                 </div>

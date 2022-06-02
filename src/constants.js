@@ -138,6 +138,7 @@ export const machineFieldNames = {
     reader_name: "Reader name",
     reader_serial: "Reader serial",
     products: "Products",
+    product_version: 'Product version',
     machine_name: "Machine name",
     cert_details: {
         thumbprint: "Thumbprint",
@@ -145,7 +146,6 @@ export const machineFieldNames = {
         san: "SAN",
         valid_from: "Valid from",
         valid_to: "Valid to",
-        expiry: "Expiry"
     },
 }
 
