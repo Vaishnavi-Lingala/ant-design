@@ -19,29 +19,38 @@ export default function Users() {
 	const [lifeCycleTypes, setLifeCycleTypes]: any = useState(undefined);
 
 	const columns = [{
+		title: 'First Name',
+		dataIndex: 'first_name',
+		width: '15%'
+		},{
+		title: 'Last Name',
+		dataIndex: 'last_name',
+		width: '15%'
+	},{
+		title: 'Email',
+		dataIndex: 'email',
+		width: '20%'
+	},{
 		title: 'Username',
 		dataIndex: 'user_name',
-		width: '30%'
-	},
-	{
+		width: '10%'
+	},{
 		title: 'Status',
 		dataIndex: 'status',
-		width: '20%'
-	},
-	{
+		width: '10%'
+	},{
 		title: 'Details',
 		dataIndex: 'details',
-		width: '20%',
+		width: '5%',
 		render: (text: any, record: { uid: any; }) => (
 			<Button onClick={() => getUserDetails(record.uid)}>
 				View
 			</Button>
 		)
-	},
-	{
+	},{
 		title: 'Actions',
 		dataIndex: 'actions',
-		width: '35%',
+		width: '25%',
 		render: (text: any, record: { uid: any; user_name: any}) => (
 			<Dropdown overlay={<Menu
 				onClick={({ key }) => {
