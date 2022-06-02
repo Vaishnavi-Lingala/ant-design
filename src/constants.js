@@ -126,21 +126,29 @@ export const filterableFieldNames = {
 
 
 export const machineFieldNames = {
-    "account_id": "Account ID",
-    "os": "OS",
-    "local_ip": "Last known IP",
-    "mac_address": "Mac address",
-    "uid": "Uid",
-    "group_type": "Group type",
-    "domain": "Domain",
-    "reader_type": "Reader type",
-    "serial_number": "Serial number",
-    "x_client": "X Client",
-    "public_ip": "Public IP",
-    "reader_name": "Reader name",
-    "reader_serial": "Reader serial",
-    "products": "Products",
-    "machine_name": "Machine name"
+    account_id: "Account ID",
+    os: "OS",
+    local_ip: "Last known IP",
+    mac_address: "Mac address",
+    uid: "Uid",
+    group_type: "Group type",
+    domain: "Domain",
+    reader_type: "Reader type",
+    serial_number: "Serial number",
+    x_client: "X Client",
+    public_ip: "Public IP",
+    reader_name: "Reader name",
+    reader_serial: "Reader serial",
+    products: "Products",
+    product_version: 'Product version',
+    machine_name: "Machine name",
+    cert_details: {
+        thumbprint: "Thumbprint",
+        serial_number: "Serial Number",
+        san: "SAN",
+        valid_from: "Valid from",
+        valid_to: "Valid to",
+    },
 }
 
 export const settingsFieldNames = {
