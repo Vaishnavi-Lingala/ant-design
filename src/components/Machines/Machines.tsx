@@ -29,14 +29,17 @@ export default function Machines() {
         title: 'Last known IP',
         dataIndex: 'local_ip',
         width: '20%'
-    }
-    ,
+    },
     {
         title: 'Type',
         dataIndex: 'group_type',
         width: '20%'
-    }
-    ,
+    },
+    {
+        title: 'Product Version',
+        dataIndex: 'product_version',
+        width: '20%'
+    },
 	{
 		title: 'Actions',
 		dataIndex: 'actions',

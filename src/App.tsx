@@ -24,6 +24,8 @@ import { MachineDetails } from "./components/Machines/MachineDetails";
 // TecUnify
 import Applications from "./components/tecUnify/Applications";
 import AppSettings from "./components/tecUnify/AppSettings";
+import Layout from "./components/Layout/Layout";
+import Mechanism from "./components/Mechanism/mechanism";
 
 const oktaAuth = new OktaAuth(config.oidc);
 
@@ -52,6 +54,7 @@ function App() {
                     <ProtectedRoute path={`/activitylogs`} component={ActivityLogs} />
                     <ProtectedRoute path={`/dashboard`} component={Dashboard} />
                     <ProtectedRoute path={`/mechanism`} component={Mechanisms} />
+                    <ProtectedRoute path={`/mechanism/:id`} component={Mechanism} />
                     <ProtectedRoute path={`/settings`} component={Settings} />
                     <ProtectedRoute path={`/groups`} component={Groups} />
                     <ProtectedRoute path={`/users`} component={Users} />

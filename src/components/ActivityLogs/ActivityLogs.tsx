@@ -147,6 +147,13 @@ export default function ActivityLogs() {
         }
     ];
 
+    const disabledDate = (current) => {
+        return (
+            (current && current > moment().endOf("day")) ||
+            current < moment().endOf("day").subtract(3, "M")
+        );
+    };
+
     useEffect(() => {
         (async function () {
             setTableLoading(true);
@@ -250,9 +257,7 @@ export default function ActivityLogs() {
                             format={date_format}
                             value={moment(datetimeFilters.start.date)}
                             picker="date"
-                            disabledDate={(current) =>
-                                current > moment().endOf("day")
-                            }
+                            disabledDate={disabledDate}
                             onChange={(date, dateString) =>
                                 onDateFilterChange(
                                     date,
@@ -283,9 +288,7 @@ export default function ActivityLogs() {
                             format={date_format}
                             value={moment(datetimeFilters.end.date)}
                             picker="date"
-                            disabledDate={(current) =>
-                                current > moment().endOf("day")
-                            }
+                            disabledDate={disabledDate}
                             onChange={(date, dateString) =>
                                 onDateFilterChange(
                                     date,
