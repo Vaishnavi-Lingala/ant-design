@@ -25,39 +25,39 @@ const Urls = {
 
     //Machine Urls
     machines: `account/${accountId}/machines`,
-    machineDetails: (uid) =>  `account/${accountId}/machines/${uid}`,
+    machineDetails: (uid: string) =>  `account/${accountId}/machines/${uid}`,
 
     // Users Urls
-    userGroups: (uid) => `account/${accountId}/users/${uid}/groups`,
+    userGroups: (uid: string) => `account/${accountId}/users/${uid}/groups`,
     users: `account/${accountId}/users`,
-    changeUserStatus: (uid) =>  `account/${accountId}/users/${uid}/lifecycle`,
+    changeUserStatus: (uid: string) =>  `account/${accountId}/users/${uid}/lifecycle`,
     lifeCycleOptions: `account/${accountId}/users/lifecycle/options`,
 
     // Groups Urls
-    group: (uid) => `account/${accountId}/groups/${uid}`,
+    group: (uid: string) => `account/${accountId}/groups/${uid}`,
     groups: `account/${accountId}/groups`,
-    groupUsers: (uid) => `account/${accountId}/groups/${uid}/users` ,
-    usersNotInGroup: (uid) => `account/${accountId}/groups/${uid}/users-not-in-group`,
-    groupMachines: (uid) => `account/${accountId}/group/${uid}/machines` ,
-    machinesNotInGroup: (uid) => `account/${accountId}/group/${uid}/machines-not-in-group`,
+    groupUsers: (uid: string) => `account/${accountId}/groups/${uid}/users` ,
+    usersNotInGroup: (uid: string) => `account/${accountId}/groups/${uid}/users-not-in-group`,
+    groupMachines: (uid: string) => `account/${accountId}/group/${uid}/machines` ,
+    machinesNotInGroup: (uid: string) => `account/${accountId}/group/${uid}/machines-not-in-group`,
 
     // Policy Urls
     policies: `account/${accountId}/product/${productId}/auth-policies`,
-    policy: (uid) => `account/${accountId}/auth-policies/${uid}`, // For GET and UPDATE APIs
+    policy: (uid: string) => `account/${accountId}/auth-policies/${uid}`, // For GET and UPDATE APIs
     addPolicy: `account/${accountId}/product/${productId}/auth-policies`, // For CREATE API
-    activatePolicy: (uid) => `/account/${accountId}/product/${productId}/auth-policy/${uid}/activate`,
-    deActivatePolicy: (uid) => `/account/${accountId}/product/${productId}/auth-policy/${uid}/inactivate`,
+    activatePolicy: (uid: string) => `/account/${accountId}/product/${productId}/auth-policy/${uid}/activate`,
+    deActivatePolicy: (uid: string) => `/account/${accountId}/product/${productId}/auth-policy/${uid}/inactivate`,
     reOrderPolicies: `/account/${accountId}/product/${productId}/auth-policy/reorder`,
 
     // Mechanism Urls
     mechanisms: `account/${accountId}/product/${productId}/mechanism`,
     addMechanism: `account/${accountId}/product/${productId}/mechanism`,
-    mechanism: (uid) => `account/${accountId}/product/${productId}/mechanism/${uid}`, // For GET and UPDATE APIs
+    mechanism: (uid: string) => `account/${accountId}/product/${productId}/mechanism/${uid}`, // For GET and UPDATE APIs
     mechanismOptions: `account/${accountId}/mechanism/options`,
     mechanismChallengeFactors: `account/${accountId}/mechanism/challenge-factor-options?product_id=${productId}`,
     mechanismPasswordGraceOptions: `account/${accountId}/mechanism/password-grace-options`,
-    activateMechanism: (uid) => `account/${accountId}/product/${productId}/mechanism/${uid}/activate`,
-    deActivateMechanism: (uid) => `account/${accountId}/product/${productId}/mechanism/${uid}/inactivate`,
+    activateMechanism: (uid: string) => `account/${accountId}/product/${productId}/mechanism/${uid}/activate`,
+    deActivateMechanism: (uid: string) => `account/${accountId}/product/${productId}/mechanism/${uid}/inactivate`,
     reOrderMechanisms: `account/${accountId}/product/${productId}/mechanism/reorder`,
 
     // Activity Log Urls

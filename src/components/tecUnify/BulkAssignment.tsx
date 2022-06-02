@@ -6,21 +6,24 @@ import { Checkbox } from 'antd';
 
 import ApiService from "../../Api.service"
 import ApiUrls from '../../ApiUtils';
-import { StoreContext } from "../../helpers/Store";
-import { showToast } from '../Layout/Toast/Toast';
 
-function BulkAssignment() {
-  const [page, setPage] = useState<number>(1);
-  const [pageLimit, setPageLimit] = useState<number>(10);
+interface PageState {
+  current: number;
+  limit: number;
+}
+
+const initialPState: PageState = {
+  current: 1,
+  limit: 10
+};
+
+function BulkAssignment(): JSX.Element {
+  const [page, setPage] = useState<PageState>(initialPState);
   const [userList, setUserList] = useState();
-	const [toastList, setToastList] = useContext(StoreContext);
 
-	const getUsersList = async (page: number, pageSize: number) => {
-		let data = await ApiService.get(ApiUrls.users, { start: page, limit: pageSize }).catch(error => {
+	async function getUsersList({ current, limit }: { current: number; limit: number; }) {
+		let data = await ApiService.get(ApiUrls.users, { start: current, limit: limit }).catch(error => {
 			console.error('Error: ', error);
-			const response = showToast('error', 'An Error has occured with getting User Lists by Page');
-			console.log('response: ', response);
-			setToastList([...toastList, response]);
 		});
 
 		console.log(data);
@@ -44,6 +47,7 @@ function BulkAssignment() {
           <span>Users</span>
           <a>reset</a>
         </div>
+
         <div>
         </div>
       </div>

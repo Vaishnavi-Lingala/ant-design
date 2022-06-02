@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Button, Skeleton } from 'antd';
 
 import './tecUnify.css';
@@ -7,26 +7,16 @@ import { mockApiRes } from './mockApiCall';
 import SupportedIntegrations from './SupportedIntegrations';
 import AccountIntegrations from './AccountIntegrations';
 import BulkAssignment from './BulkAssignment';
+import AppSettings from './AppSettings';
 
 interface PageType {
   name: string;
   isLoading: boolean;
 }
 
-interface PageStateType {
-  current: PageType;
-  previous: PageType;
-}
-
-const homeComponent: PageStateType = {
-  current: {
-    name: 'configured',
-    isLoading: false,
-  },
-  previous: {
-    name: '',
-    isLoading: false,
-  }
+const homeComponent: PageType = {
+  name: 'configured',
+  isLoading: false,
 };
 
 function capitalizeFirst(s: string): string {
@@ -34,35 +24,34 @@ function capitalizeFirst(s: string): string {
 }
 
 function Applications(): JSX.Element {
-  const [pageState, setPageState] = useState<PageStateType>(homeComponent);
+  const [currPage, setCurrPage] = useState<PageType>(homeComponent);
 
-  const isBulkAssignmentPage = (pageState.current.name === 'assignment');
-  const isConfiguredPage= (pageState.current.name === 'configured');
+  const isBulkAssignmentPage = (currPage.name === 'assignment');
+  const isConfiguredPage = (currPage.name === 'configured');
 
-  const handleClick = (e: any): void  => {
+  function handleClick(e: any): void {
     const currentPage = {
       name: e.target.parentNode.id,
       isLoading: false
     };
 
-    setPageState((currVal) => ({
-      current: currentPage,
-      previous: currVal.current
-    }));
+    setCurrPage(currentPage);
   }
 
-  const handleBack = (): void => {
-    setPageState(homeComponent);
+  function handleBack(): void {
+    setCurrPage(homeComponent);
   }
 
-  const SwitchTrack = (): JSX.Element | null  => {
-    switch(pageState.current.name) {
+  function SwitchTrack(): JSX.Element | null {
+    switch(currPage.name) {
       case 'configured':
         return <AccountIntegrations/>;
       case 'supported':
         return <SupportedIntegrations data={mockApiRes}/>;
       case 'assignment':
         return <BulkAssignment/>;
+      case 'settings':
+        return <AppSettings/>;
       default:
         return null;
     }
@@ -73,16 +62,16 @@ function Applications(): JSX.Element {
       <div className='content-header'>
         {
           !isBulkAssignmentPage ? 
-            <>{capitalizeFirst(pageState.current.name)} Applications</> : <span>Bulk Assignment</span>
+            <>{capitalizeFirst(currPage.name)} Applications</> : <span>Bulk Assignment</span>
         }
 
         { 
           !isConfiguredPage &&
-            <Button style={{ marginLeft: 'auto', alignSelf: 'end' }} onClick={handleBack}>Back</Button>
+            <Button onClick={handleBack}>Back</Button>
         }
       </div>
 
-      <Skeleton loading={pageState.current.isLoading}>
+      <Skeleton loading={currPage.isLoading}>
         <div className='header-container border'>
           <Button id='supported' size='large' type='primary' onClick={handleClick}>
             Browse Supported apps 
