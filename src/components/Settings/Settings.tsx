@@ -6,17 +6,21 @@ import './Settings.css'
 import { ClientConfiguration } from '../../models/Data.models';
 
 import { openNotification } from '../Layout/Notification';
-import Urls, { base_url } from '../../ApiUtils';
 import ApiService from '../../Api.service';
+import ApiUrls from '../../ApiUtils';
 import { settingsFieldNames } from '../../constants';
 
 function Settings() {
-    const [settings, setSettings] = useState({});
+    const [result, setResult] = useState({});
+    const [clientId, setClientId] = useState("");
+    const [issuer, setIssuer] = useState("");
+    const [accountId, setAccountId] = useState("");
     const [loading, setLoading] = useState(true);
     const domain = localStorage.getItem('domain');
+    const [settings, setSettings] = useState({});
 
     useEffect(() => {
-        ApiService.post(Urls.client_info, { domain: domain })
+        ApiService.post(ApiUrls.client_info, { domain: domain })
             .then((data: ClientConfiguration) => {
                 console.log(data);
                 setLoading(false);

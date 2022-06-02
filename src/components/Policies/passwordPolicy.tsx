@@ -187,7 +187,10 @@ export const PasswordPolicy = (props: any) => {
                             style={{ width: '275px' }}
                             options={groups}
                         /> : Object.keys(groupNames).map(name =>
-                            <><Button style={{cursor: 'text'}}>{groupNames[name]}</Button>&nbsp;</>)
+                            <div style={{ display: 'inline-block', marginRight: '3px', paddingBottom: '3px' }}>
+                                <Button style={{ cursor: 'text' }}>{groupNames[name]}</Button>
+                            </div>
+                        )
                     }
                 </div>
 

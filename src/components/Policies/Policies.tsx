@@ -108,6 +108,7 @@ export default function Policies() {
 	const [kioskDetails, setKioskDetails] = useState(undefined);
 	const [cardEnrollPolicy, setCardEnrollPolicy] = useState(undefined);
 	const [loadingDetails, setLoadingDetails] = useState(false);
+	const [loading, setLoading] = useState(false);
 	const [activePinPolicies, setActivePinPolicies]: any = useState([]);
 	const [inActivePinPolicies, setInActivePinPolicies]: any = useState([]);
 	const [activePasswordPolicies, setActivePasswordPolicies]: any = useState([]);
@@ -158,7 +159,8 @@ export default function Policies() {
 	const kioskData = {
 		policy_req: {
 			access_key_id: "",
-			assay: ""
+			assay: "",
+			confirm_assay: ""
 		},
 		auth_policy_groups: [],
 		policy_type: KIOSK,
@@ -445,7 +447,7 @@ export default function Policies() {
 	}
 
 	useEffect(() => {
-		if (window.location.pathname.split("/")[2] !== 'password' && window.location.pathname.split("/")[2] !== 'kiosk' && window.location.pathname.split("/").length !== 4) {
+		if (window.location.pathname.split("/")[2] !== 'password' && window.location.pathname.split("/")[2] !== 'kiosk' && window.location.pathname.split("/")[2] !== 'card-enrollment' && window.location.pathname.split("/").length !== 4) {
 			history.push('/policies/pin');
 			setTabname(window.location.pathname.split('/')[2].toUpperCase());
 		}
@@ -535,7 +537,7 @@ export default function Policies() {
 
 	function getPolicyDetails(uid: any) {
 		localStorage.setItem("policyUid", uid);
-		setLoadingDetails(true);
+		setLoading(true);
 		ApiService.get(ApiUrls.policy(uid))
 			.then(data => {
 				if (!data.errorSummary) {
@@ -556,7 +558,7 @@ export default function Policies() {
 						history.push('/policies/card-enrollment/' + uid);
 						setCardEnrollPolicy(data);
 					}
-					setLoadingDetails(false);
+					setLoading(false);
 				}
 				else {
 					openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
@@ -643,223 +645,45 @@ export default function Policies() {
 				</Button> : <></>}
 			</div>
 
-			<Tabs defaultActiveKey={window.location.pathname.split("/")[2]}
-				type="card" size={"middle"} animated={false}
-				tabBarStyle={{ marginBottom: '0px' }}
-				onChange={(key) => {
-					history.push("/policies/" + key);
-					setTabname(key.toUpperCase());
-				}}
-				onClick={() => {
-					if (tabname === PIN) {
-						setPasswordDetails(undefined);
-						setKioskDetails(undefined);
-					}
-					if (tabname === PASSWORD) {
-						setPinDetails(undefined);
-						setKioskDetails(undefined);
-					}
-					if (tabname === KIOSK) {
-						setPasswordDetails(undefined);
-						setPinDetails(undefined);
-					}
-					if (tabname === CARD_ENROLL) {
-						setCardEnrollPolicy(undefined);
-					}
-				}}
-			// style={{border: '1px solid #d7d7dc', margin: 0}} 
-			>
-				<TabPane tab="Pin" key="pin">
-					<Skeleton loading={loadingDetails}>
-						{pinDetails ? <PinPolicy pinDetails={pinDetails} /> :
-							isPinModalVisible ? <PinPolicy pinDetails={pinData} handleOk={handleOk} handleCancel={handleCancel} /> :
-								<>
-									<div style={{ width: '100%', border: '1px solid #D7D7DC', borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6' }}>
-										<Button type='primary' size='large' onClick={() => {
-											setIsPinModalVisible(true)
-											history.push('/policies/pin')
-										}}
-										>
-											Add Pin Policy
-										</Button>
-									</div>
-
-									<div style={{
-										fontWeight: 600, fontSize: 'x-large',
-										width: '100%', border: '1px solid #D7D7DC',
-										borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
-									}}
-									>
-										ACTIVE
-									</div>
-
-									<Table
-										style={{ border: '1px solid #D7D7DC' }}
-										showHeader={true}
-										columns={activateColumns}
-										dataSource={activePinPolicies}
-										rowKey={"index"}
-										components={{
-											body: {
-												wrapper: pinDraggableContainer,
-												row: pinDraggableBodyRow,
-											},
-										}}
-										pagination={false}
-									/>
-
-									<br />
-
-									<div style={{
-										fontWeight: 600, fontSize: 'x-large',
-										width: '100%', border: '1px solid #D7D7DC',
-										borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
-									}}
-									>
-										INACTIVE
-									</div>
-									<Table
-										style={{ border: '1px solid #D7D7DC' }}
-										showHeader={true}
-										columns={deActivateColumns}
-										dataSource={inActivePinPolicies}
-										pagination={false}
-									/>
-								</>
+			<Skeleton loading={loadingDetails}>
+				<Tabs defaultActiveKey={window.location.pathname.split("/")[2]}
+					type="card" size={"middle"} animated={false}
+					tabBarStyle={{ marginBottom: '0px' }}
+					onChange={(key) => {
+						history.push("/policies/" + key);
+						setTabname(key.toUpperCase());
+					}}
+					onClick={() => {
+						if (tabname === PIN) {
+							setPasswordDetails(undefined);
+							setKioskDetails(undefined);
 						}
-					</Skeleton>
-				</TabPane>
-				<TabPane tab="Password" key="password">
-					<Skeleton loading={loadingDetails}>
-						{passwordDetails ? <PasswordPolicy passwordDetails={passwordDetails} /> :
-							isPasswordModalVisible ? <PasswordPolicy passwordDetails={passwordData} handleOk={handleOk} handleCancel={handleCancel} /> :
-								<>
-									<div style={{ width: '100%', border: '1px solid #D7D7DC', borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6' }}>
-										<Button type='primary' size='large' onClick={() => {
-											setIsPasswordModalVisible(true)
-											history.push('/policies/password')
-										}}
-										>
-											Add Password Policy
-										</Button>
-									</div>
-
-									<div style={{
-										fontWeight: 600, fontSize: 'x-large',
-										width: '100%', border: '1px solid #D7D7DC',
-										borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
-									}}
-									>
-										ACTIVE
-									</div>
-									<Table
-										style={{ border: '1px solid #D7D7DC' }}
-										showHeader={true}
-										columns={activateColumns}
-										dataSource={activePasswordPolicies}
-										rowKey={"index"}
-										components={{
-											body: {
-												wrapper: passwordDraggableContainer,
-												row: passwordDraggableBodyRow,
-											},
-										}}
-										pagination={false}
-									/>
-
-									<br />
-
-									<div style={{
-										fontWeight: 600, fontSize: 'x-large',
-										width: '100%', border: '1px solid #D7D7DC',
-										borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
-									}}
-									>
-										INACTIVE
-									</div>
-									<Table
-										style={{ border: '1px solid #D7D7DC' }}
-										showHeader={true}
-										columns={deActivateColumns}
-										dataSource={inActivepasswordPolicies}
-										pagination={false}
-									/>
-								</>
+						if (tabname === PASSWORD) {
+							setPinDetails(undefined);
+							setKioskDetails(undefined);
 						}
-					</Skeleton>
-				</TabPane>
-				<TabPane tab="Kiosk" key="kiosk">
-					<Skeleton loading={loadingDetails}>
-						{kioskDetails ? <KioskPolicy kioskDetails={kioskDetails} /> :
-							isKioskModalVisible ? <KioskPolicy kioskDetails={kioskData} handleOk={handleOk} handleCancel={handleCancel} /> :
-								<>
-									<div style={{ width: '100%', border: '1px solid #D7D7DC', borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6' }}>
-										<Button type='primary' size='large' onClick={() => {
-											setIsKioskModalVisible(true)
-											history.push('/policies/kiosk')
-										}}
-										>
-											Add Kiosk Policy
-										</Button>
-									</div>
-
-									<div style={{
-										fontWeight: 600, fontSize: 'x-large',
-										width: '100%', border: '1px solid #D7D7DC',
-										borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
-									}}
-									>
-										ACTIVE
-									</div>
-									<Table
-										style={{ border: '1px solid #D7D7DC' }}
-										showHeader={true}
-										columns={activateColumns}
-										dataSource={activeKioskPolicies}
-										rowKey={"index"}
-										components={{
-											body: {
-												wrapper: kioskDraggableContainer,
-												row: kioskDraggableBodyRow,
-											},
-										}}
-										pagination={false}
-									/>
-
-									<br />
-
-									<div style={{
-										fontWeight: 600, fontSize: 'x-large',
-										width: '100%', border: '1px solid #D7D7DC',
-										borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
-									}}
-									>
-										INACTIVE
-									</div>
-									<Table
-										style={{ border: '1px solid #D7D7DC' }}
-										showHeader={true}
-										columns={deActivateColumns}
-										dataSource={inActiveKioskPolicies}
-										pagination={false}
-									/>
-								</>
+						if (tabname === KIOSK) {
+							setPasswordDetails(undefined);
+							setPinDetails(undefined);
 						}
-					</Skeleton>
-				</TabPane>
-				{currentSeletedProduct === TecTANGO && maxEnroll ?
-					<TabPane tab="Card enrollment" key="card-enrollment">
-						<Skeleton loading={loadingDetails}>
-							{cardEnrollPolicy ? <CardEnrollmentPolicy policyDetails={cardEnrollPolicy} /> :
-								isCardEnrollmentModalVisible ? <CardEnrollmentPolicy policyDetails={cardEnrollData} handleOk={handleOk} handleCancel={handleCancel} /> :
+						if (tabname === CARD_ENROLL) {
+							setCardEnrollPolicy(undefined);
+						}
+					}}
+				// style={{border: '1px solid #d7d7dc', margin: 0}} 
+				>
+					<TabPane tab="Pin" key="pin">
+						<Skeleton loading={loading}>
+							{pinDetails ? <PinPolicy pinDetails={pinDetails} /> :
+								isPinModalVisible ? <PinPolicy pinDetails={pinData} handleOk={handleOk} handleCancel={handleCancel} /> :
 									<>
 										<div style={{ width: '100%', border: '1px solid #D7D7DC', borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6' }}>
 											<Button type='primary' size='large' onClick={() => {
-												setIsCardEnrollmentModalVisible(true);
-												history.push('/policies/card-enrollment');
+												setIsPinModalVisible(true)
+												history.push('/policies/pin')
 											}}
 											>
-												Add Card Enrollment Policy
+												Add Pin Policy
 											</Button>
 										</div>
 
@@ -871,19 +695,20 @@ export default function Policies() {
 										>
 											ACTIVE
 										</div>
+
 										<Table
 											style={{ border: '1px solid #D7D7DC' }}
 											showHeader={true}
 											columns={activateColumns}
-											dataSource={activeCardEnrollmentPolicies}
+											dataSource={activePinPolicies}
 											rowKey={"index"}
 											components={{
 												body: {
-													wrapper: CardEnrollmentDraggableContainer,
-													row: CardEnrollmentDraggableBodyRow,
+													wrapper: pinDraggableContainer,
+													row: pinDraggableBodyRow,
 												},
 											}}
-											pagination={{ position: [] }}
+											pagination={false}
 										/>
 
 										<br />
@@ -900,14 +725,193 @@ export default function Policies() {
 											style={{ border: '1px solid #D7D7DC' }}
 											showHeader={true}
 											columns={deActivateColumns}
-											dataSource={inActiveCardEnrollmentPolicies}
-											pagination={{ position: [] }}
+											dataSource={inActivePinPolicies}
+											pagination={false}
 										/>
 									</>
 							}
 						</Skeleton>
-					</TabPane> : null}
-			</Tabs>
+					</TabPane>
+					<TabPane tab="Password" key="password">
+						<Skeleton loading={loading}>
+							{passwordDetails ? <PasswordPolicy passwordDetails={passwordDetails} /> :
+								isPasswordModalVisible ? <PasswordPolicy passwordDetails={passwordData} handleOk={handleOk} handleCancel={handleCancel} /> :
+									<>
+										<div style={{ width: '100%', border: '1px solid #D7D7DC', borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6' }}>
+											<Button type='primary' size='large' onClick={() => {
+												setIsPasswordModalVisible(true)
+												history.push('/policies/password')
+											}}
+											>
+												Add Password Policy
+											</Button>
+										</div>
+
+										<div style={{
+											fontWeight: 600, fontSize: 'x-large',
+											width: '100%', border: '1px solid #D7D7DC',
+											borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
+										}}
+										>
+											ACTIVE
+										</div>
+										<Table
+											style={{ border: '1px solid #D7D7DC' }}
+											showHeader={true}
+											columns={activateColumns}
+											dataSource={activePasswordPolicies}
+											rowKey={"index"}
+											components={{
+												body: {
+													wrapper: passwordDraggableContainer,
+													row: passwordDraggableBodyRow,
+												},
+											}}
+											pagination={false}
+										/>
+
+										<br />
+
+										<div style={{
+											fontWeight: 600, fontSize: 'x-large',
+											width: '100%', border: '1px solid #D7D7DC',
+											borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
+										}}
+										>
+											INACTIVE
+										</div>
+										<Table
+											style={{ border: '1px solid #D7D7DC' }}
+											showHeader={true}
+											columns={deActivateColumns}
+											dataSource={inActivepasswordPolicies}
+											pagination={false}
+										/>
+									</>
+							}
+						</Skeleton>
+					</TabPane>
+					<TabPane tab="Kiosk" key="kiosk">
+						<Skeleton loading={loading}>
+							{kioskDetails ? <KioskPolicy kioskDetails={kioskDetails} /> :
+								isKioskModalVisible ? <KioskPolicy kioskDetails={kioskData} handleOk={handleOk} handleCancel={handleCancel} /> :
+									<>
+										<div style={{ width: '100%', border: '1px solid #D7D7DC', borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6' }}>
+											<Button type='primary' size='large' onClick={() => {
+												setIsKioskModalVisible(true)
+												history.push('/policies/kiosk')
+											}}
+											>
+												Add Kiosk Policy
+											</Button>
+										</div>
+
+										<div style={{
+											fontWeight: 600, fontSize: 'x-large',
+											width: '100%', border: '1px solid #D7D7DC',
+											borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
+										}}
+										>
+											ACTIVE
+										</div>
+										<Table
+											style={{ border: '1px solid #D7D7DC' }}
+											showHeader={true}
+											columns={activateColumns}
+											dataSource={activeKioskPolicies}
+											rowKey={"index"}
+											components={{
+												body: {
+													wrapper: kioskDraggableContainer,
+													row: kioskDraggableBodyRow,
+												},
+											}}
+											pagination={false}
+										/>
+
+										<br />
+
+										<div style={{
+											fontWeight: 600, fontSize: 'x-large',
+											width: '100%', border: '1px solid #D7D7DC',
+											borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
+										}}
+										>
+											INACTIVE
+										</div>
+										<Table
+											style={{ border: '1px solid #D7D7DC' }}
+											showHeader={true}
+											columns={deActivateColumns}
+											dataSource={inActiveKioskPolicies}
+											pagination={false}
+										/>
+									</>
+							}
+						</Skeleton>
+					</TabPane>
+					{currentSeletedProduct === TecTANGO && maxEnroll ?
+						<TabPane tab="Card enrollment" key="card-enrollment">
+							<Skeleton loading={loading}>
+								{cardEnrollPolicy ? <CardEnrollmentPolicy policyDetails={cardEnrollPolicy} /> :
+									isCardEnrollmentModalVisible ? <CardEnrollmentPolicy policyDetails={cardEnrollData} handleOk={handleOk} handleCancel={handleCancel} /> :
+										<>
+											<div style={{ width: '100%', border: '1px solid #D7D7DC', borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6' }}>
+												<Button type='primary' size='large' onClick={() => {
+													setIsCardEnrollmentModalVisible(true);
+													history.push('/policies/card-enrollment');
+												}}
+												>
+													Add Card Enrollment Policy
+												</Button>
+											</div>
+
+											<div style={{
+												fontWeight: 600, fontSize: 'x-large',
+												width: '100%', border: '1px solid #D7D7DC',
+												borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
+											}}
+											>
+												ACTIVE
+											</div>
+											<Table
+												style={{ border: '1px solid #D7D7DC' }}
+												showHeader={true}
+												columns={activateColumns}
+												dataSource={activeCardEnrollmentPolicies}
+												rowKey={"index"}
+												components={{
+													body: {
+														wrapper: CardEnrollmentDraggableContainer,
+														row: CardEnrollmentDraggableBodyRow,
+													},
+												}}
+												pagination={{ position: [] }}
+											/>
+
+											<br />
+
+											<div style={{
+												fontWeight: 600, fontSize: 'x-large',
+												width: '100%', border: '1px solid #D7D7DC',
+												borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
+											}}
+											>
+												INACTIVE
+											</div>
+											<Table
+												style={{ border: '1px solid #D7D7DC' }}
+												showHeader={true}
+												columns={deActivateColumns}
+												dataSource={inActiveCardEnrollmentPolicies}
+												pagination={{ position: [] }}
+											/>
+										</>
+								}
+							</Skeleton>
+						</TabPane> : null}
+				</Tabs>
+			</Skeleton>
 		</>
 	);
 }

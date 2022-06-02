@@ -21,6 +21,7 @@ import Machines from "./components/Machines/Machines";
 
 import { MachineDetails } from "./components/Machines/MachineDetails";
 import Layout from "./components/Layout/Layout";
+import Mechanism from "./components/Mechanism/mechanism";
 
 const oktaAuth = new OktaAuth(config.oidc);
 
@@ -48,7 +49,8 @@ function App() {
                 <ProtectedRoute path={`/policies`} component={Policies} />
                 <ProtectedRoute path={`/activitylogs`} component={ActivityLogs} />
                 <ProtectedRoute path={`/dashboard`} component={Dashboard} />
-                <ProtectedRoute path={`/mechanism`} component={Mechanisms} />
+                <ProtectedRoute path={`/mechanism`} exact component={Mechanisms} />
+                <ProtectedRoute path={`/mechanism/:id`} component={Mechanism} />
                 <ProtectedRoute path={`/settings`} component={Settings} />
                 <ProtectedRoute path={`/groups`} component={Groups} />
                 <ProtectedRoute path={`/users`} component={Users} />

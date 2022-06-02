@@ -50,7 +50,7 @@ export const KioskPolicy = (props: any) => {
                 setLoadingDetails(false);
             }, error => {
                 console.error('Error: ', error);
-				openNotification('error', 'An Error has occured with getting Groups');
+                openNotification('error', 'An Error has occured with getting Groups');
                 setLoadingDetails(false);
             })
 
@@ -71,7 +71,7 @@ export const KioskPolicy = (props: any) => {
                 setLoading(false);
             }, error => {
                 console.error('Error: ', error);
-				openNotification('error', 'An Error has occured with getting Groups');
+                openNotification('error', 'An Error has occured with getting Groups');
             })
 
         if (kioskDisplayData.uid !== undefined) {
@@ -234,8 +234,10 @@ export const KioskPolicy = (props: any) => {
                             style={{ width: '275px' }}
                             options={groups}
                         /> : Object.keys(groupNames).map(name =>
-                            <><Button style={{cursor: 'text'}}>{groupNames[name]}</Button>&nbsp;</>)
-                        }
+                            <div style={{ display: 'inline-block', marginRight: '3px', paddingBottom: '3px' }}>
+                                <Button style={{ cursor: 'text' }}>{groupNames[name]}</Button>
+                            </div>
+                        )}
                     </div>
 
                     <div className="content-policy-key-header">
@@ -253,7 +255,7 @@ export const KioskPolicy = (props: any) => {
                             options={kioskGroups}
                             listHeight={120}
                         /> : Object.keys(kioskGroupNames).map(name =>
-                            <><Button style={{cursor: 'text'}}>{kioskGroupNames[name]}</Button>&nbsp;</>)
+                            <><Button style={{ cursor: 'text' }}>{kioskGroupNames[name]}</Button>&nbsp;</>)
                         }
                     </div>
 
@@ -271,7 +273,7 @@ export const KioskPolicy = (props: any) => {
 
                 <div className="row-policy-container">
                     <div>
-                        Kiosk username
+                        Username
                     </div>
                     <div>
                         {
@@ -284,11 +286,11 @@ export const KioskPolicy = (props: any) => {
                         }
                     </div>
                     <div>
-                        Kiosk password
+                        Password
                     </div>
                     <div>
                         {
-                            isEdit ? <Input className="form-control"
+                            isEdit ? <Input.Password className="form-control"
                                 style={{ width: "275px" }}
                                 onChange={(e) => kioskEditData.policy_req.assay = e.target.value}
                                 defaultValue={kioskDisplayData.policy_req.assay}
@@ -296,19 +298,24 @@ export const KioskPolicy = (props: any) => {
                             /> : kioskDisplayData.policy_req.assay
                         }
                     </div>
-                    <div>
-                        Kiosk confirm password
-                    </div>
-                    <div>
-                        {
-                            isEdit ? <Input className="form-control"
-                                style={{ width: "275px" }}
-                                onChange={(e) => kioskEditData.policy_req.confirm_assay = e.target.value}
-                                defaultValue={kioskDisplayData.policy_req.confirm_assay}
-                                placeholder='Enter confirm password'
-                            /> : kioskDisplayData.policy_req.confirm_assay
-                        }
-                    </div>
+                    {
+                        isEdit ?
+                            <>
+                                <div>
+                                    Confirm password
+                                </div>
+                                <div>
+                                    {
+                                        isEdit ? <Input.Password className="form-control"
+                                            style={{ width: "275px" }}
+                                            onChange={(e) => kioskEditData.policy_req.confirm_assay = e.target.value}
+                                            defaultValue={kioskDisplayData.policy_req.confirm_assay}
+                                            placeholder='Enter confirm password'
+                                        /> : kioskDisplayData.policy_req.confirm_assay
+                                    }
+                                </div>
+                            </> : <></>
+                    }
                 </div>
             </div>
             {kioskDisplayData.uid !== undefined ?
