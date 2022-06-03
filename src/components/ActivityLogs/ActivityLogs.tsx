@@ -18,7 +18,8 @@ import {
     end_date,
     end_time,
     hiddenFields,
-    logFieldNames
+    logFieldNames,
+    date_display_format
 } from '../../constants';
 import { openNotification } from "../Layout/Notification";
 
@@ -127,7 +128,7 @@ export default function ActivityLogs() {
     const columns = [
         {
             title: "Time",
-            render: (text, record) => <>{moment.utc(record.activity?.created_ts).local().format(`${date_format} ${time_format}`)}</>
+            render: (text, record) => <>{moment.utc(record.activity?.created_ts).local().format(`${date_display_format} ${time_format}`)}</>
         },
         {
             title: "Actor",
@@ -146,6 +147,13 @@ export default function ActivityLogs() {
             render: (text, record) => <>{record.machine?.machine_name}</>
         }
     ];
+
+    const disabledDate = (current) => {
+        return (
+            (current && current > moment().endOf("day")) ||
+            current < moment().endOf("day").subtract(3, "M")
+        );
+    };
 
     useEffect(() => {
         (async function () {
@@ -220,11 +228,12 @@ export default function ActivityLogs() {
         }
     }
 
-    // convert Local date time to utc date time
+    // Converts Local date time to utc date time
     function convertLocaltoUtc(local_ts, format) {
         return moment.utc(moment(local_ts)).format(format);
     }
 
+    // Generates payload for the activity logs API call
     function generateFilterPayload() {
         const payload = Object.assign(
             {
@@ -250,9 +259,7 @@ export default function ActivityLogs() {
                             format={date_format}
                             value={moment(datetimeFilters.start.date)}
                             picker="date"
-                            disabledDate={(current) =>
-                                current > moment().endOf("day")
-                            }
+                            disabledDate={disabledDate}
                             onChange={(date, dateString) =>
                                 onDateFilterChange(
                                     date,
@@ -283,9 +290,7 @@ export default function ActivityLogs() {
                             format={date_format}
                             value={moment(datetimeFilters.end.date)}
                             picker="date"
-                            disabledDate={(current) =>
-                                current > moment().endOf("day")
-                            }
+                            disabledDate={disabledDate}
                             onChange={(date, dateString) =>
                                 onDateFilterChange(
                                     date,
