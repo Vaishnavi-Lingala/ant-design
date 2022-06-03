@@ -227,11 +227,12 @@ export default function ActivityLogs() {
         }
     }
 
-    // convert Local date time to utc date time
+    // Converts Local date time to utc date time
     function convertLocaltoUtc(local_ts, format) {
         return moment.utc(moment(local_ts)).format(format);
     }
 
+    // Generates payload for the activity logs API call
     function generateFilterPayload() {
         const payload = Object.assign(
             {
