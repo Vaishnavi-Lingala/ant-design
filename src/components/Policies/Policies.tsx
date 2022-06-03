@@ -1,4 +1,6 @@
-import { Button, Skeleton, Table, Tabs } from 'antd';
+import { Button, Skeleton, Table, Tabs, Tooltip } from 'antd';
+import { BarsOutlined, PoweroffOutlined, StopOutlined } from "@ant-design/icons"
+
 import { MenuOutlined } from '@ant-design/icons';
 import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
@@ -49,9 +51,11 @@ export default function Policies() {
 			dataIndex: 'details',
 			width: '10%',
 			render: (text: any, record: { policy_id: any; }) => (
-				<Button onClick={() => getPolicyDetails(record.policy_id)}>
-					View
-				</Button>
+				<Tooltip title="View">
+					<Button icon={<BarsOutlined/>} onClick={() => getPolicyDetails(record.policy_id)}>
+					</Button>
+				</Tooltip>
+				
 			)
 		},
 		{
@@ -60,9 +64,10 @@ export default function Policies() {
 			width: '30%',
 			render: (text: any, record: { policy_id: any; default: any }) => (
 				record.default === false ?
-					<Button onClick={() => deActivatePolicy(record.policy_id)}>
-						Deactivate
-					</Button> : <></>
+				<Tooltip title="Deactivate">
+<					Button icon={<StopOutlined/>} onClick={() => deActivatePolicy(record.policy_id)}>
+					</Button> 
+				</Tooltip>: <></>
 			)
 		}
 	];
@@ -83,9 +88,11 @@ export default function Policies() {
 			dataIndex: 'details',
 			width: '10%',
 			render: (text: any, record: { policy_id: any; }) => (
-				<Button onClick={() => getPolicyDetails(record.policy_id)}>
-					View
-				</Button>
+				<Tooltip title="View">
+					<Button icon={<BarsOutlined/>}  onClick={() => getPolicyDetails(record.policy_id)}>
+					</Button>
+				</Tooltip>
+				
 			)
 		},
 		{
@@ -94,9 +101,10 @@ export default function Policies() {
 			width: '30%',
 			render: (text: any, record: { policy_id: any; default: any }) => (
 				record.default === false ?
-					<Button onClick={() => activatePolicy(record.policy_id)}>
-						Activate
-					</Button> : <></>
+					<Tooltip title="Activate">
+						<Button icon={<PoweroffOutlined/>} onClick={() => activatePolicy(record.policy_id)}>
+						</Button>
+					</Tooltip>: <></>
 			)
 		}
 	];
