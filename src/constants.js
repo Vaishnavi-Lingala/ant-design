@@ -1,5 +1,6 @@
 // constants
 export const date_format = "YYYY-MM-DD";
+export const date_display_format = " Do MMM YYYY";
 export const time_format = "HH:mm:ss";
 export const ts_format = `${date_format} ${time_format}`;
 

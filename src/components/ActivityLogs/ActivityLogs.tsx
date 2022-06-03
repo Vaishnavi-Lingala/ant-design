@@ -18,7 +18,8 @@ import {
     end_date,
     end_time,
     hiddenFields,
-    logFieldNames
+    logFieldNames,
+    date_display_format
 } from '../../constants';
 import { openNotification } from "../Layout/Notification";
 
@@ -127,7 +128,7 @@ export default function ActivityLogs() {
     const columns = [
         {
             title: "Time",
-            render: (text, record) => <>{moment.utc(record.activity?.created_ts).local().format(`${date_format} ${time_format}`)}</>
+            render: (text, record) => <>{moment.utc(record.activity?.created_ts).local().format(`${date_display_format} ${time_format}`)}</>
         },
         {
             title: "Actor",
