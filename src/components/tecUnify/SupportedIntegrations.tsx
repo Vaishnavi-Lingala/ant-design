@@ -12,32 +12,41 @@ function SupportedIntegrations({data}: SProps): JSX.Element {
   function handleClick(e) {
   }
 
+  function AppCard({app_id, app_name, window_title}: mockType) {
+    return (
+      <>
+        <h4 className='AppList-CardHeader'>
+          {app_name}
+          <img className='AppList-CardBody_ImgSize' alt='app logo' src='https://placeholder.pics/svg/100' />
+        </h4>
+        <div className='AppList-CardBody'>
+          <span>Window Title: {window_title}</span>
+          <span>App Id: {app_id}</span>
+        </div>
+      </>
+    );
+  }
+
   return (
     <>
-      <div className='flex-container'>
-        <div className='sidebar-container'>
-          <Search style={{width: '200px'}}/>
-          <div className='filters-container'>
-            filters
-          </div>
-        </div>
-
-        <div className='flex-container flex-wrap'>
-        { 
-          data.map((item): JSX.Element => (
-            <Card key={item.app_id} title={item.app_name} className='flex-adjust card-unify' onClick={handleClick}>
-              <div className='flex-container flex-between'>
-                <div className='info-container'>
-                  <p>App Id: {item.app_id}</p>
-                  <p>Window Title: {item.window_title}</p>
-                </div>
-                <img className='img-hide' alt='app logo' src='https://placeholder.pics/svg/100' />
-              </div>
-            </Card>
-          ))
-        }
+      <div className='Sidebar'>
+        <Search/>
+        <div>
+          filters
         </div>
       </div>
+
+        <ul className='AppList'>
+        { 
+          data.map((item): JSX.Element => {
+            return (
+              <li className='AppList-Item AppList-Card'>
+                <AppCard {...item}/>
+              </li>
+            );
+          })
+        }
+        </ul>
     </>
   );
 }

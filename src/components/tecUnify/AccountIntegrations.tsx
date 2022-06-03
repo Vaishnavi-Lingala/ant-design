@@ -56,7 +56,7 @@ function AccountIntegrations(): JSX.Element {
 
   const OptionsMenu = (
     <Dropdown placement='bottomRight' overlay={menuOptions} trigger={['click']}>
-      <BarsOutlined style={{ cursor: 'pointer' }} />
+      <BarsOutlined className='_Pointer'/>
     </Dropdown>
   )
 
@@ -110,18 +110,18 @@ function AccountIntegrations(): JSX.Element {
 
   return (
     <>
-      <div className='sidebar-container'>
-        <Search style={{width: '200px'}} onSearch={updateFilter}/>
-        <Menu className='no-border' onClick={updateFilter}>
+      <div className='Sidebar'>
+        <Search onSearch={updateFilter}/>
+        <Menu className='_NoBorder' onClick={updateFilter}>
           <Menu.Item key='active'>Active - ({filteredAppList?.active?.length})</Menu.Item>
           <Menu.Item key='inactive'>Inactive - ({filteredAppList?.inactive?.length})</Menu.Item>
         </Menu>
       </div>
          
-      <ul className='app-list flex-adjust'>
+      <ul className='AppList _FlexColumn'>
         { (appList) &&
           filteredAppList?.[filter.page].map((app: mockType): JSX.Element => (
-            <li className='app-item' key={app.app_id}>
+            <li className='AppList-Item AppList-Banner' key={app.app_id}>
               <Link to={{
                 pathname: `/apps/${app.app_id}/${app.app_name}`,
                 state: app

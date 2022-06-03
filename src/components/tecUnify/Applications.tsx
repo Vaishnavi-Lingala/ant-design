@@ -72,7 +72,7 @@ function Applications(): JSX.Element {
       </div>
 
       <Skeleton loading={currPage.isLoading}>
-        <div className='header-container border'>
+        <div className='Content-HeaderContainer'>
           <Button id='supported' size='large' type='primary' onClick={handleClick}>
             Browse Supported apps 
           </Button>
@@ -82,7 +82,7 @@ function Applications(): JSX.Element {
           </Button>
         </div>
 
-        <div className='content-container-unify border'>
+        <div className='Content-ComponentView'>
           <Skeleton loading={false}>
             <SwitchTrack/>
           </Skeleton>
