@@ -17,6 +17,31 @@ export function User(props: any) {
     const [pageSize, setPageSize]: any = useState(10);
     const columns = [{title: "Group Name", dataIndex: "name", width:"40%" },
     {title: "Status", dataIndex: "status", width:"40%" }];
+    const userObj = {
+        last_invite_accepted: "Last Invite Accepted",
+        sourced_by: "Sourced By",
+        uid: "User Id",
+        login_user_name: "Login Username",
+        is_shipping_contact: "Is Shipping Contact",
+        last_name: "Last Name",
+        idp_user_id: "IDP User Id",
+        display_name: "Display Name",
+        account_id: "Account Id",
+        first_name: "First Name",
+        user_name: "Username",
+        eula_accepted_date: "Eula Accepted Date",
+        is_technical_contact: "Is Technical Contact",
+        is_billing_contact: "Is Billing Contact",
+        last_portal_login: "Last Portal Login",
+        status: "Status",
+        upn: "UPN",
+        email:"Email",
+        last_invite_sent: "Last Invite Sent",
+        login_domain: "Login Domain",
+        is_portal_admin: "Is Portal Admin",
+        sam: "SAM",
+        key: "Key"
+    }
 
     useEffect(()=> {
         setLoadingDetails(true);
@@ -45,18 +70,14 @@ export function User(props: any) {
                 <TabPane tab="Profile" key="profile">
                     <Skeleton loading={loadingDetails}>
                         <div className="content-container-policy">
-                            <div style={{width: "100%", display: "flex", marginBottom: "10px"}}>
-                            <div style={{width: "50%"}}><b>Username</b></div>
-                                <div>{userDetails.user_name}</div>
+                        {
+                        Object.keys(userDetails).map((eachKey) => {
+                            return <div style={{width: "100%", display: "flex", marginBottom: "10px"}}>
+                            <div style={{width: "50%"}}><b>{userObj[eachKey]}</b></div>
+                                <div>{(typeof userDetails[eachKey] === "boolean") ? ((userDetails[eachKey] === true) ? "Yes" : "No") : userDetails[eachKey]}</div>
                             </div>
-                            <div style={{width: "100%", display: "flex", marginBottom: "10px"}}>
-                            <div style={{width: "50%"}}><b>Email</b></div>
-                                <div>{userDetails.email}</div>
-                            </div>
-                            <div style={{width: "100%", display: "flex", marginBottom: "10px"}}>
-                            <div style={{width: "50%"}}><b>Status</b></div>
-                                <div>{userDetails.status}</div>
-                            </div>    
+                        })
+                       } 
                         </div>
                     </Skeleton>
                 </TabPane>

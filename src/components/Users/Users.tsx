@@ -4,8 +4,10 @@ import ApiService from "../../Api.service"
 import ApiUrls from '../../ApiUtils';
 import { AddUser } from "./AddUser";
 import { User } from "./User";
+import { MoreOutlined } from "@ant-design/icons"
 
 import { openNotification } from "../Layout/Notification";
+import SubMenu from "antd/lib/menu/SubMenu";
 
 export default function Users() {
 
@@ -19,49 +21,42 @@ export default function Users() {
 	const [lifeCycleTypes, setLifeCycleTypes]: any = useState(undefined);
 
 	const columns = [{
+		title: 'First Name',
+		dataIndex: 'first_name'
+		},{
+		title: 'Last Name',
+		dataIndex: 'last_name'
+	},{
+		title: 'Email',
+		dataIndex: 'email'
+	},{
 		title: 'Username',
-		dataIndex: 'user_name',
-		width: '30%'
-	},
-	{
+		dataIndex: 'user_name'
+	},{
 		title: 'Status',
-		dataIndex: 'status',
-		width: '20%'
-	},
-	{
-		title: 'Details',
-		dataIndex: 'details',
-		width: '20%',
-		render: (text: any, record: { uid: any; }) => (
-			<Button onClick={() => getUserDetails(record.uid)}>
-				View
-			</Button>
-		)
-	},
-	{
+		dataIndex: 'status'
+	},{
 		title: 'Actions',
 		dataIndex: 'actions',
-		width: '35%',
 		render: (text: any, record: { uid: any; user_name: any}) => (
-			<Dropdown overlay={<Menu
-				onClick={({ key }) => {
-					changeUserStatus(key, record.uid, record.user_name)
-				}}>
-				{
+			<Dropdown overlay={<Menu>
+					<Menu.Item key={"view"} onClick={() => {
+					getUserDetails(record.uid)
+				}}>View</Menu.Item>
+				<SubMenu key={"changeStatus"} title={"Change Status"} >
+					{
 					statusList.map(item => {
-						return <Menu.Item key={item.key}>
+						return <Menu.Item key={item.key} onClick={({key}) => {changeUserStatus(key, record.uid, record.user_name)}}>
 							{item.value}
 						</Menu.Item>
 					})
 				}
-
+					</SubMenu>
 			</Menu>
 			}>
-				{<Button onClick={e => e.preventDefault()}>
-					<Space>
-						Change Status
-					</Space>
-				</Button>}
+				{
+				<MoreOutlined onClick={e => e.preventDefault()} />
+				}
 			</Dropdown>
 		)
 	}]
@@ -174,6 +169,7 @@ export default function Users() {
 						showHeader={true}
 						columns={columns}
 						dataSource={arr}
+						scroll={{x: true}}
 						pagination={{
 							current: page,
 							pageSize: pageSize,
