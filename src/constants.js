@@ -21,7 +21,8 @@ export const hiddenFields = {
         'reader_serial',
         'reader_type',
         'reader_name',
-        'uid'
+        'uid',
+        'machine_type'
     ],
     user: [
         'account_id',
@@ -52,6 +53,7 @@ export const logFieldNames = {
         "uid": "Machine ID",
         "machine_id": "Machine ID",
         "machine_name": "Machine name",
+        "machine_type": "Machine type",
         "mac_address": "MAC",
         "serial_number": "Serial number",
         "domain": "Domain",
@@ -118,11 +120,15 @@ export const filterableFieldNames = {
     "product_name": logFieldNames.activity.product_name,
     "api_end_point": logFieldNames.activity.api_end_point,
     "auth_profile_id": logFieldNames.activity.auth_profile_id,
-    "machine_name": logFieldNames.machine.machine_name,
     "serial_number": logFieldNames.machine.serial_number,
     "public_machine_ip": logFieldNames.machine.public_ip,
+    "public_ip": logFieldNames.machine.public_ip,
+    "email": logFieldNames.user.email,
+    "display_name": logFieldNames.activity.display_name,
+    "machine_name": logFieldNames.machine.machine_name,
+    "machine_type": logFieldNames.machine.machine_type,
+    "local_ip": logFieldNames.machine.local_ip,
     "mechanism_name": logFieldNames.activity.mechanism_name,
-    "display_name": logFieldNames.activity.display_name
 };
 
 
