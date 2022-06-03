@@ -2,10 +2,11 @@ import { Skeleton, Button, Divider } from "antd";
 import { useContext, useEffect, useState } from "react";
 import ApiService from "../../Api.service"
 import ApiUrls from "../../ApiUtils"
-import { machineFieldNames } from "../../constants";
+import { machineFieldNames, time_format } from "../../constants";
 import { useHistory } from 'react-router-dom';
 
 import { openNotification } from "../Layout/Notification";
+import moment from "moment";
 
 export function MachineDetails(props: any) {
 
@@ -26,6 +27,11 @@ export function MachineDetails(props: any) {
             </>
         );
     };
+
+    function calculateExpiryDays(expirydate) {
+        const inputFormat = `DD-MM-YYYY ${time_format}` ;
+        return moment(expirydate, inputFormat).diff(moment(moment().format(inputFormat), inputFormat), 'days');
+    }
 
     useEffect(() => {
         setLoadingDetails(true);
@@ -77,11 +83,11 @@ export function MachineDetails(props: any) {
                                         value={machineDetails['cert_details'][key]}
                                         key={machineDetails['cert_details'][key]}
                                     />)}
-                                {/* <DisplayField
+                                <DisplayField
                                     displayName={'Expiry days'}
-                                    value={}
+                                    value={calculateExpiryDays(machineDetails['cert_details']['valid_to'])}
                                     key="expiry-days"
-                                /> */}
+                                />
                             </> : <></>
                     }
 
