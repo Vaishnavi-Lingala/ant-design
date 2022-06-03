@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from "react"
-import { Button, Skeleton, Table, Modal, Input, Row, Col, Typography, Tabs } from 'antd';
+import { Button, Skeleton, Table, Tabs, Tooltip } from 'antd';
+import { BarsOutlined } from "@ant-design/icons"
 import ApiService from "../../Api.service";
 import ApiUrls from '../../ApiUtils';
 import GroupDetails from "./GroupDetails";
@@ -32,9 +33,10 @@ export default function Groups() {
             dataIndex: 'actions',
             width: '40%',
             render: (text: any, record: { uid: any; }) => (
-                <Button onClick={() => getGroup(record.uid)}>
-                    View
-                </Button>
+                <Tooltip title="View">
+                    <Button icon={<BarsOutlined/>} onClick={() => getGroup(record.uid)}>
+                    </Button>
+                </Tooltip>
             )
         }
     ];

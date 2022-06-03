@@ -1,10 +1,10 @@
-import { Skeleton, Table, Button, Dropdown, Menu, Space } from "antd";
+import { Skeleton, Table, Button, Dropdown, Menu, Space, Tooltip } from "antd";
 import { useContext, useEffect, useState } from "react";
 import ApiService from "../../Api.service"
 import ApiUrls from '../../ApiUtils';
 import { AddUser } from "./AddUser";
 import { User } from "./User";
-import { MoreOutlined } from "@ant-design/icons"
+import { MoreOutlined, BarsOutlined } from "@ant-design/icons"
 
 import { openNotification } from "../Layout/Notification";
 import SubMenu from "antd/lib/menu/SubMenu";
@@ -36,26 +36,34 @@ export default function Users() {
 		title: 'Status',
 		dataIndex: 'status'
 	},{
+		title: 'Details',
+		dataIndex: 'details',
+		render: (text: any, record: { uid: any; user_name: any}) => (
+			<Tooltip title="View">
+				<Button icon={<BarsOutlined />} onClick={() => getUserDetails(record.uid)}/>
+					
+			</Tooltip>
+		)
+	},{
 		title: 'Actions',
 		dataIndex: 'actions',
 		render: (text: any, record: { uid: any; user_name: any}) => (
-			<Dropdown overlay={<Menu>
-					<Menu.Item key={"view"} onClick={() => {
-					getUserDetails(record.uid)
-				}}>View</Menu.Item>
-				<SubMenu key={"changeStatus"} title={"Change Status"} >
-					{
-					statusList.map(item => {
-						return <Menu.Item key={item.key} onClick={({key}) => {changeUserStatus(key, record.uid, record.user_name)}}>
-							{item.value}
-						</Menu.Item>
-					})
-				}
-					</SubMenu>
-			</Menu>
+			<Dropdown overlay={
+				<Menu key={"changeStatus"} title={"Change Status"} >
+						{
+						statusList.map(item => {
+							return <Menu.Item key={item.key} onClick={({key}) => {changeUserStatus(key, record.uid, record.user_name)}}>
+								{item.value}
+							</Menu.Item>
+						})
+					}
+				</Menu>
 			}>
 				{
-				<MoreOutlined onClick={e => e.preventDefault()} />
+					<Tooltip title="Change status">
+						<Button icon={<MoreOutlined/>} onClick={e => e.preventDefault()} />
+
+					</Tooltip>
 				}
 			</Dropdown>
 		)
