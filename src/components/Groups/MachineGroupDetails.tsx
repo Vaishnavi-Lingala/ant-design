@@ -5,6 +5,7 @@ import ApiUrls from '../../ApiUtils';
 import Moment from 'moment';
 import MachinesSelection from "./MachinesSelection";
 import { useHistory } from "react-router-dom";
+import './MachineGroupDetails.css';
 
 import { openNotification } from "../Layout/Notification";
 
