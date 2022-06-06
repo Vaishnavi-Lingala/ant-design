@@ -1,5 +1,6 @@
-import { Button, Skeleton, Table } from 'antd';
-import { useEffect, useState } from 'react';
+import { Button, Skeleton, Table, Tooltip  } from 'antd';
+import { BarsOutlined, PoweroffOutlined, StopOutlined } from "@ant-design/icons"
+import { useContext, useEffect, useState } from 'react';
 import { MenuOutlined } from '@ant-design/icons';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { arrayMoveImmutable } from 'array-move';
@@ -20,19 +21,21 @@ export default function Mechanisms() {
 		{
 			title: 'Mechanism Name',
 			dataIndex: 'mechanism_name',
-			width: '40%'
+			width: '60%'
 		},
 		{
 			title: 'Details',
 			dataIndex: 'details',
 			width: '20%',
 			render: (text: any, record: { mechanism_id: any; }) => (
-				<Button onClick={() => {
-					// getMechanismDetails(record.mechanism_id)
-					history.push('/mechanism/' + record.mechanism_id)
-				}}>
-					View
-				</Button>
+				<Tooltip title="View">
+					<Button icon={<BarsOutlined/>} onClick={() => {
+						// getMechanismDetails(record.mechanism_id)
+						history.push('/mechanism/' + record.mechanism_id)
+					}}>
+					</Button>
+				</Tooltip>
+				
 			)
 		},
 		{
@@ -40,9 +43,11 @@ export default function Mechanisms() {
 			dataIndex: 'activate',
 			width: '20%',
 			render: (text: any, record: { mechanism_id: any; default: any }) => (
-				<Button onClick={() => activateMechanism(record.mechanism_id)}>
-					Activate
-				</Button>
+				<Tooltip title="Activate">
+					<Button icon={<PoweroffOutlined />} onClick={() => activateMechanism(record.mechanism_id)}>
+					</Button>
+				</Tooltip>
+				
 			)
 		}
 	];
@@ -72,12 +77,14 @@ export default function Mechanisms() {
 			dataIndex: 'details',
 			width: '20%',
 			render: (text: any, record: { mechanism_id: any }) => (
-				<Button onClick={() => {
+				<Tooltip title="View">
+					<Button icon={<BarsOutlined/>} onClick={() => {
 					history.push('/mechanism/' + record.mechanism_id)
 					// getMechanismDetails(record.mechanism_id)
-				}}>
-					View
-				</Button>
+					}}>
+					</Button>
+				</Tooltip>
+				
 			)
 		},
 		{
@@ -86,9 +93,10 @@ export default function Mechanisms() {
 			width: '20%',
 			render: (text: any, record: { mechanism_id: any; default: any }) => (
 				record.default === false ?
-					<Button onClick={() => deActivateMechanism(record.mechanism_id)}>
-						Deactivate
-					</Button> : <></>
+					<Tooltip title="Deactivate">
+						<Button icon={<StopOutlined/>} onClick={() => deActivateMechanism(record.mechanism_id)}>
+						</Button>
+					</Tooltip>: <></>
 			)
 		}
 	];

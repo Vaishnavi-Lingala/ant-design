@@ -1,11 +1,12 @@
-import { Skeleton, Button } from "antd";
+import { Skeleton, Button, Divider } from "antd";
 import { useContext, useEffect, useState } from "react";
 import ApiService from "../../Api.service"
 import ApiUrls from "../../ApiUtils"
-import { machineFieldNames } from "../../constants";
+import { machineFieldNames, time_format } from "../../constants";
 import { useHistory } from 'react-router-dom';
 
 import { openNotification } from "../Layout/Notification";
+import moment from "moment";
 
 export function MachineDetails(props: any) {
 
@@ -16,16 +17,21 @@ export function MachineDetails(props: any) {
     const DisplayField = ({ displayName, value }) => {
         return (
             <>
-                <div style={{ width: "100%", display: "flex", marginBottom: "10px" }}>
-                    <div style={{ width: "50%" }}>
-                        <b>{displayName}</b>
+                <div style={{ width: "100%", display: "flex", marginTop: "10px" }}>
+                    <div style={{ width: "30%" }}>
+                        <b>{typeof displayName !== 'object' ? displayName : null}</b>
                     </div>
-                    <div>{value}</div>
+                    <div>{typeof value !== 'object' ? value : null}</div>
                 </div>
 
             </>
         );
     };
+
+    function calculateExpiryDays(expirydate) {
+        const inputFormat = `DD-MM-YYYY ${time_format}` ;
+        return moment(expirydate, inputFormat).diff(moment(moment().format(inputFormat), inputFormat), 'days');
+    }
 
     useEffect(() => {
         setLoadingDetails(true);
@@ -52,14 +58,39 @@ export function MachineDetails(props: any) {
             </div>
             <Skeleton loading={loadingDetails}>
                 <div className="content-container rounded-grey-border">
-                    {Object.keys(machineDetails).map((machineField) => (
-                        machineField !== 'products' ?
-                            <DisplayField
-                                displayName={machineFieldNames[machineField]}
-                                value={machineDetails[machineField]}
-                                key={machineField}
-                            /> : <></>
-                    ))}
+                    <div style={{ fontWeight: '600', fontSize: '30px'}}>Details</div>
+                    {
+                        Object.keys(machineDetails).map((machineField) => (
+                            machineField !== 'products' && machineDetails[machineField] !== 'object' ?
+                                <DisplayField
+                                    displayName={machineFieldNames[machineField]}
+                                    value={machineDetails[machineField]}
+                                    key={machineField}
+                                /> : <></>
+                        ))
+                    }
+
+                    <Divider style={{ borderTop: '1px solid #d7d7dc' }} />
+
+                    <div className="content-policy-key-header">Certificate Details</div>
+
+                    {
+                        typeof machineDetails['cert_details'] === 'object' ?
+                            <>
+                                {Object.keys(machineFieldNames.cert_details)?.map(key =>
+                                    <DisplayField
+                                        displayName={machineFieldNames.cert_details[key]}
+                                        value={machineDetails['cert_details'][key]}
+                                        key={machineDetails['cert_details'][key]}
+                                    />)}
+                                <DisplayField
+                                    displayName={'Expiry days'}
+                                    value={calculateExpiryDays(machineDetails['cert_details']['valid_to'])}
+                                    key="expiry-days"
+                                />
+                            </> : <></>
+                    }
+
                 </div>
             </Skeleton>
         </>
