@@ -3,13 +3,16 @@ import { Link, useHistory } from 'react-router-dom';
 import { Menu, Dropdown, Input} from 'antd';
 import { BarsOutlined, UserAddOutlined, UsergroupAddOutlined, PoweroffOutlined } from '@ant-design/icons';
 
+import { openNotification } from "../Layout/Notification";
+import ApiService from '../../Api.service';
+import ApiUrls from '../../ApiUtils';
+import { AccountConfig, Template } from './types';
+
 const { Search } = Input;
 
-import { mockType, mockApiRes } from './mockApiCall';
-
 interface AppList {
-  active?: mockType[];
-  inactive?: mockType[];
+  active?: AccountConfig[];
+  inactive?: AccountConfig[];
 }
 
 interface FilterType {
@@ -23,6 +26,7 @@ const defaultFilter: FilterType = {
 };
 
 function AccountIntegrations(): JSX.Element {
+  const [templatesRef, setTemplatesRef] = useState<Template[]>();
   const [appList, setAppList] = useState<AppList>();
   const [filteredAppList, setFilteredAppList] = useState<AppList>();
   const [filter, setFilter] = useState<FilterType>(defaultFilter);
@@ -37,21 +41,21 @@ function AccountIntegrations(): JSX.Element {
   const menuOptions = (
     <Menu
       items={
-    [
-      {
-        key: '1',
-        label: <span><UserAddOutlined/> Assign to User</span>,
-      },
-      {
-        key: '2',
-        label: <span><UsergroupAddOutlined/> Assign to Group</span>
-      },
-      {
-        key: '3',
-        label: <span><PoweroffOutlined/> Move to Inactive</span>
-      },
-    ]
-    }/>
+        [
+          {
+            key: '1',
+            label: <span><UserAddOutlined/> Assign to User</span>,
+          },
+          {
+            key: '2',
+            label: <span><UsergroupAddOutlined/> Assign to Group</span>
+          },
+          {
+            key: '3',
+            label: <span><PoweroffOutlined/> Move to Inactive</span>
+          },
+        ]
+      }/>
   );
 
   const OptionsMenu = (
@@ -60,12 +64,17 @@ function AccountIntegrations(): JSX.Element {
     </Dropdown>
   )
 
-  function fetchApps(): void {
-    // NOTE: make api for app templates, joining with xref table. in order to get the templates
-    // linked to the current account
+  async function fetchApps() {
     if (appList === undefined) {
-      let activeApps = mockApiRes.filter((app): boolean | undefined => app.active);
-      let inactiveApps = mockApiRes.filter((app): boolean | undefined => !app.active);
+      const configs: AccountConfig[] = await ApiService
+        .get(ApiUrls.allAccountConfigs(48), undefined, true)
+        .catch((error) => {
+          console.error('Error: ', error);
+          openNotification('error', 'An Error has occured getting the application list.');
+        });
+
+      let activeApps = configs.filter((app): boolean | undefined => app.active);
+      let inactiveApps = configs.filter((app): boolean | undefined => !app.active);
 
       setAppList({
         active: activeApps,
@@ -73,26 +82,44 @@ function AccountIntegrations(): JSX.Element {
       });
 
       setFilteredAppList(appList);
+
+      const templateIds = configs
+        .map(config => config.template_id)
+        .filter((value, index, self) => self.indexOf(value) === index);
+
+      const templatePromises = templateIds
+        .map((id) => {
+          return ApiService.get(ApiUrls.templateById(id), undefined, true); 
+        });
+
+      console.log(templatePromises);
+
+      await Promise.all(templatePromises)
+        .then((result: Template[]) => {setTemplatesRef(result)})
+        .catch((error) => {
+          console.error('Error: ', error);
+          openNotification('error', 'An Error has occured getting the reference templates.');
+        });
     }
   }
 
-  function filterApps(): void {
+  function filterApps() {
     if (filter.search === '') {
       setFilteredAppList(appList);
       return
     }
 
-    const filteredApps = appList?.[filter.page].filter(
-      (app: mockType): boolean | undefined =>
-        app.app_name?.toLowerCase().includes(filter.search));
+    // const filteredApps = appList?.[filter.page].filter(
+    //   (app: mockType): boolean | undefined =>
+    //     app.app_name?.toLowerCase().includes(filter.search));
 
-    setFilteredAppList({
-      ...appList,
-      [filter.page]: filteredApps
-    });
+    // setFilteredAppList({
+    //   ...appList,
+    //   [filter.page]: filteredApps
+    // });
   }
 
-  function updateFilter(value: any): void { 
+  function updateFilter(value: any) { 
     setFilter(() => {
       if (value.key) {
         return {
@@ -108,6 +135,10 @@ function AccountIntegrations(): JSX.Element {
     });
   }
 
+  function lookupRef(template_id: number): Template {
+    return templatesRef?.filter((template) => template.id === template_id);
+  }
+
   return (
     <>
       <div className='Sidebar'>
@@ -120,14 +151,14 @@ function AccountIntegrations(): JSX.Element {
          
       <ul className='AppList _FlexColumn'>
         { (appList) &&
-          filteredAppList?.[filter.page].map((app: mockType): JSX.Element => (
-            <li className='AppList-Item AppList-Banner' key={app.app_id}>
+          filteredAppList?.[filter.page].map((app: AccountConfig): JSX.Element => (
+            <li className='AppList-Item AppList-Banner' key={app.config_id}>
               <Link to={{
-                pathname: `/apps/${app.app_id}/${app.app_name}`,
+                pathname: `/apps/${app.config_id}/${lookupRef(app.template_id).name}`,
                 state: app
               }}>
-                <img src={app.logo} width={50} height={50}/>
-                {app.app_name}
+                <img src={lookupRef(app.template_id).logo} width={50} height={50}/>
+                {lookupRef(app.template_id).name}
               </Link>
               {OptionsMenu}
             </li>

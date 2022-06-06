@@ -18,8 +18,8 @@ export interface Template {
   startidx: number;
   endidx: number;
   udf: string;
-  creadted_ts: string; // Date object?
-  update_ts: string;
+  creadted_ts: Date; // Date object?
+  update_ts: Date;
   logo: string; // byte array?
   deleted: boolean;
   mfa: number;
@@ -29,7 +29,52 @@ export interface Template {
   path: string;
 };
 
-export interface ApiResponse {
+export interface AccountConfig {
+  min2tray: boolean;
+  tab_name: string;
+  signalR_command: string;
+  tap_out_activity: string;
+  rfid_reader: string;
+  tecverify_url: string;
+  sequence_launch_flag: boolean;
+  pic_path: string;
+  tap_seq: string;
+  browser_session_flag: boolean;
+  tenant_url: string;
+  install_token: string;
+  memo: string;
+  remember_me_flag: boolean;
+  kiosk: boolean;
+  ocr_words: string;
+  ocr_PageSegmentationMode: string;
+  config_deleted: boolean;
+  xref_id: number;
+  udf: string;
+  ocr_EngineMode: string;
+  ocr_TesseractVersion: string;
+  theme: string;
+  xref_deleted: boolean;
+  signalR_user: string;
+  app_idle_time: number;
+  ocr_path: string;
+  active: boolean;
+  delay_loop: number;
+  template_id: number;
+  auto_launch_flag: boolean;
+  signalR_end_point: string;
+  ad_intergrated: boolean;
+  config_id: number;
+  min_browser: boolean;
+  ocr_fast: string;
+  tap_seq_name: string;
+  pipe_name: string;
+  signalR_reg_code: string;
+  debug: boolean;
+  account_id: number;
+  signalR_hub: string;
+}
+
+export interface paginationApiRes {
   items_on_page: number;
   items_per_page: number;
   next: string;

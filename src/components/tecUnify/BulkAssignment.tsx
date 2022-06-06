@@ -8,7 +8,7 @@ import { CaretDownOutlined } from '@ant-design/icons';
 import ApiService from "../../Api.service"
 import ApiUrls from '../../ApiUtils';
 
-import type { ApiResponse, User } from './types'; 
+import type { paginationApiRes, User } from './types'; 
 import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 
 interface Page {
@@ -25,7 +25,7 @@ const { Search } = Input;
 
 function ProperCase(s: string) { return s.charAt(0).toUpperCase() + s.substring(1).toLowerCase(); }
 
-async function getUsersList({ current, limit }: { current: number; limit: number; }): Promise<ApiResponse> {
+async function getUsersList({ current, limit }: { current: number; limit: number; }): Promise<paginationApiRes> {
   return await ApiService
     .get(ApiUrls.users, { start: current, limit: limit });
 }
@@ -37,15 +37,15 @@ function BulkAssignment() {
 
   const [selectedUid, setSelectedUid] = useState<(string | undefined)[]>([]);
 
-  const [userList, setUserList] = useState<ApiResponse>();
-  const [filteredUsers, setFilteredUsers] = useState<ApiResponse>();
+  const [userList, setUserList] = useState<paginationApiRes>();
+  const [filteredUsers, setFilteredUsers] = useState<paginationApiRes>();
 
   const [appList, setAppList] = useState();
   const [filteredApps, setFilteredApps] = useState();
 
   useEffect(() => { 
     getUsersList(userPage)
-      .then((data: ApiResponse) => {
+      .then((data: paginationApiRes) => {
         setUserList(data);
         setFilteredUsers(data);
       }) 
