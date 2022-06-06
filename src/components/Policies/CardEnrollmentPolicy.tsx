@@ -200,13 +200,6 @@ const CardEnrollmentPolicy = (props) => {
                         }
                     </div>
 
-                    <div className="content-policy-key-header">
-                        Policy Type:
-                    </div>
-                    <div>
-                        {cardEnrollDisplayData.policy_type}
-                    </div>
-
                     <div className="content-policy-key-header" style={{ paddingTop: '20px' }}>
                         Max Card Enrollment:
                     </div>
