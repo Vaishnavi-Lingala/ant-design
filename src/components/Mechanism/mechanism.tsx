@@ -73,11 +73,11 @@ function Mechanism(props: any) {
                     if (data.uid === undefined) {
                         setIsEdit(true);
                     }
-            
+
                     if (disabledFactors.includes("NONE")) {
                         disabledFactors.pop();
                     }
-            
+
                     if (disabledFactors1.includes("NONE")) {
                         disabledFactors1.pop();
                         disabledFactors.pop();
@@ -85,7 +85,7 @@ function Mechanism(props: any) {
                         data.challenge_factors[1].factor = "NONE";
                         console.log(data.challenge_factors[1].factor);
                     }
-            
+
                     if (data.uid !== undefined) {
                         Object.keys(data.mechanism_groups).map(result => {
                             groupNames.push(data.mechanism_groups[result].name);
@@ -264,17 +264,20 @@ function Mechanism(props: any) {
     }
 
     return (<>
-        <div className='content-header'>
-            Mechanism
-            {displayDetails['uid'] !== undefined ? <Button style={{ marginLeft: 'auto', alignSelf: 'end' }} onClick={() => {
-                history.push('/mechanism')
-            }}>Back</Button> : <></>}
-        </div>
+        {displayDetails['uid'] !== undefined ?
+            <div className='content-header'>
+                Mechanism
+                {displayDetails['uid'] !== undefined ? <Button style={{ marginLeft: 'auto', alignSelf: 'end' }} onClick={() => {
+                    history.push('/mechanism')
+                }}>Back</Button> : <></>}
+            </div> : <></>
+        }
+
         <Skeleton loading={loading || loadingDetails}>
             <div className="content-container rounded-grey-border">
                 <div className="row-containers">
                     <div>
-                        {displayDetails['uid'] === undefined ? <div className="content-heading">Create Mechanism</div> :
+                        {displayDetails['uid'] === undefined ? <></> :
                             <div className="content-heading">Edit Mechanism</div>
                         }
                     </div>
@@ -471,7 +474,7 @@ function Mechanism(props: any) {
                         onClick={handleCancelClick}>Cancel</Button>
                     <Button type='primary' style={{ float: 'right' }}
                         onClick={handleSaveClick}>Save</Button>
-                </div> : <></>) : <div style={{ paddingTop: '10px', paddingRight: '45px' }}>
+                </div> : <></>) : <div style={{ paddingTop: '10px', paddingRight: '45px', paddingBottom: '20px' }}>
                     <Button style={{ float: 'right', marginLeft: '10px' }}
                         onClick={setCancelClick}>Cancel</Button>
                     <Button type='primary' style={{ float: 'right' }}

@@ -137,10 +137,10 @@ const CardEnrollmentPolicy = (props) => {
 
     return (
         <Skeleton loading={loading}>
-            <div className="content-container-policy">
+            <div className={cardEnrollDisplayData['uid'] === undefined ? "content-container" : "content-container-policy"}>
                 <div className="row-policy-container">
                     <div>
-                        {cardEnrollDisplayData.uid === undefined ? <div className="content-heading">Create Card Enrollment Policy</div> :
+						{cardEnrollDisplayData.uid === undefined ? <></> :
                             <div className="content-heading">{isEdit ? 'Edit' : null} Card Enrollment Policy</div>
                         }
                     </div>
@@ -239,7 +239,7 @@ const CardEnrollmentPolicy = (props) => {
                         onClick={handleCancelClick}>Cancel</Button>
                     <Button type='primary' style={{ float: 'right' }}
                         onClick={handleSaveClick}>Save</Button>
-                </div> : <></>) : <div style={{ paddingTop: '10px', paddingRight: '45px' }}>
+                </div> : <></>) : <div style={{ paddingTop: '10px', paddingRight: '45px', paddingBottom: '20px' }}>
                     <Button style={{ float: 'right', marginLeft: '10px' }}
                         onClick={setCancelClick}>Cancel</Button>
                     <Button type='primary' style={{ float: 'right' }}

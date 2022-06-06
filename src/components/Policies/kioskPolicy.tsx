@@ -175,10 +175,10 @@ export const KioskPolicy = (props: any) => {
 
     return (
         <Skeleton loading={loading || loadingDetails}>
-            <div className="content-container-policy">
+            <div className={kioskDisplayData.uid === undefined ? "content-container" : "content-container-policy"}>
                 <div className="row-policy-container">
                     <div>
-                        {kioskDisplayData.uid === undefined ? <div className="content-heading">Create kiosk Policy</div> :
+						{kioskDisplayData.uid === undefined ? <></> :
                             <div className="content-heading">Edit kiosk Policy</div>
                         }
                     </div>
@@ -324,7 +324,7 @@ export const KioskPolicy = (props: any) => {
                         onClick={handleCancelClick}>Cancel</Button>
                     <Button type='primary' style={{ float: 'right' }}
                         onClick={handleSaveClick}>Save</Button>
-                </div> : <></>) : <div style={{ paddingTop: '10px', paddingRight: '45px' }}>
+                </div> : <></>) : <div style={{ paddingTop: '10px', paddingRight: '45px', paddingBottom: '20px' }}>
                     <Button style={{ float: 'right', marginLeft: '10px' }}
                         onClick={setCancelClick}>Cancel</Button>
                     <Button type='primary' style={{ float: 'right' }}

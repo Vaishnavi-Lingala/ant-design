@@ -12,10 +12,10 @@ import { PasswordPolicy } from './passwordPolicy'
 import ApiUrls from '../../ApiUtils';
 import ApiService from '../../Api.service';
 import { KioskPolicy } from './kioskPolicy';
-
 import { openNotification } from '../Layout/Notification';
 import { CARD_ENROLL, KIOSK, PASSWORD, PIN, TecTANGO } from '../../constants';
 import CardEnrollmentPolicy from './CardEnrollmentPolicy';
+import TableList from './tableList';
 
 export default function Policies() {
 
@@ -117,68 +117,9 @@ export default function Policies() {
 	const [inActiveKioskPolicies, setInActiveKioskPolicies]: any = useState([]);
 	const [activeCardEnrollmentPolicies, setActiveCardEnrollmentPolicies] = useState([]);
 	const [inActiveCardEnrollmentPolicies, setInActiveCardEnrollmentPolicies] = useState([]);
-	const [isPinModalVisible, setIsPinModalVisible] = useState(false);
-	const [isPasswordModalVisible, setIsPasswordModalVisible] = useState(false);
-	const [isKioskModalVisible, setIsKioskModalVisible] = useState(false);
-	const [isCardEnrollmentModalVisible, setIsCardEnrollmentModalVisible] = useState(false);
 	const [tabname, setTabname] = useState("");
 	const [maxEnroll, setMaxEnroll] = useState(null);
 	const { TabPane } = Tabs;
-
-	const pinData = {
-		description: '',
-		name: '',
-		order: 0,
-		policy_type: PIN,
-		auth_policy_groups: [],
-		policy_req: {
-			expires_in_x_days: 1,
-			is_special_char_req: false,
-			pin_history_period: 0,
-			min_length: 4,
-			is_upper_case_req: false,
-			is_lower_case_req: false,
-			is_non_consecutive_char_req: false,
-			max_length: 4,
-			is_pin_history_req: false,
-			is_num_req: true
-		}
-	}
-
-	const passwordData = {
-		description: '',
-		name: '',
-		order: 0,
-		auth_policy_groups: [],
-		policy_type: PASSWORD,
-		policy_req: {
-			grace_period: ''
-		}
-	}
-
-	const kioskData = {
-		policy_req: {
-			access_key_id: "",
-			assay: "",
-			confirm_assay: ""
-		},
-		auth_policy_groups: [],
-		policy_type: KIOSK,
-		kiosk_machine_groups: [],
-		name: "",
-		description: "",
-	}
-
-	const cardEnrollData = {
-		description: "",
-		name: "",
-		policy_req: {
-			max_card_enrollment: 1
-		},
-		kiosk_machine_groups: [],
-		policy_type: "CARD_ENROLL",
-		auth_policy_groups: [],
-	}
 
 	const DragHandle = SortableHandle(() => <MenuOutlined style={{ cursor: 'grab', color: '#999' }} />);
 	const SortableItem = SortableElement(props => <tr {...props} />);
@@ -299,6 +240,10 @@ export default function Policies() {
 		const index = activeKioskPolicies.findIndex(x => x.index === restProps['data-row-key']);
 		return <SortableItem index={index} {...restProps} />;
 	};
+
+	function handleGetPolicies() {
+		getPolicies();
+	}
 
 	function getPolicies() {
 		setLoadingDetails(true)
@@ -459,6 +404,12 @@ export default function Policies() {
 		getPolicies();
 	}, []);
 
+	// useEffect(() => {
+	// 	if (pinDetails !== "") {
+	// 		history.push("/policies/pin/" + pinDetails)
+	// 	}
+	// }, [pinDetails])
+
 	useEffect(() => {
 		(async function () {
 			if (currentSeletedProduct === TecTANGO) {
@@ -481,6 +432,7 @@ export default function Policies() {
 	const history = useHistory();
 
 	function activatePolicy(uid: string) {
+		console.log(uid);
 		ApiService.get(ApiUrls.activatePolicy(uid))
 			.then(data => {
 				if (!data.errorSummary) {
@@ -498,6 +450,7 @@ export default function Policies() {
 	}
 
 	function deActivatePolicy(uid: string) {
+		console.log(uid);
 		ApiService.get(ApiUrls.deActivatePolicy(uid))
 			.then(data => {
 				if (!data.errorSummary) {
@@ -536,14 +489,15 @@ export default function Policies() {
 	}
 
 	function getPolicyDetails(uid: any) {
-		localStorage.setItem("policyUid", uid);
 		setLoading(true);
+		localStorage.setItem("policyUid", uid);
+		history.push('/policies/pin/' + uid);
+		// setPinDetails(uid);
 		ApiService.get(ApiUrls.policy(uid))
 			.then(data => {
 				if (!data.errorSummary) {
 					console.log(data);
 					if (data.policy_type === PIN) {
-						history.push('/policies/pin/' + uid);
 						setPinDetails(data);
 					}
 					if (data.policy_type === PASSWORD) {
@@ -572,47 +526,6 @@ export default function Policies() {
 				openNotification('error', 'An Error has occured with getting Policy Details');
 				setLoadingDetails(false);
 			})
-	}
-
-	const handleOk = (policyType: string, object: object) => {
-		ApiService.post(ApiUrls.addPolicy, object)
-			.then(data => {
-				if (!data.errorSummary) {
-					console.log(data);
-					openNotification('success', `Successfully added ${policyType.slice(0, 1) + policyType.slice(1).toLowerCase()} Policy`);
-					getPolicies();
-					if (policyType === PIN) {
-						setIsPinModalVisible(false);
-					}
-					if (policyType === PASSWORD) {
-						setIsPasswordModalVisible(false);
-					} if (policyType === KIOSK) {
-						setIsKioskModalVisible(false);
-					} if (policyType === CARD_ENROLL) {
-						setIsCardEnrollmentModalVisible(false);
-					}
-				}
-				else {
-					openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
-				}
-			}, error => {
-				console.error('Error: ', error);
-				openNotification('error', `An Error has occured with adding ${policyType.slice(0, 1) + policyType.slice(1).toLowerCase()} Policy`);
-			})
-	}
-
-	const handleCancel = (policyType: string) => {
-		if (policyType === PIN) {
-			setIsPinModalVisible(false);
-		}
-		if (policyType === PASSWORD) {
-			setIsPasswordModalVisible(false);
-		} if (policyType === KIOSK) {
-			setIsKioskModalVisible(false);
-		}
-		if (policyType === CARD_ENROLL) {
-			setIsCardEnrollmentModalVisible(false);
-		}
 	}
 
 	return (
@@ -675,178 +588,33 @@ export default function Policies() {
 					<TabPane tab="Pin" key="pin">
 						<Skeleton loading={loading}>
 							{pinDetails ? <PinPolicy pinDetails={pinDetails} /> :
-								isPinModalVisible ? <PinPolicy pinDetails={pinData} handleOk={handleOk} handleCancel={handleCancel} /> :
-									<>
-										<div style={{ width: '100%', border: '1px solid #D7D7DC', borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6' }}>
-											<Button type='primary' size='large' onClick={() => {
-												setIsPinModalVisible(true)
-												history.push('/policies/pin')
-											}}
-											>
-												Add Pin Policy
-											</Button>
-										</div>
-
-										<div style={{
-											fontWeight: 600, fontSize: 'x-large',
-											width: '100%', border: '1px solid #D7D7DC',
-											borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
-										}}
-										>
-											ACTIVE
-										</div>
-
-										<Table
-											style={{ border: '1px solid #D7D7DC' }}
-											showHeader={true}
-											columns={activateColumns}
-											dataSource={activePinPolicies}
-											rowKey={"index"}
-											components={{
-												body: {
-													wrapper: pinDraggableContainer,
-													row: pinDraggableBodyRow,
-												},
-											}}
-											pagination={false}
-										/>
-
-										<br />
-
-										<div style={{
-											fontWeight: 600, fontSize: 'x-large',
-											width: '100%', border: '1px solid #D7D7DC',
-											borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
-										}}
-										>
-											INACTIVE
-										</div>
-										<Table
-											style={{ border: '1px solid #D7D7DC' }}
-											showHeader={true}
-											columns={deActivateColumns}
-											dataSource={inActivePinPolicies}
-											pagination={false}
-										/>
-									</>
+								<TableList policy_type={"pin"}
+									activateColumns={activateColumns} deActivateColumns={deActivateColumns} draggableBodyRow={pinDraggableBodyRow}
+									draggableContainer={pinDraggableContainer} inActivePolicies={inActivePinPolicies} activePolicies={activePinPolicies}
+									handleGetPolicies={handleGetPolicies}
+								/>
 							}
 						</Skeleton>
 					</TabPane>
 					<TabPane tab="Password" key="password">
 						<Skeleton loading={loading}>
 							{passwordDetails ? <PasswordPolicy passwordDetails={passwordDetails} /> :
-								isPasswordModalVisible ? <PasswordPolicy passwordDetails={passwordData} handleOk={handleOk} handleCancel={handleCancel} /> :
-									<>
-										<div style={{ width: '100%', border: '1px solid #D7D7DC', borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6' }}>
-											<Button type='primary' size='large' onClick={() => {
-												setIsPasswordModalVisible(true)
-												history.push('/policies/password')
-											}}
-											>
-												Add Password Policy
-											</Button>
-										</div>
-
-										<div style={{
-											fontWeight: 600, fontSize: 'x-large',
-											width: '100%', border: '1px solid #D7D7DC',
-											borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
-										}}
-										>
-											ACTIVE
-										</div>
-										<Table
-											style={{ border: '1px solid #D7D7DC' }}
-											showHeader={true}
-											columns={activateColumns}
-											dataSource={activePasswordPolicies}
-											rowKey={"index"}
-											components={{
-												body: {
-													wrapper: passwordDraggableContainer,
-													row: passwordDraggableBodyRow,
-												},
-											}}
-											pagination={false}
-										/>
-
-										<br />
-
-										<div style={{
-											fontWeight: 600, fontSize: 'x-large',
-											width: '100%', border: '1px solid #D7D7DC',
-											borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
-										}}
-										>
-											INACTIVE
-										</div>
-										<Table
-											style={{ border: '1px solid #D7D7DC' }}
-											showHeader={true}
-											columns={deActivateColumns}
-											dataSource={inActivepasswordPolicies}
-											pagination={false}
-										/>
-									</>
+								<TableList policy_type={"password"} activateColumns={activateColumns} deActivateColumns={deActivateColumns}
+									draggableBodyRow={passwordDraggableBodyRow} draggableContainer={passwordDraggableContainer}
+									inActivePolicies={inActivepasswordPolicies} activePolicies={activePasswordPolicies} handleGetPolicies={handleGetPolicies}
+								/>
 							}
 						</Skeleton>
 					</TabPane>
 					<TabPane tab="Kiosk" key="kiosk">
 						<Skeleton loading={loading}>
 							{kioskDetails ? <KioskPolicy kioskDetails={kioskDetails} /> :
-								isKioskModalVisible ? <KioskPolicy kioskDetails={kioskData} handleOk={handleOk} handleCancel={handleCancel} /> :
-									<>
-										<div style={{ width: '100%', border: '1px solid #D7D7DC', borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6' }}>
-											<Button type='primary' size='large' onClick={() => {
-												setIsKioskModalVisible(true)
-												history.push('/policies/kiosk')
-											}}
-											>
-												Add Kiosk Policy
-											</Button>
-										</div>
-
-										<div style={{
-											fontWeight: 600, fontSize: 'x-large',
-											width: '100%', border: '1px solid #D7D7DC',
-											borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
-										}}
-										>
-											ACTIVE
-										</div>
-										<Table
-											style={{ border: '1px solid #D7D7DC' }}
-											showHeader={true}
-											columns={activateColumns}
-											dataSource={activeKioskPolicies}
-											rowKey={"index"}
-											components={{
-												body: {
-													wrapper: kioskDraggableContainer,
-													row: kioskDraggableBodyRow,
-												},
-											}}
-											pagination={false}
-										/>
-
-										<br />
-
-										<div style={{
-											fontWeight: 600, fontSize: 'x-large',
-											width: '100%', border: '1px solid #D7D7DC',
-											borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
-										}}
-										>
-											INACTIVE
-										</div>
-										<Table
-											style={{ border: '1px solid #D7D7DC' }}
-											showHeader={true}
-											columns={deActivateColumns}
-											dataSource={inActiveKioskPolicies}
-											pagination={false}
-										/>
-									</>
+								<>
+									<TableList policy_type={"kiosk"} activateColumns={activateColumns} deActivateColumns={deActivateColumns}
+										draggableBodyRow={kioskDraggableBodyRow} draggableContainer={kioskDraggableContainer}
+										inActivePolicies={inActiveKioskPolicies} activePolicies={activeKioskPolicies} handleGetPolicies={handleGetPolicies}
+									/>
+								</>
 							}
 						</Skeleton>
 					</TabPane>
@@ -854,59 +622,12 @@ export default function Policies() {
 						<TabPane tab="Card enrollment" key="card-enrollment">
 							<Skeleton loading={loading}>
 								{cardEnrollPolicy ? <CardEnrollmentPolicy policyDetails={cardEnrollPolicy} /> :
-									isCardEnrollmentModalVisible ? <CardEnrollmentPolicy policyDetails={cardEnrollData} handleOk={handleOk} handleCancel={handleCancel} /> :
-										<>
-											<div style={{ width: '100%', border: '1px solid #D7D7DC', borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6' }}>
-												<Button type='primary' size='large' onClick={() => {
-													setIsCardEnrollmentModalVisible(true);
-													history.push('/policies/card-enrollment');
-												}}
-												>
-													Add Card Enrollment Policy
-												</Button>
-											</div>
-
-											<div style={{
-												fontWeight: 600, fontSize: 'x-large',
-												width: '100%', border: '1px solid #D7D7DC',
-												borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
-											}}
-											>
-												ACTIVE
-											</div>
-											<Table
-												style={{ border: '1px solid #D7D7DC' }}
-												showHeader={true}
-												columns={activateColumns}
-												dataSource={activeCardEnrollmentPolicies}
-												rowKey={"index"}
-												components={{
-													body: {
-														wrapper: CardEnrollmentDraggableContainer,
-														row: CardEnrollmentDraggableBodyRow,
-													},
-												}}
-												pagination={{ position: [] }}
-											/>
-
-											<br />
-
-											<div style={{
-												fontWeight: 600, fontSize: 'x-large',
-												width: '100%', border: '1px solid #D7D7DC',
-												borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
-											}}
-											>
-												INACTIVE
-											</div>
-											<Table
-												style={{ border: '1px solid #D7D7DC' }}
-												showHeader={true}
-												columns={deActivateColumns}
-												dataSource={inActiveCardEnrollmentPolicies}
-												pagination={{ position: [] }}
-											/>
-										</>
+									<>
+										<TableList policy_type={"card-enrollment"} activateColumns={activateColumns} deActivateColumns={deActivateColumns}
+											draggableBodyRow={CardEnrollmentDraggableBodyRow} draggableContainer={CardEnrollmentDraggableContainer}
+											inActivePolicies={inActiveCardEnrollmentPolicies} activePolicies={activeCardEnrollmentPolicies} handleGetPolicies={handleGetPolicies}
+										/>
+									</>
 								}
 							</Skeleton>
 						</TabPane> : null}

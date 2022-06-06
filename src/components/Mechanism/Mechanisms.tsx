@@ -1,5 +1,5 @@
 import { Button, Skeleton, Table } from 'antd';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { MenuOutlined } from '@ant-design/icons';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { arrayMoveImmutable } from 'array-move';
@@ -323,65 +323,63 @@ export default function Mechanisms() {
 			</div> : <></>}
 
 			<Skeleton loading={loading}>
-				{isModalVisible ? <Mechanism handleOk={handleOk} handleCancel={handleCancel} /> : <>
-					<div style={{
-						width: '100%', border: '1px solid #D7D7DC',
-						borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
+				<div style={{
+					width: '100%', border: '1px solid #D7D7DC',
+					borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
+				}}
+				>
+					<Button type='primary' size='large' onClick={() => setIsModalVisible(true)}>
+						Add New Mechanism
+					</Button>
+				</div>
+
+				<div style={{
+					fontWeight: 600, fontSize: 'x-large',
+					width: '100%', border: '1px solid #D7D7DC',
+					borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
+				}}
+				>
+					ACTIVE
+				</div>
+
+
+				<Table
+					style={{ border: '1px solid #D7D7DC' }}
+					showHeader={true}
+					columns={activeColumns}
+					dataSource={activeMechanisms}
+					rowKey={"index"}
+					components={{
+						body: {
+							wrapper: DraggableContainer,
+							row: DraggableBodyRow,
+						},
 					}}
-					>
-						<Button type='primary' size='large' onClick={() => setIsModalVisible(true)}>
-							Add New Mechanism
-						</Button>
-					</div>
+					pagination={false}
+				/>
+				<br />
 
-					<div style={{
-						fontWeight: 600, fontSize: 'x-large',
-						width: '100%', border: '1px solid #D7D7DC',
-						borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
-					}}
-					>
-						ACTIVE
-					</div>
+				<div style={{
+					fontWeight: 600, fontSize: 'x-large',
+					width: '100%', border: '1px solid #D7D7DC',
+					borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
+				}}
+				>
+					INACTIVE
+				</div>
+				<Table
+					style={{ border: '1px solid #D7D7DC' }}
+					showHeader={true}
+					columns={inactiveColumns}
+					dataSource={inactiveMechanisms}
+					pagination={false}
+				/>
+				<Modal visible={isModalVisible} footer={false} width='800px'
+					title={<div style={{fontSize: '30px'}}>Add New Mechanism</div>} centered maskClosable={false} onOk={handleCancel} onCancel={handleCancel}
+				>
+					<Mechanism handleOk={handleOk} handleCancel={handleCancel} />
+				</Modal> 
 
-
-					<Table
-						style={{ border: '1px solid #D7D7DC' }}
-						showHeader={true}
-						columns={activeColumns}
-						dataSource={activeMechanisms}
-						rowKey={"index"}
-						components={{
-							body: {
-								wrapper: DraggableContainer,
-								row: DraggableBodyRow,
-							},
-						}}
-						pagination={false}
-					/>
-					<br />
-
-					<div style={{
-						fontWeight: 600, fontSize: 'x-large',
-						width: '100%', border: '1px solid #D7D7DC',
-						borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
-					}}
-					>
-						INACTIVE
-					</div>
-					<Table
-						style={{ border: '1px solid #D7D7DC' }}
-						showHeader={true}
-						columns={inactiveColumns}
-						dataSource={inactiveMechanisms}
-						pagination={false}
-					/>
-					{/* <Modal visible={isModalVisible} footer={false} width='700px' bodyStyle={{ height: '1150px' }}
-							title={<h4>Add New Mechanism</h4>} centered maskClosable={false} onOk={handleCancel} onCancel={handleCancel}
-						> */}
-					{/* <Mechanism mechanismDetails={mechanism} handleOk={handleOk} handleCancel={handleCancel} /> */}
-					{/* </Modal> */}
-				</>
-				}
 			</Skeleton>
 		</>
 	);
