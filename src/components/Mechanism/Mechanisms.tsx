@@ -1,6 +1,6 @@
-import { Button, Skeleton, Table, Tooltip  } from 'antd';
+import { Button, Skeleton, Table, Tooltip } from 'antd';
 import { BarsOutlined, PoweroffOutlined, StopOutlined } from "@ant-design/icons"
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { MenuOutlined } from '@ant-design/icons';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { arrayMoveImmutable } from 'array-move';
@@ -29,13 +29,12 @@ export default function Mechanisms() {
 			width: '20%',
 			render: (text: any, record: { mechanism_id: any; }) => (
 				<Tooltip title="View">
-					<Button icon={<BarsOutlined/>} onClick={() => {
+					<Button icon={<BarsOutlined />} onClick={() => {
 						// getMechanismDetails(record.mechanism_id)
 						history.push('/mechanism/' + record.mechanism_id)
 					}}>
 					</Button>
 				</Tooltip>
-				
 			)
 		},
 		{
@@ -47,7 +46,6 @@ export default function Mechanisms() {
 					<Button icon={<PoweroffOutlined />} onClick={() => activateMechanism(record.mechanism_id)}>
 					</Button>
 				</Tooltip>
-				
 			)
 		}
 	];
@@ -78,13 +76,13 @@ export default function Mechanisms() {
 			width: '20%',
 			render: (text: any, record: { mechanism_id: any }) => (
 				<Tooltip title="View">
-					<Button icon={<BarsOutlined/>} onClick={() => {
-					history.push('/mechanism/' + record.mechanism_id)
-					// getMechanismDetails(record.mechanism_id)
+					<Button icon={<BarsOutlined />} onClick={() => {
+						history.push('/mechanism/' + record.mechanism_id)
+						// getMechanismDetails(record.mechanism_id)
 					}}>
 					</Button>
 				</Tooltip>
-				
+
 			)
 		},
 		{
@@ -94,9 +92,9 @@ export default function Mechanisms() {
 			render: (text: any, record: { mechanism_id: any; default: any }) => (
 				record.default === false ?
 					<Tooltip title="Deactivate">
-						<Button icon={<StopOutlined/>} onClick={() => deActivateMechanism(record.mechanism_id)}>
+						<Button icon={<StopOutlined />} onClick={() => deActivateMechanism(record.mechanism_id)}>
 						</Button>
-					</Tooltip>: <></>
+					</Tooltip> : <></>
 			)
 		}
 	];
@@ -383,10 +381,10 @@ export default function Mechanisms() {
 					pagination={false}
 				/>
 				<Modal visible={isModalVisible} footer={false} width='800px'
-					title={<div style={{fontSize: '30px'}}>Add New Mechanism</div>} centered maskClosable={false} onOk={handleCancel} onCancel={handleCancel}
+					title={<div style={{ fontSize: '30px' }}>Add New Mechanism</div>} centered maskClosable={false} onOk={handleCancel} onCancel={handleCancel}
 				>
 					<Mechanism handleOk={handleOk} handleCancel={handleCancel} />
-				</Modal> 
+				</Modal>
 
 			</Skeleton>
 		</>

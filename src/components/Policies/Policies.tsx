@@ -52,10 +52,9 @@ export default function Policies() {
 			width: '10%',
 			render: (text: any, record: { policy_id: any; }) => (
 				<Tooltip title="View">
-					<Button icon={<BarsOutlined/>} onClick={() => getPolicyDetails(record.policy_id)}>
+					<Button icon={<BarsOutlined />} onClick={() => getPolicyDetails(record.policy_id)}>
 					</Button>
 				</Tooltip>
-				
 			)
 		},
 		{
@@ -64,10 +63,10 @@ export default function Policies() {
 			width: '30%',
 			render: (text: any, record: { policy_id: any; default: any }) => (
 				record.default === false ?
-				<Tooltip title="Deactivate">
-<					Button icon={<StopOutlined/>} onClick={() => deActivatePolicy(record.policy_id)}>
-					</Button> 
-				</Tooltip>: <></>
+					<Tooltip title="Deactivate">
+						<					Button icon={<StopOutlined />} onClick={() => deActivatePolicy(record.policy_id)}>
+						</Button>
+					</Tooltip> : <></>
 			)
 		}
 	];
@@ -89,10 +88,9 @@ export default function Policies() {
 			width: '10%',
 			render: (text: any, record: { policy_id: any; }) => (
 				<Tooltip title="View">
-					<Button icon={<BarsOutlined/>}  onClick={() => getPolicyDetails(record.policy_id)}>
+					<Button icon={<BarsOutlined />} onClick={() => getPolicyDetails(record.policy_id)}>
 					</Button>
 				</Tooltip>
-				
 			)
 		},
 		{
@@ -102,9 +100,9 @@ export default function Policies() {
 			render: (text: any, record: { policy_id: any; default: any }) => (
 				record.default === false ?
 					<Tooltip title="Activate">
-						<Button icon={<PoweroffOutlined/>} onClick={() => activatePolicy(record.policy_id)}>
+						<Button icon={<PoweroffOutlined />} onClick={() => activatePolicy(record.policy_id)}>
 						</Button>
-					</Tooltip>: <></>
+					</Tooltip> : <></>
 			)
 		}
 	];
