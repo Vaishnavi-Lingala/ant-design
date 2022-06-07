@@ -288,7 +288,7 @@ export const KioskPolicy = (props: any) => {
 
                 <div className="row-policy-container">
                     <div>
-                        Login Type
+                        User Type
                     </div>
                     <div>
                         <Radio.Group defaultValue={kioskDisplayData.policy_req.login_type}
