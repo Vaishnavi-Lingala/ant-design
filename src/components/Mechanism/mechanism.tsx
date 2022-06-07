@@ -66,8 +66,13 @@ function Mechanism(props: any) {
                     console.log(data);
                     setDisplayDetails(data);
                     //@ts-ignore
-                    setChallengeFactors(data.challenge_factors)
                     setEditData(data);
+                    if (data.challenge_factors.length !== 2) {
+                        //@ts-ignore
+                        data.challenge_factors = mechanism.challenge_factors
+                    }
+                    //@ts-ignore
+                    setChallengeFactors(data.challenge_factors);
                     disabledFactors.push(data.challenge_factors[1].factor);
                     disabledFactors1.push(data.challenge_factors[0].factor);
                     if (data.uid === undefined) {

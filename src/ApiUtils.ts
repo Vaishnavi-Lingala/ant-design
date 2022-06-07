@@ -48,6 +48,7 @@ const Urls = {
     activatePolicy: (uid) => `account/${accountId}/product/${productId}/auth-policy/${uid}/activate`,
     deActivatePolicy: (uid) => `account/${accountId}/product/${productId}/auth-policy/${uid}/inactivate`,
     reOrderPolicies: `account/${accountId}/product/${productId}/auth-policy/reorder`,
+    loginTypeOptions: `account/${accountId}/auth-policy/login-type`,
 
     // Mechanism Urls
     mechanisms: `account/${accountId}/product/${productId}/mechanism`,

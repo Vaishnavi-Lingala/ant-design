@@ -47,7 +47,9 @@ function TableList({ handleGetPolicies, policy_type, activateColumns, activePoli
         policy_req: {
             access_key_id: "",
             assay: "",
-            confirm_assay: ""
+            confirm_assay: "",
+            id_as_machine_name: false,
+            login_type: ""
         },
         auth_policy_groups: [],
         policy_type: KIOSK,
@@ -152,7 +154,7 @@ function TableList({ handleGetPolicies, policy_type, activateColumns, activePoli
                         <PasswordPolicy passwordDetails={passwordData} handleOk={handleOk} handleCancel={handleCancel} /> :
                         policy_type.toUpperCase() === KIOSK ?
                             <KioskPolicy kioskDetails={kioskData} handleOk={handleOk} handleCancel={handleCancel} /> :
-                            <CardEnrollmentPolicy cardEnrollDetails={cardEnrollData} handleOk={handleOk} handleCancel={handleCancel} />
+                            <CardEnrollmentPolicy policyDetails={cardEnrollData} handleOk={handleOk} handleCancel={handleCancel} />
                 }
             </Modal>
         </>

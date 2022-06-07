@@ -497,13 +497,13 @@ export default function Policies() {
 	function getPolicyDetails(uid: any) {
 		setLoading(true);
 		localStorage.setItem("policyUid", uid);
-		history.push('/policies/pin/' + uid);
 		// setPinDetails(uid);
 		ApiService.get(ApiUrls.policy(uid))
 			.then(data => {
 				if (!data.errorSummary) {
 					console.log(data);
 					if (data.policy_type === PIN) {
+						history.push('/policies/pin/' + uid);
 						setPinDetails(data);
 					}
 					if (data.policy_type === PASSWORD) {
@@ -576,17 +576,22 @@ export default function Policies() {
 						if (tabname === PIN) {
 							setPasswordDetails(undefined);
 							setKioskDetails(undefined);
+							setCardEnrollPolicy(undefined);
 						}
-						if (tabname === PASSWORD) {
+						else if (tabname === PASSWORD) {
 							setPinDetails(undefined);
 							setKioskDetails(undefined);
+							setCardEnrollPolicy(undefined);
 						}
-						if (tabname === KIOSK) {
+						else if (tabname === KIOSK) {
 							setPasswordDetails(undefined);
 							setPinDetails(undefined);
-						}
-						if (tabname === CARD_ENROLL) {
 							setCardEnrollPolicy(undefined);
+						}
+						else {
+							setPasswordDetails(undefined);
+							setPinDetails(undefined);
+							setKioskDetails(undefined);
 						}
 					}}
 				// style={{border: '1px solid #d7d7dc', margin: 0}} 
@@ -629,7 +634,7 @@ export default function Policies() {
 							<Skeleton loading={loading}>
 								{cardEnrollPolicy ? <CardEnrollmentPolicy policyDetails={cardEnrollPolicy} /> :
 									<>
-										<TableList policy_type={"card-enrollment"} activateColumns={activateColumns} deActivateColumns={deActivateColumns}
+										<TableList policy_type={"card_enrollment"} activateColumns={activateColumns} deActivateColumns={deActivateColumns}
 											draggableBodyRow={CardEnrollmentDraggableBodyRow} draggableContainer={CardEnrollmentDraggableContainer}
 											inActivePolicies={inActiveCardEnrollmentPolicies} activePolicies={activeCardEnrollmentPolicies} handleGetPolicies={handleGetPolicies}
 										/>
