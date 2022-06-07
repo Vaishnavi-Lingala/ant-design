@@ -24,8 +24,8 @@ const Urls = {
     stats:`account/${accountId}/stats`,
 
     //Machine Urls
-    machines: `account/${accountId}/product/${productId}/machines`,
-    machineDetails: (uid) =>  `account/${accountId}/product/${productId}/machines/${uid}`,
+    machines: `account/${accountId}/machines`,
+    machineDetails: (uid) =>  `account/${accountId}/machines/${uid}`,
 
     // Users Urls
     userGroups: (uid) => `account/${accountId}/users/${uid}/groups`,
@@ -45,9 +45,10 @@ const Urls = {
     policies: `account/${accountId}/product/${productId}/auth-policies`,
     policy: (uid) => `account/${accountId}/auth-policies/${uid}`, // For GET and UPDATE APIs
     addPolicy: `account/${accountId}/product/${productId}/auth-policies`, // For CREATE API
-    activatePolicy: (uid) => `/account/${accountId}/product/${productId}/auth-policy/${uid}/activate`,
-    deActivatePolicy: (uid) => `/account/${accountId}/product/${productId}/auth-policy/${uid}/inactivate`,
-    reOrderPolicies: `/account/${accountId}/product/${productId}/auth-policy/reorder`,
+    activatePolicy: (uid) => `account/${accountId}/product/${productId}/auth-policy/${uid}/activate`,
+    deActivatePolicy: (uid) => `account/${accountId}/product/${productId}/auth-policy/${uid}/inactivate`,
+    reOrderPolicies: `account/${accountId}/product/${productId}/auth-policy/reorder`,
+    loginTypeOptions: `account/${accountId}/auth-policy/login-type`,
 
     // Mechanism Urls
     mechanisms: `account/${accountId}/product/${productId}/mechanism`,

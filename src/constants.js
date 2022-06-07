@@ -173,9 +173,25 @@ export const end_time = "end_time";
 
 // Product names
 export const TecTANGO = "TecTANGO";
+export const TecBIO = "TecBIO";
 
 // Policy types
 export const PIN = "PIN";
 export const PASSWORD = "PASSWORD";
 export const KIOSK = "KIOSK";
 export const CARD_ENROLL = "CARD_ENROLL";
+
+// Header Options
+export const Directory = "Directory";
+export const Products = "Products";
+export const Settings = "Settings";
+
+export const MenuItemPaths = {
+    [Directory]: "/dashboard",
+    [Settings]: "/settings",
+    [TecTANGO]: "/policies",
+    [TecBIO]: "/policies"
+}
+
+// LocalStorage constants
+export const SELECTED_HEADER = 'SELECTED_HEADER';
