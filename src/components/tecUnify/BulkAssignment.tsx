@@ -1,19 +1,16 @@
 // TODO: Call API to get list of all Applications
 // TODO: Virtual List, grab items as we scroll down the list
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Button, Checkbox, List, Input } from 'antd';
 import { CaretDownOutlined } from '@ant-design/icons';
-
-import ApiService from "../../Api.service"
-import ApiUrls from '../../ApiUtils';
-
-import type { paginationApiRes, User } from './types'; 
 import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 
-interface Page {
-  current: number;
-  limit: number;
+import useFetchUsers from './useFetchUsers';
+import { isUser, App, Page, User } from './types'; 
+
+interface BAProps {
+  activeList: App[];
 }
 
 const initialPState: Page = {
@@ -23,39 +20,15 @@ const initialPState: Page = {
 
 const { Search } = Input;
 
-function ProperCase(s: string) { return s.charAt(0).toUpperCase() + s.substring(1).toLowerCase(); }
+function PascalCase(s: string) { return s.charAt(0).toUpperCase() + s.substring(1).toLowerCase(); }
 
-async function getUsersList({ current, limit }: { current: number; limit: number; }): Promise<paginationApiRes> {
-  return await ApiService
-    .get(ApiUrls.users, { start: current, limit: limit });
-}
-
-function BulkAssignment() {
+function BulkAssignment({activeList}: BAProps) {
   const [userPage, setUserPage] = useState<Page>(initialPState);
   const [appPage, setAppPage] = useState<Page>(initialPState);
-  const [track, setTrack] = useState();
+  const [selectedUid, setSelectedUid] = useState<(string)[]>([]);
+  const [filteredApps, setFilteredApps] = useState(activeList);
 
-  const [selectedUid, setSelectedUid] = useState<(string | undefined)[]>([]);
-
-  const [userList, setUserList] = useState<paginationApiRes>();
-  const [filteredUsers, setFilteredUsers] = useState<paginationApiRes>();
-
-  const [appList, setAppList] = useState();
-  const [filteredApps, setFilteredApps] = useState();
-
-  useEffect(() => { 
-    getUsersList(userPage)
-      .then((data: paginationApiRes) => {
-        setUserList(data);
-        setFilteredUsers(data);
-      }) 
-      .catch(error => console.error('Error: ', error));
-  },[userPage, appPage]);
-
-  function handleReset() {
-    setFilteredUsers(userList);
-  }
-
+  const { userList, resetFilter } = useFetchUsers(userPage);
 
   function filterFields(searchVal: string) {
     console.log(searchVal)
@@ -70,7 +43,7 @@ function BulkAssignment() {
   }
 
   function handleCheckboxChange(e: CheckboxChangeEvent) {
-    setSelectedUid(current => [...current, e.target.id]);
+    setSelectedUid(current => [...current, e.target.id as string]);
   }
 
   function UserList() {
@@ -87,10 +60,10 @@ function BulkAssignment() {
           pagination={{
             onChange: pageNum => setUserPage(currPage => {return {...currPage, current: pageNum}}),
             pageSize: userPage.limit,
-            total: filteredUsers?.total_items, 
+            total: userList.total_items, 
             size: 'small'
           }}
-          dataSource={filteredUsers?.results}
+          dataSource={userList.results}
           renderItem={(user): React.ReactNode => ListItem(user)}
           />
       </div>
@@ -107,35 +80,58 @@ function BulkAssignment() {
         <ListSubHeader leftText="Applications"/>
 
 
-        {/*
         <List 
           itemLayout='vertical'
           pagination={{
             onChange: pageNum => setAppPage(currPage => {return {...currPage, current: pageNum}}),
-            pageSize: page.limit,
-            total: filteredApps?.total_items, 
+            pageSize: appPage.limit,
+            total: filteredApps.length, 
             size: 'small'
           }}
-          header={SearchBar}
-          dataSource={filteredApps?.results}
-          renderItem={(app): React.ReactNode => ListItem(app)}
+          dataSource={filteredApps}
+          renderItem={(app) => ListItem(app)}
           />
-        */}
       </div>
     );
   }
 
-  function ListItem(user: User) {
+  function ListItem(item: App | User) {
+    if (isUser(item)) {
+      return (
+        <List.Item className='BulkAssignment-ListItems'>
+          <Checkbox 
+            onChange={handleCheckboxChange}
+            id={item.uid}
+            style={{marginLeft: '7px', alignSelf: 'center'}}
+          />
+
+          <h4 style={{alignSelf: 'center', marginBottom: '0px', marginRight: 'auto'}}>
+            {item.user_name}
+          </h4>
+
+          <h4 style={{alignSelf: 'center', marginBottom: '0px', marginRight: '7px'}}>
+            {item.status && PascalCase(item.status)}
+          </h4>
+        </List.Item>
+      );
+    }
+
     return (
-    <List.Item className='BulkAssignment-ListItems'>
-      <Checkbox onChange={handleCheckboxChange} id={user.uid} style={{marginLeft: '7px', alignSelf: 'center'}}/>
-      <h4 style={{alignSelf: 'center', marginBottom: '0px', marginRight: 'auto'}}>{user.user_name}</h4>
-      <h4 style={{alignSelf: 'center', marginBottom: '0px', marginRight: '7px'}}>{ProperCase(user.status)}</h4>
-    </List.Item>
+        <List.Item className='BulkAssignment-ListItems'>
+          <Checkbox 
+            onChange={handleCheckboxChange}
+            id={item.app_id}
+            style={{marginLeft: '7px', alignSelf: 'center'}}
+          />
+
+          <h4 style={{alignSelf: 'center', marginBottom: '0px', marginRight: 'auto'}}>
+            {item.name}
+          </h4>
+        </List.Item>
     );
   }
  
-  const ResetButton = <Button onClick={handleReset} type='link' size='small'>reset</Button>;
+  const ResetButton = <Button onClick={resetFilter} type='link' size='small'>reset</Button>;
   
   function ListSubHeader({leftText = "", rightText = ""}) {
     return(
@@ -145,7 +141,7 @@ function BulkAssignment() {
         style={{padding: '7px'}}
         size='small'
         width='fill'
-        placeholder='Search for Users'
+        placeholder={`Search for ${leftText}`}
       />
       
       <div className='BulkAssignment-ListSubHeader'>

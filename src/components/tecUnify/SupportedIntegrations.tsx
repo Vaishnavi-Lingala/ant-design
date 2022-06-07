@@ -1,22 +1,25 @@
 import { Card, Input } from 'antd';
-import type { mockType } from './mockApiCall';
+
+import useFilter from './useFilter';
+
+import type { AppList, App } from './types';
 
 const { Search } = Input;
 
-interface SProps {
-  data: mockType[];
+interface SIProps {
+  appList: AppList;
 }
 
-function SupportedIntegrations({data}: SProps): JSX.Element {
+function SupportedIntegrations(): JSX.Element {
 
   function handleClick(e) {
   }
 
-  function AppCard({app_id, app_name, window_title}: mockType) {
+  function AppCard({app_id, name, window_title}: App) {
     return (
       <>
         <h4 className='AppList-CardHeader'>
-          {app_name}
+          {name}
           <img className='AppList-CardBody_ImgSize' alt='app logo' src='https://placeholder.pics/svg/100' />
         </h4>
         <div className='AppList-CardBody'>
@@ -37,15 +40,15 @@ function SupportedIntegrations({data}: SProps): JSX.Element {
       </div>
 
         <ul className='AppList'>
-        { 
-          data.map((item): JSX.Element => {
+        {/* 
+          appList.map((item): JSX.Element => {
             return (
               <li className='AppList-Item AppList-Card'>
                 <AppCard {...item}/>
               </li>
             );
           })
-        }
+        */}
         </ul>
     </>
   );

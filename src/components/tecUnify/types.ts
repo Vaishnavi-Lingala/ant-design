@@ -87,7 +87,7 @@ export interface Config {
   signalR_hub: string;
 }
 
-export interface paginationApiRes {
+export interface PaginationApiRes {
   items_on_page: number;
   items_per_page: number;
   next: string;
@@ -120,4 +120,20 @@ export interface User {
   uid: string;
   upn: string;
   user_name: string;
+}
+
+export interface Page {
+  current: number;
+  limit: number;
+}
+
+export function isUser(item: any): item is User {
+  return(item as User).email !== undefined;
+}
+
+export function isApp(item: any): item is App {
+  return (
+    ((item as App).config_id !== undefined) &&
+    ((item as App).xref_id !== undefined)
+  );
 }

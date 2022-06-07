@@ -7,7 +7,7 @@ interface ABProps {
 }
 
 const placeholderImg = "https://placeholder.pics/svg/100";
-function AppBanner({app, optionsMenu}: ABProps) {
+function AppListItem({app, optionsMenu}: ABProps): JSX.Element {
   return (
     <li className='AppList-Item AppList-Banner' key={app.config_id}>
       <Link to={{
@@ -26,4 +26,4 @@ function AppBanner({app, optionsMenu}: ABProps) {
   );
 }
 
-export default AppBanner;
+export default AppListItem;
