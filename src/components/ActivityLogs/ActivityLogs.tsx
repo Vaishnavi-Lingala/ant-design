@@ -101,7 +101,7 @@ export default function ActivityLogs() {
 
     const initialDateTimeFilters = {
         start: {
-            date: moment().startOf("day").subtract(1, "M").format(date_format),
+            date: moment().startOf("day").subtract(7, "days").format(date_format),
             time: moment().startOf("day").format(time_format),
         },
         end: {
