@@ -24,8 +24,8 @@ const Urls = {
     stats:`account/${accountId}/stats`,
 
     //Machine Urls
-    machines: `account/${accountId}/product/${productId}/machines`,
-    machineDetails: (uid) =>  `account/${accountId}/product/${productId}/machines/${uid}`,
+    machines: `account/${accountId}/machines`,
+    machineDetails: (uid) =>  `account/${accountId}/machines/${uid}`,
 
     // Users Urls
     userGroups: (uid) => `account/${accountId}/users/${uid}/groups`,
