@@ -4,7 +4,7 @@ export const accountId = localStorage.getItem('accountId');
 export const productId = localStorage.getItem("productId");
 console.log(productId);
 
-export const base_url = 'https://api.credenti.xyz/admin';
+export const base_url = process.env.REACT_APP_API_URL;
 
 export function getAccessToken() {
     const okta_token_storage = localStorage.getItem("okta-token-storage");
