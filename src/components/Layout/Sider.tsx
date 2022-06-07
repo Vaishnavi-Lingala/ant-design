@@ -1,15 +1,49 @@
 import { Menu } from "antd";
 import Sider from "antd/lib/layout/Sider";
 import { useHistory } from "react-router-dom";
-import { UserOutlined, DesktopOutlined, TeamOutlined, SettingOutlined, PieChartOutlined, 
-	AreaChartOutlined, SolutionOutlined, LockOutlined } from '@ant-design/icons';
+import {
+	UserOutlined, DesktopOutlined, TeamOutlined, SettingOutlined, PieChartOutlined,
+	AreaChartOutlined, SolutionOutlined, LockOutlined
+} from '@ant-design/icons';
+import { useContext } from "react";
+import { Store } from "../../Store";
+import { Directory, Settings, TecBIO, TecTANGO } from "../../constants";
 
 function AppSider() {
 	const history = useHistory();
-	
+	const [selectedMenuOption] = useContext(Store);
+
 	function openScreen(screen: string) {
-        history.push('/' + screen);
-    }
+		history.push('/' + screen);
+	}
+
+	function renderOptions() {
+		const commonProductoptions = <>
+			<Menu.Item key="mechanism"><LockOutlined /> Mechanisms</Menu.Item>
+			<Menu.Item key="policies"><SolutionOutlined /> Policies</Menu.Item>
+			<Menu.Item key="activityLogs"><PieChartOutlined /> Activity Logs</Menu.Item>
+		</>;
+
+		console.log({ selectedMenuOption });
+
+		switch (selectedMenuOption) {
+			case Directory:
+				return <>
+					<Menu.Item key="dashboard"><AreaChartOutlined /> Dashboard</Menu.Item>
+					<Menu.Item key="users"><UserOutlined /> Users</Menu.Item>
+					<Menu.Item key="machines"><DesktopOutlined /> Machines</Menu.Item>
+					<Menu.Item key="groups"><TeamOutlined /> Groups</Menu.Item>
+				</>
+			case Settings:
+				return <Menu.Item key="settings"><SettingOutlined /> Settings</Menu.Item>
+			case TecTANGO:
+				return commonProductoptions;
+			case TecBIO:
+				return commonProductoptions;
+			default:
+				return null;
+		}
+	}
 
 	return (
 		<Sider width='250'
@@ -20,15 +54,9 @@ function AppSider() {
 				selectedKeys={[window.location.pathname.split("/")[1]]}
 				className="sider-menu"
 			>
-				<Menu.Item key="dashboard"><AreaChartOutlined /> Dashboard</Menu.Item>
-				<Menu.Item key="mechanism"><LockOutlined /> Mechanisms</Menu.Item>
-				<Menu.Item key="policies"><SolutionOutlined /> Policies</Menu.Item>
-				{/* <Menu.Item key="config">Configuration</Menu.Item> */}
-				<Menu.Item key="users"><UserOutlined /> Users</Menu.Item>
-				<Menu.Item key="machines"><DesktopOutlined /> Machines</Menu.Item>
-				<Menu.Item key="groups"><TeamOutlined /> Groups</Menu.Item>
-				<Menu.Item key="activityLogs"><PieChartOutlined /> Activity Logs</Menu.Item>
-				<Menu.Item key="settings"><SettingOutlined /> Settings</Menu.Item>
+				{
+					renderOptions()
+				}
 			</Menu>
 		</Sider>
 	);

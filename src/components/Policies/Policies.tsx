@@ -15,7 +15,7 @@ import ApiUrls from '../../ApiUtils';
 import ApiService from '../../Api.service';
 import { KioskPolicy } from './kioskPolicy';
 import { openNotification } from '../Layout/Notification';
-import { CARD_ENROLL, KIOSK, PASSWORD, PIN, TecTANGO } from '../../constants';
+import { CARD_ENROLL, KIOSK, PASSWORD, PIN, SELECTED_HEADER, TecTANGO } from '../../constants';
 import CardEnrollmentPolicy from './CardEnrollmentPolicy';
 import TableList from './tableList';
 
@@ -107,7 +107,7 @@ export default function Policies() {
 		}
 	];
 
-	const currentSeletedProduct = localStorage.getItem("productName");
+	const currentSeletedProduct = localStorage.getItem(SELECTED_HEADER);
 
 	const [pinDetails, setPinDetails] = useState(undefined);
 	const [passwordDetails, setPasswordDetails] = useState(undefined);
