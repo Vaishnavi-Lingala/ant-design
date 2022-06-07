@@ -1,3 +1,16 @@
+export type App = Config & Template;
+
+export interface AppList {
+  active: App[];
+  inactive: App[];
+}
+
+export interface FilterType {
+  activity: string;
+  search: string;
+  updated: boolean;
+}
+
 export interface Template {
   id: number;
   app_id: string;
@@ -29,7 +42,7 @@ export interface Template {
   path: string;
 };
 
-export interface AccountConfig {
+export interface Config {
   min2tray: boolean;
   tab_name: string;
   signalR_command: string;

@@ -1,44 +1,41 @@
 import { useEffect, useState } from 'react';
-import { Link, useHistory } from 'react-router-dom';
-import { Menu, Dropdown, Input} from 'antd';
+import { Menu, Dropdown, Input } from 'antd';
 import { BarsOutlined, UserAddOutlined, UsergroupAddOutlined, PoweroffOutlined } from '@ant-design/icons';
 
-import { openNotification } from "../Layout/Notification";
-import ApiService from '../../Api.service';
-import ApiUrls from '../../ApiUtils';
-import { AccountConfig, Template } from './types';
+import AppBanner from './AppBanner';
+
+import type { App, FilterType, AppList } from './types';
 
 const { Search } = Input;
 
-interface AppList {
-  active?: AccountConfig[];
-  inactive?: AccountConfig[];
-}
-
-interface FilterType {
-  page: string;
-  search: string;
-}
-
+// NOTE: Maybe move updated field outside of the filter state
 const defaultFilter: FilterType = {
-  page: 'active',
-  search: ''
+  activity: 'active',
+  search: '',
+  updated: false
 };
+ 
+interface AIProps {
+  appList: AppList;
+}
 
-function AccountIntegrations(): JSX.Element {
-  const [templatesRef, setTemplatesRef] = useState<Template[]>();
-  const [appList, setAppList] = useState<AppList>();
-  const [filteredAppList, setFilteredAppList] = useState<AppList>();
+function AccountIntegrations({appList} : AIProps): JSX.Element {
   const [filter, setFilter] = useState<FilterType>(defaultFilter);
-
-  const history = useHistory();
+  const [filteredAppList, setFilteredAppList] = useState<AppList>(appList);
 
   useEffect(() => {
-    fetchApps();
-    filterApps();
-  },[filter, appList]);
+    console.log("rerendering filters");
+    filterList();
+    
+    setFilter((curr) => {
+      return {
+        ...curr,
+        updated: false
+      }
+    });
+  }, [filter.activity, filter.search]);
 
-  const menuOptions = (
+  const options = (
     <Menu
       items={
         [
@@ -59,84 +56,46 @@ function AccountIntegrations(): JSX.Element {
   );
 
   const OptionsMenu = (
-    <Dropdown placement='bottomRight' overlay={menuOptions} trigger={['click']}>
+    <Dropdown placement='bottomRight' overlay={options} trigger={['click']}>
       <BarsOutlined className='_Pointer'/>
     </Dropdown>
   )
 
-  async function fetchApps() {
-    if (appList === undefined) {
-      const configs: AccountConfig[] = await ApiService
-        .get(ApiUrls.allAccountConfigs(48), undefined, true)
-        .catch((error) => {
-          console.error('Error: ', error);
-          openNotification('error', 'An Error has occured getting the application list.');
-        });
-
-      let activeApps = configs.filter((app): boolean | undefined => app.active);
-      let inactiveApps = configs.filter((app): boolean | undefined => !app.active);
-
-      setAppList({
-        active: activeApps,
-        inactive: inactiveApps
-      });
-
-      setFilteredAppList(appList);
-
-      const templateIds = configs
-        .map(config => config.template_id)
-        .filter((value, index, self) => self.indexOf(value) === index);
-
-      const templatePromises = templateIds
-        .map((id) => {
-          return ApiService.get(ApiUrls.templateById(id), undefined, true); 
-        });
-
-      console.log(templatePromises);
-
-      await Promise.all(templatePromises)
-        .then((result: Template[]) => {setTemplatesRef(result)})
-        .catch((error) => {
-          console.error('Error: ', error);
-          openNotification('error', 'An Error has occured getting the reference templates.');
-        });
-    }
-  }
-
-  function filterApps() {
+  function filterList() {
     if (filter.search === '') {
       setFilteredAppList(appList);
       return
     }
 
-    // const filteredApps = appList?.[filter.page].filter(
-    //   (app: mockType): boolean | undefined =>
-    //     app.app_name?.toLowerCase().includes(filter.search));
+    if (filter.updated) {
+      const filteredApps: App[] = appList[filter.activity]
+        .filter(
+          (app: App): boolean =>
+            app.name.toLowerCase().includes(filter.search));
 
-    // setFilteredAppList({
-    //   ...appList,
-    //   [filter.page]: filteredApps
-    // });
+      setFilteredAppList({
+        ...appList,
+        [filter.activity]: filteredApps
+      });
+    }
   }
 
-  function updateFilter(value: any) { 
-    setFilter(() => {
-      if (value.key) {
+  function updateFilter(event: any) { 
+    setFilter((curr) => {
+      if (event.key) {
         return {
           search: '',
-          page: value.key
+          activity: event.key,
+          updated: true
         }
       } else {
         return {
-          ...filter,
-          search: value.toLowerCase()
+          ...curr,
+          search: event.toLowerCase(),
+          updated: true
         }
       }
     });
-  }
-
-  function lookupRef(template_id: number): Template {
-    return templatesRef?.filter((template) => template.id === template_id);
   }
 
   return (
@@ -144,25 +103,20 @@ function AccountIntegrations(): JSX.Element {
       <div className='Sidebar'>
         <Search onSearch={updateFilter}/>
         <Menu className='_NoBorder' onClick={updateFilter}>
-          <Menu.Item key='active'>Active - ({filteredAppList?.active?.length})</Menu.Item>
-          <Menu.Item key='inactive'>Inactive - ({filteredAppList?.inactive?.length})</Menu.Item>
+          <Menu.Item key='active'>Active - ({filteredAppList.active.length})</Menu.Item>
+          <Menu.Item key='inactive'>Inactive - ({filteredAppList.inactive.length})</Menu.Item>
         </Menu>
       </div>
-         
       <ul className='AppList _FlexColumn'>
-        { (appList) &&
-          filteredAppList?.[filter.page].map((app: AccountConfig): JSX.Element => (
-            <li className='AppList-Item AppList-Banner' key={app.config_id}>
-              <Link to={{
-                pathname: `/apps/${app.config_id}/${lookupRef(app.template_id).name}`,
-                state: app
-              }}>
-                <img src={lookupRef(app.template_id).logo} width={50} height={50}/>
-                {lookupRef(app.template_id).name}
-              </Link>
-              {OptionsMenu}
-            </li>
-          ))
+        { 
+          filteredAppList[filter.activity]
+            .map((app: App) => 
+              <AppBanner
+                key={app.xref_id} 
+                app={app}
+                optionsMenu={OptionsMenu}
+              />
+            )
         }
       </ul>
     </>
