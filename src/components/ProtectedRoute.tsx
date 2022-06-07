@@ -45,7 +45,7 @@ export default function ProtectedRoute({
     }
 
     return (
-        <Route exact
+        <Route
             {...restOfProps}
             render={(props) =>
                 oktaStorage !== null ? (

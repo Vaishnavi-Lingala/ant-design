@@ -1,5 +1,5 @@
 import { Button, Divider, Input, Radio, Select, Skeleton } from "antd";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import TextArea from "antd/lib/input/TextArea";
 
 import './Policies.css'
@@ -127,10 +127,10 @@ export const PasswordPolicy = (props: any) => {
     }
 
     return <Skeleton loading={loading}>
-        <div className="content-container-policy">
+        <div className={passwordDisplayData.uid === undefined ? "content-container" : "content-container-policy"}>
             <div className="row-policy-container">
                 <div>
-                    {passwordDisplayData.uid === undefined ? <div className="content-heading">Create Password Policy</div> :
+                    {passwordDisplayData.uid === undefined ? <></> :
                         <div className="content-heading">Edit Password Policy</div>
                     }
                 </div>
@@ -243,7 +243,7 @@ export const PasswordPolicy = (props: any) => {
                     onClick={handleCancelClick}>Cancel</Button>
                 <Button type='primary' style={{ float: 'right' }}
                     onClick={handleSaveClick}>Save</Button>
-            </div> : <></>) : <div style={{ paddingTop: '10px', paddingRight: '45px' }}>
+            </div> : <></>) : <div style={{ paddingTop: '10px', paddingRight: '45px', paddingBottom: '20px' }}>
                 <Button style={{ float: 'right', marginLeft: '10px' }}
                     onClick={setCancelClick}>Cancel</Button>
                 <Button type='primary' style={{ float: 'right' }}

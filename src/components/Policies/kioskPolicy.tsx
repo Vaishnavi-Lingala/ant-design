@@ -1,4 +1,4 @@
-import { Divider, Checkbox, Button, InputNumber, Input, Select, Skeleton } from "antd";
+import { Divider, Checkbox, Button, Input, Select, Skeleton, Radio } from "antd";
 import { useContext, useEffect, useState } from "react";
 
 import './Policies.css';
@@ -15,10 +15,11 @@ export const KioskPolicy = (props: any) => {
 
     const [isEdit, setIsEdit] = useState(false);
     const [loading, setLoading] = useState(true);
-    const [loadingDetails, setLoadingDetails] = useState(true);
     const [kioskDisplayData, setKioskDisplayData] = useState<kioskPolicyType>(props.kioskDetails);
     const [kioskEditData, setKioskEditedData] = useState(props.kioskDetails);
     const [groups, setGroups]: any = useState([]);
+    const [render, setRender] = useState(true);
+    const [loginTypeOptions, setLoginTypeOptions] = useState({});
     const [groupsChange, setGroupsChange]: any = useState([]);
     const [groupNames, setGroupNames]: any = useState([]);
     const [groupUids, setGroupUids]: any = useState([]);
@@ -26,55 +27,61 @@ export const KioskPolicy = (props: any) => {
     const [kioskGroupsChange, setkioskGroupsChange]: any = useState([]);
     const [kioskGroupNames, setKioskGroupNames]: any = useState([]);
     const [kioskGroupUids, setKioskGroupUids]: any = useState([]);
+    const [password, setPassword] = useState("");
 
     useEffect(() => {
         if (kioskDisplayData.uid === undefined) {
             setIsEdit(true);
         }
 
-        ApiService.get(ApiUrls.groups, { type: "USER" })
+        Promise.all(([
+            ApiService.get(ApiUrls.groups, { type: "USER" }),
+            ApiService.get(ApiUrls.groups, { type: "KIOSK" }),
+            ApiService.get(ApiUrls.loginTypeOptions)
+        ]))
             .then(data => {
-                for (var i = 0; i < data.length; i++) {
+                console.log(data[0]);
+                for (var i = 0; i < data[0].length; i++) {
                     groups.push({
-                        label: data[i].name,
-                        value: data[i].uid
+                        label: data[0][i].name,
+                        value: data[0][i].uid
                     })
                 }
                 var object = {};
-                for (var i = 0; i < data.length; i++) {
-                    object[data[i].name] = data[i].uid
+                for (var i = 0; i < data[0].length; i++) {
+                    object[data[0][i].name] = data[0][i].uid
                 }
-                setGroups(groups);
                 groupsChange.push(object);
-                console.log(groups);
-                setLoadingDetails(false);
-            }, error => {
-                console.error('Error: ', error);
-                openNotification('error', 'An Error has occured with getting Groups');
-                setLoadingDetails(false);
-            })
 
-        ApiService.get(ApiUrls.groups, { type: "KIOSK" })
-            .then(data => {
-                for (var i = 0; i < data.length; i++) {
+                console.log(data[1]);
+                for (var i = 0; i < data[1].length; i++) {
                     kioskGroups.push({
-                        label: data[i].name,
-                        value: data[i].uid
+                        label: data[1][i].name,
+                        value: data[1][i].uid
                     })
                 }
                 var object = {};
-                for (var i = 0; i < data.length; i++) {
-                    object[data[i].name] = data[i].uid
+                for (var i = 0; i < data[1].length; i++) {
+                    object[data[1][i].name] = data[1][i].uid
                 }
                 kioskGroupsChange.push(object);
                 console.log(kioskGroups);
                 setLoading(false);
+
+                setLoginTypeOptions(data[2]);
             }, error => {
                 console.error('Error: ', error);
                 openNotification('error', 'An Error has occured with getting Groups');
             })
 
         if (kioskDisplayData.uid !== undefined) {
+            console.log(kioskDisplayData.policy_req.assay.length)
+            var password = ""
+            for (let i = 0; i < kioskDisplayData.policy_req.assay.length; i++) {
+                password += "*";
+            }
+            setPassword(password);
+            kioskDisplayData.policy_req.assay.replaceAll(kioskDisplayData.policy_req.assay, "*");
             Object.keys(kioskDisplayData.auth_policy_groups).map(data => {
                 groupNames.push(kioskDisplayData.auth_policy_groups[data].name);
                 groupUids.push(kioskDisplayData.auth_policy_groups[data].uid)
@@ -100,6 +107,11 @@ export const KioskPolicy = (props: any) => {
                 if (!data.errorSummary) {
                     groupNames.length = 0;
                     kioskGroupNames.length = 0;
+                    var password = ""
+                    for (let i = 0; i < kioskDisplayData.policy_req.assay.length; i++) {
+                        password += "*";
+                    }
+                    setPassword(password);
                     setKioskDisplayData({ ...kioskEditData });
                     openNotification('success', 'Successfully updated Kiosk Policy');
                     Object.keys(data.auth_policy_groups).map(index => {
@@ -125,10 +137,11 @@ export const KioskPolicy = (props: any) => {
 
     function handleEditClick() {
         setIsEdit(!isEdit);
-        setKioskEditedData({ ...kioskDisplayData });
+        // setKioskEditedData({ ...kioskDisplayData });
     }
 
     function handleCancelClick() {
+        setKioskEditedData({ ...kioskDisplayData });
         setIsEdit(false);
     }
 
@@ -174,11 +187,11 @@ export const KioskPolicy = (props: any) => {
     }
 
     return (
-        <Skeleton loading={loading || loadingDetails}>
-            <div className="content-container-policy">
+        <Skeleton loading={loading}>
+            <div className={kioskDisplayData.uid === undefined ? "content-container" : "content-container-policy"}>
                 <div className="row-policy-container">
                     <div>
-                        {kioskDisplayData.uid === undefined ? <div className="content-heading">Create kiosk Policy</div> :
+                        {kioskDisplayData.uid === undefined ? <></> :
                             <div className="content-heading">Edit kiosk Policy</div>
                         }
                     </div>
@@ -255,7 +268,9 @@ export const KioskPolicy = (props: any) => {
                             options={kioskGroups}
                             listHeight={120}
                         /> : Object.keys(kioskGroupNames).map(name =>
-                            <><Button style={{ cursor: 'text' }}>{kioskGroupNames[name]}</Button>&nbsp;</>)
+                            <><Button style={{ cursor: 'text' }}>
+                                {kioskGroupNames[name]}
+                            </Button>&nbsp;</>)
                         }
                     </div>
 
@@ -273,16 +288,57 @@ export const KioskPolicy = (props: any) => {
 
                 <div className="row-policy-container">
                     <div>
+                        Login Type
+                    </div>
+                    <div>
+                        <Radio.Group defaultValue={kioskDisplayData.policy_req.login_type}
+                            disabled={!isEdit}
+                            onChange={(e) => kioskDisplayData.policy_req.login_type = e.target.value}
+                        >
+                            {
+                                Object.keys(loginTypeOptions).map(option => {
+                                    return <div key={option}>
+                                        <Radio value={option}>
+                                            {loginTypeOptions[option]}
+                                        </Radio>
+                                        <br />
+                                    </div>
+                                })
+                            }
+                        </Radio.Group>
+                    </div>
+                    <div>
                         Username
+                        &nbsp;<Checkbox
+                            onChange={(e) => {
+                                kioskEditData.policy_req.id_as_machine_name = e.target.checked
+                                if (e.target.checked === true) {
+                                    kioskDisplayData.policy_req.access_key_id = "%machineName%"
+                                    setRender(!render);
+                                }
+                                else {
+                                    kioskEditData.policy_req.access_key_id = ""
+                                    setRender(!render);
+                                }
+                            }}
+                            defaultChecked={!isEdit ? kioskDisplayData.policy_req.id_as_machine_name : kioskDisplayData.policy_req.id_as_machine_name}
+                            disabled={!isEdit}
+                        >
+                            Same as machine name
+                        </Checkbox>
                     </div>
                     <div>
                         {
-                            isEdit ? <Input className="form-control"
-                                style={{ width: "275px" }}
-                                onChange={(e) => kioskEditData.policy_req.access_key_id = e.target.value}
-                                defaultValue={kioskDisplayData.policy_req.access_key_id}
-                                placeholder='Enter username'
-                            /> : kioskDisplayData.policy_req.access_key_id
+                            isEdit ?
+                                kioskDisplayData.policy_req.id_as_machine_name === false?
+                                    <Input className="form-control"
+                                        style={{ width: "275px" }}
+                                        onChange={(e) => kioskEditData.policy_req.access_key_id = e.target.value}
+                                        defaultValue={kioskDisplayData.policy_req.access_key_id}
+                                        placeholder='Enter username'
+                                    /> : "%machineName%"
+                                : kioskDisplayData.policy_req.id_as_machine_name ? "%machineName%"
+                                    : kioskDisplayData.policy_req.access_key_id 
                         }
                     </div>
                     <div>
@@ -295,7 +351,7 @@ export const KioskPolicy = (props: any) => {
                                 onChange={(e) => kioskEditData.policy_req.assay = e.target.value}
                                 defaultValue={kioskDisplayData.policy_req.assay}
                                 placeholder='Enter password'
-                            /> : kioskDisplayData.policy_req.assay
+                            /> : password
                         }
                     </div>
                     {
@@ -324,7 +380,7 @@ export const KioskPolicy = (props: any) => {
                         onClick={handleCancelClick}>Cancel</Button>
                     <Button type='primary' style={{ float: 'right' }}
                         onClick={handleSaveClick}>Save</Button>
-                </div> : <></>) : <div style={{ paddingTop: '10px', paddingRight: '45px' }}>
+                </div> : <></>) : <div style={{ paddingTop: '10px', paddingRight: '45px', paddingBottom: '20px' }}>
                     <Button style={{ float: 'right', marginLeft: '10px' }}
                         onClick={setCancelClick}>Cancel</Button>
                     <Button type='primary' style={{ float: 'right' }}

@@ -119,10 +119,10 @@ export const PinPolicy = (props: any) => {
 
 	return (
 		<Skeleton loading={loading}>
-			<div className="content-container-policy">
+			<div className={pinDisplayData.uid === undefined ? "content-container" : "content-container-policy"}>
 				<div className="row-policy-container">
 					<div>
-						{pinDisplayData.uid === undefined ? <div className="content-heading">Create Pin Policy</div> :
+						{pinDisplayData.uid === undefined ? <></> :
 							<div className="content-heading">Edit Pin Policy</div>
 						}
 					</div>
@@ -298,7 +298,7 @@ export const PinPolicy = (props: any) => {
 						onClick={handleCancelClick}>Cancel</Button>
 					<Button type='primary' style={{ float: 'right' }}
 						onClick={handleSaveClick}>Save</Button>
-				</div> : <></>) : <div style={{ paddingTop: '10px', paddingRight: '45px' }}>
+				</div> : <></>) : <div style={{ paddingTop: '10px', paddingRight: '45px', paddingBottom: '20px' }}>
 					<Button style={{ float: 'right', marginLeft: '10px' }}
 						onClick={setCancelClick}>Cancel</Button>
 					<Button type='primary' style={{ float: 'right' }}
