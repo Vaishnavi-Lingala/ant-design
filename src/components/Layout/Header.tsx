@@ -43,8 +43,6 @@ function AppHeader() {
             })
     }
 
-    console.log(products);
-
     const logout = async () => {
         const basename = window.location.origin + history.createHref({ pathname: '/' });
 

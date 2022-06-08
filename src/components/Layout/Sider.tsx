@@ -36,8 +36,6 @@ function AppSider() {
 			<Menu.Item key="activityLogs"><PieChartOutlined /> Activity Logs</Menu.Item>
 		</>;
 
-		console.log({ selectedMenuOption });
-
 		switch (selectedMenuOption) {
 			case Directory:
 				return <>

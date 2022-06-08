@@ -10,6 +10,7 @@ import ApiUrls from '../../ApiUtils';
 import { openNotification } from "../Layout/Notification";
 import { useHistory } from "react-router-dom";
 import { MechanismType } from "../../models/Data.models";
+import { Store } from "../../Store";
 
 
 function Mechanism(props: any) {
@@ -31,6 +32,7 @@ function Mechanism(props: any) {
     const [value, setValue] = useState("");
     const [disabledFactors]: any = useState([]);
     const [disabledFactors1]: any = useState([]);
+    const [selectedHeader] = useContext(Store);
     const history = useHistory();
     const mechanism = {
         challenge_factors: [
@@ -338,12 +340,12 @@ function Mechanism(props: any) {
                         Primary Challenge:
                     </div>
                     <div>
-                        {localStorage.getItem("productName") === 'TecTANGO' ?
+                        {selectedHeader === 'TecTANGO' ?
                             <Radio.Group name="Primary challenge" defaultValue={"PROXIMITY_CARD"}>
                                 <Radio value={"PROXIMITY_CARD"} disabled>Proximity Card</Radio>
                             </Radio.Group>
                             :
-                            localStorage.getItem("productName") === 'TecBIO' ?
+                            selectedHeader === 'TecBIO' ?
                                 <Radio.Group name="Primary challenge" defaultValue={"BIO_METRICS"}>
                                     <Radio value={"BIO_METRICS"} disabled>Biometrics</Radio>: <></>
                                 </Radio.Group>

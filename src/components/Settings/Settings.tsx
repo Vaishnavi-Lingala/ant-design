@@ -22,7 +22,6 @@ function Settings() {
     useEffect(() => {
         ApiService.post(ApiUrls.client_info, { domain: domain })
             .then((data: ClientConfiguration) => {
-                console.log(data);
                 setLoading(false);
                 setSettings(data);
             })
