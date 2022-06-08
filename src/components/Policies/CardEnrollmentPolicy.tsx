@@ -9,55 +9,74 @@ import ApiUrls from '../../ApiUtils';
 import { CARD_ENROLL, TecTANGO } from "../../constants";
 import { openNotification } from "../Layout/Notification";
 import Hint from "../Controls/Hint";
+import { useHistory } from "react-router-dom";
 
 const CardEnrollmentPolicy = (props) => {
     const [isEdit, setIsEdit] = useState(false);
     const [loading, setLoading] = useState(true);
-    const [cardEnrollDisplayData, setCardEnrollDisplayData] = useState(props.policyDetails);
-    const [cardEnrollEditData, setCardEnrollEditedData] = useState(props.policyDetails);
+    const [cardEnrollDisplayData, setCardEnrollDisplayData] = useState({});
+    const [cardEnrollEditData, setCardEnrollEditedData]: any = useState();
+    const [policyRequirements, setPolicyRequirements] = useState({});
     const [groups, setGroups]: any = useState([]);
     const [groupNames, setGroupNames]: any = useState([]);
     const [groupUids, setGroupUids]: any = useState([]);
     const [groupsChange, setGroupsChange]: any = useState([]);
     const [maxEnroll, setMaxEnroll] = useState(null);
     const [isLimitReached, setIsLimitReached] = useState(false);
+    const history = useHistory();
 
     useEffect(() => {
-        if (cardEnrollDisplayData.uid === undefined) {
-            setIsEdit(true);
-        }
-
-        ApiService.get(ApiUrls.groups, { type: "USER" })
+        Promise.all(([
+            ApiService.get(ApiUrls.groups, { type: "USER" }),
+            ApiService.get(ApiUrls.policy(window.location.pathname.split('/')[3]))
+        ]))
             .then(data => {
-                console.log('GROUPS: ', data);
-                for (var i = 0; i < data.length; i++) {
+                console.log('GROUPS: ', data[0]);
+                for (var i = 0; i < data[0].length; i++) {
                     groups.push({
-                        label: data[i].name,
-                        value: data[i].uid
+                        label: data[0][i].name,
+                        value: data[0][i].uid
                     })
                 }
+                setGroups(groups);
                 var object = {};
-                for (var i = 0; i < data.length; i++) {
-                    object[data[i].name] = data[i].uid
+                for (var i = 0; i < data[0].length; i++) {
+                    object[data[0][i].name] = data[0][i].uid
                 }
                 groupsChange.push(object);
-                console.log(groups);
-                setLoading(false);
+                setGroupsChange(groupsChange);
+
+                if (!data[1].errorSummary) {
+                    setCardEnrollDisplayData(data[1]);
+                    setCardEnrollEditedData(data[1]);
+                    setPolicyRequirements(data[1].policy_req);
+
+                    Object.keys(data[1]['auth_policy_groups']).map(index => {
+                        groupNames.push(data[1].auth_policy_groups[index].name);
+                        groupUids.push(data[1].auth_policy_groups[index].uid)
+                        setGroupNames(groupNames);
+                        setGroupUids(groupUids);
+                    });
+
+                    setLoading(false);
+                }
+                else if (window.location.pathname.split('/').length === 3) {
+                    setCardEnrollDisplayData(props.policyDetails);
+                    setCardEnrollEditedData(props.policyDetails);
+                    setPolicyRequirements(props.policyDetails.policy_req);
+                    setIsEdit(true);
+                    setLoading(false);
+                }
+                else {
+                    console.log('else: ', data[1]);
+                    openNotification('error', data[1].errorCauses.length !== 0 ? data[1].errorCauses[1].errorSummary : data[1].errorSummary);
+                    history.push('/policies/card-enrollment');
+                }
             }, error => {
                 console.error('Error: ', error);
                 openNotification('error', 'An Error has occured with getting Groups');
                 setLoading(false);
             })
-
-        if (cardEnrollDisplayData.uid !== undefined) {
-            Object.keys(cardEnrollDisplayData.auth_policy_groups).map(data => {
-                groupNames.push(cardEnrollDisplayData.auth_policy_groups[data].name);
-                groupUids.push(cardEnrollDisplayData.auth_policy_groups[data].uid)
-                console.log(groupNames);
-                console.log(groupUids);
-            });
-        }
-        cardEnrollDisplayData.auth_policy_groups = groupUids;
     }, []);
 
     useEffect(() => {
@@ -77,9 +96,9 @@ const CardEnrollmentPolicy = (props) => {
         })();
     }, []);
 
-
     function updateCardEnrollPolicy() {
-        ApiService.put(ApiUrls.policy(cardEnrollDisplayData.uid), cardEnrollEditData)
+        cardEnrollDisplayData['auth_policy_groups'] = groupUids;
+        ApiService.put(ApiUrls.policy(cardEnrollDisplayData['uid']), cardEnrollEditData)
             .then(data => {
                 if (!data.errorSummary) {
                     groupNames.length = 0;
@@ -125,13 +144,13 @@ const CardEnrollmentPolicy = (props) => {
     function handleGroups(value: any) {
         Object.keys(groupsChange[0]).map(key => {
             if (value.includes(key)) {
-                console.log(key)
                 var index = value.indexOf(key)
-                console.log(index)
                 value.splice(index, 1)
                 value.push(groupsChange[0][key]);
             }
         })
+        groupUids.length = 0;
+        setGroupUids(value);
         cardEnrollEditData.auth_policy_groups = value;
         console.log(cardEnrollEditData.auth_policy_groups);
     }
@@ -141,15 +160,17 @@ const CardEnrollmentPolicy = (props) => {
             <div className={cardEnrollDisplayData['uid'] === undefined ? "content-container" : "content-container-policy"}>
                 <div className="row-policy-container">
                     <div>
-                        {cardEnrollDisplayData.uid === undefined ? <div className="content-heading">Create Card Enrollment Policy</div> :
-                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                        {cardEnrollDisplayData['uid'] === undefined ? <></> :
+                            <div>
                                 <div className="content-heading">{isEdit ? 'Edit' : null} Card Enrollment Policy </div>
-                                <Hint text={"This policy allows you to control how many cards can be enrolled per user"} />
+                                <div>
+                                    <Hint text={"This policy allows you to control how many cards can be enrolled per user"} />
+                                </div>
                             </div>
                         }
                     </div>
                     <div>
-                        {cardEnrollDisplayData.default === false ? <Button style={{ float: 'right' }} onClick={handleEditClick}>
+                        {cardEnrollDisplayData['default'] === false ? <Button style={{ float: 'right' }} onClick={handleEditClick}>
                             {!isEdit ? 'Edit' : 'Cancel'}
                         </Button> : <></>
                         }
@@ -164,9 +185,9 @@ const CardEnrollmentPolicy = (props) => {
                                 ...cardEnrollEditData,
                                 name: e.target.value
                             })}
-                            defaultValue={cardEnrollDisplayData.name}
+                            defaultValue={cardEnrollDisplayData['name']}
                             placeholder='Enter a new policy name'
-                        /> : cardEnrollDisplayData.name
+                        /> : cardEnrollDisplayData['name']
                         }
                     </div>
 
@@ -180,9 +201,9 @@ const CardEnrollmentPolicy = (props) => {
                                 ...cardEnrollEditData,
                                 description: e.target.value
                             })}
-                            defaultValue={cardEnrollDisplayData.description}
+                            defaultValue={cardEnrollDisplayData['description']}
                             placeholder='Enter policy description'
-                        /> : cardEnrollDisplayData.description
+                        /> : cardEnrollDisplayData['description']
                         }
                     </div>
 
@@ -195,7 +216,7 @@ const CardEnrollmentPolicy = (props) => {
                                 mode="multiple"
                                 size={"large"}
                                 placeholder={<div>Please select groups</div>}
-                                defaultValue={cardEnrollDisplayData.name !== "" ? groupNames : []}
+                                defaultValue={cardEnrollDisplayData['name'] !== "" ? groupNames : []}
                                 onChange={handleGroups}
                                 style={{ width: '275px' }}
                                 options={groups}
@@ -220,17 +241,17 @@ const CardEnrollmentPolicy = (props) => {
                                         policy_req: { max_card_enrollment: parseInt(e) }
                                     })
                                 }}
-                                defaultValue={cardEnrollDisplayData.policy_req.max_card_enrollment}
+                                defaultValue={policyRequirements['max_card_enrollment']}
                             />
                             {isLimitReached ? <div style={{ padding: '5px', color: 'red' }}>
                                 Max card enrollment limit is {maxEnroll}. Please contact Tecnics to update it.
                             </div> : null}
-                        </> : cardEnrollDisplayData.policy_req.max_card_enrollment
+                        </> : policyRequirements['max_card_enrollment']
                         }
                     </div>
                 </div>
             </div>
-            {cardEnrollDisplayData.uid !== undefined ?
+            {cardEnrollDisplayData['uid'] !== undefined ?
                 (isEdit ? <div style={{ paddingTop: '10px', paddingRight: '45px' }}>
                     <Button style={{ float: 'right', marginLeft: '10px' }}
                         onClick={handleCancelClick}>Cancel</Button>

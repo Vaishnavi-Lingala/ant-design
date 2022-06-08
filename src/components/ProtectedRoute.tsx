@@ -50,13 +50,13 @@ export default function ProtectedRoute({
             render={(props) =>
                 oktaStorage !== null ? (
                     <SecureRoute>
-                        <Layout>
+                        {/* <Layout> */}
                             <Component
                                 authStatus={authState}
                                 oktaAuth={oktaAuth}
                                 {...props}
                             />
-                        </Layout>
+                        {/* </Layout> */}
                     </SecureRoute>
                 ) : (
                     <Redirect to={"/"} />

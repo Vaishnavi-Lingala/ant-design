@@ -9,11 +9,13 @@ import ApiService from "../../Api.service";
 import ApiUrls from '../../ApiUtils';
 
 import { openNotification } from "../Layout/Notification";
+import { useHistory } from "react-router-dom";
 
 export const PasswordPolicy = (props: any) => {
     const [isEdit, setIsEdit] = useState(false);
-    const [passwordDisplayData, setPasswordDisplayData] = useState<PasswordPolicyType>(props.passwordDetails);
-    const [passwordEditData, setPasswordEditedData] = useState(props.passwordDetails);
+    const [passwordDisplayData, setPasswordDisplayData] = useState({});
+    const [passwordEditData, setPasswordEditedData]: any = useState();
+    const [policyRequirements, setPolicyRequirements] = useState({});
     const [loading, setLoading] = useState(true);
     const [graceOptions, setGraceOptions]: any = useState({});
     const [groups, setGroups]: any = useState([]);
@@ -21,51 +23,60 @@ export const PasswordPolicy = (props: any) => {
     const [groupNames, setGroupNames]: any = useState([]);
     const [groupUids, setGroupUids]: any = useState([]);
     const [groupsChange, setGroupsChange]: any = useState([]);
+    const history = useHistory();
 
     useEffect(() => {
-        ApiService.get(ApiUrls.groups, { type: "USER" })
-            .then(data => {
-                console.log('GROUPS: ', data);
-                for (var i = 0; i < data.length; i++) {
+        Promise.all(([
+            ApiService.get(ApiUrls.policy(window.location.pathname.split('/')[3])),
+            ApiService.get(ApiUrls.groups, { type: "USER" }),
+            ApiService.get(ApiUrls.mechanismPasswordGraceOptions)
+        ]))
+            .then((data) => {
+                //@ts-ignore
+                if (!data[0].errorSummary) {
+                    setPasswordDisplayData(data[0]);
+                    setPasswordEditedData(data[0]);
+                    setPolicyRequirements(data[0]['policy_req']);
+
+                    Object.keys(data[0]['auth_policy_groups']).map(index => {
+                        groupNames.push(data[0]['auth_policy_groups'][index].name);
+                        groupUids.push(data[0]['auth_policy_groups'][index].uid)
+                        console.log(groupNames);
+                        console.log(groupUids);
+                    });
+                }
+                else if (window.location.pathname.split('/').length === 3) {
+                    setPasswordDisplayData(props.passwordDetails);
+                    setPasswordEditedData(props.passwordDetails);
+                    setPolicyRequirements(props.passwordDetails.policy_req);
+                    setIsEdit(true);
+                }
+                else {
+                    console.log('else: ', data[0]);
+                    openNotification('error', data[0].errorCauses.length !== 0 ? data[0].errorCauses[0].errorSummary : data[0].errorSummary);
+                    history.push('/policies/password');
+                }
+
+                console.log('GROUPS: ', data[1]);
+                for (var i = 0; i < data[1].length; i++) {
                     groups.push({
-                        label: data[i].name,
-                        value: data[i].uid
+                        label: data[1][i].name,
+                        value: data[1][i].uid
                     })
                 }
                 var object = {};
-                for (var i = 0; i < data.length; i++) {
-                    object[data[i].name] = data[i].uid
+                for (var i = 0; i < data[1].length; i++) {
+                    object[data[1][i].name] = data[1][i].uid
                 }
                 groupsChange.push(object);
                 console.log(groups);
+                console.log(data[2]);
+                setGraceOptions(data[2].password_grace_options);
                 setLoading(false);
             }, error => {
                 console.error('Error: ', error);
-                openNotification('error', 'An Error has occured with getting Groups');
+                openNotification('error', 'An Error has occured with getting details');
             })
-
-        ApiService.get(ApiUrls.mechanismPasswordGraceOptions)
-            .then(data => {
-                console.log(data);
-                setGraceOptions(data.password_grace_options);
-            }, error => {
-                console.error('Error: ', error);
-                openNotification('error', 'An Error has occured with getting Password Grace Options');
-            })
-
-        if (passwordDisplayData.uid === undefined) {
-            setIsEdit(true);
-        }
-
-        if (passwordDisplayData.uid !== undefined) {
-            Object.keys(passwordDisplayData.auth_policy_groups).map(data => {
-                groupNames.push(passwordDisplayData.auth_policy_groups[data].name);
-                groupUids.push(passwordDisplayData.auth_policy_groups[data].uid)
-                console.log(groupNames);
-                console.log(groupUids);
-            });
-        }
-        passwordEditData.auth_policy_groups = groupUids;
     }, [])
 
     function handleEditClick() {
@@ -90,7 +101,8 @@ export const PasswordPolicy = (props: any) => {
     }
 
     function updatePasswordPolicy() {
-        ApiService.put(ApiUrls.policy(passwordDisplayData.uid), passwordEditData)
+        passwordEditData.auth_policy_groups = groupUids;
+        ApiService.put(ApiUrls.policy(passwordDisplayData['uid']), passwordEditData)
             .then(data => {
                 if (!data.errorSummary) {
                     groupNames.length = 0;
@@ -115,27 +127,27 @@ export const PasswordPolicy = (props: any) => {
     function handleGroups(value: any) {
         Object.keys(groupsChange[0]).map(key => {
             if (value.includes(key)) {
-                console.log(key)
                 var index = value.indexOf(key)
-                console.log(index)
                 value.splice(index, 1)
                 value.push(groupsChange[0][key]);
             }
         })
+        groupUids.length = 0;
+        setGroupUids(value);
         passwordEditData.auth_policy_groups = value;
         console.log(passwordEditData.auth_policy_groups);
     }
 
     return <Skeleton loading={loading}>
-        <div className={passwordDisplayData.uid === undefined ? "content-container" : "content-container-policy"}>
+        <div className={passwordDisplayData['uid'] === undefined ? "content-container" : "content-container-policy"}>
             <div className="row-policy-container">
                 <div>
-                    {passwordDisplayData.uid === undefined ? <></> :
+                    {passwordDisplayData['uid'] === undefined ? <></> :
                         <div className="content-heading">Edit Password Policy</div>
                     }
                 </div>
                 <div>
-                    {passwordDisplayData.default === false ? <Button style={{ float: 'right' }} onClick={handleEditClick}>
+                    {passwordDisplayData['default'] === false ? <Button style={{ float: 'right' }} onClick={handleEditClick}>
                         {!isEdit ? 'Edit' : 'Cancel'}
                     </Button> : <></>
                     }
@@ -151,9 +163,9 @@ export const PasswordPolicy = (props: any) => {
                             ...passwordEditData,
                             name: e.target.value
                         })}
-                        defaultValue={passwordDisplayData.name}
+                        defaultValue={passwordDisplayData['name']}
                         placeholder='Enter a new policy name'
-                    /> : passwordDisplayData.name
+                    /> : passwordDisplayData['name']
                     }
                 </div>
 
@@ -167,9 +179,9 @@ export const PasswordPolicy = (props: any) => {
                             ...passwordEditData,
                             description: e.target.value
                         })}
-                        defaultValue={passwordDisplayData.description}
+                        defaultValue={passwordDisplayData['description']}
                         placeholder='Enter policy description'
-                    /> : passwordDisplayData.description
+                    /> : passwordDisplayData['description']
                     }
                 </div>
 
@@ -182,7 +194,7 @@ export const PasswordPolicy = (props: any) => {
                             mode="multiple"
                             size={"large"}
                             placeholder={<div>Please select groups</div>}
-                            defaultValue={passwordDisplayData.name !== "" ? groupNames : []}
+                            defaultValue={passwordDisplayData['name'] !== "" ? groupNames : []}
                             onChange={handleGroups}
                             style={{ width: '275px' }}
                             options={groups}
@@ -198,7 +210,7 @@ export const PasswordPolicy = (props: any) => {
                     Policy Type:
                 </div>
                 <div>
-                    {passwordDisplayData.policy_type}
+                    {passwordDisplayData['policy_type']}
                 </div>
             </div>
 
@@ -209,7 +221,7 @@ export const PasswordPolicy = (props: any) => {
                     Grace Period:
                 </div>
                 <div style={{ padding: '12px 0 10px 0' }}>
-                    <Radio.Group defaultValue={passwordDisplayData.policy_req.grace_period}
+                    <Radio.Group defaultValue={policyRequirements['grace_period']}
                         disabled={!isEdit}
                         onChange={(e) => passwordEditData.policy_req.grace_period = e.target.value}
                     >
@@ -226,7 +238,9 @@ export const PasswordPolicy = (props: any) => {
                     </Radio.Group>
                 </div>
             </div>
+
             <br />
+
             <div style={{ display: 'grid', gridTemplateColumns: '6% 85%' }}>
                 <div className="content-policy-key-header" style={{ marginTop: '-3px' }}>
                     Help:
@@ -237,7 +251,7 @@ export const PasswordPolicy = (props: any) => {
             </div>
         </div>
 
-        {passwordDisplayData.uid !== undefined ?
+        {passwordDisplayData['uid'] !== undefined ?
             (isEdit ? <div style={{ paddingTop: '10px', paddingRight: '45px' }}>
                 <Button style={{ float: 'right', marginLeft: '10px' }}
                     onClick={handleCancelClick}>Cancel</Button>
