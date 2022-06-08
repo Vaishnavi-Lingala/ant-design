@@ -8,6 +8,7 @@ import ApiService from "../../Api.service";
 import ApiUrls from '../../ApiUtils';
 import { CARD_ENROLL, TecTANGO } from "../../constants";
 import { openNotification } from "../Layout/Notification";
+import Hint from "../Controls/Hint";
 
 const CardEnrollmentPolicy = (props) => {
     const [isEdit, setIsEdit] = useState(false);
@@ -137,11 +138,14 @@ const CardEnrollmentPolicy = (props) => {
 
     return (
         <Skeleton loading={loading}>
-            <div className="content-container-policy">
+            <div className={cardEnrollDisplayData['uid'] === undefined ? "content-container" : "content-container-policy"}>
                 <div className="row-policy-container">
                     <div>
                         {cardEnrollDisplayData.uid === undefined ? <div className="content-heading">Create Card Enrollment Policy</div> :
-                            <div className="content-heading">{isEdit ? 'Edit' : null} Card Enrollment Policy</div>
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                                <div className="content-heading">{isEdit ? 'Edit' : null} Card Enrollment Policy </div>
+                                <Hint text={"This policy allows you to control how many cards can be enrolled per user"} />
+                            </div>
                         }
                     </div>
                     <div>
@@ -200,13 +204,6 @@ const CardEnrollmentPolicy = (props) => {
                         }
                     </div>
 
-                    <div className="content-policy-key-header">
-                        Policy Type:
-                    </div>
-                    <div>
-                        {cardEnrollDisplayData.policy_type}
-                    </div>
-
                     <div className="content-policy-key-header" style={{ paddingTop: '20px' }}>
                         Max Card Enrollment:
                     </div>
@@ -226,7 +223,7 @@ const CardEnrollmentPolicy = (props) => {
                                 defaultValue={cardEnrollDisplayData.policy_req.max_card_enrollment}
                             />
                             {isLimitReached ? <div style={{ padding: '5px', color: 'red' }}>
-                            Max card enrollment limit is {maxEnroll}. Please contact Tecnics to update it.
+                                Max card enrollment limit is {maxEnroll}. Please contact Tecnics to update it.
                             </div> : null}
                         </> : cardEnrollDisplayData.policy_req.max_card_enrollment
                         }
@@ -239,7 +236,7 @@ const CardEnrollmentPolicy = (props) => {
                         onClick={handleCancelClick}>Cancel</Button>
                     <Button type='primary' style={{ float: 'right' }}
                         onClick={handleSaveClick}>Save</Button>
-                </div> : <></>) : <div style={{ paddingTop: '10px', paddingRight: '45px' }}>
+                </div> : <></>) : <div style={{ paddingTop: '10px', paddingRight: '45px', paddingBottom: '20px' }}>
                     <Button style={{ float: 'right', marginLeft: '10px' }}
                         onClick={setCancelClick}>Cancel</Button>
                     <Button type='primary' style={{ float: 'right' }}

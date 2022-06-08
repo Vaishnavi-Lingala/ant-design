@@ -12,19 +12,22 @@ import ApiUrls from '../../ApiUtils';
 import ApiService from "../../Api.service";
 
 import { openNotification } from "./Notification";
+import { Directory, MenuItemPaths, Products, Settings } from "../../constants";
+import { Store } from "../../Store";
 
 const { SubMenu } = Menu;
 const { Header } = Layout;
 
 function AppHeader() {
     const history = useHistory();
+    const [selectedMenuOption, setSelectedMenuOption] = useContext(Store);
     const { authState } = useOktaAuth();
     const [products, setProducts]: any = useState([]);
 
     useEffect(() => {
         getProducts();
     }, [])
-    
+
     function getProducts() {
         ApiService.get(ApiUrls.getProducts)
             .then(data => {
@@ -83,24 +86,26 @@ function AppHeader() {
             </div>
 
             <Menu className="border-bottom-0" theme="light" mode="horizontal"
-                selectedKeys={[String(localStorage.getItem("productName"))]} onClick={(e) => {
-                    Object.keys(products).map(product => {
-                        if (e.key === product) {
-                            localStorage.setItem("productName", product)
-                            localStorage.setItem("productId", products[product])
-                            history.push("/dashboard");
-                            window.location.reload()
-                        }
-                    })
+                selectedKeys={[selectedMenuOption]} onClick={(e) => {
+                    setSelectedMenuOption(e.key);
+                    localStorage.setItem("productId", products[e.key]);
+                    history.push(MenuItemPaths[e.key]);
+                    window.location.reload();
                 }}
             >
-                {
-                    Object.keys(products).map(product => {
-                        return <Menu.Item key={product}>
-                            {product.slice(0, 1).toUpperCase() + product.slice(1, 3).toLowerCase() + product.slice(3, 4).toUpperCase() + product.slice(4).toLowerCase()}
-                        </Menu.Item>
-                    })
-                }
+                <Menu.Item key={Directory}>
+                    {Directory}
+                </Menu.Item>
+                <SubMenu title={Products} key={Products}>
+                    {
+                        Object.keys(products).map(product =>
+                            <Menu.Item key={product}>
+                                {product.slice(0, 1).toUpperCase() + product.slice(1, 3).toLowerCase() + product.slice(3, 4).toUpperCase() + product.slice(4).toLowerCase()}
+                            </Menu.Item>
+                        )
+                    }
+                </SubMenu>
+                <Menu.Item key={Settings}>{Settings}</Menu.Item>
             </Menu>
 
             <Menu className="border-bottom-0" theme="light" mode="horizontal" id="logout-menu">

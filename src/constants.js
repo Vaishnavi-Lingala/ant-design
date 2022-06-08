@@ -1,5 +1,6 @@
 // constants
 export const date_format = "YYYY-MM-DD";
+export const date_display_format = " Do MMM YYYY";
 export const time_format = "HH:mm:ss";
 export const ts_format = `${date_format} ${time_format}`;
 
@@ -20,7 +21,8 @@ export const hiddenFields = {
         'reader_serial',
         'reader_type',
         'reader_name',
-        'uid'
+        'uid',
+        'machine_type'
     ],
     user: [
         'account_id',
@@ -37,7 +39,6 @@ export const hiddenFields = {
         'eula_accepted_date',
         'is_portal_admin',
         'idp_login_hint',
-        'active_session',
         'windows_login_hint',
         'uid'
 
@@ -51,6 +52,7 @@ export const logFieldNames = {
         "uid": "Machine ID",
         "machine_id": "Machine ID",
         "machine_name": "Machine name",
+        "machine_type": "Machine type",
         "mac_address": "MAC",
         "serial_number": "Serial number",
         "domain": "Domain",
@@ -74,9 +76,7 @@ export const logFieldNames = {
         "display_name": "Display name",
         "event_context": "Event context",
         "event_display_message": "Event display message",
-        "event_outcome": "Event outcome",
-        "session_id": "Session ID",
-        "state_token": "State token",
+        "event_outcome": "Event outcome",        
         "auth_profile_id": "Auth profile ID",
         "machine_type": "Machine type",
         "user_agent": "User agent",
@@ -106,6 +106,8 @@ export const logFieldNames = {
         "is_billing_contact": "Is billing contact",
         "last_invite_sent": "Last invite sent",
         "eula_accepted_date": "Eula accepted date",
+        "state_token": "State token",
+        "active_session": "Session ID",
         "is_portal_admin": "Is portal admin"
     }
 }
@@ -117,11 +119,15 @@ export const filterableFieldNames = {
     "product_name": logFieldNames.activity.product_name,
     "api_end_point": logFieldNames.activity.api_end_point,
     "auth_profile_id": logFieldNames.activity.auth_profile_id,
-    "machine_name": logFieldNames.machine.machine_name,
     "serial_number": logFieldNames.machine.serial_number,
     "public_machine_ip": logFieldNames.machine.public_ip,
+    "public_ip": logFieldNames.machine.public_ip,
+    "email": logFieldNames.user.email,
+    "display_name": logFieldNames.activity.display_name,
+    "machine_name": logFieldNames.machine.machine_name,
+    "machine_type": logFieldNames.machine.machine_type,
+    "local_ip": logFieldNames.machine.local_ip,
     "mechanism_name": logFieldNames.activity.mechanism_name,
-    "display_name": logFieldNames.activity.display_name
 };
 
 
@@ -166,9 +172,25 @@ export const end_time = "end_time";
 
 // Product names
 export const TecTANGO = "TecTANGO";
+export const TecBIO = "TecBIO";
 
 // Policy types
 export const PIN = "PIN";
 export const PASSWORD = "PASSWORD";
 export const KIOSK = "KIOSK";
 export const CARD_ENROLL = "CARD_ENROLL";
+
+// Header Options
+export const Directory = "Directory";
+export const Products = "Products";
+export const Settings = "Settings";
+
+export const MenuItemPaths = {
+    [Directory]: "/dashboard",
+    [Settings]: "/settings",
+    [TecTANGO]: "/policies",
+    [TecBIO]: "/policies"
+}
+
+// LocalStorage constants
+export const SELECTED_HEADER = 'SELECTED_HEADER';

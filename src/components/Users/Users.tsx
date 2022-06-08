@@ -1,11 +1,13 @@
-import { Skeleton, Table, Button, Dropdown, Menu, Space } from "antd";
+import { Skeleton, Table, Button, Dropdown, Menu, Space, Tooltip } from "antd";
 import { useContext, useEffect, useState } from "react";
 import ApiService from "../../Api.service"
 import ApiUrls from '../../ApiUtils';
 import { AddUser } from "./AddUser";
 import { User } from "./User";
+import { MoreOutlined, BarsOutlined } from "@ant-design/icons"
 
 import { openNotification } from "../Layout/Notification";
+import SubMenu from "antd/lib/menu/SubMenu";
 
 export default function Users() {
 
@@ -19,49 +21,50 @@ export default function Users() {
 	const [lifeCycleTypes, setLifeCycleTypes]: any = useState(undefined);
 
 	const columns = [{
+		title: 'First Name',
+		dataIndex: 'first_name'
+		},{
+		title: 'Last Name',
+		dataIndex: 'last_name'
+	},{
+		title: 'Email',
+		dataIndex: 'email'
+	},{
 		title: 'Username',
-		dataIndex: 'user_name',
-		width: '30%'
-	},
-	{
+		dataIndex: 'user_name'
+	},{
 		title: 'Status',
-		dataIndex: 'status',
-		width: '20%'
-	},
-	{
+		dataIndex: 'status'
+	},{
 		title: 'Details',
 		dataIndex: 'details',
-		width: '20%',
-		render: (text: any, record: { uid: any; }) => (
-			<Button onClick={() => getUserDetails(record.uid)}>
-				View
-			</Button>
+		render: (text: any, record: { uid: any; user_name: any}) => (
+			<Tooltip title="View">
+				<Button icon={<BarsOutlined />} onClick={() => getUserDetails(record.uid)}/>
+					
+			</Tooltip>
 		)
-	},
-	{
+	},{
 		title: 'Actions',
 		dataIndex: 'actions',
-		width: '35%',
 		render: (text: any, record: { uid: any; user_name: any}) => (
-			<Dropdown overlay={<Menu
-				onClick={({ key }) => {
-					changeUserStatus(key, record.uid, record.user_name)
-				}}>
-				{
-					statusList.map(item => {
-						return <Menu.Item key={item.key}>
-							{item.value}
-						</Menu.Item>
-					})
-				}
-
-			</Menu>
+			<Dropdown overlay={
+				<Menu key={"changeStatus"} title={"Change Status"} >
+						{
+						statusList.map(item => {
+							return <Menu.Item key={item.key} onClick={({key}) => {changeUserStatus(key, record.uid, record.user_name)}}>
+								{item.value}
+							</Menu.Item>
+						})
+					}
+				</Menu>
 			}>
-				{<Button onClick={e => e.preventDefault()}>
-					<Space>
-						Change Status
-					</Space>
-				</Button>}
+				{
+					<Tooltip title="Change status">
+						<Button icon={<MoreOutlined/>} onClick={e => e.preventDefault()} />
+
+					</Tooltip>
+				}
 			</Dropdown>
 		)
 	}]
@@ -174,6 +177,7 @@ export default function Users() {
 						showHeader={true}
 						columns={columns}
 						dataSource={arr}
+						scroll={{x: true}}
 						pagination={{
 							current: page,
 							pageSize: pageSize,

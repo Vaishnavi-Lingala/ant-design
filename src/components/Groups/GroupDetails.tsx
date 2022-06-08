@@ -5,6 +5,7 @@ import { Divider, Table, Skeleton, Button, Modal, Col, Row, Typography } from "a
 import UsersSelection from "./UsersSelection";
 import Moment from 'moment';
 import { useHistory } from "react-router-dom";
+import './GroupDetails.css';
 
 import { openNotification } from "../Layout/Notification";
 

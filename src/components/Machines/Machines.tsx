@@ -1,4 +1,5 @@
-import { Skeleton, Table, Button, Select } from "antd";
+import { Skeleton, Table, Button, Select, Tooltip } from "antd";
+import { BarsOutlined } from "@ant-design/icons"
 import { useContext, useEffect, useState } from "react";
 import ApiService from "../../Api.service"
 import ApiUrls from '../../ApiUtils';
@@ -35,19 +36,15 @@ export default function Machines() {
         dataIndex: 'group_type',
         width: '20%'
     },
-    {
-        title: 'Product Version',
-        dataIndex: 'product_version',
-        width: '20%'
-    },
 	{
 		title: 'Actions',
 		dataIndex: 'actions',
 		width: '20%',
 		render: (text: any, record: { uid: any; }) => (
-			<Button onClick={() => history.push('/machines/' + record.uid)}>
-			  View
-			</Button>
+            <Tooltip title="View">
+                <Button icon={<BarsOutlined/>} onClick={() => history.push('/machines/' + record.uid)}>
+                </Button>
+            </Tooltip>
 		)
 	}
     ]
