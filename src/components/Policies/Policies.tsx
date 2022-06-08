@@ -1,7 +1,7 @@
 import { Button, Skeleton, Tabs, Tooltip } from 'antd';
 import { BarsOutlined, PoweroffOutlined, StopOutlined } from "@ant-design/icons"
 import { MenuOutlined } from '@ant-design/icons';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { arrayMoveImmutable } from 'array-move';
@@ -17,6 +17,7 @@ import { openNotification } from '../Layout/Notification';
 import { CARD_ENROLL, KIOSK, PASSWORD, PIN, TecTANGO } from '../../constants';
 import CardEnrollmentPolicy from './CardEnrollmentPolicy';
 import TableList from './tableList';
+import { Store } from '../../Store';
 import ProtectedRoute from '../ProtectedRoute';
 
 export default function Policies() {
@@ -111,7 +112,7 @@ export default function Policies() {
 	];
 
 	const history = useHistory();
-	const currentSeletedProduct = localStorage.getItem("SELECTED_HEADER");
+	const [seletedProduct] = useContext(Store);
 	const [loadingDetails, setLoadingDetails] = useState(false);
 	const [activePinPolicies, setActivePinPolicies]: any = useState([]);
 	const [inActivePinPolicies, setInActivePinPolicies]: any = useState([]);
@@ -408,7 +409,7 @@ export default function Policies() {
 
 	useEffect(() => {
 		(async function () {
-			if (currentSeletedProduct === TecTANGO) {
+			if (seletedProduct === TecTANGO) {
 				try {
 					let licenses = await ApiService.get(ApiUrls.licences);
 					console.log(licenses);
@@ -533,7 +534,7 @@ export default function Policies() {
 								</>
 							}
 					</TabPane>
-					{currentSeletedProduct === TecTANGO && maxEnroll ?
+					{seletedProduct === TecTANGO && maxEnroll ?
 						<TabPane tab="Card enrollment" key="card-enrollment">
 								{window.location.pathname.split('/').length === 4 ?
 									<ProtectedRoute path={`/policies/card-enrollment/:id`} component={CardEnrollmentPolicy} /> :
