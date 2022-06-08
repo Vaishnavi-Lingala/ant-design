@@ -57,6 +57,7 @@ function Settings() {
                         Object.keys(settingsFieldNames).map(key => <DisplayField
                             displayName={settingsFieldNames[key]}
                             value={settings[key]}
+                            key={key}
                         />)
                     }
                 </div>
