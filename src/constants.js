@@ -173,6 +173,7 @@ export const end_time = "end_time";
 // Product names
 export const TecTANGO = "TecTANGO";
 export const TecBIO = "TecBIO";
+export const TecUnify = "TecUnify";
 
 // Policy types
 export const PIN = "PIN";
@@ -189,7 +190,8 @@ export const MenuItemPaths = {
     [Directory]: "/dashboard",
     [Settings]: "/settings",
     [TecTANGO]: "/policies",
-    [TecBIO]: "/policies"
+    [TecBIO]: "/policies",
+    [TecUnify]: "/apps"
 }
 
 // LocalStorage constants

@@ -76,7 +76,6 @@ const Urls = {
     xrefByAccount: (account_id: number) => `app-xref?account_id=${account_id}`,
     allAccountConfigs: (account_id: number) => `combo-account?id=${account_id}`,
     templatesByConfigId: (config_id: number) => `combo-config?id=${config_id}`
-    
 }
 
 export default Urls;

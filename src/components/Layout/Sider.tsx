@@ -3,11 +3,11 @@ import Sider from "antd/lib/layout/Sider";
 import { useHistory } from "react-router-dom";
 import {
 	UserOutlined, DesktopOutlined, TeamOutlined, SettingOutlined, PieChartOutlined,
-	AreaChartOutlined, SolutionOutlined, LockOutlined
+	AreaChartOutlined, SolutionOutlined, LockOutlined, AppstoreOutlined
 } from '@ant-design/icons';
 import { useContext } from "react";
 import { Store } from "../../Store";
-import { Directory, Settings, TecBIO, TecTANGO } from "../../constants";
+import { Directory, Settings, TecBIO, TecTANGO, TecUnify} from "../../constants";
 
 function AppSider() {
 	const history = useHistory();
@@ -40,6 +40,8 @@ function AppSider() {
 				return commonProductoptions;
 			case TecBIO:
 				return commonProductoptions;
+      case TecUnify:
+        return <Menu.Item key="apps"><AppstoreOutlined/> Applications</Menu.Item>;
 			default:
 				return null;
 		}

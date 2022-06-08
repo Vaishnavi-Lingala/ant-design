@@ -2,20 +2,20 @@ import { Card, Input } from 'antd';
 
 import useFilter from './useFilter';
 
-import type { AppList, App } from './types';
+import type { Template } from './types';
 
 const { Search } = Input;
 
 interface SIProps {
-  appList: AppList;
+  templateList: Template[];
 }
 
-function SupportedIntegrations(): JSX.Element {
+function SupportedIntegrations({templateList}: SIProps): JSX.Element {
 
   function handleClick(e) {
   }
 
-  function AppCard({app_id, name, window_title}: App) {
+  function AppCard({app_id, name, window_title}: Template) {
     return (
       <>
         <h4 className='AppList-CardHeader'>
@@ -40,15 +40,15 @@ function SupportedIntegrations(): JSX.Element {
       </div>
 
         <ul className='AppList'>
-        {/* 
-          appList.map((item): JSX.Element => {
+        { 
+          templateList.map((item): JSX.Element => {
             return (
               <li className='AppList-Item AppList-Card'>
                 <AppCard {...item}/>
               </li>
             );
           })
-        */}
+        }
         </ul>
     </>
   );

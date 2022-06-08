@@ -23,11 +23,13 @@ async function getUsersList({ current, limit }: Page): Promise<PaginationApiRes>
 
 function useFetchUsers(userPage: Page) {
   const [userList, setUserList] = useState<PaginationApiRes>(initUserList);
+  const [isFetching, toggleFetching] = useState(true);
 
   useEffect(() => { 
     getUsersList(userPage)
       .then((pagedList) => {
         setUserList(pagedList);
+        toggleFetching(false);
       })
       .catch(error => console.error('Error: ', error));
 
@@ -37,7 +39,7 @@ function useFetchUsers(userPage: Page) {
     return userList;
   }
 
-  return {userList, resetFilter}
+  return {userList, resetFilter, isFetching}
 }
 
 export default useFetchUsers;

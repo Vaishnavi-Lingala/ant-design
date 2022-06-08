@@ -1,8 +1,5 @@
-// TODO: Call API to get list of all Applications
-// TODO: Virtual List, grab items as we scroll down the list
-
 import { useState } from 'react';
-import { Button, Checkbox, List, Input } from 'antd';
+import { Button, Checkbox, List, Input, Skeleton } from 'antd';
 import { CaretDownOutlined } from '@ant-design/icons';
 import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 
@@ -23,12 +20,12 @@ const { Search } = Input;
 function PascalCase(s: string) { return s.charAt(0).toUpperCase() + s.substring(1).toLowerCase(); }
 
 function BulkAssignment({activeList}: BAProps) {
-  const [userPage, setUserPage] = useState<Page>(initialPState);
-  const [appPage, setAppPage] = useState<Page>(initialPState);
+  const [userPage, setUserPage] = useState(initialPState);
+  const [appPage, setAppPage] = useState(initialPState);
   const [selectedUid, setSelectedUid] = useState<(string)[]>([]);
   const [filteredApps, setFilteredApps] = useState(activeList);
 
-  const { userList, resetFilter } = useFetchUsers(userPage);
+  const { userList, resetFilter, isFetching } = useFetchUsers(userPage);
 
   function filterFields(searchVal: string) {
     console.log(searchVal)
@@ -159,13 +156,15 @@ function BulkAssignment({activeList}: BAProps) {
 
 
   return (
-    <div className='BulkAssignment'>
-      <Button style={{alignSelf: 'end', margin: '5px 5px 0px'}}type='primary' size='middle'>Next</Button>
-      <div className='BulkAssignment-ListGroup'>
-        <ApplicationList/>
-        <UserList/>
+    <Skeleton loading={isFetching} className={`${isFetching && "_Padding"}`}>
+      <div className='BulkAssignment'>
+        <Button style={{alignSelf: 'end', margin: '5px 5px 0px'}}type='primary' size='middle'>Next</Button>
+        <div className='BulkAssignment-ListGroup'>
+          <ApplicationList/>
+          <UserList/>
+        </div>
       </div>
-    </div>
+    </Skeleton>
   );
 }
 

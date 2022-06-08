@@ -19,6 +19,10 @@
     flex-direction: row;
 }
 
+._Padding {
+    padding: 1vmax;
+}
+
 .AppSettings {
     display: flex;
     flex-direction: column;

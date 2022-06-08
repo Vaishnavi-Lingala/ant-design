@@ -66,11 +66,11 @@ export default function FiltersModal({ onFilterApply, onResetClick }) {
             }
         });
 
-        const reducedOptimisedFiltersObj = optimisedFiltersObj.reduce(
-            (r, c) => Object.assign(r, c),
-            {}
-        );
-        onFilterApply(reducedOptimisedFiltersObj);
+        // const reducedOptimisedFiltersObj = optimisedFiltersObj.reduce(
+        //     (r, c) => Object.assign(r, c),
+        //     {}
+        // );
+        // onFilterApply(reducedOptimisedFiltersObj);
     };
 
     return (

@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import { Button, Skeleton } from 'antd';
 
 import './tecUnify.css';
@@ -7,7 +7,7 @@ import SupportedIntegrations from './SupportedIntegrations';
 import AccountIntegrations from './AccountIntegrations';
 import BulkAssignment from './BulkAssignment';
 import AppSettings from './AppSettings';
-import useFetchApps from './useFetchApps';
+import { useAppFetch } from './useUnifyFetch';
 
 interface PageType {
   name: string;
@@ -24,8 +24,8 @@ function capitalizeFirst(s: string): string {
 }
 
 function Applications(): JSX.Element {
-  const [currPage, setCurrPage] = useState<PageType>(homeComponent);
-  const { appList, isFetching } = useFetchApps();
+  const [currPage, setCurrPage] = useState(homeComponent);
+  const { appList, isFetching } = useAppFetch();
 
   const isBulkAssignmentPage = (currPage.name === 'assignment');
   const isConfiguredPage = (currPage.name === 'configured');
@@ -44,12 +44,12 @@ function Applications(): JSX.Element {
     setCurrPage(homeComponent);
   }
 
-  function SwitchTrack(): JSX.Element | null {
+  function RenderOptions(): JSX.Element | null {
     switch(currPage.name) {
       case 'configured':
         return <AccountIntegrations appList={appList}/>;
       case 'supported':
-        return <SupportedIntegrations/>;
+        // return <SupportedIntegrations templateList={}/>;
       case 'assignment':
         return <BulkAssignment activeList={appList.active}/>;
       case 'settings':
@@ -85,7 +85,7 @@ function Applications(): JSX.Element {
         </div>
 
         <div className='Content-ComponentView'>
-          <SwitchTrack/>
+          <RenderOptions/>
         </div>
       </Skeleton>
     </>
