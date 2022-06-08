@@ -20,6 +20,7 @@ export const KioskPolicy = (props: any) => {
     const [kioskEditData, setKioskEditedData]: any = useState();
     const [groups, setGroups]: any = useState([]);
     const [render, setRender] = useState(true);
+    const [confirmPassword, setConfirmPassword] = useState("");
     const [loginTypeOptions, setLoginTypeOptions] = useState({});
     const [groupsChange, setGroupsChange]: any = useState([]);
     const [groupNames, setGroupNames]: any = useState([]);
@@ -47,11 +48,13 @@ export const KioskPolicy = (props: any) => {
                         value: data[0][i].uid
                     })
                 }
+                setGroups(groups);
                 var object = {};
                 for (var i = 0; i < data[0].length; i++) {
                     object[data[0][i].name] = data[0][i].uid
                 }
                 groupsChange.push(object);
+                setGroupsChange(groupsChange);
 
                 console.log(data[1]);
                 for (var i = 0; i < data[1].length; i++) {
@@ -60,12 +63,14 @@ export const KioskPolicy = (props: any) => {
                         value: data[1][i].uid
                     })
                 }
+                setKioskGroups(kioskGroups);
                 var object = {};
                 for (var i = 0; i < data[1].length; i++) {
                     object[data[1][i].name] = data[1][i].uid
                 }
                 kioskGroupsChange.push(object);
                 console.log(kioskGroups);
+                setkioskGroupsChange(kioskGroupsChange);
                 
                 setLoginTypeOptions(data[2]);
                 
@@ -74,7 +79,7 @@ export const KioskPolicy = (props: any) => {
                     setKioskDisplayData(data[3]);
                     setKioskEditedData(data[3]);
                     setPolicyRequirements(data[3].policy_req);
-                    
+                    setConfirmPassword(data[3].policy_req.assay);
                     var password = ""
                     for (let i = 0; i < data[3].policy_req.assay.length; i++) {
                         password += "*";
@@ -119,6 +124,7 @@ export const KioskPolicy = (props: any) => {
     function updateKioskPolicy() {
         kioskEditData.auth_policy_groups = groupUids;
         kioskEditData.kiosk_machine_groups = kioskGroupUids;
+        kioskEditData.policy_req.confirm_assay = confirmPassword;
         ApiService.put(ApiUrls.policy(kioskDisplayData['uid']), kioskEditData)
             .then(data => {
                 console.log(data);
@@ -382,8 +388,8 @@ export const KioskPolicy = (props: any) => {
                                     {
                                         isEdit ? <Input.Password className="form-control"
                                             style={{ width: "275px" }}
-                                            onChange={(e) => kioskEditData.policy_req.confirm_assay = e.target.value}
-                                            defaultValue={policyRequirements['assay']}
+                                            onChange={(e) => setConfirmPassword(e.target.value)}
+                                            defaultValue={confirmPassword}
                                             placeholder='Enter confirm password'
                                         /> : policyRequirements['confirm_assay']
                                     }

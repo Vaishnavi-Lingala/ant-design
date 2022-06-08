@@ -97,7 +97,7 @@ const CardEnrollmentPolicy = (props) => {
     }, []);
 
     function updateCardEnrollPolicy() {
-        cardEnrollDisplayData['auth_policy_groups'] = groupUids;
+        cardEnrollEditData['auth_policy_groups'] = groupUids;
         ApiService.put(ApiUrls.policy(cardEnrollDisplayData['uid']), cardEnrollEditData)
             .then(data => {
                 if (!data.errorSummary) {
