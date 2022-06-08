@@ -70,18 +70,18 @@ const CardEnrollmentPolicy = (props) => {
                 else {
                     console.log('else: ', data[1]);
                     openNotification('error', data[1].errorCauses.length !== 0 ? data[1].errorCauses[1].errorSummary : data[1].errorSummary);
-                    history.push('/policies/kiosk');
+                    history.push('/policies/card-enrollment');
                 }
             }, error => {
                 console.error('Error: ', error);
                 openNotification('error', 'An Error has occured with getting Groups');
                 setLoading(false);
             })
-        }, []);
-        
-        useEffect(() => {
-            (async function () {
-                try {
+    }, []);
+
+    useEffect(() => {
+        (async function () {
+            try {
                 let licenses = await ApiService.get(ApiUrls.licences);
                 licenses.forEach(license => {
                     if (license.product.sku === TecTANGO && license.max_enroll_allowed) {
@@ -95,8 +95,7 @@ const CardEnrollmentPolicy = (props) => {
             }
         })();
     }, []);
-    
-    
+
     function updateCardEnrollPolicy() {
         cardEnrollDisplayData['auth_policy_groups'] = groupUids;
         ApiService.put(ApiUrls.policy(cardEnrollDisplayData['uid']), cardEnrollEditData)
@@ -161,10 +160,12 @@ const CardEnrollmentPolicy = (props) => {
             <div className={cardEnrollDisplayData['uid'] === undefined ? "content-container" : "content-container-policy"}>
                 <div className="row-policy-container">
                     <div>
-                        {cardEnrollDisplayData['uid'] === undefined ? <div className="content-heading">Create Card Enrollment Policy</div> :
-                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                        {cardEnrollDisplayData['uid'] === undefined ? <></> :
+                            <div>
                                 <div className="content-heading">{isEdit ? 'Edit' : null} Card Enrollment Policy </div>
-                                <Hint text={"This policy allows you to control how many cards can be enrolled per user"} />
+                                <div>
+                                    <Hint text={"This policy allows you to control how many cards can be enrolled per user"} />
+                                </div>
                             </div>
                         }
                     </div>

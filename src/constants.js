@@ -188,8 +188,8 @@ export const Settings = "Settings";
 export const MenuItemPaths = {
     [Directory]: "/dashboard",
     [Settings]: "/settings",
-    [TecTANGO]: "/policies",
-    [TecBIO]: "/policies"
+    [TecTANGO]: "/mechanism",
+    [TecBIO]: "/mechanism"
 }
 
 // LocalStorage constants

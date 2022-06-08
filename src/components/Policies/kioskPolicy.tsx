@@ -383,7 +383,7 @@ export const KioskPolicy = (props: any) => {
                                         isEdit ? <Input.Password className="form-control"
                                             style={{ width: "275px" }}
                                             onChange={(e) => kioskEditData.policy_req.confirm_assay = e.target.value}
-                                            defaultValue={policyRequirements['confirm_assay']}
+                                            defaultValue={policyRequirements['assay']}
                                             placeholder='Enter confirm password'
                                         /> : policyRequirements['confirm_assay']
                                     }

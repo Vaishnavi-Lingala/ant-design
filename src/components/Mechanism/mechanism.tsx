@@ -1,19 +1,16 @@
 import { Button, Input, Radio, Select, Skeleton } from "antd";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import './Mechanism.css'
 
 import ApiService from "../../Api.service";
-// import { MechanismType } from "../../models/Data.models";
 import ApiUrls from '../../ApiUtils';
-
 import { openNotification } from "../Layout/Notification";
 import { useHistory } from "react-router-dom";
 import { MechanismType } from "../../models/Data.models";
 
 
 function Mechanism(props: any) {
-    // var displayDetails = {};
     const [loading, setLoading] = useState(true);
     const [loadingDetails, setLoadingDetails] = useState(true);
     const [isEdit, setIsEdit] = useState(false);
@@ -22,7 +19,6 @@ function Mechanism(props: any) {
     const [groups, setGroups]: any = useState([]);
     const [challengeFactors, setChallengeFactors] = useState([]);
     const [tapOutOptions, setTapOutOption]: any = useState({});
-    // const [readerOptions, setReaderOptions]: any = useState({});
     const [factorOptions, setFactorOptions]: any = useState({});
     const [render, setRender] = useState(false);
     const [groupNames, setGroupNames]: any = useState([]);
@@ -47,7 +43,6 @@ function Mechanism(props: any) {
                 password_grace_period: null
             }
         ],
-        // reader_type: "",
         product_id: "oprc735871d0",
         name: "",
         on_tap_out: null,
@@ -144,7 +139,6 @@ function Mechanism(props: any) {
 
                 console.log(data[1]);
                 setTapOutOption(data[1].tap_out_options);
-                // setReaderOptions(data[1].readers);
 
                 console.log(data[2]);
                 setFactorOptions(data[2]);
@@ -153,40 +147,8 @@ function Mechanism(props: any) {
                 setLoadingDetails(false);
             })
             .catch(error => {
-                // openNotification('error', 'No internet connection');
                 openNotification('error', error.message);
             })
-
-        console.log(editData);
-        // if (data[3]['uid'] === undefined) {
-        //     setIsEdit(true);
-        // }
-
-        // if (disabledFactors.includes("NONE")) {
-        //     disabledFactors.pop();
-        // }
-
-        // if (disabledFactors1.includes("NONE")) {
-        //     disabledFactors1.pop();
-        //     disabledFactors.pop();
-        //     setValue("NONE")
-        //     data[3]['challenge_factors'][1].factor = "NONE";
-        //     console.log(data[3]['challenge_factors'][1].factor);
-        // }
-
-        // if (data[3]['uid'] !== undefined) {
-        //     Object.keys(data[3].mechanism_groups).map(result => {
-        //         groupNames.push(data[3].mechanism_groups[result].name);
-        //         groupUids.push(data[3].mechanism_groups[result].uid)
-        //         console.log(groupNames);
-        //         console.log(groupUids);
-        //     });
-        //     setGroupNames(groupNames);
-        //     setGroupUids(groupUids);
-        // }
-        // editData.mechanism_groups = groupUids;
-        // setEditData({...editData, mechanism_groups: groupUids});
-        console.log(displayDetails);
     }, [])
 
     function updateMechanism() {
@@ -265,14 +227,12 @@ function Mechanism(props: any) {
     }
 
     return (<>
-        {displayDetails['uid'] !== undefined ?
-            <div className='content-header'>
-                Mechanism
-                {displayDetails['uid'] !== undefined ? <Button style={{ marginLeft: 'auto', alignSelf: 'end' }} onClick={() => {
-                    history.push('/mechanism')
-                }}>Back</Button> : <></>}
-            </div> : <></>
-        }
+        <div className='content-header'>
+            Mechanism
+            <Button style={{ marginLeft: 'auto', alignSelf: 'end' }} onClick={() => {
+                history.push('/mechanism')
+            }}>Back</Button>
+        </div>
 
         <Skeleton loading={loading || loadingDetails}>
             <div className="content-container rounded-grey-border">

@@ -71,7 +71,7 @@ export const PinPolicy = (props: any) => {
 				else {
 					console.log('else: ', data[1]);
 					openNotification('error', data[1].errorCauses.length !== 0 ? data[1].errorCauses[1].errorSummary : data[1].errorSummary);
-					history.push('/policies/kiosk');
+					history.push('/policies/pin');
 				}
 			}, error => {
 				console.error('Error: ', error);

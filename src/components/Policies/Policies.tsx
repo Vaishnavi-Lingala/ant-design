@@ -14,7 +14,7 @@ import ApiUrls from '../../ApiUtils';
 import ApiService from '../../Api.service';
 import { KioskPolicy } from './kioskPolicy';
 import { openNotification } from '../Layout/Notification';
-import { CARD_ENROLL, KIOSK, PASSWORD, PIN, SELECTED_HEADER, TecTANGO } from '../../constants';
+import { CARD_ENROLL, KIOSK, PASSWORD, PIN, TecTANGO } from '../../constants';
 import CardEnrollmentPolicy from './CardEnrollmentPolicy';
 import TableList from './tableList';
 import ProtectedRoute from '../ProtectedRoute';
@@ -110,7 +110,8 @@ export default function Policies() {
 		}
 	];
 
-	const currentSeletedProduct = localStorage.getItem("productName");
+	const history = useHistory();
+	const currentSeletedProduct = localStorage.getItem("SELECTED_HEADER");
 	const [loadingDetails, setLoadingDetails] = useState(false);
 	const [activePinPolicies, setActivePinPolicies]: any = useState([]);
 	const [inActivePinPolicies, setInActivePinPolicies]: any = useState([]);
@@ -410,6 +411,7 @@ export default function Policies() {
 			if (currentSeletedProduct === TecTANGO) {
 				try {
 					let licenses = await ApiService.get(ApiUrls.licences);
+					console.log(licenses);
 					licenses.forEach(license => {
 						if (license.product.sku === TecTANGO && license.max_enroll_allowed) {
 							setMaxEnroll(license.max_enroll_allowed);
@@ -423,8 +425,6 @@ export default function Policies() {
 			}
 		})();
 	}, []);
-
-	const history = useHistory();
 
 	function activatePolicy(uid: string) {
 		console.log(uid);
