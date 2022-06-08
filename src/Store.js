@@ -12,7 +12,6 @@ function StoreProvider({ children }) {
 
     useEffect(() => {
         localStorage.setItem(SELECTED_HEADER, selectedHeaderOption);
-        console.log({ selectedHeaderOption });
     }, [selectedHeaderOption]);
 
     return (
