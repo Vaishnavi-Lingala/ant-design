@@ -21,6 +21,7 @@ function AppSider() {
 		const commonProductoptions = <>
 			<Menu.Item key="mechanism"><LockOutlined /> Mechanisms</Menu.Item>
 			<Menu.Item key="policies"><SolutionOutlined /> Policies</Menu.Item>
+			<Menu.Item key="machines"><DesktopOutlined /> Machines</Menu.Item>
 			<Menu.Item key="activityLogs"><PieChartOutlined /> Activity Logs</Menu.Item>
 		</>;
 
@@ -31,7 +32,6 @@ function AppSider() {
 				return <>
 					<Menu.Item key="dashboard"><AreaChartOutlined /> Dashboard</Menu.Item>
 					<Menu.Item key="users"><UserOutlined /> Users</Menu.Item>
-					<Menu.Item key="machines"><DesktopOutlined /> Machines</Menu.Item>
 					<Menu.Item key="groups"><TeamOutlined /> Groups</Menu.Item>
 				</>
 			case Settings:

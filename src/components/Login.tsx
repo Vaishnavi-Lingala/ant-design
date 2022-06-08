@@ -1,4 +1,4 @@
-import { useState } from "react"; 
+import { useContext, useState } from "react"; 
 import { OktaAuth } from "@okta/okta-auth-js";
 import { Input, Button, Form } from "antd";
 
@@ -10,6 +10,8 @@ import ReactDOM from "react-dom";
 import { ClientConfiguration } from "../models/Data.models";
 import ApiService from "../Api.service";
 import ApiUrls from '../ApiUtils';
+import { Store } from "../Store";
+import { Directory } from "../constants";
 
 function Login() {
     const [email, setEmail] = useState("");
@@ -17,6 +19,7 @@ function Login() {
     const [errorMessage, setErrorMessage] = useState("");
     const emailPrefix = email.split('@')[0];
     const domain = email.split('@')[1];
+    const [, setSelectedHeader] = useContext(Store);
 
     const validateEmail = async () => {
         ApiService.post(ApiUrls.client_info, { domain: domain })
@@ -34,6 +37,7 @@ function Login() {
                         oktaAuth.signInWithRedirect({
                             originalUri: '/dashboard'
                         }).then((data) => {
+                            setSelectedHeader(Directory);
                         }).catch((error) => {
                             console.log(error);
                         })
