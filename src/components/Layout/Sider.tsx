@@ -7,32 +7,41 @@ import {
 } from '@ant-design/icons';
 import { useContext } from "react";
 import { Store } from "../../Store";
-import { Directory, Settings, TecBIO, TecTANGO, TecUnify} from "../../constants";
+import { Directory, MenuItemPaths, Settings, TecBIO, TecTANGO, TecUnify } from "../../constants";
 
 function AppSider() {
 	const history = useHistory();
 	const [selectedMenuOption] = useContext(Store);
 
 	function openScreen(screen: string) {
-		history.push('/' + screen);
+		if (screen !== "product") {
+			history.push('/' + screen);
+		}
+		else {
+			history.push(MenuItemPaths[selectedMenuOption]);
+		}
 	}
 
 	function renderOptions() {
 		const commonProductoptions = <>
+			<Menu.Item key="product" className="sidebar-header">
+				<div className="sidebar-header-content">
+					<img height={32} width={32} src={require("../../assets/favicon.ico")} />
+					{selectedMenuOption.slice(0, 1).toUpperCase() + selectedMenuOption.slice(1, 3).toLowerCase() + selectedMenuOption.slice(3, 4).toUpperCase() + selectedMenuOption.slice(4).toLowerCase()}
+				</div>
+			</Menu.Item>
 			<Menu.Item key="mechanism"><LockOutlined /> Mechanisms</Menu.Item>
 			<Menu.Item key="policies"><SolutionOutlined /> Policies</Menu.Item>
 			<Menu.Item key="activityLogs"><PieChartOutlined /> Activity Logs</Menu.Item>
 		</>;
-
-		console.log({ selectedMenuOption });
 
 		switch (selectedMenuOption) {
 			case Directory:
 				return <>
 					<Menu.Item key="dashboard"><AreaChartOutlined /> Dashboard</Menu.Item>
 					<Menu.Item key="users"><UserOutlined /> Users</Menu.Item>
-					<Menu.Item key="machines"><DesktopOutlined /> Machines</Menu.Item>
 					<Menu.Item key="groups"><TeamOutlined /> Groups</Menu.Item>
+					<Menu.Item key="machines"><DesktopOutlined /> Machines</Menu.Item>
 				</>
 			case Settings:
 				return <Menu.Item key="settings"><SettingOutlined /> Settings</Menu.Item>
