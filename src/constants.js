@@ -39,7 +39,6 @@ export const hiddenFields = {
         'eula_accepted_date',
         'is_portal_admin',
         'idp_login_hint',
-        'active_session',
         'windows_login_hint',
         'uid'
 
@@ -77,9 +76,7 @@ export const logFieldNames = {
         "display_name": "Display name",
         "event_context": "Event context",
         "event_display_message": "Event display message",
-        "event_outcome": "Event outcome",
-        "session_id": "Session ID",
-        "state_token": "State token",
+        "event_outcome": "Event outcome",        
         "auth_profile_id": "Auth profile ID",
         "machine_type": "Machine type",
         "user_agent": "User agent",
@@ -109,6 +106,8 @@ export const logFieldNames = {
         "is_billing_contact": "Is billing contact",
         "last_invite_sent": "Last invite sent",
         "eula_accepted_date": "Eula accepted date",
+        "state_token": "State token",
+        "active_session": "Session ID",
         "is_portal_admin": "Is portal admin"
     }
 }

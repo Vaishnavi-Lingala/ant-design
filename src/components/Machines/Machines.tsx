@@ -36,11 +36,6 @@ export default function Machines() {
         dataIndex: 'group_type',
         width: '20%'
     },
-    {
-        title: 'Product Version',
-        dataIndex: 'product_version',
-        width: '20%'
-    },
 	{
 		title: 'Actions',
 		dataIndex: 'actions',
