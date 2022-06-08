@@ -2,7 +2,7 @@ import { Button, Skeleton, Table, Tabs, Tooltip } from 'antd';
 import { BarsOutlined, PoweroffOutlined, StopOutlined } from "@ant-design/icons"
 
 import { MenuOutlined } from '@ant-design/icons';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { arrayMoveImmutable } from 'array-move';
@@ -18,6 +18,7 @@ import { openNotification } from '../Layout/Notification';
 import { CARD_ENROLL, KIOSK, PASSWORD, PIN, SELECTED_HEADER, TecTANGO } from '../../constants';
 import CardEnrollmentPolicy from './CardEnrollmentPolicy';
 import TableList from './tableList';
+import { Store } from '../../Store';
 
 export default function Policies() {
 
@@ -107,7 +108,7 @@ export default function Policies() {
 		}
 	];
 
-	const currentSeletedProduct = localStorage.getItem(SELECTED_HEADER);
+	const [seletedProduct] = useContext(Store);
 
 	const [pinDetails, setPinDetails] = useState(undefined);
 	const [passwordDetails, setPasswordDetails] = useState(undefined);
@@ -418,7 +419,7 @@ export default function Policies() {
 
 	useEffect(() => {
 		(async function () {
-			if (currentSeletedProduct === TecTANGO) {
+			if (seletedProduct === TecTANGO) {
 				try {
 					let licenses = await ApiService.get(ApiUrls.licences);
 					licenses.forEach(license => {
@@ -629,7 +630,7 @@ export default function Policies() {
 							}
 						</Skeleton>
 					</TabPane>
-					{currentSeletedProduct === TecTANGO && maxEnroll ?
+					{seletedProduct === TecTANGO && maxEnroll ?
 						<TabPane tab="Card enrollment" key="card-enrollment">
 							<Skeleton loading={loading}>
 								{cardEnrollPolicy ? <CardEnrollmentPolicy policyDetails={cardEnrollPolicy} /> :
