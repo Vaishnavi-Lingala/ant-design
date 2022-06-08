@@ -11,7 +11,6 @@ import './Mechanism.css';
 import ApiService from '../../Api.service';
 import ApiUrls from '../../ApiUtils';
 import Mechanism from './mechanism';
-
 import { openNotification } from '../Layout/Notification';
 import Modal from 'antd/lib/modal/Modal';
 
@@ -30,7 +29,6 @@ export default function Mechanisms() {
 			render: (text: any, record: { mechanism_id: any; }) => (
 				<Tooltip title="View">
 					<Button icon={<BarsOutlined />} onClick={() => {
-						// getMechanismDetails(record.mechanism_id)
 						history.push('/mechanism/' + record.mechanism_id)
 					}}>
 					</Button>
@@ -78,7 +76,6 @@ export default function Mechanisms() {
 				<Tooltip title="View">
 					<Button icon={<BarsOutlined />} onClick={() => {
 						history.push('/mechanism/' + record.mechanism_id)
-						// getMechanismDetails(record.mechanism_id)
 					}}>
 					</Button>
 				</Tooltip>
@@ -99,37 +96,11 @@ export default function Mechanisms() {
 		}
 	];
 
-	const [mechanismDetails, setMechanismDetails] = useState(undefined);
 	const [loading, setLoading] = useState(false);
 	const [activeMechanisms, setActiveMechanisms]: any = useState([]);
 	const [inactiveMechanisms, setInactiveMechanisms]: any = useState([]);
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const history = useHistory();
-	const mechanism = {
-		challenge_factors: [
-			{
-				order: 0,
-				factor: "",
-				name: "Challenge_1",
-				password_grace_period: "TWO_HOURS"
-			},
-			{
-				order: 1,
-				factor: "",
-				name: "Challenge_2",
-				password_grace_period: null
-			}
-		],
-		// reader_type: "",
-		product_id: "oprc735871d0",
-		name: "",
-		on_tap_out: null,
-		mechanism_groups: [],
-		default: false,
-		order: null,
-		active: false,
-		account_id: "ooa46c499ccb"
-	}
 
 	function getMechanisms() {
 		setLoading(true);
@@ -177,9 +148,6 @@ export default function Mechanisms() {
 	}
 
 	useEffect(() => {
-		if (window.location.pathname.split("/").length === 3) {
-			getMechanismDetails(window.location.pathname.split('/')[2]);
-		}
 		getMechanisms();
 	}, [])
 
@@ -261,30 +229,6 @@ export default function Mechanisms() {
 
 	}
 
-	function getMechanismDetails(uid: string) {
-		localStorage.setItem("mechanismUid", uid);
-		setLoading(true);
-		ApiService.get(ApiUrls.mechanism(uid))
-			.then(data => {
-				if (!data.errorSummary) {
-					history.push('/mechanism/' + uid);
-					console.log(data);
-					console.log(mechanism);
-					setMechanismDetails(data);
-					setLoading(false);
-				}
-				else {
-					openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
-					setLoading(false);
-				}
-			})
-			.catch(error => {
-				console.error('Error: ', error);
-				openNotification('error', 'An Error has occured with getting Mechanism Details');
-			})
-	}
-
-
 	const DragHandle = SortableHandle(() => <MenuOutlined style={{ cursor: 'grab', color: '#999' }} />);
 	const SortableItem = SortableElement(props => <tr {...props} />);
 	const SortableBody = SortableContainer(props => <tbody {...props} />);
@@ -320,13 +264,9 @@ export default function Mechanisms() {
 
 	return (
 		<>
-			{!isModalVisible ? <div className='content-header'>
+			<div className='content-header'>
 				Mechanism
-				{mechanismDetails ? <Button style={{ marginLeft: 'auto', alignSelf: 'end' }} onClick={() => {
-					setMechanismDetails(undefined)
-					history.push('/mechanism')
-				}}>Back</Button> : <></>}
-			</div> : <></>}
+			</div>
 
 			<Skeleton loading={loading}>
 				<div style={{

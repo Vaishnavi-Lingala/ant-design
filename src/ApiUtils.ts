@@ -1,10 +1,8 @@
 export const accountId = localStorage.getItem('accountId');
-// export const productId = "opr296b1a0dc"
-// export const productId = "oprc735871d0"
-export const productId = localStorage.getItem("productId");
-console.log(productId);
 
-export const base_url = process.env.REACT_APP_API_URL;
+export const productId = localStorage.getItem("productId");
+
+export const base_url = process.env.REACT_APP_API_URL
 
 export function getAccessToken() {
     const okta_token_storage = localStorage.getItem("okta-token-storage");
