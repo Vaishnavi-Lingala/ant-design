@@ -71,8 +71,7 @@ function AppHeader() {
     return (
         <Header className="header">
             <div className="logo">
-                TecConnect
-                {/* <img src="Credenti_Logo.png" alt="Credenti TecConnect" width={150}/> */}
+                <img src="Credenti_Logo.png" alt="Credenti TecConnect" width={150}/>
             </div>
 
             <Menu className="border-bottom-0" theme="light" mode="horizontal"
