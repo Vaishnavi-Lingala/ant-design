@@ -112,11 +112,10 @@ function Mechanism(props: any) {
                     setLoading(false);
                 }
                 else {
-                    console.log('else: ', data[3]);
-                    openNotification('error', data[3].errorCauses.length !== 0 ? data[3].errorCauses[0].errorSummary : data[3].errorSummary);
-                    // setInterval(() => {
-                    //     history.goBack();
-                    // }, 2000)
+                    console.log('else: ', data);
+                    //@ts-ignore
+                    openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses.errorSummary : data.errorSummary);
+                    history.push('/mechanism');
                 }
             })
     }, [])
@@ -252,12 +251,9 @@ function Mechanism(props: any) {
     }
 
     function handleGroups(value: any) {
-        console.log(value);
         Object.keys(groupsChange[0]).map(key => {
             if (value.includes(key)) {
-                console.log(value)
                 var index = value.indexOf(key)
-                console.log(index)
                 value.splice(index, 1)
                 value.push(groupsChange[0][key]);
             }

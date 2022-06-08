@@ -1,6 +1,5 @@
-import { Button, Skeleton, Table, Tabs, Tooltip } from 'antd';
+import { Button, Skeleton, Tabs, Tooltip } from 'antd';
 import { BarsOutlined, PoweroffOutlined, StopOutlined } from "@ant-design/icons"
-
 import { MenuOutlined } from '@ant-design/icons';
 import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
@@ -18,9 +17,9 @@ import { openNotification } from '../Layout/Notification';
 import { CARD_ENROLL, KIOSK, PASSWORD, PIN, SELECTED_HEADER, TecTANGO } from '../../constants';
 import CardEnrollmentPolicy from './CardEnrollmentPolicy';
 import TableList from './tableList';
+import ProtectedRoute from '../ProtectedRoute';
 
 export default function Policies() {
-
 	const activateColumns = [
 		{
 			title: 'Sort',
@@ -52,7 +51,9 @@ export default function Policies() {
 			width: '10%',
 			render: (text: any, record: { policy_id: any; }) => (
 				<Tooltip title="View">
-					<Button icon={<BarsOutlined />} onClick={() => getPolicyDetails(record.policy_id)}>
+					<Button icon={<BarsOutlined />} onClick={() => {
+						history.push('/policies/' + window.location.pathname.split("/")[2] + "/" + record.policy_id);
+					}}>
 					</Button>
 				</Tooltip>
 			)
@@ -64,7 +65,7 @@ export default function Policies() {
 			render: (text: any, record: { policy_id: any; default: any }) => (
 				record.default === false ?
 					<Tooltip title="Deactivate">
-						<					Button icon={<StopOutlined />} onClick={() => deActivatePolicy(record.policy_id)}>
+						<Button icon={<StopOutlined />} onClick={() => deActivatePolicy(record.policy_id)}>
 						</Button>
 					</Tooltip> : <></>
 			)
@@ -88,7 +89,9 @@ export default function Policies() {
 			width: '10%',
 			render: (text: any, record: { policy_id: any; }) => (
 				<Tooltip title="View">
-					<Button icon={<BarsOutlined />} onClick={() => getPolicyDetails(record.policy_id)}>
+					<Button icon={<BarsOutlined />} onClick={() => {
+						history.push('/policies/' + window.location.pathname.split("/")[2] + "/" + record.policy_id);
+					}}>
 					</Button>
 				</Tooltip>
 			)
@@ -107,14 +110,8 @@ export default function Policies() {
 		}
 	];
 
-	const currentSeletedProduct = localStorage.getItem(SELECTED_HEADER);
-
-	const [pinDetails, setPinDetails] = useState(undefined);
-	const [passwordDetails, setPasswordDetails] = useState(undefined);
-	const [kioskDetails, setKioskDetails] = useState(undefined);
-	const [cardEnrollPolicy, setCardEnrollPolicy] = useState(undefined);
+	const currentSeletedProduct = localStorage.getItem("productName");
 	const [loadingDetails, setLoadingDetails] = useState(false);
-	const [loading, setLoading] = useState(false);
 	const [activePinPolicies, setActivePinPolicies]: any = useState([]);
 	const [inActivePinPolicies, setInActivePinPolicies]: any = useState([]);
 	const [activePasswordPolicies, setActivePasswordPolicies]: any = useState([]);
@@ -123,7 +120,7 @@ export default function Policies() {
 	const [inActiveKioskPolicies, setInActiveKioskPolicies]: any = useState([]);
 	const [activeCardEnrollmentPolicies, setActiveCardEnrollmentPolicies] = useState([]);
 	const [inActiveCardEnrollmentPolicies, setInActiveCardEnrollmentPolicies] = useState([]);
-	const [tabname, setTabname] = useState("");
+	const path = window.location.pathname.split('/').length;
 	const [maxEnroll, setMaxEnroll] = useState(null);
 	const { TabPane } = Tabs;
 
@@ -252,169 +249,161 @@ export default function Policies() {
 	}
 
 	function getPolicies() {
-		setLoadingDetails(true)
-		ApiService.get(ApiUrls.policies)
-			.then(data => {
-				console.log(data);
-				var pinCounter = 0;
-				var passwordCounter = 0;
-				var kioskCounter = 0;
-				var cardEnrollCounter = 0;
-				var pinActive: any = [];
-				var pinInActive: any = [];
-				var passwordActive: any = [];
-				var passwordInActive: any = [];
-				var kioskActive: any = [];
-				var kioskInActive: any = [];
-				var cardEnrollActive: any = [];
-				var cardEnrollInActive: any = [];
-				for (var i = 0; i < data.length; i++) {
-					var object;
-					if (data[i].policy_type === PIN) {
-						if (data[i].active === true) {
-							object = {
-								key: pinCounter + 1,
-								policy_name: data[i].name,
-								policy_id: data[i].uid,
-								policy_description: data[i].description,
-								order: data[i].order,
-								default: data[i].default,
-								index: pinCounter + 1
+		console.log(path);
+		if (path === 3) {
+			setLoadingDetails(true)
+			ApiService.get(ApiUrls.policies)
+				.then(data => {
+					console.log(data);
+					var pinCounter = 0;
+					var passwordCounter = 0;
+					var kioskCounter = 0;
+					var cardEnrollCounter = 0;
+					var pinActive: any = [];
+					var pinInActive: any = [];
+					var passwordActive: any = [];
+					var passwordInActive: any = [];
+					var kioskActive: any = [];
+					var kioskInActive: any = [];
+					var cardEnrollActive: any = [];
+					var cardEnrollInActive: any = [];
+					for (var i = 0; i < data.length; i++) {
+						var object;
+						if (data[i].policy_type === PIN) {
+							if (data[i].active === true) {
+								object = {
+									key: pinCounter + 1,
+									policy_name: data[i].name,
+									policy_id: data[i].uid,
+									policy_description: data[i].description,
+									order: data[i].order,
+									default: data[i].default,
+									index: pinCounter + 1
+								}
+								pinCounter = pinCounter + 1;
+								pinActive.push(object);
 							}
-							pinCounter = pinCounter + 1;
-							pinActive.push(object);
-						}
-						else {
-							object = {
-								key: pinCounter + 1,
-								policy_name: data[i].name,
-								policy_id: data[i].uid,
-								policy_description: data[i].description,
-								default: data[i].default,
-								index: pinCounter + 1
+							else {
+								object = {
+									key: pinCounter + 1,
+									policy_name: data[i].name,
+									policy_id: data[i].uid,
+									policy_description: data[i].description,
+									default: data[i].default,
+									index: pinCounter + 1
+								}
+								pinCounter = pinCounter + 1;
+								pinInActive.push(object);
 							}
-							pinCounter = pinCounter + 1;
-							pinInActive.push(object);
 						}
-					}
 
-					if (data[i].policy_type === PASSWORD) {
-						if (data[i].active === true) {
-							object = {
-								key: passwordCounter + 1,
-								policy_name: data[i].name,
-								policy_id: data[i].uid,
-								policy_description: data[i].description,
-								order: data[i].order,
-								default: data[i].default,
-								index: passwordCounter + 1
+						if (data[i].policy_type === PASSWORD) {
+							if (data[i].active === true) {
+								object = {
+									key: passwordCounter + 1,
+									policy_name: data[i].name,
+									policy_id: data[i].uid,
+									policy_description: data[i].description,
+									order: data[i].order,
+									default: data[i].default,
+									index: passwordCounter + 1
+								}
+								passwordCounter = passwordCounter + 1;
+								passwordActive.push(object);
 							}
-							passwordCounter = passwordCounter + 1;
-							passwordActive.push(object);
-						}
-						else {
-							object = {
-								key: passwordCounter + 1,
-								policy_name: data[i].name,
-								policy_id: data[i].uid,
-								policy_description: data[i].description,
-								default: data[i].default,
-								index: passwordCounter + 1
+							else {
+								object = {
+									key: passwordCounter + 1,
+									policy_name: data[i].name,
+									policy_id: data[i].uid,
+									policy_description: data[i].description,
+									default: data[i].default,
+									index: passwordCounter + 1
+								}
+								passwordCounter = passwordCounter + 1;
+								passwordInActive.push(object);
 							}
-							passwordCounter = passwordCounter + 1;
-							passwordInActive.push(object);
 						}
-					}
 
-					if (data[i].policy_type === KIOSK) {
-						if (data[i].active === true) {
-							object = {
-								key: kioskCounter + 1,
-								policy_name: data[i].name,
-								policy_id: data[i].uid,
-								policy_description: data[i].description,
-								order: data[i].order,
-								default: data[i].default,
-								index: kioskCounter + 1
+						if (data[i].policy_type === KIOSK) {
+							if (data[i].active === true) {
+								object = {
+									key: kioskCounter + 1,
+									policy_name: data[i].name,
+									policy_id: data[i].uid,
+									policy_description: data[i].description,
+									order: data[i].order,
+									default: data[i].default,
+									index: kioskCounter + 1
+								}
+								kioskCounter = kioskCounter + 1;
+								kioskActive.push(object);
 							}
-							kioskCounter = kioskCounter + 1;
-							kioskActive.push(object);
-						}
-						else {
-							object = {
-								key: kioskCounter + 1,
-								policy_name: data[i].name,
-								policy_id: data[i].uid,
-								policy_description: data[i].description,
-								default: data[i].default,
-								index: kioskCounter + 1
+							else {
+								object = {
+									key: kioskCounter + 1,
+									policy_name: data[i].name,
+									policy_id: data[i].uid,
+									policy_description: data[i].description,
+									default: data[i].default,
+									index: kioskCounter + 1
+								}
+								kioskCounter = kioskCounter + 1;
+								kioskInActive.push(object);
 							}
-							kioskCounter = kioskCounter + 1;
-							kioskInActive.push(object);
 						}
-					}
 
-					if (data[i].policy_type === CARD_ENROLL) {
-						if (data[i].active === true) {
-							object = {
-								key: cardEnrollCounter + 1,
-								policy_name: data[i].name,
-								policy_id: data[i].uid,
-								policy_description: data[i].description,
-								order: data[i].order,
-								default: data[i].default,
-								index: cardEnrollCounter + 1
+						if (data[i].policy_type === CARD_ENROLL) {
+							if (data[i].active === true) {
+								object = {
+									key: cardEnrollCounter + 1,
+									policy_name: data[i].name,
+									policy_id: data[i].uid,
+									policy_description: data[i].description,
+									order: data[i].order,
+									default: data[i].default,
+									index: cardEnrollCounter + 1
+								}
+								cardEnrollCounter = cardEnrollCounter + 1;
+								cardEnrollActive.push(object);
 							}
-							cardEnrollCounter = cardEnrollCounter + 1;
-							cardEnrollActive.push(object);
-						}
-						else {
-							object = {
-								key: cardEnrollCounter + 1,
-								policy_name: data[i].name,
-								policy_id: data[i].uid,
-								policy_description: data[i].description,
-								default: data[i].default,
-								index: cardEnrollCounter + 1
+							else {
+								object = {
+									key: cardEnrollCounter + 1,
+									policy_name: data[i].name,
+									policy_id: data[i].uid,
+									policy_description: data[i].description,
+									default: data[i].default,
+									index: cardEnrollCounter + 1
+								}
+								cardEnrollCounter = cardEnrollCounter + 1;
+								cardEnrollInActive.push(object);
 							}
-							cardEnrollCounter = cardEnrollCounter + 1;
-							cardEnrollInActive.push(object);
 						}
 					}
-				}
-				setActivePinPolicies(pinActive);
-				setInActivePinPolicies(pinInActive);
-				setActivePasswordPolicies(passwordActive);
-				setInActivePasswordPolicies(passwordInActive);
-				setActiveKioskPolicies(kioskActive);
-				setInActiveKioskPolicies(kioskInActive);
-				setActiveCardEnrollmentPolicies(cardEnrollActive);
-				setInActiveCardEnrollmentPolicies(cardEnrollInActive);
-				setLoadingDetails(false);
-			}, error => {
-				console.log(error)
-				openNotification('error', 'An Error has occured with getting Policies');
-			})
+					setActivePinPolicies(pinActive);
+					setInActivePinPolicies(pinInActive);
+					setActivePasswordPolicies(passwordActive);
+					setInActivePasswordPolicies(passwordInActive);
+					setActiveKioskPolicies(kioskActive);
+					setInActiveKioskPolicies(kioskInActive);
+					setActiveCardEnrollmentPolicies(cardEnrollActive);
+					setInActiveCardEnrollmentPolicies(cardEnrollInActive);
+					setLoadingDetails(false);
+				}, error => {
+					console.log(error)
+					openNotification('error', 'An Error has occured with getting Policies');
+				})
+		}
 	}
 
 	useEffect(() => {
-		if (window.location.pathname.split("/")[2] !== 'password' && window.location.pathname.split("/")[2] !== 'kiosk' && window.location.pathname.split("/")[2] !== 'card-enrollment' && window.location.pathname.split("/").length !== 4) {
+		if (['password', 'kiosk', 'card-enrollment'].includes(window.location.pathname.split("/")[2]) === false && window.location.pathname.split("/").length !== 4) {
 			history.push('/policies/pin');
-			setTabname(window.location.pathname.split('/')[2].toUpperCase());
-		}
-
-		if (window.location.pathname.split("/").length === 4) {
-			getPolicyDetails(window.location.pathname.split("/")[3]);
 		}
 
 		getPolicies();
-	}, []);
-
-	// useEffect(() => {
-	// 	if (pinDetails !== "") {
-	// 		history.push("/policies/pin/" + pinDetails)
-	// 	}
-	// }, [pinDetails])
+	}, [path]);
 
 	useEffect(() => {
 		(async function () {
@@ -494,132 +483,48 @@ export default function Policies() {
 			})
 	}
 
-	function getPolicyDetails(uid: any) {
-		setLoading(true);
-		localStorage.setItem("policyUid", uid);
-		// setPinDetails(uid);
-		ApiService.get(ApiUrls.policy(uid))
-			.then(data => {
-				if (!data.errorSummary) {
-					console.log(data);
-					if (data.policy_type === PIN) {
-						history.push('/policies/pin/' + uid);
-						setPinDetails(data);
-					}
-					if (data.policy_type === PASSWORD) {
-						history.push('/policies/password/' + uid);
-						setPasswordDetails(data);
-					}
-					if (data.policy_type === KIOSK) {
-						history.push('/policies/kiosk/' + uid);
-						setKioskDetails(data);
-					}
-					if (data.policy_type === CARD_ENROLL) {
-						history.push('/policies/card-enrollment/' + uid);
-						setCardEnrollPolicy(data);
-					}
-					setLoading(false);
-				}
-				else {
-					openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
-					setInterval(() => {
-						history.goBack();
-					}, 2000)
-				}
-			})
-			.catch(error => {
-				console.error('Error: ', error);
-				openNotification('error', 'An Error has occured with getting Policy Details');
-				setLoadingDetails(false);
-			})
-	}
-
 	return (
 		<>
 			<div className='content-header'>
 				Policy
-				{pinDetails ? <Button style={{ marginLeft: 'auto', alignSelf: 'end' }} onClick={() => {
-					setPinDetails(undefined)
-					history.push('/policies/pin')
-				}}>
-					Back
-				</Button> : <></>}
-				{passwordDetails ? <Button style={{ marginLeft: 'auto', alignSelf: 'end' }} onClick={() => {
-					setPasswordDetails(undefined)
-					history.push('/policies/password')
-				}}>
-					Back
-				</Button> : <></>}
-				{kioskDetails ? <Button style={{ marginLeft: 'auto', alignSelf: 'end' }} onClick={() => {
-					setKioskDetails(undefined)
-					history.push('/policies/kiosk')
-				}}>
-					Back
-				</Button> : <></>}
-				{cardEnrollPolicy ? <Button style={{ marginLeft: 'auto', alignSelf: 'end' }} onClick={() => {
-					setCardEnrollPolicy(undefined);
-					history.push('/policies/card-enrollment');
+				{window.location.pathname.split('/').length === 4 ? <Button style={{ marginLeft: 'auto', alignSelf: 'end' }} onClick={() => {
+					console.log(window.location.pathname.split('/')[2]);
+					history.push('/policies/' + window.location.pathname.split('/')[2]);
 				}}>
 					Back
 				</Button> : <></>}
 			</div>
 
 			<Skeleton loading={loadingDetails}>
-				<Tabs defaultActiveKey={window.location.pathname.split("/")[2]}
+				<Tabs activeKey={window.location.pathname.split("/")[2]}
 					type="card" size={"middle"} animated={false}
 					tabBarStyle={{ marginBottom: '0px' }}
 					onChange={(key) => {
 						history.push("/policies/" + key);
-						setTabname(key.toUpperCase());
 					}}
-					onClick={() => {
-						if (tabname === PIN) {
-							setPasswordDetails(undefined);
-							setKioskDetails(undefined);
-							setCardEnrollPolicy(undefined);
-						}
-						else if (tabname === PASSWORD) {
-							setPinDetails(undefined);
-							setKioskDetails(undefined);
-							setCardEnrollPolicy(undefined);
-						}
-						else if (tabname === KIOSK) {
-							setPasswordDetails(undefined);
-							setPinDetails(undefined);
-							setCardEnrollPolicy(undefined);
-						}
-						else {
-							setPasswordDetails(undefined);
-							setPinDetails(undefined);
-							setKioskDetails(undefined);
-						}
-					}}
-				// style={{border: '1px solid #d7d7dc', margin: 0}} 
 				>
 					<TabPane tab="Pin" key="pin">
-						<Skeleton loading={loading}>
-							{pinDetails ? <PinPolicy pinDetails={pinDetails} /> :
+							{window.location.pathname.split('/').length === 4 ?
+								<ProtectedRoute path={`/policies/pin/:id`} component={PinPolicy} /> :
 								<TableList policy_type={"pin"}
 									activateColumns={activateColumns} deActivateColumns={deActivateColumns} draggableBodyRow={pinDraggableBodyRow}
 									draggableContainer={pinDraggableContainer} inActivePolicies={inActivePinPolicies} activePolicies={activePinPolicies}
 									handleGetPolicies={handleGetPolicies}
 								/>
 							}
-						</Skeleton>
 					</TabPane>
 					<TabPane tab="Password" key="password">
-						<Skeleton loading={loading}>
-							{passwordDetails ? <PasswordPolicy passwordDetails={passwordDetails} /> :
+							{window.location.pathname.split('/').length === 4 ?
+								<ProtectedRoute path={`/policies/password/:id`} component={PasswordPolicy} /> :
 								<TableList policy_type={"password"} activateColumns={activateColumns} deActivateColumns={deActivateColumns}
 									draggableBodyRow={passwordDraggableBodyRow} draggableContainer={passwordDraggableContainer}
 									inActivePolicies={inActivepasswordPolicies} activePolicies={activePasswordPolicies} handleGetPolicies={handleGetPolicies}
 								/>
 							}
-						</Skeleton>
 					</TabPane>
 					<TabPane tab="Kiosk" key="kiosk">
-						<Skeleton loading={loading}>
-							{kioskDetails ? <KioskPolicy kioskDetails={kioskDetails} /> :
+							{window.location.pathname.split('/').length === 4 ?
+								<ProtectedRoute path={`/policies/kiosk/:id`} component={KioskPolicy} /> :
 								<>
 									<TableList policy_type={"kiosk"} activateColumns={activateColumns} deActivateColumns={deActivateColumns}
 										draggableBodyRow={kioskDraggableBodyRow} draggableContainer={kioskDraggableContainer}
@@ -627,20 +532,18 @@ export default function Policies() {
 									/>
 								</>
 							}
-						</Skeleton>
 					</TabPane>
 					{currentSeletedProduct === TecTANGO && maxEnroll ?
 						<TabPane tab="Card enrollment" key="card-enrollment">
-							<Skeleton loading={loading}>
-								{cardEnrollPolicy ? <CardEnrollmentPolicy policyDetails={cardEnrollPolicy} /> :
+								{window.location.pathname.split('/').length === 4 ?
+									<ProtectedRoute path={`/policies/card-enrollment/:id`} component={CardEnrollmentPolicy} /> :
 									<>
-										<TableList policy_type={"card_enrollment"} activateColumns={activateColumns} deActivateColumns={deActivateColumns}
+										<TableList policy_type={"card-enrollment"} activateColumns={activateColumns} deActivateColumns={deActivateColumns}
 											draggableBodyRow={CardEnrollmentDraggableBodyRow} draggableContainer={CardEnrollmentDraggableContainer}
 											inActivePolicies={inActiveCardEnrollmentPolicies} activePolicies={activeCardEnrollmentPolicies} handleGetPolicies={handleGetPolicies}
 										/>
 									</>
 								}
-							</Skeleton>
 						</TabPane> : null}
 				</Tabs>
 			</Skeleton>

@@ -10,13 +10,14 @@ import ApiUrls from '../../ApiUtils';
 import TextArea from "antd/lib/input/TextArea";
 
 import { openNotification } from "../Layout/Notification";
+import { useHistory } from "react-router-dom";
 
 export const KioskPolicy = (props: any) => {
 
     const [isEdit, setIsEdit] = useState(false);
     const [loading, setLoading] = useState(true);
-    const [kioskDisplayData, setKioskDisplayData] = useState<kioskPolicyType>(props.kioskDetails);
-    const [kioskEditData, setKioskEditedData] = useState(props.kioskDetails);
+    const [kioskDisplayData, setKioskDisplayData] = useState({});
+    const [kioskEditData, setKioskEditedData]: any = useState();
     const [groups, setGroups]: any = useState([]);
     const [render, setRender] = useState(true);
     const [loginTypeOptions, setLoginTypeOptions] = useState({});
@@ -28,16 +29,15 @@ export const KioskPolicy = (props: any) => {
     const [kioskGroupNames, setKioskGroupNames]: any = useState([]);
     const [kioskGroupUids, setKioskGroupUids]: any = useState([]);
     const [password, setPassword] = useState("");
+    const history = useHistory();
+    const [policyRequirements, setPolicyRequirements] = useState({});
 
     useEffect(() => {
-        if (kioskDisplayData.uid === undefined) {
-            setIsEdit(true);
-        }
-
         Promise.all(([
             ApiService.get(ApiUrls.groups, { type: "USER" }),
             ApiService.get(ApiUrls.groups, { type: "KIOSK" }),
-            ApiService.get(ApiUrls.loginTypeOptions)
+            ApiService.get(ApiUrls.loginTypeOptions),
+            ApiService.get(ApiUrls.policy(window.location.pathname.split('/')[3]))
         ]))
             .then(data => {
                 console.log(data[0]);
@@ -66,49 +66,67 @@ export const KioskPolicy = (props: any) => {
                 }
                 kioskGroupsChange.push(object);
                 console.log(kioskGroups);
-                setLoading(false);
-
+                
                 setLoginTypeOptions(data[2]);
+                
+                if (!data[3].errorSummary) {
+                    console.log(data[3]);
+                    setKioskDisplayData(data[3]);
+                    setKioskEditedData(data[3]);
+                    setPolicyRequirements(data[3].policy_req);
+                    
+                    var password = ""
+                    for (let i = 0; i < data[3].policy_req.assay.length; i++) {
+                        password += "*";
+                    }
+                    setPassword(password);
+
+                    Object.keys(data[3].auth_policy_groups).map(index => {
+                        groupNames.push(data[3].auth_policy_groups[index].name);
+                        groupUids.push(data[3].auth_policy_groups[index].uid)
+                        console.log(groupNames);
+                        setGroupNames(groupNames);
+                        console.log(groupUids);
+                    });
+                    
+                    Object.keys(data[3].kiosk_machine_groups).map(index => {
+                        kioskGroupNames.push(data[3].kiosk_machine_groups[index].name);
+                        kioskGroupUids.push(data[3].kiosk_machine_groups[index].uid)
+                        console.log(kioskGroupNames);
+                        setKioskGroupNames(kioskGroupNames);
+                        console.log(kioskGroupUids);
+                    });
+                    setLoading(false);
+                }
+                else if(window.location.pathname.split('/').length === 3){
+                    setKioskDisplayData(props.kioskDetails);
+                    setKioskEditedData(props.kioskDetails);
+                    setPolicyRequirements(props.kioskDetails.policy_req);
+                    setIsEdit(true);
+                    setLoading(false);
+                }
+                else{
+                    console.log('else: ', data[3]);
+                    openNotification('error', data[3].errorCauses.length !== 0 ? data[3].errorCauses[3].errorSummary : data[3].errorSummary);
+                    history.push('/policies/kiosk');
+                }
             }, error => {
                 console.error('Error: ', error);
-                openNotification('error', 'An Error has occured with getting Groups');
+                openNotification('error', 'An Error has occured with getting details');
             })
-
-        if (kioskDisplayData.uid !== undefined) {
-            console.log(kioskDisplayData.policy_req.assay.length)
-            var password = ""
-            for (let i = 0; i < kioskDisplayData.policy_req.assay.length; i++) {
-                password += "*";
-            }
-            setPassword(password);
-            kioskDisplayData.policy_req.assay.replaceAll(kioskDisplayData.policy_req.assay, "*");
-            Object.keys(kioskDisplayData.auth_policy_groups).map(data => {
-                groupNames.push(kioskDisplayData.auth_policy_groups[data].name);
-                groupUids.push(kioskDisplayData.auth_policy_groups[data].uid)
-                console.log(groupNames);
-                console.log(groupUids);
-            });
-
-            Object.keys(kioskDisplayData.kiosk_machine_groups).map(data => {
-                kioskGroupNames.push(kioskDisplayData.kiosk_machine_groups[data].name);
-                kioskGroupUids.push(kioskDisplayData.kiosk_machine_groups[data].uid)
-                console.log(kioskGroupNames);
-                console.log(kioskGroupUids);
-            });
-        }
-        kioskEditData.auth_policy_groups = groupUids;
-        kioskEditData.kiosk_machine_groups = kioskGroupUids;
     }, [])
 
     function updateKioskPolicy() {
-        ApiService.put(ApiUrls.policy(kioskDisplayData.uid), kioskEditData)
+        kioskEditData.auth_policy_groups = groupUids;
+        kioskEditData.kiosk_machine_groups = kioskGroupUids;
+        ApiService.put(ApiUrls.policy(kioskDisplayData['uid']), kioskEditData)
             .then(data => {
                 console.log(data);
                 if (!data.errorSummary) {
                     groupNames.length = 0;
                     kioskGroupNames.length = 0;
                     var password = ""
-                    for (let i = 0; i < kioskDisplayData.policy_req.assay.length; i++) {
+                    for (let i = 0; i < policyRequirements['assay'].length; i++) {
                         password += "*";
                     }
                     setPassword(password);
@@ -161,13 +179,13 @@ export const KioskPolicy = (props: any) => {
     function handleMachineGroups(value: any) {
         Object.keys(kioskGroupsChange[0]).map(key => {
             if (value.includes(key)) {
-                console.log(key)
                 var index = value.indexOf(key)
-                console.log(index)
                 value.splice(index, 1)
                 value.push(kioskGroupsChange[0][key]);
             }
         })
+        kioskGroupUids.length = 0;
+        setKioskGroupUids(value);
         kioskEditData.kiosk_machine_groups = value;
         console.log(kioskEditData.kiosk_machine_groups);
     }
@@ -175,28 +193,28 @@ export const KioskPolicy = (props: any) => {
     function handleGroups(value: any) {
         Object.keys(groupsChange[0]).map(key => {
             if (value.includes(key)) {
-                console.log(key)
                 var index = value.indexOf(key)
-                console.log(index)
                 value.splice(index, 1)
                 value.push(groupsChange[0][key]);
             }
         })
+        groupUids.length = 0;
+        setGroupUids(value);
         kioskEditData.auth_policy_groups = value;
         console.log(kioskEditData.auth_policy_groups);
     }
 
     return (
         <Skeleton loading={loading}>
-            <div className={kioskDisplayData.uid === undefined ? "content-container" : "content-container-policy"}>
+            <div className={kioskDisplayData['uid'] === undefined ? "content-container" : "content-container-policy"}>
                 <div className="row-policy-container">
                     <div>
-                        {kioskDisplayData.uid === undefined ? <></> :
+                        {kioskDisplayData['uid'] === undefined ? <></> :
                             <div className="content-heading">Edit kiosk Policy</div>
                         }
                     </div>
                     <div>
-                        {kioskDisplayData.default === false ? <Button style={{ float: 'right' }} onClick={handleEditClick}>
+                        {kioskDisplayData['default'] === false ? <Button style={{ float: 'right' }} onClick={handleEditClick}>
                             {!isEdit ? 'Edit' : 'Cancel'}
                         </Button> : <></>
                         }
@@ -211,9 +229,9 @@ export const KioskPolicy = (props: any) => {
                                 ...kioskEditData,
                                 name: e.target.value
                             })}
-                            defaultValue={kioskDisplayData.name}
+                            defaultValue={kioskDisplayData['name']}
                             placeholder='Enter a new policy name'
-                        /> : kioskDisplayData.name
+                        /> : kioskDisplayData['name']
                         }
                     </div>
 
@@ -227,9 +245,9 @@ export const KioskPolicy = (props: any) => {
                                 ...kioskEditData,
                                 description: e.target.value
                             })}
-                            defaultValue={kioskDisplayData.description}
+                            defaultValue={kioskDisplayData['description']}
                             placeholder='Enter policy description'
-                        /> : kioskDisplayData.description
+                        /> : kioskDisplayData['description']
                         }
                     </div>
 
@@ -241,7 +259,7 @@ export const KioskPolicy = (props: any) => {
                             mode="multiple"
                             size={"large"}
                             placeholder="Please select groups"
-                            defaultValue={kioskDisplayData.name !== "" ? groupNames : []}
+                            defaultValue={kioskDisplayData['name'] !== "" ? groupNames : []}
                             onChange={handleGroups}
                             // disabled={!isEdit}
                             style={{ width: '275px' }}
@@ -261,7 +279,7 @@ export const KioskPolicy = (props: any) => {
                             mode="multiple"
                             size={"large"}
                             placeholder="Please select groups"
-                            defaultValue={kioskDisplayData.name !== "" ? kioskGroupNames : []}
+                            defaultValue={kioskDisplayData['name'] !== "" ? kioskGroupNames : []}
                             onChange={handleMachineGroups}
                             // disabled={!isEdit}
                             style={{ width: '275px' }}
@@ -278,7 +296,7 @@ export const KioskPolicy = (props: any) => {
                         Policy Type:
                     </div>
                     <div>
-                        {kioskDisplayData.policy_type}
+                        {kioskDisplayData['policy_type']}
                     </div>
                 </div>
 
@@ -291,9 +309,9 @@ export const KioskPolicy = (props: any) => {
                         User Type
                     </div>
                     <div>
-                        <Radio.Group defaultValue={kioskDisplayData.policy_req.login_type}
+                        <Radio.Group defaultValue={policyRequirements['login_type']}
                             disabled={!isEdit}
-                            onChange={(e) => kioskDisplayData.policy_req.login_type = e.target.value}
+                            onChange={(e) => kioskEditData.policy_req.login_type = e.target.value}
                         >
                             {
                                 Object.keys(loginTypeOptions).map(option => {
@@ -313,7 +331,7 @@ export const KioskPolicy = (props: any) => {
                             onChange={(e) => {
                                 kioskEditData.policy_req.id_as_machine_name = e.target.checked
                                 if (e.target.checked === true) {
-                                    kioskDisplayData.policy_req.access_key_id = "%machineName%"
+                                    policyRequirements['access_key_id'] = "%machineName%"
                                     setRender(!render);
                                 }
                                 else {
@@ -321,7 +339,7 @@ export const KioskPolicy = (props: any) => {
                                     setRender(!render);
                                 }
                             }}
-                            defaultChecked={!isEdit ? kioskDisplayData.policy_req.id_as_machine_name : kioskDisplayData.policy_req.id_as_machine_name}
+                            defaultChecked={isEdit ? policyRequirements['id_as_machine_name'] : policyRequirements['id_as_machine_name']}
                             disabled={!isEdit}
                         >
                             Same as machine name
@@ -330,15 +348,15 @@ export const KioskPolicy = (props: any) => {
                     <div>
                         {
                             isEdit ?
-                                kioskDisplayData.policy_req.id_as_machine_name === false?
+                                policyRequirements['id_as_machine_name'] === false ?
                                     <Input className="form-control"
                                         style={{ width: "275px" }}
                                         onChange={(e) => kioskEditData.policy_req.access_key_id = e.target.value}
-                                        defaultValue={kioskDisplayData.policy_req.access_key_id}
+                                        defaultValue={policyRequirements['access_key_id']}
                                         placeholder='Enter username'
                                     /> : "%machineName%"
-                                : kioskDisplayData.policy_req.id_as_machine_name ? "%machineName%"
-                                    : kioskDisplayData.policy_req.access_key_id 
+                                : policyRequirements['id_as_machine_name'] ? "%machineName%"
+                                    : policyRequirements['access_key_id']
                         }
                     </div>
                     <div>
@@ -349,7 +367,7 @@ export const KioskPolicy = (props: any) => {
                             isEdit ? <Input.Password className="form-control"
                                 style={{ width: "275px" }}
                                 onChange={(e) => kioskEditData.policy_req.assay = e.target.value}
-                                defaultValue={kioskDisplayData.policy_req.assay}
+                                defaultValue={policyRequirements['assay']}
                                 placeholder='Enter password'
                             /> : password
                         }
@@ -365,16 +383,16 @@ export const KioskPolicy = (props: any) => {
                                         isEdit ? <Input.Password className="form-control"
                                             style={{ width: "275px" }}
                                             onChange={(e) => kioskEditData.policy_req.confirm_assay = e.target.value}
-                                            defaultValue={kioskDisplayData.policy_req.confirm_assay}
+                                            defaultValue={policyRequirements['confirm_assay']}
                                             placeholder='Enter confirm password'
-                                        /> : kioskDisplayData.policy_req.confirm_assay
+                                        /> : policyRequirements['confirm_assay']
                                     }
                                 </div>
                             </> : <></>
                     }
                 </div>
             </div>
-            {kioskDisplayData.uid !== undefined ?
+            {kioskDisplayData['uid'] !== undefined ?
                 (isEdit ? <div style={{ paddingTop: '10px', paddingRight: '45px' }}>
                     <Button style={{ float: 'right', marginLeft: '10px' }}
                         onClick={handleCancelClick}>Cancel</Button>
