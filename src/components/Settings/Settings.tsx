@@ -22,7 +22,6 @@ function Settings() {
     useEffect(() => {
         ApiService.post(ApiUrls.client_info, { domain: domain })
             .then((data: ClientConfiguration) => {
-                console.log(data);
                 setLoading(false);
                 setSettings(data);
             })
@@ -57,6 +56,7 @@ function Settings() {
                         Object.keys(settingsFieldNames).map(key => <DisplayField
                             displayName={settingsFieldNames[key]}
                             value={settings[key]}
+                            key={key}
                         />)
                     }
                 </div>
