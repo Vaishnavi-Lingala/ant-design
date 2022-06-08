@@ -26,7 +26,7 @@ function AppSider() {
 		const commonProductoptions = <>
 			<Menu.Item key="product" className="sidebar-header">
 				<div className="sidebar-header-content">
-					<img height={32} width={32} src={require("../../assets/favicon.ico")} />
+					<img height={32} width={32} src={require("../../assets/credenti-favicon.png")} />
 					{selectedMenuOption.slice(0, 1).toUpperCase() + selectedMenuOption.slice(1, 3).toLowerCase() + selectedMenuOption.slice(3, 4).toUpperCase() + selectedMenuOption.slice(4).toLowerCase()}
 				</div>
 			</Menu.Item>
