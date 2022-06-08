@@ -68,7 +68,6 @@ export function MachineDetails(props: any) {
                 }
                 // activeVersion ? machineProducts.push(activeVersion) : console.log('No active version for product ', product);
             })
-            console.log('Machine products: ', machineProducts);
             setProducts(machineProducts)
             setMachineDetails(data);
         }).catch(error => {
