@@ -11,6 +11,29 @@ export interface FilterType {
   updated: boolean;
 }
 
+export interface ControlName {
+  x: number;
+  deleted: boolean;
+  line: string;
+  action_type: number;
+  wait_time: number;
+  rect: string;
+  flt: string;
+  rect_name: string;
+  action_name: string;
+  wrdname: string;
+  force: boolean;
+  id: number;
+  udf: string;
+  ord: number;
+  block: string;
+  template_id: number;
+  txvalue: string;
+  para: string;
+  txname: string;
+  y: number;
+}
+
 export interface Template {
   id: number;
   app_id: string;
@@ -125,15 +148,4 @@ export interface User {
 export interface Page {
   current: number;
   limit: number;
-}
-
-export function isUser(item: any): item is User {
-  return(item as User).email !== undefined;
-}
-
-export function isApp(item: any): item is App {
-  return (
-    ((item as App).config_id !== undefined) &&
-    ((item as App).xref_id !== undefined)
-  );
 }

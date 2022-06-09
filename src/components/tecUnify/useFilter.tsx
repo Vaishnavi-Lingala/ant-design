@@ -12,13 +12,13 @@ const defaultFilterState: FilterType = {
   updated: false
 }
 
-function useFilter({appList}: FProps) {
+function useFilter({ appList }: FProps) {
   const [filteredAppList, setFilteredAppList] = useState<AppList>(appList);
   const [filter, setFilter] = useState<FilterType>(defaultFilterState);
 
   useEffect(() => {
     filterList();
-    
+
     setFilter((curr) => {
       return {
         ...curr,
@@ -47,7 +47,7 @@ function useFilter({appList}: FProps) {
     }
   }
 
-  function updateFilter(event: any) { 
+  function updateFilter(event: any) {
     setFilter((curr) => {
       if (event.key) {
         return {
@@ -65,7 +65,7 @@ function useFilter({appList}: FProps) {
     });
   }
 
-  return {filter, filteredAppList, updateFilter};
+  return { filter, filteredAppList, updateFilter };
 }
 
 export default useFilter;

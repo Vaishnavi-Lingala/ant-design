@@ -1,3 +1,9 @@
+/*
+ * NOTE:
+ * Apps to be displayed will either be by account_id or config_id
+ * 
+ */
+
 import { Card, Input } from 'antd';
 
 import useFilter from './useFilter';

@@ -7,16 +7,22 @@ import SupportedIntegrations from './SupportedIntegrations';
 import AccountIntegrations from './AccountIntegrations';
 import BulkAssignment from './BulkAssignment';
 import AppSettings from './AppSettings';
-import { useAppFetch } from './useUnifyFetch';
+import { useFetch } from './useUnifyFetch';
+import { AppList } from './types';
 
 interface PageType {
   name: string;
   isLoading: boolean;
 }
 
-const homeComponent: PageType = {
+const initialComponent: PageType = {
   name: 'configured',
   isLoading: false,
+};
+
+const initAppList: AppList = {
+  active: [],
+  inactive: []
 };
 
 function capitalizeFirst(s: string): string {
@@ -24,12 +30,12 @@ function capitalizeFirst(s: string): string {
 }
 
 function Applications(): JSX.Element {
-  const [currPage, setCurrPage] = useState(homeComponent);
-  const { appList, isFetching } = useAppFetch();
+  const [currPage, setCurrPage] = useState(initialComponent);
+  const { data, isFetching, update } = useFetch(initAppList);
+
 
   const isBulkAssignmentPage = (currPage.name === 'assignment');
   const isConfiguredPage = (currPage.name === 'configured');
-
 
   function handleClick(e: any): void {
     const currentPage = {
@@ -41,19 +47,19 @@ function Applications(): JSX.Element {
   }
 
   function handleBack(): void {
-    setCurrPage(homeComponent);
+    setCurrPage(initialComponent);
   }
 
   function RenderOptions(): JSX.Element | null {
-    switch(currPage.name) {
+    switch (currPage.name) {
       case 'configured':
-        return <AccountIntegrations appList={appList}/>;
+        return <AccountIntegrations appList={data} />;
       case 'supported':
-        // return <SupportedIntegrations templateList={}/>;
+      // return <SupportedIntegrations templateList={}/>;
       case 'assignment':
-        return <BulkAssignment activeList={appList.active}/>;
+        return <BulkAssignment activeList={data.active} />;
       case 'settings':
-        return <AppSettings/>;
+        return <AppSettings />;
       default:
         return null;
     }
@@ -63,20 +69,24 @@ function Applications(): JSX.Element {
     <>
       <div className='content-header'>
         {
-          !isBulkAssignmentPage ? 
+          !isBulkAssignmentPage ?
             <>{capitalizeFirst(currPage.name)} Applications</> : <span>Bulk Assignment</span>
         }
 
-        { 
+        {
           !isConfiguredPage &&
-            <Button onClick={handleBack}>Back</Button>
+          <Button onClick={handleBack}>Back</Button>
         }
       </div>
 
-      <Skeleton loading={isFetching}>
+      <Skeleton
+        loading={isFetching}
+        active={true}
+        className={`${isFetching ? '_Padding' : ''}`}
+      >
         <div className='Content-HeaderContainer'>
           <Button id='supported' size='large' type='primary' onClick={handleClick}>
-            Browse Supported apps 
+            Browse Supported apps
           </Button>
 
           <Button id='assignment' size='large' type='primary' onClick={handleClick}>
@@ -85,7 +95,7 @@ function Applications(): JSX.Element {
         </div>
 
         <div className='Content-ComponentView'>
-          <RenderOptions/>
+          <RenderOptions />
         </div>
       </Skeleton>
     </>

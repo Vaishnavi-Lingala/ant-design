@@ -99,7 +99,7 @@
 .BulkAssignment-ListItems {
     display: flex;
     flex-direction: row;
-    justify-content: start;
+    justify-content: flex-start;
     gap: 10px;
     padding: 1px 0px;
 }

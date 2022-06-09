@@ -7,6 +7,7 @@ interface ABProps {
 }
 
 const placeholderImg = "https://placeholder.pics/svg/100";
+
 function AppListItem({app, optionsMenu}: ABProps): JSX.Element {
   return (
     <li className='AppList-Item AppList-Banner' key={app.config_id}>
