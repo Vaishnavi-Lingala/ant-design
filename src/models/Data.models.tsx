@@ -124,3 +124,12 @@ export interface Group {
     type: string
     uid: string
 }
+
+export interface MachineProducts {
+    key: string,
+    active: boolean,
+    product_version: string,
+    updated_t: string,
+    created_ts: string,
+    product_sku: string
+}

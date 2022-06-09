@@ -1,17 +1,38 @@
 import { useEffect, useState } from "react";
 import { useHistory } from 'react-router-dom';
-import { Skeleton, Button, Divider } from "antd";
+import { Skeleton, Button, Divider, Table } from "antd";
 import moment from "moment";
 
 import { openNotification } from "../Layout/Notification";
 import ApiUrls from "../../ApiUtils"
 import ApiService from "../../Api.service"
-import { machineFieldNames, time_format } from "../../constants";
+import { date_display_format, machineFieldNames, time_format } from "../../constants";
+import { MachineProducts } from "../../models/Data.models";
 
 export function MachineDetails(props: any) {
     const [loadingDetails, setLoadingDetails] = useState(false);
     const [machineDetails, setMachineDetails] = useState({});
+    const [products, setProducts]: any = useState([]);
     const history = useHistory();
+
+    const columns = [
+        {
+            title: 'Product',
+            dataIndex: 'product_sku',
+            width: '30%'
+        },
+        {
+            title: 'Version',
+            dataIndex: 'product_version',
+            width: '30%'
+        },
+        {
+            title: "Installed Time",
+            render: (text, record) => <>
+               {moment.utc(record.created_ts).local().format(`${date_display_format} ${time_format}`)}
+            </>
+        }
+    ]
 
     const DisplayField = ({ displayName, value }) => {
         return (
@@ -37,6 +58,16 @@ export function MachineDetails(props: any) {
         let machineId = window.location.pathname.split('/')[2];
         ApiService.get(ApiUrls.machineDetails(machineId)).then((data: any) => {
             console.log('Machine details:', data);
+            let machineProducts: MachineProducts[] = [];
+            Object.keys(data.products).map((product) => {
+                let activeVersion = data.products[product].find(record => record.active === true)
+                if (activeVersion) {
+                    activeVersion.key = activeVersion.product_version
+                    machineProducts.push(activeVersion)
+                }
+                // activeVersion ? machineProducts.push(activeVersion) : console.log('No active version for product ', product);
+            })
+            setProducts(machineProducts)
             setMachineDetails(data);
         }).catch(error => {
             console.error('Error: ', error);
@@ -88,6 +119,21 @@ export function MachineDetails(props: any) {
                                 />
                             </> : <></>
                     }
+
+                    <Divider style={{ borderTop: '1px solid #d7d7dc' }} />
+
+                    <div className="content-policy-key-header">Installed Products</div>
+                    
+                    <div style={{ marginTop: "10px" }}>
+                        <Table
+                            style={{ border: '1px solid #D7D7DC' }}
+                            showHeader={true}
+                            columns={columns}
+                            dataSource={products}
+                            pagination={{ position: [] }}
+                        />
+                    </div>
+                   
 
                 </div>
             </Skeleton>
