@@ -161,8 +161,10 @@ const CardEnrollmentPolicy = (props) => {
                     <div>
                         {cardEnrollDisplayData['uid'] === undefined ? <></> :
                             <div>
-                                <div className="content-heading">{isEdit ? 'Edit' : null} Card Enrollment Policy </div>
-                                <div>
+                                <div style={{display: 'inline-block', marginRight: '3px'}} className="content-heading">
+                                    {isEdit ? 'Edit' : null} Card Enrollment Policy 
+                                </div>
+                                <div style={{display: 'inline-block', marginRight: '3px'}}>
                                     <Hint text={"This policy allows you to control how many cards can be enrolled per user"} />
                                 </div>
                             </div>

@@ -149,7 +149,7 @@ function TableList({ handleGetPolicies, policy_type, activateColumns, activePoli
                 pagination={false}
             />
 
-            <Modal visible={isModal} footer={false} centered width={900} maskClosable={false}
+            <Modal visible={isModal} footer={false} centered width={900} maskClosable={true}
                 title={<div style={{ fontSize: '30px' }}>Add {policy_type.slice(0, 1).toUpperCase() + policy_type.slice(1)} Policy </div>}
             >
                 {policy_type.toUpperCase() === PIN ?

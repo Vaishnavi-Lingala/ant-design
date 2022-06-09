@@ -18,6 +18,7 @@ export default function MachineGroupDetails(props: any) {
     const [pageSize, setPageSize]: any = useState(10);
     const [totalItems, setTotalItems]: any = useState(0);
     const history = useHistory();
+
     const columns = [
         {
             title: 'Machine name',
@@ -124,22 +125,22 @@ export default function MachineGroupDetails(props: any) {
     return (
         <>
             <div className="content-container rounded-grey-border">
-                <div className="row-container">
-                    <div className='content-header'>
-                        {groupDetails['name']}
-                    </div>
-                    <Button style={{ marginLeft: 'auto' }} onClick={() => {
-                        history.push('/groups/' + window.location.pathname.split('/')[2]);
-                    }}
-                    >
-                        Back
-                    </Button>
-                </div>
-                <div style={{ fontWeight: 600, fontSize: 'medium' }}>
-                    Created: {Moment(groupDetails['created_ts']).format('MM/DD/YYYY')}
-                </div>
-                <Divider style={{ borderTop: '1px solid #d7d7dc' }} />
                 <Skeleton loading={loadingDetails}>
+                    <div className="row-container">
+                        <div className='content-header'>
+                            {groupDetails['name']}
+                        </div>
+                        <Button style={{ marginLeft: 'auto' }} onClick={() => {
+                            history.push('/groups/' + window.location.pathname.split('/')[2]);
+                        }}
+                        >
+                            Back
+                        </Button>
+                    </div>
+                    <div style={{ fontWeight: 600, fontSize: 'medium' }}>
+                        Created: {Moment(groupDetails['created_ts']).format('MM/DD/YYYY')}
+                    </div>
+                    <Divider style={{ borderTop: '1px solid #d7d7dc' }} />
                     <div style={{ width: '100%', border: '1px solid #D7D7DC', borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6' }}>
                         <Row>
                             <Col span={12}>

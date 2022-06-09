@@ -228,13 +228,14 @@ function Mechanism(props: any) {
     }
 
     return (<>
-        <div className='content-header'>
-            Mechanism
-            <Button style={{ marginLeft: 'auto', alignSelf: 'end' }} onClick={() => {
-                history.push('/mechanism')
-            }}>Back</Button>
-        </div>
-
+        {displayDetails['uid'] !== undefined ?
+            <div className='content-header'>
+                Mechanism
+                <Button style={{ marginLeft: 'auto', alignSelf: 'end' }} onClick={() => {
+                    history.push('/mechanism')
+                }}>Back</Button>
+            </div> : <></>
+        }
         <Skeleton loading={loading || loadingDetails}>
             <div className="content-container rounded-grey-border">
                 <div className="row-containers">
@@ -332,7 +333,7 @@ function Mechanism(props: any) {
                             }
                         </Radio.Group>
                     </div>
-                    
+
                     {challengeFactors.length === 2 ?
                         <>
                             <div>
