@@ -4,12 +4,6 @@
     overflow: hidden;
 }
 
-.row-container {
-    display: grid;
-    grid-template-columns: 20% 80%;
-    grid-row-gap: 15px;
-}
-
 .content-header {
     font-size: xx-large;
     font-weight: 600;
