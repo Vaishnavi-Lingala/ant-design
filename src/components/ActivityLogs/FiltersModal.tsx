@@ -1,13 +1,13 @@
-import { Button, Col, Input, Modal, Row, Select } from "antd";
-import Link from "antd/lib/typography/Link";
 import { useEffect, useState } from "react";
-import ApiService from "../../Api.service";
-import ApiUtils from "../../ApiUtils";
+import { Button, Modal} from "antd";
+import Link from "antd/lib/typography/Link";
+
 import FilterInput from "./FilterInput";
+import ApiUtils from "../../ApiUtils";
+import ApiService from "../../Api.service";
 
 export default function FiltersModal({ onFilterApply, onResetClick }) {
     const initialFilterInput = { field: "", value: "" };
-
     const [isVisible, setIsVisible] = useState(false);
     const [filterableFields, setFilterableFields] = useState([""]);
     const [filterInputs, setFilterInputs] = useState([initialFilterInput]);

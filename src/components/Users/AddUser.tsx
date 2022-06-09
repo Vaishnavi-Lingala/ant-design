@@ -1,8 +1,8 @@
+import { useState } from "react";
 import { Button, Col, Input, Modal, Row, Typography } from "antd";
-import { useContext, useState } from "react";
-import ApiService from "../../Api.service";
-import ApiUrls from "../../ApiUtils"
 
+import ApiUrls from "../../ApiUtils"
+import ApiService from "../../Api.service";
 import { openNotification } from "../Layout/Notification";
 
 export function AddUser(props) {
@@ -39,7 +39,6 @@ export function AddUser(props) {
                 setIsModalVisible(false);
             }
             else {
-                // console.log(data.errorCauses[0].errorSummary.split('errorSummary')[2].slice(4));
                 console.log(data);
 				openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
             }

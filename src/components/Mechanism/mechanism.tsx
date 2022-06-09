@@ -1,12 +1,12 @@
-import { Button, Input, Radio, Select, Skeleton } from "antd";
 import { useContext, useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
+import { Button, Input, Radio, Select, Skeleton } from "antd";
 
 import './Mechanism.css'
 
-import ApiService from "../../Api.service";
-import ApiUrls from '../../ApiUtils';
 import { openNotification } from "../Layout/Notification";
-import { useHistory } from "react-router-dom";
+import ApiUrls from '../../ApiUtils';
+import ApiService from "../../Api.service";
 import { MechanismType } from "../../models/Data.models";
 import { Store } from "../../Store";
 
@@ -160,7 +160,6 @@ function Mechanism(props: any) {
             .then(data => {
                 if (!data.errorSummary) {
                     groupNames.length = 0;
-                    // setDisplayDetails({ ...editData });
                     openNotification('success', 'Successfully updated Mechanism');
                     Object.keys(data.mechanism_groups).map(index => {
                         groupNames.push(data.mechanism_groups[index].name);
@@ -333,34 +332,7 @@ function Mechanism(props: any) {
                             }
                         </Radio.Group>
                     </div>
-                    {/*{localStorage.getItem("productName") === 'TecTANGO' ?
-                        <>
-                            <div className="content-mechanism-key-header" style={{ paddingTop: '20px', paddingBottom: '40px' }}>
-                                Reader Type:
-                            </div>
-                            <div style={{ paddingTop: '20px' }}>
-                                <Radio.Group name="Reader" defaultValue={displayDetails?.reader_type}
-                                    onChange={(e) =>
-                                        setEditData((editData: any) => ({
-                                            ...editData,
-                                            reader_type: e.target.value
-                                        }))} disabled={!isEdit}
-                                >
-                                    {
-                                        Object.keys(readerOptions).map(factor => {
-                                            return <div key={factor}>
-                                                <Radio value={factor}>
-                                                    {readerOptions[factor]}
-                                                </Radio>
-                                                <br />
-                                            </div>
-                                        })
-                                    }
-                                </Radio.Group>
-                            </div>
-                        </> : <></>
-                    } */}
-
+                    
                     {challengeFactors.length === 2 ?
                         <>
                             <div>

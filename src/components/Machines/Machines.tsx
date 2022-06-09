@@ -1,53 +1,53 @@
-import { Skeleton, Table, Button, Select, Tooltip } from "antd";
-import { BarsOutlined } from "@ant-design/icons"
 import { useContext, useEffect, useState } from "react";
-import ApiService from "../../Api.service"
-import ApiUrls from '../../ApiUtils';
 import { useHistory } from 'react-router-dom';
+import { Skeleton, Table, Button, Tooltip } from "antd";
+import { BarsOutlined } from "@ant-design/icons"
 
 import { openNotification } from "../Layout/Notification";
+import ApiUrls from '../../ApiUtils';
+import ApiService from "../../Api.service"
 
 export default function Machines() {
-
-	const [loadingDetails, setLoadingDetails] = useState(false);
+    const [loadingDetails, setLoadingDetails] = useState(false);
     const [machines, setMachines]: any = useState([]);
-	const [page, setPage]: any = useState(1);
-	const [pageSize, setPageSize]: any = useState(10);
-	const [totalItems, setTotalItems]: any = useState(0);
+    const [page, setPage]: any = useState(1);
+    const [pageSize, setPageSize]: any = useState(10);
+    const [totalItems, setTotalItems]: any = useState(0);
     const history = useHistory();
 
-    const columns = [{
-        title: 'Machine name',
-        dataIndex: 'machine_name',
-        width: '20%'
-    },
-    {
-        title: 'MAC',
-        dataIndex: 'mac_address',
-        width: '20%'
-    },
-	{
-        title: 'Last known IP',
-        dataIndex: 'local_ip',
-        width: '20%'
-    },
-    {
-        title: 'Type',
-        dataIndex: 'group_type',
-        width: '20%'
-    },
-	{
-		title: 'Actions',
-		dataIndex: 'actions',
-		width: '20%',
-		render: (text: any, record: { uid: any; }) => (
-            <Tooltip title="View">
-                <Button icon={<BarsOutlined/>} onClick={() => history.push('/machines/' + record.uid)}>
-                </Button>
-            </Tooltip>
-		)
-	}
-    ]
+    const columns = [
+        {
+            title: 'Machine name',
+            dataIndex: 'machine_name',
+            width: '20%'
+        },
+        {
+            title: 'MAC',
+            dataIndex: 'mac_address',
+            width: '20%'
+        },
+        {
+            title: 'Last known IP',
+            dataIndex: 'local_ip',
+            width: '20%'
+        },
+        {
+            title: 'Type',
+            dataIndex: 'group_type',
+            width: '20%'
+        },
+        {
+            title: 'Actions',
+            dataIndex: 'actions',
+            width: '20%',
+            render: (text: any, record: { uid: any; }) => (
+                <Tooltip title="View">
+                    <Button icon={<BarsOutlined />} onClick={() => history.push('/machines/' + record.uid)}>
+                    </Button>
+                </Tooltip>
+            )
+        }
+    ];
 
     useEffect(() => {
         getMachines();
@@ -55,13 +55,13 @@ export default function Machines() {
 
     const onMachinesPageChange = async (page, pageSize) => {
         const params = {
-            start: page, 
+            start: page,
             limit: pageSize
         }
         getMachines(params);
-	}
+    }
 
-    function getMachines(param={}){
+    function getMachines(param = {}) {
         setLoadingDetails(true);
         ApiService.get(ApiUrls.machines).then(data => {
             console.log('Machines: ', data);
@@ -81,27 +81,27 @@ export default function Machines() {
     return (
         <>
             <div className='content-header'>
-				<span>Machines</span>
-			</div>
+                <span>Machines</span>
+            </div>
 
-			<Skeleton loading={loadingDetails}>
-				 <Table
-						style={{ border: '1px solid #D7D7DC' }}
-						showHeader={true}
-						columns={columns}
-						dataSource={machines}
-						pagination={{
-							current: page, 
-							pageSize: pageSize,
-							total: totalItems,
-							onChange:(page, pageSize) => {
-								setPage(page);
-								setPageSize(pageSize);
-								onMachinesPageChange(page, pageSize);
-							}
-						}}
-					/>
-			</Skeleton>
+            <Skeleton loading={loadingDetails}>
+                <Table
+                    style={{ border: '1px solid #D7D7DC' }}
+                    showHeader={true}
+                    columns={columns}
+                    dataSource={machines}
+                    pagination={{
+                        current: page,
+                        pageSize: pageSize,
+                        total: totalItems,
+                        onChange: (page, pageSize) => {
+                            setPage(page);
+                            setPageSize(pageSize);
+                            onMachinesPageChange(page, pageSize);
+                        }
+                    }}
+                />
+            </Skeleton>
         </>
     )
 }

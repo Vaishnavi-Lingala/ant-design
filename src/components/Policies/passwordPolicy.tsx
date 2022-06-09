@@ -1,15 +1,13 @@
-import { Button, Divider, Input, Radio, Select, Skeleton } from "antd";
 import { useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
+import { Button, Divider, Input, Radio, Select, Skeleton } from "antd";
 import TextArea from "antd/lib/input/TextArea";
 
 import './Policies.css'
 
-import { PasswordPolicyType } from "../../models/Data.models";
 import ApiService from "../../Api.service";
 import ApiUrls from '../../ApiUtils';
-
 import { openNotification } from "../Layout/Notification";
-import { useHistory } from "react-router-dom";
 
 export const PasswordPolicy = (props: any) => {
     const [isEdit, setIsEdit] = useState(false);
@@ -19,7 +17,6 @@ export const PasswordPolicy = (props: any) => {
     const [loading, setLoading] = useState(true);
     const [graceOptions, setGraceOptions]: any = useState({});
     const [groups, setGroups]: any = useState([]);
-    const { Option } = Select;
     const [groupNames, setGroupNames]: any = useState([]);
     const [groupUids, setGroupUids]: any = useState([]);
     const [groupsChange, setGroupsChange]: any = useState([]);
@@ -64,11 +61,13 @@ export const PasswordPolicy = (props: any) => {
                         value: data[1][i].uid
                     })
                 }
+                setGroups(groups)
                 var object = {};
                 for (var i = 0; i < data[1].length; i++) {
                     object[data[1][i].name] = data[1][i].uid
                 }
                 groupsChange.push(object);
+                setGroupsChange(groupsChange);
                 console.log(groups);
                 console.log(data[2]);
                 setGraceOptions(data[2].password_grace_options);

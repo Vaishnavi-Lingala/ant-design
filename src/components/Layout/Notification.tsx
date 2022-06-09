@@ -5,7 +5,6 @@ type NotificationType = 'success' | 'info' | 'warning' | 'error';
 export const openNotification = (type: NotificationType, customMessage: string) => {
     notification[type]({
         message: customMessage,
-        // description: customMessage,
         onClick: () => {
             console.log('Notification Clicked!');
         }

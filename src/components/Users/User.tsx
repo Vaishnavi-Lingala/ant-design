@@ -1,22 +1,22 @@
+import { useEffect, useState } from "react";
 import { Skeleton, Table, Tabs } from "antd";
-import { useContext, useEffect, useState } from "react";
-import ApiService from "../../Api.service"
-import ApiUrls from "../../ApiUtils"
 
 import { openNotification } from "../Layout/Notification";
+import ApiUrls from "../../ApiUtils"
+import ApiService from "../../Api.service"
 
 export function User(props: any) {
     let userDetails = props.userDetails;
-    console.log(userDetails);
-    const {TabPane} = Tabs;
-    //@ts-ignore
-    const accessToken = JSON.parse(localStorage.getItem("okta-token-storage")).accessToken.accessToken;
     const [groups, setGroups]: any = useState([]);
     const [loadingDetails, setLoadingDetails] = useState(false);
     const [page, setPage]: any = useState(1);
     const [pageSize, setPageSize]: any = useState(10);
-    const columns = [{title: "Group Name", dataIndex: "name", width:"40%" },
-    {title: "Status", dataIndex: "status", width:"40%" }];
+    const {TabPane} = Tabs;
+    
+    const columns = [{title: "Group Name", dataIndex: "name", width:"40%" }, 
+        {title: "Status", dataIndex: "status", width:"40%" }
+    ];
+
     const userObj = {
         last_invite_accepted: "Last Invite Accepted",
         sourced_by: "Sourced By",

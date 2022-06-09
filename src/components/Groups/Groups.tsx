@@ -1,26 +1,23 @@
-import { useContext, useEffect, useState } from "react"
-import { Button, Skeleton, Table, Tabs, Tooltip } from 'antd';
-import { BarsOutlined } from "@ant-design/icons"
-import ApiService from "../../Api.service";
-import ApiUrls from '../../ApiUtils';
-import GroupDetails from "./GroupDetails";
-import AddGroup from "./AddGroup";
-import { Group } from "../../models/Data.models";
-import MachineGroupDetails from "./MachineGroupDetails";
+import { useEffect, useState } from "react"
 import { useHistory } from "react-router-dom";
+import { Button, Skeleton, Tabs, Tooltip } from 'antd';
+import { BarsOutlined } from "@ant-design/icons"
 
+import GroupDetails from "./GroupDetails";
+import MachineGroupDetails from "./MachineGroupDetails";
+import TableList from "./TableList";
 import { openNotification } from "../Layout/Notification";
+import ProtectedRoute from "../ProtectedRoute";
+import ApiUrls from '../../ApiUtils';
+import ApiService from "../../Api.service";
+import { Group } from "../../models/Data.models";
 
 export default function Groups() {
-
     const [userGroups, setUserGroups] = useState<Group[]>([]);
     const history = useHistory();
     const [kioskMachineGroups, setKioskMachineGroups] = useState<Group[]>([]);
     const [standardMachineGroups, setStandardMachineGroups] = useState<Group[]>([]);
     const [loadingDetails, setLoadingDetails] = useState(false);
-    const [groupDetails, setGroupDetails] = useState(undefined);
-    const [kioskGroupDetails, setKioskGroupDetails] = useState(undefined);
-    const [standardGroupDetails, setStandardGroupDetails] = useState(undefined);
     const { TabPane } = Tabs;
     const columns = [
         {
@@ -34,53 +31,20 @@ export default function Groups() {
             width: '40%',
             render: (text: any, record: { uid: any; }) => (
                 <Tooltip title="View">
-                    <Button icon={<BarsOutlined/>} onClick={() => getGroup(record.uid)}>
-                    </Button>
+                    <Button icon={<BarsOutlined />} onClick={() =>
+                        history.push('/groups/' + window.location.pathname.split('/')[2] + '/' + record.uid)
+                    }
+                    />
                 </Tooltip>
             )
         }
     ];
 
-    function getGroup(uid: any) {
-        setLoadingDetails(true);
-        ApiService.get(ApiUrls.group(uid))
-            .then(data => {
-                if (!data.errorSummary) {
-                    console.log('GROUP_DETAILS: ', data);
-                    if (data.type === 'USER') {
-                        history.push('/groups/users/' + uid);
-                        setGroupDetails(data);
-                        setLoadingDetails(false);
-                    }
-                    if (data.type === 'KIOSK') {
-                        history.push('/groups/kiosk/' + uid);
-                        setKioskGroupDetails(data);
-                        setLoadingDetails(false);
-                    }
-                    if (data.type === 'STANDARD') {
-                        history.push('/groups/standard/' + uid);
-                        setStandardGroupDetails(data);
-                        setLoadingDetails(false);
-                    }
-                }
-                else {
-                    openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
-                }
-            }, error => {
-                console.error('Error: ', error);
-                openNotification('error', 'An Error has occured with getting Group');
-                setLoadingDetails(false);
-            })
-    }
-
     useEffect(() => {
-        if (window.location.pathname.split("/").length === 4) {
-            getGroup(window.location.pathname.split('/')[3]);
+        if (window.location.pathname.split('/').length === 2) {
+            history.push("/groups/user")
         }
 
-        if (window.location.pathname.split('/').length === 2) {
-            history.push("/groups/users")
-        }
         getGroups();
     }, [])
 
@@ -120,18 +84,6 @@ export default function Groups() {
         console.log('Group type: ', key);
     }
 
-    function clearUserGroupDetails() {
-        setGroupDetails(undefined)
-    }
-
-    function clearKioskMachineGroupDetails() {
-        setKioskGroupDetails(undefined)
-    }
-
-    function clearStandardMachineGroupDetails() {
-        setStandardGroupDetails(undefined)
-    }
-
     return (
         <>
             <div className='content-header'>
@@ -143,59 +95,32 @@ export default function Groups() {
                 tabBarStyle={{ marginBottom: '0px' }}
                 defaultActiveKey={window.location.pathname.split("/")[2]}
                 onChange={onGroupTypeChange}
-            // style={{border: '1px solid #d7d7dc', margin: 0}} 
             >
-
                 <TabPane tab="User" key="user">
                     <Skeleton loading={loadingDetails}>
-                        {groupDetails ? <GroupDetails groupDetails={groupDetails} clearGroupDetails={clearUserGroupDetails} /> : <>
-                            <AddGroup onGroupCreate={getGroups} type='USER' />
-                            <Table
-                                style={{ border: '1px solid #D7D7DC' }}
-                                showHeader={true}
-                                columns={columns}
-                                dataSource={userGroups}
-                                // bordered={true}
-                                pagination={{ position: [] }}
-                            />
-                        </>
+                        {window.location.pathname.split('/').length === 4 ?
+                            <ProtectedRoute path={`/groups/user/:id`} component={GroupDetails} /> :
+                            <TableList type={'USER'} getGroups={getGroups} columns={columns} standardMachineGroups={userGroups} />
                         }
                     </Skeleton>
                 </TabPane>
                 <TabPane tab="Kiosk Machine" key="kiosk">
                     <Skeleton loading={loadingDetails}>
-                        {kioskGroupDetails ? <MachineGroupDetails groupDetails={kioskGroupDetails} clearGroupDetails={clearKioskMachineGroupDetails} /> : <>
-                            <AddGroup onGroupCreate={getGroups} type='KIOSK' />
-                            <Table
-                                style={{ border: '1px solid #D7D7DC' }}
-                                showHeader={true}
-                                columns={columns}
-                                dataSource={kioskMachineGroups}
-                                // bordered={true}
-                                pagination={{ position: [] }}
-                            />
-                        </>
+                        {window.location.pathname.split('/').length === 4 ?
+                            <ProtectedRoute path={`/groups/kiosk/:id`} component={MachineGroupDetails} /> :
+                            <TableList type={'KIOSK'} getGroups={getGroups} columns={columns} standardMachineGroups={kioskMachineGroups} />
                         }
                     </Skeleton>
                 </TabPane>
                 <TabPane tab="Standard Machine" key="standard">
                     <Skeleton loading={loadingDetails}>
-                        {standardGroupDetails ? <MachineGroupDetails groupDetails={standardGroupDetails} clearGroupDetails={clearStandardMachineGroupDetails} /> : <>
-                            <AddGroup onGroupCreate={getGroups} type='STANDARD' />
-                            <Table
-                                style={{ border: '1px solid #D7D7DC' }}
-                                showHeader={true}
-                                columns={columns}
-                                dataSource={standardMachineGroups}
-                                // bordered={true}
-                                pagination={{ position: [] }}
-                            />
-                        </>
+                        {window.location.pathname.split('/').length === 4 ?
+                            <ProtectedRoute path={`/groups/standard/:id`} component={MachineGroupDetails} /> :
+                            <TableList type={'STANDARD'} getGroups={getGroups} columns={columns} standardMachineGroups={standardMachineGroups} />
                         }
                     </Skeleton>
                 </TabPane>
             </Tabs>
-
         </>
     )
 }

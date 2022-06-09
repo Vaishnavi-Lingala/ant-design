@@ -1,15 +1,14 @@
-import { Skeleton, Button, Divider } from "antd";
-import { useContext, useEffect, useState } from "react";
-import ApiService from "../../Api.service"
-import ApiUrls from "../../ApiUtils"
-import { machineFieldNames, time_format } from "../../constants";
+import { useEffect, useState } from "react";
 import { useHistory } from 'react-router-dom';
-
-import { openNotification } from "../Layout/Notification";
+import { Skeleton, Button, Divider } from "antd";
 import moment from "moment";
 
-export function MachineDetails(props: any) {
+import { openNotification } from "../Layout/Notification";
+import ApiUrls from "../../ApiUtils"
+import ApiService from "../../Api.service"
+import { machineFieldNames, time_format } from "../../constants";
 
+export function MachineDetails(props: any) {
     const [loadingDetails, setLoadingDetails] = useState(false);
     const [machineDetails, setMachineDetails] = useState({});
     const history = useHistory();
@@ -46,7 +45,6 @@ export function MachineDetails(props: any) {
             setLoadingDetails(false);
         });
     }, []);
-
 
     return (
         <>

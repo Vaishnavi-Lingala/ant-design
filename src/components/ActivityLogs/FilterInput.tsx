@@ -1,5 +1,6 @@
-import { Input, Row, Col, Select, Button } from "antd";
 import { FunctionComponent } from "react";
+import { Input, Row, Col, Select, Button } from "antd";
+
 import { filterableFieldNames } from "../../constants";
 
 interface FilterInputProps {

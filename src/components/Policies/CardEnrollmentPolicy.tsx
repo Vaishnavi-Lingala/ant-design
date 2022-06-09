@@ -1,6 +1,7 @@
+import { useState, useEffect } from "react";
+import { useHistory } from "react-router-dom";
 import { Button, Input, InputNumber, Select, Skeleton } from "antd";
 import TextArea from "antd/lib/input/TextArea";
-import { useState, useEffect } from "react";
 
 import './Policies.css';
 
@@ -9,7 +10,6 @@ import ApiUrls from '../../ApiUtils';
 import { CARD_ENROLL, TecTANGO } from "../../constants";
 import { openNotification } from "../Layout/Notification";
 import Hint from "../Controls/Hint";
-import { useHistory } from "react-router-dom";
 
 const CardEnrollmentPolicy = (props) => {
     const [isEdit, setIsEdit] = useState(false);
@@ -57,7 +57,6 @@ const CardEnrollmentPolicy = (props) => {
                         setGroupNames(groupNames);
                         setGroupUids(groupUids);
                     });
-
                     setLoading(false);
                 }
                 else if (window.location.pathname.split('/').length === 3) {

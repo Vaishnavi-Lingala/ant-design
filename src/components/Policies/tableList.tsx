@@ -1,14 +1,14 @@
 import { Button, Modal, Table } from "antd";
 import { useState } from "react";
 
-import ApiService from "../../Api.service";
-import ApiUrls from "../../ApiUtils";
-import { CARD_ENROLL, KIOSK, PASSWORD, PIN } from "../../constants";
-import { openNotification } from "../Layout/Notification";
 import CardEnrollmentPolicy from "./CardEnrollmentPolicy";
 import { KioskPolicy } from "./kioskPolicy";
 import { PasswordPolicy } from "./passwordPolicy";
 import { PinPolicy } from "./pinPolicy";
+import { openNotification } from "../Layout/Notification";
+import ApiUrls from "../../ApiUtils";
+import ApiService from "../../Api.service";
+import { CARD_ENROLL, KIOSK, PASSWORD, PIN } from "../../constants";
 
 function TableList({ handleGetPolicies, policy_type, activateColumns, activePolicies, draggableContainer, draggableBodyRow, deActivateColumns, inActivePolicies }) {
     const [isModal, setIsModal] = useState(false);
@@ -105,6 +105,7 @@ function TableList({ handleGetPolicies, policy_type, activateColumns, activePoli
                     Add {policy_type.slice(0, 1).toUpperCase() + policy_type.slice(1)} Policy
                 </Button>
             </div>
+
             <div style={{
                 fontWeight: 600, fontSize: 'x-large',
                 width: '100%', border: '1px solid #D7D7DC',
@@ -113,6 +114,7 @@ function TableList({ handleGetPolicies, policy_type, activateColumns, activePoli
             >
                 ACTIVE
             </div>
+
             <Table
                 style={{ border: '1px solid #D7D7DC' }}
                 showHeader={true}
@@ -127,7 +129,9 @@ function TableList({ handleGetPolicies, policy_type, activateColumns, activePoli
                 }}
                 pagination={false}
             />
+
             <br />
+
             <div style={{
                 fontWeight: 600, fontSize: 'x-large',
                 width: '100%', border: '1px solid #D7D7DC',
@@ -144,9 +148,9 @@ function TableList({ handleGetPolicies, policy_type, activateColumns, activePoli
                 dataSource={inActivePolicies}
                 pagination={false}
             />
-            
+
             <Modal visible={isModal} footer={false} centered width={900} maskClosable={false}
-                title={<div style={{fontSize: '30px'}}>Add {policy_type.slice(0, 1).toUpperCase() + policy_type.slice(1)} Policy </div>}
+                title={<div style={{ fontSize: '30px' }}>Add {policy_type.slice(0, 1).toUpperCase() + policy_type.slice(1)} Policy </div>}
             >
                 {policy_type.toUpperCase() === PIN ?
                     <PinPolicy pinDetails={pinData} handleOk={handleOk} handleCancel={handleCancel} /> :

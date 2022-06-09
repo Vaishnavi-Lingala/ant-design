@@ -1,23 +1,18 @@
+import { useEffect, useState } from 'react';
 import { Skeleton } from 'antd';
-import { useContext, useEffect, useState } from 'react';
 
 import './Settings.css'
 
+import { openNotification } from '../Layout/Notification';
+import ApiUrls from '../../ApiUtils';
+import ApiService from '../../Api.service';
+import { settingsFieldNames } from '../../constants';
 import { ClientConfiguration } from '../../models/Data.models';
 
-import { openNotification } from '../Layout/Notification';
-import ApiService from '../../Api.service';
-import ApiUrls from '../../ApiUtils';
-import { settingsFieldNames } from '../../constants';
-
 function Settings() {
-    const [result, setResult] = useState({});
-    const [clientId, setClientId] = useState("");
-    const [issuer, setIssuer] = useState("");
-    const [accountId, setAccountId] = useState("");
     const [loading, setLoading] = useState(true);
-    const domain = localStorage.getItem('domain');
     const [settings, setSettings] = useState({});
+    const domain = localStorage.getItem('domain');
 
     useEffect(() => {
         ApiService.post(ApiUrls.client_info, { domain: domain })

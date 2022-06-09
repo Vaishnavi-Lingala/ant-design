@@ -1,9 +1,7 @@
 import { useOktaAuth } from "@okta/okta-react";
 import { Redirect, Route, useHistory } from "react-router-dom";
 import { SecureRoute } from "@okta/okta-react";
-import Layout from "./Layout/Layout";
 
-// @ts-ignore
 export default function ProtectedRoute({
     component: Component,
     ...restOfProps
@@ -50,13 +48,11 @@ export default function ProtectedRoute({
             render={(props) =>
                 oktaStorage !== null ? (
                     <SecureRoute>
-                        {/* <Layout> */}
-                            <Component
-                                authStatus={authState}
-                                oktaAuth={oktaAuth}
-                                {...props}
-                            />
-                        {/* </Layout> */}
+                        <Component
+                            authStatus={authState}
+                            oktaAuth={oktaAuth}
+                            {...props}
+                        />
                     </SecureRoute>
                 ) : (
                     <Redirect to={"/"} />

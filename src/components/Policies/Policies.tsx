@@ -1,26 +1,40 @@
-import { Button, Skeleton, Tabs, Tooltip } from 'antd';
-import { BarsOutlined, PoweroffOutlined, StopOutlined } from "@ant-design/icons"
-import { MenuOutlined } from '@ant-design/icons';
 import { useEffect, useState, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
+import { Button, Skeleton, Tabs, Tooltip } from 'antd';
+import { BarsOutlined, MenuOutlined, PoweroffOutlined, StopOutlined } from "@ant-design/icons"
 import { arrayMoveImmutable } from 'array-move';
 
 import './Policies.css';
 
-import { PinPolicy } from './pinPolicy';
+import CardEnrollmentPolicy from './CardEnrollmentPolicy';
+import { KioskPolicy } from './kioskPolicy';
 import { PasswordPolicy } from './passwordPolicy'
+import { PinPolicy } from './pinPolicy';
+import TableList from './tableList';
+import { openNotification } from '../Layout/Notification';
+import ProtectedRoute from '../ProtectedRoute';
 import ApiUrls from '../../ApiUtils';
 import ApiService from '../../Api.service';
-import { KioskPolicy } from './kioskPolicy';
-import { openNotification } from '../Layout/Notification';
 import { CARD_ENROLL, KIOSK, PASSWORD, PIN, TecTANGO } from '../../constants';
-import CardEnrollmentPolicy from './CardEnrollmentPolicy';
-import TableList from './tableList';
 import { Store } from '../../Store';
-import ProtectedRoute from '../ProtectedRoute';
 
 export default function Policies() {
+	const history = useHistory();
+	const [seletedProduct] = useContext(Store);
+	const [loadingDetails, setLoadingDetails] = useState(false);
+	const [activePinPolicies, setActivePinPolicies]: any = useState([]);
+	const [inActivePinPolicies, setInActivePinPolicies]: any = useState([]);
+	const [activePasswordPolicies, setActivePasswordPolicies]: any = useState([]);
+	const [inActivepasswordPolicies, setInActivePasswordPolicies]: any = useState([]);
+	const [activeKioskPolicies, setActiveKioskPolicies]: any = useState([]);
+	const [inActiveKioskPolicies, setInActiveKioskPolicies]: any = useState([]);
+	const [activeCardEnrollmentPolicies, setActiveCardEnrollmentPolicies] = useState([]);
+	const [inActiveCardEnrollmentPolicies, setInActiveCardEnrollmentPolicies] = useState([]);
+	const path = window.location.pathname.split('/').length;
+	const [maxEnroll, setMaxEnroll] = useState(null);
+	const { TabPane } = Tabs;
+
 	const activateColumns = [
 		{
 			title: 'Sort',
@@ -110,21 +124,6 @@ export default function Policies() {
 			)
 		}
 	];
-
-	const history = useHistory();
-	const [seletedProduct] = useContext(Store);
-	const [loadingDetails, setLoadingDetails] = useState(false);
-	const [activePinPolicies, setActivePinPolicies]: any = useState([]);
-	const [inActivePinPolicies, setInActivePinPolicies]: any = useState([]);
-	const [activePasswordPolicies, setActivePasswordPolicies]: any = useState([]);
-	const [inActivepasswordPolicies, setInActivePasswordPolicies]: any = useState([]);
-	const [activeKioskPolicies, setActiveKioskPolicies]: any = useState([]);
-	const [inActiveKioskPolicies, setInActiveKioskPolicies]: any = useState([]);
-	const [activeCardEnrollmentPolicies, setActiveCardEnrollmentPolicies] = useState([]);
-	const [inActiveCardEnrollmentPolicies, setInActiveCardEnrollmentPolicies] = useState([]);
-	const path = window.location.pathname.split('/').length;
-	const [maxEnroll, setMaxEnroll] = useState(null);
-	const { TabPane } = Tabs;
 
 	const DragHandle = SortableHandle(() => <MenuOutlined style={{ cursor: 'grab', color: '#999' }} />);
 	const SortableItem = SortableElement(props => <tr {...props} />);
@@ -489,7 +488,6 @@ export default function Policies() {
 			<div className='content-header'>
 				Policy
 				{window.location.pathname.split('/').length === 4 ? <Button style={{ marginLeft: 'auto', alignSelf: 'end' }} onClick={() => {
-					console.log(window.location.pathname.split('/')[2]);
 					history.push('/policies/' + window.location.pathname.split('/')[2]);
 				}}>
 					Back
@@ -505,46 +503,42 @@ export default function Policies() {
 					}}
 				>
 					<TabPane tab="Pin" key="pin">
-							{window.location.pathname.split('/').length === 4 ?
-								<ProtectedRoute path={`/policies/pin/:id`} component={PinPolicy} /> :
-								<TableList policy_type={"pin"}
-									activateColumns={activateColumns} deActivateColumns={deActivateColumns} draggableBodyRow={pinDraggableBodyRow}
-									draggableContainer={pinDraggableContainer} inActivePolicies={inActivePinPolicies} activePolicies={activePinPolicies}
-									handleGetPolicies={handleGetPolicies}
-								/>
-							}
+						{window.location.pathname.split('/').length === 4 ?
+							<ProtectedRoute path={`/policies/pin/:id`} component={PinPolicy} /> :
+							<TableList policy_type={"pin"}
+								activateColumns={activateColumns} deActivateColumns={deActivateColumns} draggableBodyRow={pinDraggableBodyRow}
+								draggableContainer={pinDraggableContainer} inActivePolicies={inActivePinPolicies} activePolicies={activePinPolicies}
+								handleGetPolicies={handleGetPolicies}
+							/>
+						}
 					</TabPane>
 					<TabPane tab="Password" key="password">
-							{window.location.pathname.split('/').length === 4 ?
-								<ProtectedRoute path={`/policies/password/:id`} component={PasswordPolicy} /> :
-								<TableList policy_type={"password"} activateColumns={activateColumns} deActivateColumns={deActivateColumns}
-									draggableBodyRow={passwordDraggableBodyRow} draggableContainer={passwordDraggableContainer}
-									inActivePolicies={inActivepasswordPolicies} activePolicies={activePasswordPolicies} handleGetPolicies={handleGetPolicies}
-								/>
-							}
+						{window.location.pathname.split('/').length === 4 ?
+							<ProtectedRoute path={`/policies/password/:id`} component={PasswordPolicy} /> :
+							<TableList policy_type={"password"} activateColumns={activateColumns} deActivateColumns={deActivateColumns}
+								draggableBodyRow={passwordDraggableBodyRow} draggableContainer={passwordDraggableContainer}
+								inActivePolicies={inActivepasswordPolicies} activePolicies={activePasswordPolicies} handleGetPolicies={handleGetPolicies}
+							/>
+						}
 					</TabPane>
 					<TabPane tab="Kiosk" key="kiosk">
-							{window.location.pathname.split('/').length === 4 ?
-								<ProtectedRoute path={`/policies/kiosk/:id`} component={KioskPolicy} /> :
-								<>
-									<TableList policy_type={"kiosk"} activateColumns={activateColumns} deActivateColumns={deActivateColumns}
-										draggableBodyRow={kioskDraggableBodyRow} draggableContainer={kioskDraggableContainer}
-										inActivePolicies={inActiveKioskPolicies} activePolicies={activeKioskPolicies} handleGetPolicies={handleGetPolicies}
-									/>
-								</>
-							}
+						{window.location.pathname.split('/').length === 4 ?
+							<ProtectedRoute path={`/policies/kiosk/:id`} component={KioskPolicy} /> :
+							<TableList policy_type={"kiosk"} activateColumns={activateColumns} deActivateColumns={deActivateColumns}
+								draggableBodyRow={kioskDraggableBodyRow} draggableContainer={kioskDraggableContainer}
+								inActivePolicies={inActiveKioskPolicies} activePolicies={activeKioskPolicies} handleGetPolicies={handleGetPolicies}
+							/>
+						}
 					</TabPane>
 					{seletedProduct === TecTANGO && maxEnroll ?
 						<TabPane tab="Card enrollment" key="card-enrollment">
-								{window.location.pathname.split('/').length === 4 ?
-									<ProtectedRoute path={`/policies/card-enrollment/:id`} component={CardEnrollmentPolicy} /> :
-									<>
-										<TableList policy_type={"card-enrollment"} activateColumns={activateColumns} deActivateColumns={deActivateColumns}
-											draggableBodyRow={CardEnrollmentDraggableBodyRow} draggableContainer={CardEnrollmentDraggableContainer}
-											inActivePolicies={inActiveCardEnrollmentPolicies} activePolicies={activeCardEnrollmentPolicies} handleGetPolicies={handleGetPolicies}
-										/>
-									</>
-								}
+							{window.location.pathname.split('/').length === 4 ?
+								<ProtectedRoute path={`/policies/card-enrollment/:id`} component={CardEnrollmentPolicy} /> :
+								<TableList policy_type={"card-enrollment"} activateColumns={activateColumns} deActivateColumns={deActivateColumns}
+									draggableBodyRow={CardEnrollmentDraggableBodyRow} draggableContainer={CardEnrollmentDraggableContainer}
+									inActivePolicies={inActiveCardEnrollmentPolicies} activePolicies={activeCardEnrollmentPolicies} handleGetPolicies={handleGetPolicies}
+								/>
+							}
 						</TabPane> : null}
 				</Tabs>
 			</Skeleton>

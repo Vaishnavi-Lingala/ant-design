@@ -1,47 +1,44 @@
-import { useContext, useEffect, useState } from "react";
-import {Table,  Button, Modal, Typography, Input } from "antd";
-import ApiService from "../../Api.service";
-import ApiUrls from '../../ApiUtils';
+import { useEffect, useState } from "react";
+import { Table, Button, Modal, Typography, Input } from "antd";
 
 import { openNotification } from "../Layout/Notification";
-
+import ApiUrls from '../../ApiUtils';
+import ApiService from "../../Api.service";
 
 export default function MachinesSelection(props: any) {
-
-    const { Title } = Typography;
-    const { Search } = Input;
-
-    const columns = [
-		{
-			title: 'Machine name',
-			dataIndex: 'machine_name',
-			width: '30%'
-		},
-        {
-			title: 'Mac Address',
-			dataIndex: 'mac_address',
-			width: '40%'
-		},
-        {
-			title: 'Operating System',
-			dataIndex: 'os',
-			width: '40%'
-		}
-		
-	];
-
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
     const [machinesList, setMachinesList] = useState([]);
     const [searchText, setSearchText] = useState('');
     const [loadingDetails, setLoadingDetails] = useState(false);
     const [page, setPage]: any = useState(1);
-	const [pageSize, setPageSize]: any = useState(10);
-	const [totalItems, setTotalItems]: any = useState(0);
+    const [pageSize, setPageSize]: any = useState(10);
+    const [totalItems, setTotalItems]: any = useState(0);
+    const { Title } = Typography;
+    const { Search } = Input;
+
+    const columns = [
+        {
+            title: 'Machine name',
+            dataIndex: 'machine_name',
+            width: '30%'
+        },
+        {
+            title: 'Mac Address',
+            dataIndex: 'mac_address',
+            width: '40%'
+        },
+        {
+            title: 'Operating System',
+            dataIndex: 'os',
+            width: '40%'
+        }
+
+    ];
 
     const onSelectChange = selectedRowKeys => {
         console.log('selectedRowKeys changed: ', selectedRowKeys);
         setSelectedRowKeys(selectedRowKeys)
-      };
+    };
 
     const rowSelection = {
         selectedRowKeys,
@@ -68,12 +65,12 @@ export default function MachinesSelection(props: any) {
         setSearchText(text)
         setPage(1);
         const params = {
-            q : text
+            q: text
         }
         getMachinesNotInGroup(props.groupId, params);
     }
 
-    function getMachinesNotInGroup(groupId, params={}){
+    function getMachinesNotInGroup(groupId, params = {}) {
         setLoadingDetails(true);
         ApiService.get(ApiUrls.machinesNotInGroup(groupId), params).then(data => {
             data.results.forEach(machine => {
@@ -89,23 +86,20 @@ export default function MachinesSelection(props: any) {
         })
     }
 
-
-
     useEffect(() => {
-       getMachinesNotInGroup(props.groupId);
-	}, [])
+        getMachinesNotInGroup(props.groupId);
+    }, [])
 
     const onMachinesPageChange = async (page, pageSize) => {
         const params = {
-            q : searchText,
-            start: page, 
+            q: searchText,
+            start: page,
             limit: pageSize
         }
         getMachinesNotInGroup(props.groupId, params);
-	}
+    }
 
-
-    return(
+    return (
         <>
             <Modal title={<Title level={2}>{props.action} Machines</Title>} visible={true} onOk={handleOk} onCancel={handleCancel} width={1000}
                 footer={[
@@ -113,35 +107,34 @@ export default function MachinesSelection(props: any) {
                         Cancel
                     </Button>,
                     <Button key="submit" type="primary" onClick={handleOk}>
-                       {props.action}
+                        {props.action}
                     </Button>
                 ]}>
                 <div style={{ width: '100%', border: '1px solid #D7D7DC', borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6' }}>
-                    <Search placeholder="Search for users by name or email" allowClear style={{ width: 400 }} 
-                    onSearch={onSearch}
-                    size="large"
-                    enterButton/>
+                    <Search placeholder="Search for users by name or email" allowClear style={{ width: 400 }}
+                        onSearch={onSearch}
+                        size="large"
+                        enterButton />
                 </div>
                 <Table
                     loading={loadingDetails}
                     style={{ border: '1px solid #D7D7DC' }}
                     showHeader={true}
                     columns={columns}
-                    dataSource={machinesList}   
+                    dataSource={machinesList}
                     rowSelection={rowSelection}
-                    // bordered={true}
                     pagination={{
-                        current: page, 
+                        current: page,
                         pageSize: pageSize,
                         total: totalItems,
-                        onChange:(page, pageSize) => {
+                        onChange: (page, pageSize) => {
                             setPage(page);
                             setPageSize(pageSize);
                             onMachinesPageChange(page, pageSize);
                         }
                     }}
                 />
-                    
+
             </Modal>
         </>
     )
