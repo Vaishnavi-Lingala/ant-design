@@ -262,7 +262,7 @@ const CardEnrollmentPolicy = (props) => {
                     <Button style={{ float: 'right', marginLeft: '10px' }}
                         onClick={setCancelClick}>Cancel</Button>
                     <Button type='primary' style={{ float: 'right' }}
-                        onClick={createCardEnrollPolicy}>create</Button></div>
+                        onClick={createCardEnrollPolicy}>Create</Button></div>
             }
         </Skeleton>
     );

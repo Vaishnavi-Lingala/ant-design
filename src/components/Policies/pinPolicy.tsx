@@ -321,7 +321,7 @@ export const PinPolicy = (props: any) => {
 					<Button style={{ float: 'right', marginLeft: '10px' }}
 						onClick={setCancelClick}>Cancel</Button>
 					<Button type='primary' style={{ float: 'right' }}
-						onClick={createPinPolicy}>create</Button></div>
+						onClick={createPinPolicy}>Create</Button></div>
 			}
 		</Skeleton>
 	);
