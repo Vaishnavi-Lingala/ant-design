@@ -1,18 +1,15 @@
+import { useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
 import { Divider, Checkbox, Button, InputNumber, Input, Select, Skeleton } from "antd";
-import { useContext, useEffect, useState } from "react";
 import TextArea from "antd/lib/input/TextArea";
 
 import './Policies.css';
 
-import { PinPolicyType } from "../../models/Data.models";
 import ApiService from "../../Api.service";
 import ApiUrls from '../../ApiUtils';
-
 import { openNotification } from "../Layout/Notification";
-import { useHistory } from "react-router-dom";
 
 export const PinPolicy = (props: any) => {
-
 	const [isEdit, setIsEdit] = useState(false);
 	const [loading, setLoading] = useState(true);
 	const [pinDisplayData, setPinDisplayData] = useState({});
@@ -23,7 +20,7 @@ export const PinPolicy = (props: any) => {
 	const [groupsChange, setGroupsChange]: any = useState([]);
 	const [policyRequirements, setPolicyRequirements] = useState({});
 	const history = useHistory();
-  
+
 	useEffect(() => {
 		Promise.all(([
 			ApiService.get(ApiUrls.groups, { type: "USER" }),
@@ -134,9 +131,9 @@ export const PinPolicy = (props: any) => {
 			}
 		})
 		groupUids.length = 0;
-        setGroupUids(value);
-        pinEditData.auth_policy_groups = value;
-        console.log(pinEditData.auth_policy_groups);
+		setGroupUids(value);
+		pinEditData.auth_policy_groups = value;
+		console.log(pinEditData.auth_policy_groups);
 	}
 
 	return (
@@ -324,7 +321,7 @@ export const PinPolicy = (props: any) => {
 					<Button style={{ float: 'right', marginLeft: '10px' }}
 						onClick={setCancelClick}>Cancel</Button>
 					<Button type='primary' style={{ float: 'right' }}
-						onClick={createPinPolicy}>create</Button></div>
+						onClick={createPinPolicy}>Create</Button></div>
 			}
 		</Skeleton>
 	);

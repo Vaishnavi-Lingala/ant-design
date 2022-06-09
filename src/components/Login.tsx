@@ -1,17 +1,17 @@
 import { useContext, useState } from "react"; 
+import ReactDOM from "react-dom";
 import { OktaAuth } from "@okta/okta-auth-js";
 import { Input, Button, Form } from "antd";
 
 import './Login.css';
 
-import config from "../config";
 import Register from "./Register";
-import ReactDOM from "react-dom";
-import { ClientConfiguration } from "../models/Data.models";
-import ApiService from "../Api.service";
 import ApiUrls from '../ApiUtils';
-import { Store } from "../Store";
+import ApiService from "../Api.service";
+import config from "../config";
 import { Directory } from "../constants";
+import { ClientConfiguration } from "../models/Data.models";
+import { Store } from "../Store";
 
 function Login() {
     const [email, setEmail] = useState("");
@@ -19,7 +19,7 @@ function Login() {
     const [errorMessage, setErrorMessage] = useState("");
     const emailPrefix = email.split('@')[0];
     const domain = email.split('@')[1];
-    const [, setSelectedHeader] = useContext(Store);
+    const [setSelectedHeader] = useContext(Store);
 
     const validateEmail = async () => {
         ApiService.post(ApiUrls.client_info, { domain: domain })

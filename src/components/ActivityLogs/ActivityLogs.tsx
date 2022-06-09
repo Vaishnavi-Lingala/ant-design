@@ -1,14 +1,14 @@
-import { Button, Collapse, Skeleton } from "antd";
-import { CaretRightOutlined } from '@ant-design/icons';
 import { useEffect, useState } from "react";
-import { DatePicker, Table } from "antd";
+import { Button, Collapse, Skeleton, DatePicker, Table } from "antd";
+import { CaretRightOutlined } from '@ant-design/icons';
 import moment from "moment";
 
 import "./ActivityLogs.css";
 
-import ApiService from "../../Api.service";
-import ApiUrls from "../../ApiUtils";
 import FiltersModal from "./FiltersModal";
+import { openNotification } from "../Layout/Notification";
+import ApiUrls from "../../ApiUtils";
+import ApiService from "../../Api.service";
 import {
     date_format,
     time_format,
@@ -21,7 +21,6 @@ import {
     logFieldNames,
     date_display_format
 } from '../../constants';
-import { openNotification } from "../Layout/Notification";
 
 const { Panel } = Collapse;
 

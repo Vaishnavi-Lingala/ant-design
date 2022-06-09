@@ -1,16 +1,13 @@
+import { useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
 import { Divider, Checkbox, Button, Input, Select, Skeleton, Radio } from "antd";
-import { useContext, useEffect, useState } from "react";
+import TextArea from "antd/lib/input/TextArea";
 
 import './Policies.css';
 
-// import { AuthenticationPolicy } from "../../models/Data.models";
-import { kioskPolicyType } from "../../models/Data.models";
 import ApiService from "../../Api.service";
 import ApiUrls from '../../ApiUtils';
-import TextArea from "antd/lib/input/TextArea";
-
 import { openNotification } from "../Layout/Notification";
-import { useHistory } from "react-router-dom";
 
 export const KioskPolicy = (props: any) => {
 
@@ -161,7 +158,6 @@ export const KioskPolicy = (props: any) => {
 
     function handleEditClick() {
         setIsEdit(!isEdit);
-        // setKioskEditedData({ ...kioskDisplayData });
     }
 
     function handleCancelClick() {
@@ -171,7 +167,6 @@ export const KioskPolicy = (props: any) => {
 
     function handleSaveClick() {
         updateKioskPolicy();
-        // setIsEdit(false);
     }
 
     function createkioskPolicy() {

@@ -1,17 +1,16 @@
-import { Layout, Menu } from "antd";
-import { UserOutlined } from '@ant-design/icons';
+import { useContext, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { useOktaAuth } from "@okta/okta-react";
 import { OktaAuth } from "@okta/okta-auth-js";
-import { useContext, useEffect, useState } from "react";
+import { Layout, Menu } from "antd";
+import { UserOutlined } from '@ant-design/icons';
 
 import './Layout.css';
 
-import config from "../../config";
+import { openNotification } from "./Notification";
 import ApiUrls from '../../ApiUtils';
 import ApiService from "../../Api.service";
-
-import { openNotification } from "./Notification";
+import config from "../../config";
 import { Directory, MenuItemPaths, Products, Settings } from "../../constants";
 import { Store } from "../../Store";
 

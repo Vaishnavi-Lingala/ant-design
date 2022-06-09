@@ -6,22 +6,21 @@ import { ConfigProvider } from "antd";
 import "antd/dist/antd.variable.min.css";
 import "./App.css";
 
-import config from "./config";
+import ActivityLogs from "./components/ActivityLogs/ActivityLogs";
+import Dashboard from "./components/Dashboard/Dashboard";
+import Groups from "./components/Groups/Groups";
+import Layout from "./components/Layout/Layout";
 import Login from "./components/Login";
+import Machines from "./components/Machines/Machines";
+import { MachineDetails } from "./components/Machines/MachineDetails";
+import Mechanisms from "./components/Mechanism/Mechanisms";
+import Mechanism from "./components/Mechanism/mechanism";
+import PageNotFound from "./components/PageNotFound";
 import Policies from "./components/Policies/Policies";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Settings from "./components/Settings/Settings";
-import PageNotFound from "./components/PageNotFound";
-import ActivityLogs from "./components/ActivityLogs/ActivityLogs";
-import Dashboard from "./components/Dashboard/Dashboard";
-import Mechanisms from "./components/Mechanism/Mechanisms";
-import Groups from "./components/Groups/Groups";
 import Users from "./components/Users/Users";
-import Machines from "./components/Machines/Machines";
-
-import { MachineDetails } from "./components/Machines/MachineDetails";
-import Layout from "./components/Layout/Layout";
-import Mechanism from "./components/Mechanism/mechanism";
+import config from "./config";
 import StoreProvider from "./Store";
 
 const oktaAuth = new OktaAuth(config.oidc);

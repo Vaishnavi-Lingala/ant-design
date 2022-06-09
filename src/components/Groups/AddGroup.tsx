@@ -1,12 +1,13 @@
-import { useContext, useEffect, useState } from "react"
-import { Button, Skeleton, Table, Modal, Input, Row, Col, Typography } from 'antd';
-import ApiService from "../../Api.service";
-import ApiUrls from '../../ApiUtils';
+import { useState } from "react"
+import { Button, Col, Input, Modal, Row, Typography } from 'antd';
 
 import { openNotification } from "../Layout/Notification";
+import ApiUrls from '../../ApiUtils';
+import ApiService from "../../Api.service";
 
 export default function AddGroup(props: any) {
-
+    const [loading, setLoading] = useState(false);
+    const [isModalVisible, setIsModalVisible] = useState(false);
     const { Title } = Typography;
     const { TextArea } = Input;
     const [newGroup, setNewGroup] = useState({
@@ -14,8 +15,6 @@ export default function AddGroup(props: any) {
         'description': '',
         'type': props.type
     });
-    const [loading, setLoading] = useState(false);
-    const [isModalVisible, setIsModalVisible] = useState(false);
 
     const showModal = () => {
         setNewGroup({

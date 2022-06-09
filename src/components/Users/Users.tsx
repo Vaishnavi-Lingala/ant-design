@@ -1,16 +1,14 @@
-import { Skeleton, Table, Button, Dropdown, Menu, Space, Tooltip } from "antd";
-import { useContext, useEffect, useState } from "react";
-import ApiService from "../../Api.service"
-import ApiUrls from '../../ApiUtils';
+import { useEffect, useState } from "react";
+import { Button, Dropdown, Menu, Skeleton, Table, Tooltip } from "antd";
+import { BarsOutlined, MoreOutlined } from "@ant-design/icons"
+
 import { AddUser } from "./AddUser";
 import { User } from "./User";
-import { MoreOutlined, BarsOutlined } from "@ant-design/icons"
-
 import { openNotification } from "../Layout/Notification";
-import SubMenu from "antd/lib/menu/SubMenu";
+import ApiUrls from '../../ApiUtils';
+import ApiService from "../../Api.service"
 
 export default function Users() {
-
 	const [userDetails, setUserDetails] = useState(undefined);
 	const [loadingDetails, setLoadingDetails] = useState(true);
 	const [arr, setArr]: any = useState([]);
@@ -20,76 +18,86 @@ export default function Users() {
 	const [statusList, setStatusList]: any = useState([]);
 	const [lifeCycleTypes, setLifeCycleTypes]: any = useState(undefined);
 
-	const columns = [{
-		title: 'First Name',
-		dataIndex: 'first_name'
-		},{
-		title: 'Last Name',
-		dataIndex: 'last_name'
-	},{
-		title: 'Email',
-		dataIndex: 'email'
-	},{
-		title: 'Username',
-		dataIndex: 'user_name'
-	},{
-		title: 'Status',
-		dataIndex: 'status'
-	},{
-		title: 'Details',
-		dataIndex: 'details',
-		render: (text: any, record: { uid: any; user_name: any}) => (
-			<Tooltip title="View">
-				<Button icon={<BarsOutlined />} onClick={() => getUserDetails(record.uid)}/>
-					
-			</Tooltip>
-		)
-	},{
-		title: 'Actions',
-		dataIndex: 'actions',
-		render: (text: any, record: { uid: any; user_name: any}) => (
-			<Dropdown overlay={
-				<Menu key={"changeStatus"} title={"Change Status"} >
-						{
-						statusList.map(item => {
-							return <Menu.Item key={item.key} onClick={({key}) => {changeUserStatus(key, record.uid, record.user_name)}}>
-								{item.value}
-							</Menu.Item>
-						})
-					}
-				</Menu>
-			}>
-				{
-					<Tooltip title="Change status">
-						<Button icon={<MoreOutlined/>} onClick={e => e.preventDefault()} />
+	const columns = [
+		{
+			title: 'First Name',
+			dataIndex: 'first_name'
+		},
+		{
+			title: 'Last Name',
+			dataIndex: 'last_name'
+		},
+		{
+			title: 'Email',
+			dataIndex: 'email'
+		},
+		{
+			title: 'Username',
+			dataIndex: 'user_name'
+		},
+		{
+			title: 'Status',
+			dataIndex: 'status'
+		},
+		{
+			title: 'Details',
+			dataIndex: 'details',
+			render: (text: any, record: { uid: any; user_name: any }) => (
+				<Tooltip title="View">
+					<Button icon={<BarsOutlined />} onClick={() => getUserDetails(record.uid)} />
 
-					</Tooltip>
-				}
-			</Dropdown>
-		)
-	}]
+				</Tooltip>
+			)
+		},
+		{
+			title: 'Actions',
+			dataIndex: 'actions',
+			render: (text: any, record: { uid: any; user_name: any }) => (
+				<Dropdown overlay={
+					<Menu key={"changeStatus"} title={"Change Status"} >
+						{
+							statusList.map(item => {
+								return <Menu.Item key={item.key} onClick={({ key }) => { changeUserStatus(key, record.uid, record.user_name) }}>
+									{item.value}
+								</Menu.Item>
+							})
+						}
+					</Menu>
+				}>
+					{
+						<Tooltip title="Change status">
+							<Button icon={<MoreOutlined />} onClick={e => e.preventDefault()} />
+
+						</Tooltip>
+					}
+				</Dropdown>
+			)
+		}
+	];
 
 	useEffect(() => {
-		const statusTypes = [{
-			key: 'ACTIVE',
-			value: 'Activate'
-		},
-		{
-			key: 'DEACTIVATED',
-			value: 'Deactivate'
-		},
-		{
-			key: 'STAGED',
-			value: 'Stage'
-		},
-		{
-			key: 'SUSPENDED',
-			value: 'Suspend'
-		},
-		{
-			key: 'LOCKED_OUT',
-			value: 'Lock'
-		}]
+		const statusTypes = [
+			{
+				key: 'ACTIVE',
+				value: 'Activate'
+			},
+			{
+				key: 'DEACTIVATED',
+				value: 'Deactivate'
+			},
+			{
+				key: 'STAGED',
+				value: 'Stage'
+			},
+			{
+				key: 'SUSPENDED',
+				value: 'Suspend'
+			},
+			{
+				key: 'LOCKED_OUT',
+				value: 'Lock'
+			}
+		];
 		setStatusList(statusTypes);
 		getLifeCycleOptions();
 	}, [])
@@ -177,7 +185,7 @@ export default function Users() {
 						showHeader={true}
 						columns={columns}
 						dataSource={arr}
-						scroll={{x: true}}
+						scroll={{ x: true }}
 						pagination={{
 							current: page,
 							pageSize: pageSize,

@@ -1,20 +1,24 @@
-import { Button, Skeleton, Table, Tooltip } from 'antd';
-import { BarsOutlined, PoweroffOutlined, StopOutlined } from "@ant-design/icons"
 import { useEffect, useState } from 'react';
-import { MenuOutlined } from '@ant-design/icons';
-import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
-import { arrayMoveImmutable } from 'array-move';
 import { useHistory } from 'react-router-dom';
+import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
+import { Button, Skeleton, Table, Tooltip } from 'antd';
+import Modal from 'antd/lib/modal/Modal';
+import { BarsOutlined, MenuOutlined, PoweroffOutlined, StopOutlined } from "@ant-design/icons"
+import { arrayMoveImmutable } from 'array-move';
 
 import './Mechanism.css';
 
-import ApiService from '../../Api.service';
-import ApiUrls from '../../ApiUtils';
 import Mechanism from './mechanism';
 import { openNotification } from '../Layout/Notification';
-import Modal from 'antd/lib/modal/Modal';
+import ApiUrls from '../../ApiUtils';
+import ApiService from '../../Api.service';
 
 export default function Mechanisms() {
+	const [loading, setLoading] = useState(false);
+	const [activeMechanisms, setActiveMechanisms]: any = useState([]);
+	const [inactiveMechanisms, setInactiveMechanisms]: any = useState([]);
+	const [isModalVisible, setIsModalVisible] = useState(false);
+	const history = useHistory();
 
 	const inactiveColumns = [
 		{
@@ -95,12 +99,6 @@ export default function Mechanisms() {
 			)
 		}
 	];
-
-	const [loading, setLoading] = useState(false);
-	const [activeMechanisms, setActiveMechanisms]: any = useState([]);
-	const [inactiveMechanisms, setInactiveMechanisms]: any = useState([]);
-	const [isModalVisible, setIsModalVisible] = useState(false);
-	const history = useHistory();
 
 	function getMechanisms() {
 		setLoading(true);

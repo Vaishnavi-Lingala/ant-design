@@ -1,13 +1,13 @@
 import { Layout as AntLayout } from 'antd';
-import AppHeader from "./Header";
-import AppSider from "./Sider";
 
 import './Layout.css';
+
+import AppHeader from "./Header";
+import AppSider from "./Sider";
 
 const { Content } = AntLayout;
 
 function Layout(props: any) {
-
 	return (
 		<AntLayout>
 			<AppHeader />

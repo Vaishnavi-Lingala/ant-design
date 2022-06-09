@@ -1,13 +1,14 @@
+import { useContext } from "react"; 
+import { useHistory } from "react-router-dom";
 import { Menu } from "antd";
 import Sider from "antd/lib/layout/Sider";
-import { useHistory } from "react-router-dom";
 import {
 	UserOutlined, DesktopOutlined, TeamOutlined, SettingOutlined, PieChartOutlined,
 	AreaChartOutlined, SolutionOutlined, LockOutlined
 } from '@ant-design/icons';
-import { useContext } from "react";
-import { Store } from "../../Store";
+
 import { Directory, MenuItemPaths, Settings, TecBIO, TecTANGO } from "../../constants";
+import { Store } from "../../Store";
 
 function AppSider() {
 	const history = useHistory();

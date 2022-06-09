@@ -1,6 +1,7 @@
+import { useState, useEffect } from "react";
+import { useHistory } from "react-router-dom";
 import { Button, Input, InputNumber, Select, Skeleton } from "antd";
 import TextArea from "antd/lib/input/TextArea";
-import { useState, useEffect } from "react";
 
 import './Policies.css';
 
@@ -9,7 +10,6 @@ import ApiUrls from '../../ApiUtils';
 import { CARD_ENROLL, TecTANGO } from "../../constants";
 import { openNotification } from "../Layout/Notification";
 import Hint from "../Controls/Hint";
-import { useHistory } from "react-router-dom";
 
 const CardEnrollmentPolicy = (props) => {
     const [isEdit, setIsEdit] = useState(false);
@@ -57,7 +57,6 @@ const CardEnrollmentPolicy = (props) => {
                         setGroupNames(groupNames);
                         setGroupUids(groupUids);
                     });
-
                     setLoading(false);
                 }
                 else if (window.location.pathname.split('/').length === 3) {
@@ -162,8 +161,10 @@ const CardEnrollmentPolicy = (props) => {
                     <div>
                         {cardEnrollDisplayData['uid'] === undefined ? <></> :
                             <div>
-                                <div className="content-heading">{isEdit ? 'Edit' : null} Card Enrollment Policy </div>
-                                <div>
+                                <div style={{display: 'inline-block', marginRight: '3px'}} className="content-heading">
+                                    {isEdit ? 'Edit' : null} Card Enrollment Policy 
+                                </div>
+                                <div style={{display: 'inline-block', marginRight: '3px'}}>
                                     <Hint text={"This policy allows you to control how many cards can be enrolled per user"} />
                                 </div>
                             </div>
@@ -261,7 +262,7 @@ const CardEnrollmentPolicy = (props) => {
                     <Button style={{ float: 'right', marginLeft: '10px' }}
                         onClick={setCancelClick}>Cancel</Button>
                     <Button type='primary' style={{ float: 'right' }}
-                        onClick={createCardEnrollPolicy}>create</Button></div>
+                        onClick={createCardEnrollPolicy}>Create</Button></div>
             }
         </Skeleton>
     );
