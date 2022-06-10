@@ -191,12 +191,14 @@ export const Machines = "Machines";
 export const Mechanisms = "Mechanisms";
 export const Policies = "Policies";
 export const ActivityLogs = "Activity Logs";
+export const Devices = "Devices";
 
 // Sidebar item keys
 export const dashboard = "dashboard";
 export const users = "users";
 export const groups = "groups";
 export const machines = "machines";
+export const devices = "devices";
 export const mechanisms = "mechanism";
 export const policies = "policies";
 export const activityLogs = "activitylogs";
