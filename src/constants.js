@@ -220,5 +220,12 @@ export const MenuItemPaths = {
     [TecBIO]: "/mechanism"
 }
 
+export const policyDisplayNames = {
+    [PIN]: "Pin",
+    [PASSWORD]: "Password",
+    [KIOSK]: "Kiosk",
+    [CARD_ENROLL]: "Card Enrollment"
+}
+
 // LocalStorage constants
 export const SELECTED_HEADER = 'SELECTED_HEADER';
