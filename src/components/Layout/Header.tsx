@@ -11,11 +11,36 @@ import { openNotification } from "./Notification";
 import ApiUrls from '../../ApiUtils';
 import ApiService from "../../Api.service";
 import config from "../../config";
-import { Directory, MenuItemPaths, Products, Settings } from "../../constants";
+import { Directory, MenuItemPaths, Products, Settings, TecBio, TecBIO, TecTango, TecTANGO } from "../../constants";
 import { Store } from "../../Store";
 
 const { SubMenu } = Menu;
 const { Header } = Layout;
+
+const headerItems = [
+    {
+        label: Directory,
+        key: Directory
+    },
+    {
+        label: Products,
+        key: Products,
+        children: [
+            {
+                label: TecTango,
+                key: TecTANGO
+            },
+            {
+                label: TecBio,
+                key: TecBIO
+            }
+        ]
+    },
+    {
+        label: Settings,
+        key: Settings
+    }
+];
 
 function AppHeader() {
     const history = useHistory();
@@ -80,21 +105,8 @@ function AppHeader() {
                     history.push(MenuItemPaths[e.key]);
                     window.location.reload();
                 }}
-            >
-                <Menu.Item key={Directory}>
-                    {Directory}
-                </Menu.Item>
-                <SubMenu title={Products} key={Products}>
-                    {
-                        Object.keys(products).map(product =>
-                            <Menu.Item key={product}>
-                                {product.slice(0, 1).toUpperCase() + product.slice(1, 3).toLowerCase() + product.slice(3, 4).toUpperCase() + product.slice(4).toLowerCase()}
-                            </Menu.Item>
-                        )
-                    }
-                </SubMenu>
-                <Menu.Item key={Settings}>{Settings}</Menu.Item>
-            </Menu>
+                items={headerItems}
+            />
 
             <Menu className="border-bottom-0" theme="light" mode="horizontal" id="logout-menu">
                 <SubMenu title={authState?.idToken?.claims.name?.split(" ")[0]}

@@ -19,7 +19,7 @@ function Login() {
     const [errorMessage, setErrorMessage] = useState("");
     const emailPrefix = email.split('@')[0];
     const domain = email.split('@')[1];
-    const [setSelectedHeader] = useContext(Store);
+    const [, setSelectedHeader] = useContext(Store);
 
     const validateEmail = async () => {
         ApiService.post(ApiUrls.client_info, { domain: domain })

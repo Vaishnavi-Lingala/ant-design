@@ -76,7 +76,7 @@ export const logFieldNames = {
         "display_name": "Display name",
         "event_context": "Event context",
         "event_display_message": "Event display message",
-        "event_outcome": "Event outcome",        
+        "event_outcome": "Event outcome",
         "auth_profile_id": "Auth profile ID",
         "machine_type": "Machine type",
         "user_agent": "User agent",
@@ -171,8 +171,38 @@ export const end_date = "end_date";
 export const end_time = "end_time";
 
 // Product names
+export const TecTango = "TecTango";
+export const TecBio = "TecBio";
+
+// Product keys
 export const TecTANGO = "TecTANGO";
 export const TecBIO = "TecBIO";
+
+export const productNames = {
+    [TecTANGO]: TecTango,
+    [TecBIO]: TecBio
+}
+
+// Sidebar item names
+export const Dashboard = "Dashboard";
+export const Users = "Users";
+export const Groups = "Groups";
+export const Machines = "Machines";
+export const Mechanisms = "Mechanisms";
+export const Policies = "Policies";
+export const ActivityLogs = "Activity Logs";
+export const Devices = "Devices";
+
+// Sidebar item keys
+export const dashboard = "dashboard";
+export const users = "users";
+export const groups = "groups";
+export const machines = "machines";
+export const devices = "devices";
+export const mechanisms = "mechanism";
+export const policies = "policies";
+export const activityLogs = "activitylogs";
+export const settings = "settings";
 
 // Policy types
 export const PIN = "PIN";
@@ -190,6 +220,13 @@ export const MenuItemPaths = {
     [Settings]: "/settings",
     [TecTANGO]: "/mechanism",
     [TecBIO]: "/mechanism"
+}
+
+export const policyDisplayNames = {
+    [PIN]: "Pin",
+    [PASSWORD]: "Password",
+    [KIOSK]: "Kiosk",
+    [CARD_ENROLL]: "Card Enrollment"
 }
 
 // LocalStorage constants

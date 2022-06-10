@@ -8,7 +8,7 @@ import { PinPolicy } from "./pinPolicy";
 import { openNotification } from "../Layout/Notification";
 import ApiUrls from "../../ApiUtils";
 import ApiService from "../../Api.service";
-import { CARD_ENROLL, KIOSK, PASSWORD, PIN } from "../../constants";
+import { CARD_ENROLL, KIOSK, PASSWORD, PIN, policyDisplayNames } from "../../constants";
 
 function TableList({ handleGetPolicies, policy_type, activateColumns, activePolicies, draggableContainer, draggableBodyRow, deActivateColumns, inActivePolicies }) {
     const [isModal, setIsModal] = useState(false);
@@ -102,7 +102,7 @@ function TableList({ handleGetPolicies, policy_type, activateColumns, activePoli
                     setIsModal(true);
                 }}
                 >
-                    Add {policy_type.slice(0, 1).toUpperCase() + policy_type.slice(1)} Policy
+                    Add {policyDisplayNames[policy_type]} Policy
                 </Button>
             </div>
 
@@ -150,13 +150,13 @@ function TableList({ handleGetPolicies, policy_type, activateColumns, activePoli
             />
 
             <Modal visible={isModal} footer={false} centered width={900} maskClosable={true}
-                title={<div style={{ fontSize: '30px' }}>Add {policy_type.slice(0, 1).toUpperCase() + policy_type.slice(1)} Policy </div>}
+                title={<div style={{ fontSize: '30px' }}>Add {policyDisplayNames[policy_type]} Policy </div>}
             >
-                {policy_type.toUpperCase() === PIN ?
+                {policy_type === PIN ?
                     <PinPolicy pinDetails={pinData} handleOk={handleOk} handleCancel={handleCancel} /> :
-                    policy_type.toUpperCase() === PASSWORD ?
+                    policy_type === PASSWORD ?
                         <PasswordPolicy passwordDetails={passwordData} handleOk={handleOk} handleCancel={handleCancel} /> :
-                        policy_type.toUpperCase() === KIOSK ?
+                        policy_type === KIOSK ?
                             <KioskPolicy kioskDetails={kioskData} handleOk={handleOk} handleCancel={handleCancel} /> :
                             <CardEnrollmentPolicy policyDetails={cardEnrollData} handleOk={handleOk} handleCancel={handleCancel} />
                 }
