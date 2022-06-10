@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { useHistory } from "react-router-dom";
 import { Menu } from "antd";
 import Sider from "antd/lib/layout/Sider";
-import { HddOutlined, UserOutlined, DesktopOutlined, TeamOutlined, SettingOutlined, PieChartOutlined,
+import { ScanOutlined , UserOutlined, DesktopOutlined, TeamOutlined, SettingOutlined, PieChartOutlined,
 	AreaChartOutlined, SolutionOutlined, LockOutlined
 } from '@ant-design/icons';
 
@@ -38,7 +38,7 @@ const directoryItems = [
 	{
 		label: Devices,
 		key: devices,
-		icon: <HddOutlined />
+		icon: <ScanOutlined />
 	}
 ];
 
