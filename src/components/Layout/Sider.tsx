@@ -1,4 +1,4 @@
-import { useContext } from "react"; 
+import { useContext } from "react";
 import { useHistory } from "react-router-dom";
 import { Menu } from "antd";
 import Sider from "antd/lib/layout/Sider";
@@ -7,51 +7,99 @@ import {
 	AreaChartOutlined, SolutionOutlined, LockOutlined
 } from '@ant-design/icons';
 
-import { Directory, MenuItemPaths, Settings, TecBIO, TecTANGO } from "../../constants";
+import {
+	ActivityLogs, activityLogs, Dashboard, dashboard, Directory, 
+	Groups, groups, Machines, machines, Mechanisms, mechanisms, MenuItemPaths,
+	Policies, policies, productNames, settings, Settings, TecBIO, TecTANGO, Users, users
+} from "../../constants";
 import { Store } from "../../Store";
+
+// Sidebar items
+const directoryItems = [
+    {
+        label: Dashboard,
+        key: dashboard,
+        icon: <AreaChartOutlined />
+    },
+    {
+        label: Users,
+        key: users,
+        icon: <UserOutlined />
+    },
+    {
+        label: Groups,
+        key: groups,
+        icon: <TeamOutlined />
+    },
+    {
+        label: Machines,
+        key: machines,
+        icon: <DesktopOutlined />
+    }
+];
+
+const commonProductItems = [
+    {
+        label: Mechanisms,
+        key: mechanisms,
+        icon: <LockOutlined />
+    },
+    {
+        label: Policies,
+        key: policies,
+        icon: <SolutionOutlined />
+    },
+    {
+        label: ActivityLogs,
+        key: activityLogs,
+        icon: <PieChartOutlined />
+    }
+];
+
+const settingsItems = [
+    {
+        label: Settings,
+        key: settings,
+        icon: <SettingOutlined />
+    }
+];
 
 function AppSider() {
 	const history = useHistory();
 	const [selectedMenuOption] = useContext(Store);
 
 	function openScreen(screen: string) {
-		if (screen !== "product") {
+		if (screen !== selectedMenuOption) {
 			history.push('/' + screen);
 		}
 		else {
-			history.push(MenuItemPaths[selectedMenuOption]);
+			history.push(MenuItemPaths[screen]);
 		}
 	}
 
-	function renderOptions() {
-		const commonProductoptions = <>
-			<Menu.Item key="product" className="sidebar-header">
-				<div className="sidebar-header-content">
-					<img height={32} width={32} src={require("../../assets/credenti-favicon.png")} />
-					{selectedMenuOption.slice(0, 1).toUpperCase() + selectedMenuOption.slice(1, 3).toLowerCase() + selectedMenuOption.slice(3, 4).toUpperCase() + selectedMenuOption.slice(4).toLowerCase()}
-				</div>
-			</Menu.Item>
-			<Menu.Item key="mechanism"><LockOutlined /> Mechanisms</Menu.Item>
-			<Menu.Item key="policies"><SolutionOutlined /> Policies</Menu.Item>
-			<Menu.Item key="activityLogs"><PieChartOutlined /> Activity Logs</Menu.Item>
-		</>;
+	function renderItems() {
+		const productItemsWithHeader = [
+			{
+				label: <div className="sidebar-header-content">
+					<img height={32} width={32} src={"credenti-favicon.png"} />
+					{productNames[selectedMenuOption]}
+				</div>,
+				key: selectedMenuOption
+			},
+			...commonProductItems
+		];
 
 		switch (selectedMenuOption) {
 			case Directory:
-				return <>
-					<Menu.Item key="dashboard"><AreaChartOutlined /> Dashboard</Menu.Item>
-					<Menu.Item key="users"><UserOutlined /> Users</Menu.Item>
-					<Menu.Item key="groups"><TeamOutlined /> Groups</Menu.Item>
-					<Menu.Item key="machines"><DesktopOutlined /> Machines</Menu.Item>
-				</>
+				return directoryItems;
 			case Settings:
-				return <Menu.Item key="settings"><SettingOutlined /> Settings</Menu.Item>
+				return settingsItems;
 			case TecTANGO:
-				return commonProductoptions;
+				return productItemsWithHeader;
 			case TecBIO:
-				return commonProductoptions;
+				return productItemsWithHeader;
 			default:
-				return null;
+				return [];
 		}
 	}
 
@@ -63,11 +111,8 @@ function AppSider() {
 				onSelect={(e: any) => openScreen(e.key)}
 				selectedKeys={[window.location.pathname.split("/")[1]]}
 				className="sider-menu"
-			>
-				{
-					renderOptions()
-				}
-			</Menu>
+				items={renderItems()}
+			/>
 		</Sider>
 	);
 }
