@@ -228,14 +228,18 @@ function Mechanism(props: any) {
     }
 
     return (<>
-        {displayDetails['uid'] !== undefined ?
+        {window.location.pathname.split('/').length === 3 ?
             <div className='content-header'>
                 Mechanism
-                <Button style={{ marginLeft: 'auto', alignSelf: 'end' }} onClick={() => {
-                    history.push('/mechanism')
-                }}>Back</Button>
+                {displayDetails['uid'] !== undefined ?
+                    <Button style={{ marginLeft: 'auto', alignSelf: 'end' }} onClick={() => {
+                        history.push('/mechanism')
+                    }}>Back</Button>
+                    : <></>
+                }
             </div> : <></>
         }
+
         <Skeleton loading={loading || loadingDetails}>
             <div className="content-container rounded-grey-border">
                 <div className="row-containers">
