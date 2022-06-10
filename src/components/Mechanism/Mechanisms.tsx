@@ -33,7 +33,7 @@ export default function Mechanisms() {
 			render: (text: any, record: { mechanism_id: any; }) => (
 				<Tooltip title="View">
 					<Button icon={<BarsOutlined />} onClick={() => {
-						history.push('/mechanism/' + record.mechanism_id)
+						history.push('/mechanism/' + record.mechanism_id);
 					}}>
 					</Button>
 				</Tooltip>
@@ -319,7 +319,7 @@ export default function Mechanisms() {
 					pagination={false}
 				/>
 				<Modal visible={isModalVisible} footer={false} width='800px'
-					title={<div style={{ fontSize: '30px' }}>Add New Mechanism</div>} centered maskClosable={false} onOk={handleCancel} onCancel={handleCancel}
+					title={<div style={{ fontSize: '30px' }}>Add New Mechanism</div>} centered maskClosable={false}
 				>
 					<Mechanism handleOk={handleOk} handleCancel={handleCancel} />
 				</Modal>

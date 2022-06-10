@@ -1,0 +1,14 @@
+.content-device-key-header {
+    display: flex;
+    font-size: medium;
+    color: black;
+    font-weight: 500;
+    margin-top: -5px;
+}
+
+.device-content-heading {
+    display: flex;
+    font-size: xx-large;
+    color: black;
+    font-weight: 500;
+}

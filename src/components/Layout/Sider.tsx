@@ -2,8 +2,7 @@ import { useContext } from "react";
 import { useHistory } from "react-router-dom";
 import { Menu } from "antd";
 import Sider from "antd/lib/layout/Sider";
-import {
-	UserOutlined, DesktopOutlined, TeamOutlined, SettingOutlined, PieChartOutlined,
+import { HddOutlined, UserOutlined, DesktopOutlined, TeamOutlined, SettingOutlined, PieChartOutlined,
 	AreaChartOutlined, SolutionOutlined, LockOutlined
 } from '@ant-design/icons';
 
@@ -43,6 +42,7 @@ function AppSider() {
 					<Menu.Item key="users"><UserOutlined /> Users</Menu.Item>
 					<Menu.Item key="groups"><TeamOutlined /> Groups</Menu.Item>
 					<Menu.Item key="machines"><DesktopOutlined /> Machines</Menu.Item>
+					<Menu.Item key="devices"><HddOutlined /> Devices</Menu.Item>
 				</>
 			case Settings:
 				return <Menu.Item key="settings"><SettingOutlined /> Settings</Menu.Item>
