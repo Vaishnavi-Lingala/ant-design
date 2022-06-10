@@ -21,7 +21,7 @@ const CardEnrollmentPolicy = (props) => {
     const [groupNames, setGroupNames]: any = useState([]);
     const [groupUids, setGroupUids]: any = useState([]);
     const [groupsChange, setGroupsChange]: any = useState([]);
-    const [maxEnroll, setMaxEnroll] = useState(null);
+    const [maxEnroll, setMaxEnroll] = useState(1);
     const [isLimitReached, setIsLimitReached] = useState(false);
     const history = useHistory();
 
@@ -232,11 +232,10 @@ const CardEnrollmentPolicy = (props) => {
                     <div style={{ paddingTop: '20px' }}>
                         {isEdit ? <>
                             <InputNumber className="form-control"
-                                max={maxEnroll}
                                 min={1}
                                 style={{ width: "275px" }}
                                 onChange={(e) => {
-                                    setIsLimitReached(parseInt(e) === maxEnroll);
+                                    setIsLimitReached(parseInt(e) > maxEnroll);
                                     setCardEnrollEditedData({
                                         ...cardEnrollEditData,
                                         policy_req: { max_card_enrollment: parseInt(e) }
@@ -245,7 +244,8 @@ const CardEnrollmentPolicy = (props) => {
                                 defaultValue={policyRequirements['max_card_enrollment']}
                             />
                             {isLimitReached ? <div style={{ padding: '5px', color: 'red' }}>
-                                Max card enrollment limit is {maxEnroll}. Please contact Tecnics to update it.
+                            By policy, users will not be allowed to enroll more than the {maxEnroll} cards. If higher limit is required, please contact support team.
+                                {/* Max card enrollment limit is {maxEnroll}. Please contact Tecnics to update it. */}
                             </div> : null}
                         </> : policyRequirements['max_card_enrollment']
                         }
@@ -256,7 +256,7 @@ const CardEnrollmentPolicy = (props) => {
                 (isEdit ? <div style={{ paddingTop: '10px', paddingRight: '45px' }}>
                     <Button style={{ float: 'right', marginLeft: '10px' }}
                         onClick={handleCancelClick}>Cancel</Button>
-                    <Button type='primary' style={{ float: 'right' }}
+                    <Button disabled={isLimitReached} type='primary' style={{ float: 'right' }}
                         onClick={handleSaveClick}>Save</Button>
                 </div> : <></>) : <div style={{ paddingTop: '10px', paddingRight: '45px', paddingBottom: '20px' }}>
                     <Button style={{ float: 'right', marginLeft: '10px' }}
