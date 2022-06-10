@@ -2,14 +2,13 @@ import { useContext } from "react";
 import { useHistory } from "react-router-dom";
 import { Menu } from "antd";
 import Sider from "antd/lib/layout/Sider";
-import {
-	UserOutlined, DesktopOutlined, TeamOutlined, SettingOutlined, PieChartOutlined,
+import { HddOutlined, UserOutlined, DesktopOutlined, TeamOutlined, SettingOutlined, PieChartOutlined,
 	AreaChartOutlined, SolutionOutlined, LockOutlined
 } from '@ant-design/icons';
 
 import {
-	ActivityLogs, activityLogs, Dashboard, dashboard, Directory, 
-	Groups, groups, Machines, machines, Mechanisms, mechanisms, MenuItemPaths,
+	ActivityLogs, activityLogs, Dashboard, dashboard, Directory, Groups, groups,
+	Machines, machines, Devices, devices, Mechanisms, mechanisms, MenuItemPaths,
 	Policies, policies, productNames, settings, Settings, TecBIO, TecTANGO, Users, users
 } from "../../constants";
 import { Store } from "../../Store";
@@ -35,7 +34,12 @@ const directoryItems = [
         label: Machines,
         key: machines,
         icon: <DesktopOutlined />
-    }
+    },
+	{
+		label: Devices,
+		key: devices,
+		icon: <HddOutlined />
+	}
 ];
 
 const commonProductItems = [

@@ -58,12 +58,12 @@ export default function Machines() {
             start: page,
             limit: pageSize
         }
-        getMachines(params);
+        getMachines(params);    
     }
 
     function getMachines(param = {}) {
         setLoadingDetails(true);
-        ApiService.get(ApiUrls.machines).then(data => {
+        ApiService.get(ApiUrls.machines,).then(data => {
             console.log('Machines: ', data);
             data.results.forEach(machine => {
                 machine.key = machine.uid;

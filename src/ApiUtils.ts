@@ -21,6 +21,12 @@ const Urls = {
     getProducts: `account/${accountId}/product`,
     stats:`account/${accountId}/stats`,
 
+    //Device Urls
+    devices: `account/${accountId}/devices`,
+    device: (uid) => `account/${accountId}/devices/${uid}`,
+    addDevice: `account/${accountId}/devices`,
+    deviceOptions: `account/${accountId}/devices/options`,
+
     //Machine Urls
     machines: `account/${accountId}/machines`,
     machineDetails: (uid) =>  `account/${accountId}/machines/${uid}`,
