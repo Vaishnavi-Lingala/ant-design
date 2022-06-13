@@ -8,7 +8,7 @@ definitions:
 
 pipelines:
   branches:
-      master:
+      dev:
       - step:
           services:
             - docker
@@ -29,6 +29,7 @@ pipelines:
             - docker push $IMAGE:$TAG
             - export BUILD_NUMBER="${BITBUCKET_BUILD_NUMBER}"
             - export ACCOUNT_NUMBER="${ACCOUNT_NUMBER_DEV}"
+            - export NAMESPACE=ct-dev
             - envsubst <deployment.yml >credenti-deployment.yaml
             - pipe: atlassian/aws-eks-kubectl-run:2.2.0
               variables:
