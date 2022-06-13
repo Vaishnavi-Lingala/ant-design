@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useMemo } from "react";
 import { useHistory } from "react-router-dom";
 import { Menu } from "antd";
 import Sider from "antd/lib/layout/Sider";
@@ -70,14 +70,24 @@ const settingsItems = [
 
 function AppSider() {
 	const history = useHistory();
-	const [selectedMenuOption] = useContext(Store);
+	const [selectedHeaderOption] = useContext(Store);
+	const selectedProductId = localStorage.getItem("productId");
 
 	function openScreen(screen: string) {
-		if (screen !== selectedMenuOption) {
-			history.push('/' + screen);
-		}
-		else {
-			history.push(MenuItemPaths[screen]);
+		switch (selectedHeaderOption) {
+			case Directory:
+				history.push(`/${screen}`);
+				break;
+			case Settings:
+				history.push(`/${screen}`);
+				break;
+			default:
+				if (screen === TecTANGO || screen === TecBIO) {
+					history.push(`/product/${selectedProductId}${MenuItemPaths[screen]}`);
+				}
+				else {
+					history.push(`/product/${selectedProductId}/${screen}`);
+				}
 		}
 	}
 
@@ -85,15 +95,15 @@ function AppSider() {
 		const productItemsWithHeader = [
 			{
 				label: <div className="sidebar-header-content">
-					<img height={32} width={32} src={"credenti-favicon.png"} />
-					{productNames[selectedMenuOption]}
+					<img height={28} width={28} src={"../../credenti-favicon.png"} />
+					{productNames[selectedHeaderOption]}
 				</div>,
-				key: selectedMenuOption
+				key: selectedHeaderOption
 			},
 			...commonProductItems
 		];
 
-		switch (selectedMenuOption) {
+		switch (selectedHeaderOption) {
 			case Directory:
 				return directoryItems;
 			case Settings:
@@ -107,15 +117,17 @@ function AppSider() {
 		}
 	}
 
+	const sidebarItems = useMemo(() => renderItems(), [selectedHeaderOption]);
+
 	return (
 		<Sider width='250'
 			id="sider">
 			<Menu
 				mode="inline"
-				onSelect={(e: any) => openScreen(e.key)}
-				selectedKeys={[window.location.pathname.split("/")[1]]}
+				onSelect={(e: any) => {openScreen(e.key)}}
+				selectedKeys={[window.location.pathname.split("/")[window.location.pathname.split("/")[1] === 'product' ? 3 : 1]]}
 				className="sider-menu"
-				items={renderItems()}
+				items={sidebarItems}
 			/>
 		</Sider>
 	);

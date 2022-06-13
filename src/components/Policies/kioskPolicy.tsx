@@ -35,7 +35,7 @@ export const KioskPolicy = (props: any) => {
             ApiService.get(ApiUrls.groups, { type: "USER" }),
             ApiService.get(ApiUrls.groups, { type: "KIOSK" }),
             ApiService.get(ApiUrls.loginTypeOptions),
-            ApiService.get(ApiUrls.policy(window.location.pathname.split('/')[3]))
+            ApiService.get(ApiUrls.policy(window.location.pathname.split('/')[5]))
         ]))
             .then(data => {
                 console.log(data[0]);
@@ -100,7 +100,7 @@ export const KioskPolicy = (props: any) => {
                     });
                     setLoading(false);
                 }
-                else if(window.location.pathname.split('/').length === 3){
+                else if(window.location.pathname.split('/').length === 5){
                     setKioskDisplayData(props.kioskDetails);
                     setKioskEditedData(props.kioskDetails);
                     setPolicyRequirements(props.kioskDetails.policy_req);
@@ -110,7 +110,7 @@ export const KioskPolicy = (props: any) => {
                 else{
                     console.log('else: ', data[3]);
                     openNotification('error', data[3].errorCauses.length !== 0 ? data[3].errorCauses[3].errorSummary : data[3].errorSummary);
-                    history.push('/policies/kiosk');
+                    history.push(`/product/${localStorage.getItem("productId")}/policies/kiosk`);
                 }
             }, error => {
                 console.error('Error: ', error);
