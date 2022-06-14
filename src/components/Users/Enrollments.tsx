@@ -9,16 +9,17 @@ export function Enrollments() {
     const [loadingDetails, setLoadingDetails] = useState(false);
     const [page, setPage]: any = useState(1);
     const [pageSize, setPageSize]: any = useState(10);
-    const columns = [{ title: "Status", dataIndex: "status", width: "30%" },
-    { title: "Instrument Id", dataIndex: "instrument_id", width: "30%" },
-    { title: "Enrollment Time", dataIndex: "enrollment_time", width: "30%" },
-    { title: "Product Version", dataIndex: "product_version", width: "30%" },
-    { title: "Last Login TS", dataIndex: "last_login_ts", width: "30%" },
-    {
-        title: "Actions", dataIndex: "activate", width: "30%", render: () => (
-            <Button >Activate</Button>
-        )
-    },
+    const columns = [
+        { title: "Instrument Id", dataIndex: "instrument_id", width: "25%" },
+        { title: "Enrollment Time", dataIndex: "enrollment_time", width: "20%" },
+        { title: "Last Login Time", dataIndex: "last_login_ts", width: "20%" },
+        { title: "Product Version", dataIndex: "product_version", width: "15%" },
+        { title: "Status", dataIndex: "status", width: "10%" },
+        {
+            title: "Actions", dataIndex: "activate", width: "10%", render: () => (
+                <Button >Activate</Button>
+            )
+        }
     ]
     useEffect(() => {
         setLoadingDetails(true);
