@@ -4,6 +4,7 @@
     margin-top: 20px;
     border: var(--grey-border);
     border-radius: 4px;
+    background-color: #fafafa;
 }
 
 .filter-container > * {
