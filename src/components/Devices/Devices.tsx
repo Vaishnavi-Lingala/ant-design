@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Button, Modal, Skeleton, Table, Tooltip } from "antd";
-import { BarsOutlined } from "@ant-design/icons"
+import { BarsOutlined, CloseOutlined  } from "@ant-design/icons"
 
 import { openNotification } from "../Layout/Notification";
 import ApiUrls from "../../ApiUtils"
@@ -17,13 +17,13 @@ function Devices() {
     const [pageSize, setPageSize]: any = useState(10);
     const [totalItems, setTotalItems] = useState(0);
 
-    const device =
-    {
+    const device = {
         "device_name": "",
         "serial_number": "",
         "vendor": "",
         "is_blocked": false,
-        "device_type": ""
+        "device_type": "",
+        "model": ""
     }
 
     const columns = [
@@ -161,7 +161,7 @@ function Devices() {
                 }}
             />
 
-            <Modal visible={isModalVisible} footer={false} width='800px'
+            <Modal visible={isModalVisible} footer={false} closeIcon={<Button><CloseOutlined /></Button>} width='800px' onCancel={handleCancel}
                 title={<div style={{ fontSize: '30px' }}>Add New Device</div>} centered maskClosable={false}
             >
                 <Device deviceDetails={device} handleOk={handleOk} handleCancel={handleCancel} />

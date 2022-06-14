@@ -1,5 +1,6 @@
-import { Button, Modal, Table } from "antd";
 import { useState } from "react";
+import { Button, Modal, Table } from "antd";
+import { CloseOutlined } from "@ant-design/icons";
 
 import CardEnrollmentPolicy from "./CardEnrollmentPolicy";
 import { KioskPolicy } from "./kioskPolicy";
@@ -149,7 +150,7 @@ function TableList({ handleGetPolicies, policy_type, activateColumns, activePoli
                 pagination={false}
             />
 
-            <Modal visible={isModal} footer={false} centered width={900} maskClosable={true}
+            <Modal visible={isModal} closeIcon={<Button><CloseOutlined /></Button>} footer={false} centered width={900} maskClosable={true} onCancel={handleCancel}
                 title={<div style={{ fontSize: '30px' }}>Add {policyDisplayNames[policy_type]} Policy </div>}
             >
                 {policy_type === PIN ?
