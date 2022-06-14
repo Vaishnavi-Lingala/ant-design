@@ -15,6 +15,9 @@ import { Group } from "../../models/Data.models";
 export default function Groups() {
     const [userGroups, setUserGroups] = useState<Group[]>([]);
     const history = useHistory();
+    const [page, setPage] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
+    const [totalItems, setTotalItems] = useState(0);
     const [kioskMachineGroups, setKioskMachineGroups] = useState<Group[]>([]);
     const [standardMachineGroups, setStandardMachineGroups] = useState<Group[]>([]);
     const [loadingDetails, setLoadingDetails] = useState(false);
@@ -48,15 +51,18 @@ export default function Groups() {
         getGroups();
     }, [])
 
-    function getGroups() {
+    function getGroups(param={paginated: true}) {
         setLoadingDetails(true);
-        ApiService.get(ApiUrls.groups)
+        ApiService.get(ApiUrls.groups, param)
             .then(data => {
+                setPage(data.page);
+                setPageSize(data.items_per_page);
+                setTotalItems(data.total_items);
                 console.log('Groups: ', data);
                 let userGroupsList: Group[] = [];
                 let kioskGroupsList: Group[] = [];
                 let standardGroupsList: Group[] = [];
-                data.forEach((group: Group) => {
+                data['results'].forEach((group: Group) => {
                     group.key = group.uid;
                     if (group.type === 'USER') {
                         userGroupsList.push(group);
@@ -100,7 +106,7 @@ export default function Groups() {
                     <Skeleton loading={loadingDetails}>
                         {window.location.pathname.split('/').length === 4 ?
                             <ProtectedRoute path={`/groups/user/:id`} component={GroupDetails} /> :
-                            <TableList type={'USER'} getGroups={getGroups} columns={columns} standardMachineGroups={userGroups} />
+                            <TableList getPage={page} getPageSize={pageSize} getTotalItems={totalItems} type={'USER'} getGroups={getGroups} columns={columns} standardMachineGroups={userGroups} />
                         }
                     </Skeleton>
                 </TabPane>
@@ -108,7 +114,7 @@ export default function Groups() {
                     <Skeleton loading={loadingDetails}>
                         {window.location.pathname.split('/').length === 4 ?
                             <ProtectedRoute path={`/groups/kiosk/:id`} component={MachineGroupDetails} /> :
-                            <TableList type={'KIOSK'} getGroups={getGroups} columns={columns} standardMachineGroups={kioskMachineGroups} />
+                            <TableList getPage={page} getPageSize={pageSize} getTotalItems={totalItems} type={'KIOSK'} getGroups={getGroups} columns={columns} standardMachineGroups={kioskMachineGroups} />
                         }
                     </Skeleton>
                 </TabPane>
@@ -116,7 +122,7 @@ export default function Groups() {
                     <Skeleton loading={loadingDetails}>
                         {window.location.pathname.split('/').length === 4 ?
                             <ProtectedRoute path={`/groups/standard/:id`} component={MachineGroupDetails} /> :
-                            <TableList type={'STANDARD'} getGroups={getGroups} columns={columns} standardMachineGroups={standardMachineGroups} />
+                            <TableList getPage={page} getPageSize={pageSize} getTotalItems={totalItems} type={'STANDARD'} getGroups={getGroups} columns={columns} standardMachineGroups={standardMachineGroups} />
                         }
                     </Skeleton>
                 </TabPane>

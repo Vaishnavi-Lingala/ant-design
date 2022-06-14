@@ -163,8 +163,32 @@ function Device(props: any) {
                             : deviceTypeOptions[displayDetails['device_type']]
                         }
                     </div>
-
-                    {/* <div className="content-device-key-header">
+                    <div className="content-device-key-header">
+                        Vendor:
+                    </div>
+                    <div>
+                        {isEdit ?
+                            <Select
+                                size={"large"}
+                                placeholder="Please select vendor type"
+                                defaultValue={vendorOptions[displayDetails['vendor']]}
+                                onChange={(value) => setEditData({
+                                    ...editData,
+                                    vendor: value
+                                })}
+                                style={{ width: '275px' }}
+                            >
+                                {
+                                    Object.keys(vendorOptions).map(vendor => {
+                                        return <Select.Option key={vendor} value={vendor}>
+                                            {vendorOptions[vendor]}
+                                        </Select.Option>
+                                    })
+                                }
+                            </Select> : vendorOptions[displayDetails['vendor']]
+                        }
+                    </div>
+                    <div className="content-device-key-header">
                         Model:
                     </div>
                     <div>
@@ -179,10 +203,10 @@ function Device(props: any) {
                                 style={{ width: "275px" }}
                                 className="form-control"
                                 placeholder="Enter model"
-                                defaultValue={displayDetails['name'] !== "" ? displayDetails['name'] : ""}
-                            /> : displayDetails['name']
+                                defaultValue={displayDetails['device_name'] !== "" ? displayDetails['model'] : ""}
+                            /> : displayDetails['model']
                         }
-                    </div> */}
+                    </div>
                     <div className="content-device-key-header">
                         Serial Number:
                     </div>
@@ -210,31 +234,6 @@ function Device(props: any) {
                             defaultChecked={displayDetails['device_name'] !== "" ? displayDetails['is_blocked'] : ""}
                             disabled={!isEdit}
                         />
-                    </div>
-                    <div className="content-device-key-header">
-                        Vendor:
-                    </div>
-                    <div>
-                        {isEdit ?
-                            <Select
-                                size={"large"}
-                                placeholder="Please select vendor type"
-                                defaultValue={vendorOptions[displayDetails['vendor']]}
-                                onChange={(value) => setEditData({
-                                    ...editData,
-                                    vendor: value
-                                })}
-                                style={{ width: '275px' }}
-                            >
-                                {
-                                    Object.keys(vendorOptions).map(vendor => {
-                                        return <Select.Option key={vendor} value={vendor}>
-                                            {vendorOptions[vendor]}
-                                        </Select.Option>
-                                    })
-                                }
-                            </Select> : vendorOptions[displayDetails['vendor']]
-                        }
                     </div>
                 </div>
             </div>

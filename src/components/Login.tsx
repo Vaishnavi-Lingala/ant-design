@@ -1,4 +1,4 @@
-import { useContext, useState } from "react"; 
+import { useContext, useState } from "react";
 import ReactDOM from "react-dom";
 import { OktaAuth } from "@okta/okta-auth-js";
 import { Input, Button, Form } from "antd";
@@ -25,7 +25,7 @@ function Login() {
         ApiService.post(ApiUrls.client_info, { domain: domain })
             .then((data: ClientConfiguration) => {
                 //@ts-ignore
-                if(!data.errorSummary){
+                if (!data.errorSummary) {
                     console.log('Auth profile: ', data);
                     config.oidc.clientId = data.portal_oidc_client_id;
                     config.oidc.issuer = data.issuer_url;
@@ -33,7 +33,7 @@ function Login() {
                     localStorage.setItem("accountId", data.uid);
                     console.log("Account Id: ", localStorage.getItem("accountId"));
                     if (data.issuer_url !== "" && data.portal_oidc_client_id !== "") {
-                        const oktaAuth = new OktaAuth(config.oidc);     
+                        const oktaAuth = new OktaAuth(config.oidc);
                         oktaAuth.signInWithRedirect({
                             originalUri: '/dashboard'
                         }).then((data) => {
@@ -44,12 +44,12 @@ function Login() {
                     }
                     else {
                         ReactDOM.render(
-                            <Register domain={domain}/>,
+                            <Register domain={domain} />,
                             document.getElementById('root')
                         )
                     }
                 }
-                else{
+                else {
                     //@ts-ignore
                     setErrorMessage(data.errorSummary);
                     console.log(data);
@@ -90,32 +90,32 @@ function Login() {
         <div style={{ height: '100vh', backgroundColor: 'whitesmoke' }} >
             <div id="login-container">
                 <div style={{ paddingTop: '35px' }}>
-                    <img src="https://op1static.oktacdn.com/fs/bco/1/fs0qzb42biQ2gLFj90h7" />
+                    <img src="Credenti_Logo.png" alt="Credenti TecConnect" width={250} />
                 </div>
 
                 <div className="heading"><span>Login</span></div>
-                
-                <div style={{ color: 'red', textAlign: 'center', position: 'relative', top: '23px'}} >
+
+                <div style={{ color: 'red', textAlign: 'center', position: 'relative', top: '23px' }} >
                     {errorMessage}
                 </div>
 
-                <Form onFinish={handleSubmit} layout="vertical" 
+                <Form onFinish={handleSubmit} layout="vertical"
                     style={{ textAlign: 'left', padding: '35px 35px 20px 35px' }}
                 >
                     <Form.Item
                         label="Email"
                         validateStatus={checkInvalid()}
-                        style={{marginBottom: '15px'}}
+                        style={{ marginBottom: '15px' }}
                     >
-                        <Input 
-                            style={{ borderRadius: '5px'}}
-                            onChange={(e) => { setEmail(e.target.value) }} 
+                        <Input
+                            style={{ borderRadius: '5px' }}
+                            onChange={(e) => { setEmail(e.target.value) }}
                             size="large"
                         />
                         <div style={{ color: 'red', textAlign: 'left' }}>{message}</div>
                     </Form.Item>
 
-                    <Form.Item style={{marginBottom: '16px'}}>
+                    <Form.Item style={{ marginBottom: '16px' }}>
                         <Button type="primary" className="submit-button" size="large"
                             htmlType="submit"
                         >
