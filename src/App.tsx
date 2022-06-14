@@ -24,6 +24,10 @@ import config from "./config";
 import StoreProvider from "./Store";
 import Devices from "./components/Devices/Devices";
 import Device from "./components/Devices/Device";
+import { UserInfo } from "./components/Users/UserInfo";
+import { Enrollments } from "./components/Users/Enrollments";
+import { UserGroups } from "./components/Users/UserGroups";
+import { User } from "./components/Users/User";
 
 const oktaAuth = new OktaAuth(config.oidc);
 
@@ -61,6 +65,9 @@ function App() {
                     <ProtectedRoute path={`/machines/:id`} component={MachineDetails} />
                     <ProtectedRoute path={`/devices`} exact component={Devices} />
                     <ProtectedRoute path={`/devices/:id`} exact component={Device} />
+                    <ProtectedRoute path={`/user/:id/profile`} exact component={User} />
+                    <ProtectedRoute path={`/user/:id/groups`} exact component={User} />
+                    <ProtectedRoute path={`/user/:id/enrollments`} exact component={User} />
                 </Layout>
 
                 <Route component={PageNotFound} />

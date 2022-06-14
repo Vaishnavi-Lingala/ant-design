@@ -6,10 +6,11 @@ import { AddUser } from "./AddUser";
 import { User } from "./User";
 import { openNotification } from "../Layout/Notification";
 import ApiUrls from '../../ApiUtils';
-import ApiService from "../../Api.service"
+import ApiService from "../../Api.service";
+import {useHistory} from "react-router-dom";
 
 export default function Users() {
-	const [userDetails, setUserDetails] = useState(undefined);
+	const [userDetails, setUserDetails]: any = useState(undefined);
 	const [loadingDetails, setLoadingDetails] = useState(true);
 	const [arr, setArr]: any = useState([]);
 	const [page, setPage]: any = useState(1);
@@ -17,6 +18,7 @@ export default function Users() {
 	const [totalItems, setTotalItems]: any = useState(0);
 	const [statusList, setStatusList]: any = useState([]);
 	const [lifeCycleTypes, setLifeCycleTypes]: any = useState(undefined);
+	const history = useHistory();
 
 	const columns = [
 		{
@@ -44,7 +46,7 @@ export default function Users() {
 			dataIndex: 'details',
 			render: (text: any, record: { uid: any; user_name: any }) => (
 				<Tooltip title="View">
-					<Button icon={<BarsOutlined />} onClick={() => getUserDetails(record.uid)} />
+					<Button icon={<BarsOutlined />} onClick={() => history.push(`/user/${record.uid}/profile`)} />
 
 				</Tooltip>
 			)
@@ -108,13 +110,6 @@ export default function Users() {
 		}
 	}, [lifeCycleTypes])
 
-	function getUserDetails(uid: string) {
-		setLoadingDetails(true);
-		const selectedUser = arr.find(user => user.uid === uid);
-		if (selectedUser) setUserDetails(selectedUser);
-		setLoadingDetails(false);
-	}
-
 	const getLifeCycleOptions = async () => {
 		if (lifeCycleTypes === undefined) {
 			let userStatusTypes = await ApiService.get(ApiUrls.lifeCycleOptions).catch(error => {
@@ -173,12 +168,12 @@ export default function Users() {
 	return (
 		<>
 			<div className='content-header'>
-				{userDetails ? <span>User</span> : <span>Users</span>}
-				{userDetails ? <Button style={{ marginLeft: 'auto', alignSelf: 'end' }} onClick={() => { setUserDetails(undefined) }}>Back</Button> : <></>}
+				{window.location.pathname.split('/').length === 2 ? <span>Users</span> : <span>User</span>}
+				{window.location.pathname.split('/').length !== 2 ? <Button style={{ marginLeft: 'auto', alignSelf: 'end' }} onClick={() => { setUserDetails(undefined) }}>Back</Button> : <></>}
 			</div>
 
 			<Skeleton loading={loadingDetails}>
-				{userDetails ? <User userDetails={userDetails}></User> : <>
+				{window.location.pathname.split('/').length !== 2 ? <User></User> : <>
 					<AddUser onUserCreate={getUpdatedUsersList}></AddUser>
 					<Table
 						style={{ border: '1px solid #D7D7DC' }}
