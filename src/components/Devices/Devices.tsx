@@ -28,8 +28,8 @@ function Devices() {
 
     const columns = [
         {
-            title: 'Vendor Type',
-            dataIndex: 'vendor_type',
+            title: 'Vendor',
+            dataIndex: 'vendor',
             width: '20%',
         },
         {
@@ -80,7 +80,7 @@ function Devices() {
                     var obj;
                     obj = {
                         key: i + 1,
-                        vendor_type: data.results[i].vendor,
+                        vendor: data.results[i].vendor,
                         device_name: data.results[i].device_name,
                         device_type: data.results[i].device_type,
                         serial_number: data.results[i].serial_number,
