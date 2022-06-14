@@ -179,7 +179,7 @@ export default function ActivityLogs() {
             setTableLoading(true);
             try {
                 var response = await ApiService.post(
-                    `${url.pathname}${url.search}`,
+                    `${ApiUrls.activityLog}${url.search}`,
                     generateFilterPayload()
                 );
                 setTableLoading(false);

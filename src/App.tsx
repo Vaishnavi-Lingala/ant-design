@@ -49,11 +49,11 @@ function App() {
                     <Route path="/" exact component={Login} />
                     <Route path="/login/callback" component={LoginCallback} />
                 <Layout>
-                    <ProtectedRoute path={`/policies`} component={Policies} />
-                    <ProtectedRoute path={`/activitylogs`} component={ActivityLogs} />
+                    <ProtectedRoute path={`/product/:productId/policies`} component={Policies} />
+                    <ProtectedRoute path={`/product/:productId/activitylogs`} component={ActivityLogs} />
                     <ProtectedRoute path={`/dashboard`} component={Dashboard} />
-                    <ProtectedRoute path={`/mechanism`} exact component={Mechanisms} />
-                    <ProtectedRoute path={`/mechanism/:id`} component={Mechanism} />
+                    <ProtectedRoute path={`/product/:productId/mechanism`} exact component={Mechanisms} />
+                    <ProtectedRoute path={`/product/:productId/mechanism/:id`} component={Mechanism} />
                     <ProtectedRoute path={`/settings`} component={Settings} />
                     <ProtectedRoute path={`/groups`} component={Groups} />
                     <ProtectedRoute path={`/users`} component={Users} />

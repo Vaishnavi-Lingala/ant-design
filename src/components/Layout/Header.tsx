@@ -92,19 +92,32 @@ function AppHeader() {
         })
     };
 
+    function headerMenuClickHandler(e) {
+        setSelectedMenuOption(e.key);
+        localStorage.setItem("productId", products[e.key]);
+        console.log(e.key);
+        console.log(MenuItemPaths[e.key]);
+        switch (e.key) {
+			case Directory:
+				history.push(`${MenuItemPaths[e.key]}`);
+				break;
+			case Settings:
+				history.push(`${MenuItemPaths[e.key]}`);
+				break;
+			default:
+				history.push(`/product/${products[e.key]}${MenuItemPaths[e.key]}`);
+                window.location.reload();
+		}
+    }
+
     return (
         <Header className="header">
             <div className="logo">
-                <img src="Credenti_Logo.png" alt="Credenti TecConnect" width={150}/>
+                <img src="../../Credenti_Logo.png" alt="Credenti TecConnect" width={150}/>
             </div>
 
             <Menu className="border-bottom-0" theme="light" mode="horizontal"
-                selectedKeys={[selectedMenuOption]} onClick={(e) => {
-                    setSelectedMenuOption(e.key);
-                    localStorage.setItem("productId", products[e.key]);
-                    history.push(MenuItemPaths[e.key]);
-                    window.location.reload();
-                }}
+                selectedKeys={[selectedMenuOption]} onClick={headerMenuClickHandler}
                 items={headerItems}
             />
 
