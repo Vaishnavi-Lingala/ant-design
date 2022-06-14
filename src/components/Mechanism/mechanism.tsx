@@ -30,6 +30,9 @@ function Mechanism(props: any) {
     const [disabledFactors1]: any = useState([]);
     const [selectedHeader] = useContext(Store);
     const history = useHistory();
+
+    const productId = localStorage.getItem("productId");
+    
     const mechanism = {
         challenge_factors: [
             {
@@ -56,7 +59,7 @@ function Mechanism(props: any) {
     }
 
     useEffect(() => {
-        ApiService.get(ApiUrls.mechanism(window.location.pathname.split('/')[2]))
+        ApiService.get(ApiUrls.mechanism(window.location.pathname.split('/')[4]))
             .then((data: MechanismType) => {
                 //@ts-ignore
                 if (!data.errorSummary) {
@@ -100,7 +103,7 @@ function Mechanism(props: any) {
                     }
                     setLoading(false);
                 }
-                else if (window.location.pathname.split('/').length === 2) {
+                else if (window.location.pathname.split('/').length === 4) {
                     setDisplayDetails(mechanism);
                     setEditData(mechanism);
                     setIsEdit(true);
@@ -112,7 +115,7 @@ function Mechanism(props: any) {
                     console.log('else: ', data);
                     //@ts-ignore
                     openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses.errorSummary : data.errorSummary);
-                    history.push('/mechanism');
+                    history.push(`/product/${productId}/mechanism`);
                 }
             })
     }, [])
@@ -233,7 +236,7 @@ function Mechanism(props: any) {
                 Mechanism
                 {displayDetails['uid'] !== undefined ?
                     <Button style={{ marginLeft: 'auto', alignSelf: 'end' }} onClick={() => {
-                        history.push('/mechanism')
+                        history.push(`/product/${productId}/mechanism`);
                     }}>Back</Button>
                     : <></>
                 }

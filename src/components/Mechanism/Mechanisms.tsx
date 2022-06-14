@@ -3,14 +3,14 @@ import { useHistory } from 'react-router-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Button, Skeleton, Table, Tooltip } from 'antd';
 import Modal from 'antd/lib/modal/Modal';
-import { BarsOutlined, MenuOutlined, PoweroffOutlined, StopOutlined } from "@ant-design/icons"
+import { BarsOutlined, CloseOutlined, MenuOutlined, PoweroffOutlined, StopOutlined } from "@ant-design/icons"
 import { arrayMoveImmutable } from 'array-move';
 
 import './Mechanism.css';
 
 import Mechanism from './mechanism';
 import { openNotification } from '../Layout/Notification';
-import ApiUrls from '../../ApiUtils';
+import ApiUrls, { productId } from '../../ApiUtils';
 import ApiService from '../../Api.service';
 
 export default function Mechanisms() {
@@ -33,7 +33,7 @@ export default function Mechanisms() {
 			render: (text: any, record: { mechanism_id: any; }) => (
 				<Tooltip title="View">
 					<Button icon={<BarsOutlined />} onClick={() => {
-						history.push('/mechanism/' + record.mechanism_id);
+						history.push(`/product/${productId}/mechanism/${record.mechanism_id}`);
 					}}>
 					</Button>
 				</Tooltip>
@@ -79,7 +79,7 @@ export default function Mechanisms() {
 			render: (text: any, record: { mechanism_id: any }) => (
 				<Tooltip title="View">
 					<Button icon={<BarsOutlined />} onClick={() => {
-						history.push('/mechanism/' + record.mechanism_id)
+						history.push(`/product/${productId}/mechanism/${record.mechanism_id}`)
 					}}>
 					</Button>
 				</Tooltip>
@@ -318,7 +318,7 @@ export default function Mechanisms() {
 					dataSource={inactiveMechanisms}
 					pagination={false}
 				/>
-				<Modal visible={isModalVisible} footer={false} width='800px'
+				<Modal visible={isModalVisible} closeIcon={<Button><CloseOutlined /></Button>} footer={false} onCancel={handleCancel} width='800px'
 					title={<div style={{ fontSize: '30px' }}>Add New Mechanism</div>} centered maskClosable={false}
 				>
 					<Mechanism handleOk={handleOk} handleCancel={handleCancel} />

@@ -61,9 +61,9 @@ export default function Machines() {
         getMachines(params);    
     }
 
-    function getMachines(param = {}) {
+    function getMachines(params = {}) {
         setLoadingDetails(true);
-        ApiService.get(ApiUrls.machines,).then(data => {
+        ApiService.get(ApiUrls.machines, params).then(data => {
             console.log('Machines: ', data);
             data.results.forEach(machine => {
                 machine.key = machine.uid;
