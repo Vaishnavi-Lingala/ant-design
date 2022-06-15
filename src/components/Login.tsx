@@ -27,12 +27,12 @@ function Login() {
                 //@ts-ignore
                 if (!data.errorSummary) {
                     console.log('Auth profile: ', data);
-                    config.oidc.clientId = data.portal_oidc_client_id;
+                    config.oidc.clientId = data.idp_portal_oidc_client_id;
                     config.oidc.issuer = data.issuer_url;
                     localStorage.setItem("domain", domain);
                     localStorage.setItem("accountId", data.uid);
                     console.log("Account Id: ", localStorage.getItem("accountId"));
-                    if (data.issuer_url !== "" && data.portal_oidc_client_id !== "") {
+                    if (data.issuer_url !== "" && data.idp_portal_oidc_client_id !== "") {
                         const oktaAuth = new OktaAuth(config.oidc);
                         oktaAuth.signInWithRedirect({
                             originalUri: '/dashboard'

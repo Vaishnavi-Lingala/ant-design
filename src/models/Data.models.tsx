@@ -1,6 +1,6 @@
 export interface ClientConfiguration {
     uid: string;
-    portal_oidc_client_id: string;
+    idp_portal_oidc_client_id: string;
     issuer_url: string;
 }
 
