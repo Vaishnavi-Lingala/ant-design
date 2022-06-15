@@ -92,7 +92,6 @@ function AppSider() {
 	}
 
 	function renderItems() {
-		console.log('Selected product: ', productNames[selectedHeaderOption]);
 		const productItemsWithHeader = [
 			{
 				label: <div className="sidebar-header-content">
