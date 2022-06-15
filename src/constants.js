@@ -160,7 +160,7 @@ export const machineFieldNames = {
 export const settingsFieldNames = {
     uid: "Account ID",
     name: "Company Name",
-    portal_oidc_client_id: "Client ID",
+    idp_portal_oidc_client_id: "Client ID",
     issuer_url: "Issuer"
 }
 
