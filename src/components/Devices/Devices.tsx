@@ -23,7 +23,8 @@ function Devices() {
         "vendor": "",
         "is_blocked": false,
         "device_type": "",
-        "model": ""
+        "model": "",
+        "additional_info": ""
     }
 
     const columns = [

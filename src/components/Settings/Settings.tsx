@@ -18,9 +18,6 @@ function Settings() {
     const [displayDomains, setDisplayDomains]: any = useState([]);
     const [render, setRender] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
-    const object = {
-        "domains": domains
-    }
 
     useEffect(() => {
         getSettings();
@@ -53,6 +50,19 @@ function Settings() {
     }
 
     function handleSave() {
+        const list: any = [];
+        domains.map(value => {
+            if(value !== ''){
+                list.push(value);
+            }
+        })
+        
+        console.log(list);
+
+        const object = {
+            "domains": list
+        }
+
         ApiService.put(ApiUrls.updateDomains, object)
             .then(data => {
                 if (!data.errorSummary) {
@@ -107,12 +117,12 @@ function Settings() {
                         </div>
                         <div>
                             {
-                                !isEdit ? domains.map(value => {
-                                    return <div key={value}>
+                                !isEdit ? domains.map((value, index) => {
+                                    return <div key={index}>
                                         {value}
                                     </div>
                                 }) : domains.map((value, index) => {
-                                    return <div key={value} style={{ padding: '5px' }}>
+                                    return <div key={index} style={{ padding: '5px' }}>
                                         <Input className="form-control"
                                             defaultValue={value} onChange={(e) => {
                                                 domains[index] = e.target.value

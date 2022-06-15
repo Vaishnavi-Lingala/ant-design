@@ -1,23 +1,24 @@
 import { Table } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import AddGroup from "./AddGroup";
 
-function TableList({ type, getGroups, columns, standardMachineGroups, getPage, getPageSize, getTotalItems}) {
+function TableList({ groupType, getGroups, columns, standardMachineGroups, getPage, getPageSize, getTotalItems}) {
     const [page, setPage] = useState(getPage);
     const [pageSize, setPageSize] = useState(getPageSize);
     const [totalItems, setTotalItems] = useState(getTotalItems);
 
     function onGroupsPageChange(page, pageSize) {
         const params = {
+            type: groupType,
+            paginated: true,
             start: page,
-            limit: pageSize,
-            paginated: true
+            limit: pageSize
         }
         getGroups(params);
     }
     return <>
-        <AddGroup onGroupCreate={getGroups} type={type} />
+        <AddGroup onGroupCreate={getGroups} type={groupType} />
         <Table
             style={{ border: '1px solid #D7D7DC' }}
             showHeader={true}

@@ -7,6 +7,7 @@ import './Devices.css';
 import { openNotification } from "../Layout/Notification";
 import ApiUrls from "../../ApiUtils"
 import ApiService from "../../Api.service";
+import TextArea from "antd/lib/input/TextArea";
 
 function Device(props: any) {
     const history = useHistory();
@@ -118,7 +119,7 @@ function Device(props: any) {
                     </div>
 
                     <div className="content-device-key-header">
-                        Device name:
+                        Device Name:
                     </div>
                     <div>
                         {isEdit ?
@@ -234,6 +235,24 @@ function Device(props: any) {
                             defaultChecked={displayDetails['device_name'] !== "" ? displayDetails['is_blocked'] : ""}
                             disabled={!isEdit}
                         />
+                    </div>
+                    <div className="content-device-key-header">
+                        Additional Information:
+                    </div>
+                    <div>
+                        {isEdit ?
+                            <TextArea
+                                name="additional_info"
+                                onChange={(e) => setEditData({
+                                    ...editData,
+                                    additional_info: e.target.value
+                                })}
+                                style={{ width: "275px" }}
+                                className="form-control"
+                                placeholder="Enter additional information"
+                                defaultValue={displayDetails['device_name'] !== "" ? displayDetails['additional_info'] : ""}
+                            /> : displayDetails['additional_info']
+                        }
                     </div>
                 </div>
             </div>

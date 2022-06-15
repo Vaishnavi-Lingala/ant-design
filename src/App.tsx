@@ -24,9 +24,6 @@ import config from "./config";
 import StoreProvider from "./Store";
 import Devices from "./components/Devices/Devices";
 import Device from "./components/Devices/Device";
-import { UserInfo } from "./components/Users/UserInfo";
-import { Enrollments } from "./components/Users/Enrollments";
-import { UserGroups } from "./components/Users/UserGroups";
 import { User } from "./components/Users/User";
 
 const oktaAuth = new OktaAuth(config.oidc);
