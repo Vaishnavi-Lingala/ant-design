@@ -71,13 +71,10 @@
     object-fit: contain;
 }
 
-.sidebar-header {
-    margin: 10px 0 10px 0 !important; 
-}
-
 .sidebar-header-content {
     display: flex;
     align-items: center;
     font-size: medium;
     font-weight: 500;
+    margin: 10px 0 10px 0 !important;
 }

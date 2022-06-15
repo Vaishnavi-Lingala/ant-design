@@ -28,7 +28,7 @@ const CardEnrollmentPolicy = (props) => {
     useEffect(() => {
         Promise.all(([
             ApiService.get(ApiUrls.groups, { type: "USER" }),
-            ApiService.get(ApiUrls.policy(window.location.pathname.split('/')[3]))
+            ApiService.get(ApiUrls.policy(window.location.pathname.split('/')[5]))
         ]))
             .then(data => {
                 console.log('GROUPS: ', data[0]);
@@ -59,7 +59,7 @@ const CardEnrollmentPolicy = (props) => {
                     });
                     setLoading(false);
                 }
-                else if (window.location.pathname.split('/').length === 3) {
+                else if (window.location.pathname.split('/').length === 5) {
                     setCardEnrollDisplayData(props.policyDetails);
                     setCardEnrollEditedData(props.policyDetails);
                     setPolicyRequirements(props.policyDetails.policy_req);
@@ -69,7 +69,7 @@ const CardEnrollmentPolicy = (props) => {
                 else {
                     console.log('else: ', data[1]);
                     openNotification('error', data[1].errorCauses.length !== 0 ? data[1].errorCauses[1].errorSummary : data[1].errorSummary);
-                    history.push('/policies/card-enrollment');
+                    history.push(`/product/${localStorage.getItem("productId")}/policies/card-enrollment`);
                 }
             }, error => {
                 console.error('Error: ', error);

@@ -10,7 +10,7 @@ import './Mechanism.css';
 
 import Mechanism from './mechanism';
 import { openNotification } from '../Layout/Notification';
-import ApiUrls from '../../ApiUtils';
+import ApiUrls, { productId } from '../../ApiUtils';
 import ApiService from '../../Api.service';
 
 export default function Mechanisms() {
@@ -33,7 +33,7 @@ export default function Mechanisms() {
 			render: (text: any, record: { mechanism_id: any; }) => (
 				<Tooltip title="View">
 					<Button icon={<BarsOutlined />} onClick={() => {
-						history.push('/mechanism/' + record.mechanism_id);
+						history.push(`/product/${productId}/mechanism/${record.mechanism_id}`);
 					}}>
 					</Button>
 				</Tooltip>
@@ -79,7 +79,7 @@ export default function Mechanisms() {
 			render: (text: any, record: { mechanism_id: any }) => (
 				<Tooltip title="View">
 					<Button icon={<BarsOutlined />} onClick={() => {
-						history.push('/mechanism/' + record.mechanism_id)
+						history.push(`/product/${productId}/mechanism/${record.mechanism_id}`)
 					}}>
 					</Button>
 				</Tooltip>

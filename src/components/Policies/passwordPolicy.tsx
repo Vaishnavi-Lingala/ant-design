@@ -24,7 +24,7 @@ export const PasswordPolicy = (props: any) => {
 
     useEffect(() => {
         Promise.all(([
-            ApiService.get(ApiUrls.policy(window.location.pathname.split('/')[3])),
+            ApiService.get(ApiUrls.policy(window.location.pathname.split('/')[5])),
             ApiService.get(ApiUrls.groups, { type: "USER" }),
             ApiService.get(ApiUrls.mechanismPasswordGraceOptions)
         ]))
@@ -42,7 +42,7 @@ export const PasswordPolicy = (props: any) => {
                         console.log(groupUids);
                     });
                 }
-                else if (window.location.pathname.split('/').length === 3) {
+                else if (window.location.pathname.split('/').length === 5) {
                     setPasswordDisplayData(props.passwordDetails);
                     setPasswordEditedData(props.passwordDetails);
                     setPolicyRequirements(props.passwordDetails.policy_req);
@@ -51,7 +51,7 @@ export const PasswordPolicy = (props: any) => {
                 else {
                     console.log('else: ', data[0]);
                     openNotification('error', data[0].errorCauses.length !== 0 ? data[0].errorCauses[0].errorSummary : data[0].errorSummary);
-                    history.push('/policies/password');
+                    history.push(`/product/${localStorage.getItem("productId")}/policies/password`);
                 }
 
                 console.log('GROUPS: ', data[1]);

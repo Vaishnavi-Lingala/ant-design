@@ -24,7 +24,7 @@ export const PinPolicy = (props: any) => {
 	useEffect(() => {
 		Promise.all(([
 			ApiService.get(ApiUrls.groups, { type: "USER" }),
-			ApiService.get(ApiUrls.policy(window.location.pathname.split('/')[3]))
+			ApiService.get(ApiUrls.policy(window.location.pathname.split('/')[5]))
 		]))
 			.then(data => {
 				console.log('GROUPS: ', data[0]);
@@ -58,7 +58,7 @@ export const PinPolicy = (props: any) => {
 					}
 					setLoading(false);
 				}
-				else if (window.location.pathname.split('/').length === 3) {
+				else if (window.location.pathname.split('/').length === 5) {
 					setPinDisplayData(props.pinDetails);
 					setPinEditedData(props.pinDetails);
 					setPolicyRequirements(props.pinDetails.policy_req);
@@ -68,7 +68,7 @@ export const PinPolicy = (props: any) => {
 				else {
 					console.log('else: ', data[1]);
 					openNotification('error', data[1].errorCauses.length !== 0 ? data[1].errorCauses[1].errorSummary : data[1].errorSummary);
-					history.push('/policies/pin');
+					history.push(`/product/${localStorage.getItem("productId")}/policies/pin`);
 				}
 			}, error => {
 				console.error('Error: ', error);
