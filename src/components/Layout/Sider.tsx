@@ -9,7 +9,7 @@ import { ScanOutlined , UserOutlined, DesktopOutlined, TeamOutlined, SettingOutl
 import {
 	ActivityLogs, activityLogs, Dashboard, dashboard, Directory, Groups, groups,
 	Machines, machines, Devices, devices, Mechanisms, mechanisms, MenuItemPaths,
-	Policies, policies, productNames, settings, Settings, TecBIO, TecTANGO, Users, users
+	Policies, policies, productNames, settings, Settings, TecBIO, TecTANGO, Users, users, TecTango, TecBio
 } from "../../constants";
 import { Store } from "../../Store";
 
@@ -92,10 +92,14 @@ function AppSider() {
 	}
 
 	function renderItems() {
+		console.log('Selected product: ', productNames[selectedHeaderOption]);
 		const productItemsWithHeader = [
 			{
 				label: <div className="sidebar-header-content">
-					<img height={28} width={28} src={"../../credenti-favicon.png"} />
+					{productNames[selectedHeaderOption] === TecTango ?
+					  <img height={28} width={28} src={"../../TecTango.png"} /> : 
+					  productNames[selectedHeaderOption] === TecBio? 
+					  <img height={28} width={28} src={"../../TecBioIcon.png"} /> : <></>}
 					{productNames[selectedHeaderOption]}
 				</div>,
 				key: selectedHeaderOption
