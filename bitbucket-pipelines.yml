@@ -22,6 +22,7 @@ pipelines:
             - TAG="${BITBUCKET_BUILD_NUMBER}"
             - touch .env.local
             - echo "DISABLE_ESLINT_PLUGIN=true" | cat >> .env.local
+            - echo "REACT_APP_API_URL=$PORTAL_API_URL" | cat >> .env.local
             - docker build -t $IMAGE:$TAG .
             - aws configure set aws_access_key_id "${AWS_ACCESS_KEY_DEV}"
             - aws configure set aws_secret_access_key "${AWS_SECRET_ACCESS_KEY_DEV}"
