@@ -231,7 +231,7 @@ function Mechanism(props: any) {
     }
 
     return (<>
-        {window.location.pathname.split('/').length === 3 ?
+        {window.location.pathname.split('/').length === 5 ?
             <div className='content-header'>
                 Mechanism
                 {displayDetails['uid'] !== undefined ?
