@@ -318,7 +318,7 @@ export default function Mechanisms() {
 					dataSource={inactiveMechanisms}
 					pagination={false}
 				/>
-				<Modal visible={isModalVisible} closeIcon={<Button><CloseOutlined /></Button>} footer={false} onCancel={handleCancel} width='800px'
+				<Modal visible={isModalVisible} closeIcon={<Button icon={<CloseOutlined />}></Button>} footer={false} onCancel={handleCancel} width='800px'
 					title={<div style={{ fontSize: '30px' }}>Add New Mechanism</div>} centered maskClosable={false}
 				>
 					<Mechanism handleOk={handleOk} handleCancel={handleCancel} />

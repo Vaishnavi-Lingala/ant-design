@@ -150,7 +150,7 @@ function TableList({ handleGetPolicies, policy_type, activateColumns, activePoli
                 pagination={false}
             />
 
-            <Modal visible={isModal} closeIcon={<Button><CloseOutlined /></Button>} footer={false} centered width={900} maskClosable={true} onCancel={handleCancel}
+            <Modal visible={isModal} closeIcon={<Button icon={<CloseOutlined />}></Button>} footer={false} centered width={900} maskClosable={true} onCancel={handleCancel}
                 title={<div style={{ fontSize: '30px' }}>Add {policyDisplayNames[policy_type]} Policy </div>}
             >
                 {policy_type === PIN ?

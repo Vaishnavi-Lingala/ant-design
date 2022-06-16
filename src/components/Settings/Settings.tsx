@@ -7,16 +7,14 @@ import './Settings.css'
 import { openNotification } from '../Layout/Notification';
 import ApiUrls from '../../ApiUtils';
 import ApiService from '../../Api.service';
-import { settingsFieldNames } from '../../constants';
+import { Account, settingsFieldNames } from '../../constants';
 import { ClientConfiguration } from '../../models/Data.models';
 
 function Settings() {
-    const domain = localStorage.getItem('domain');
     const [loading, setLoading] = useState(false);
     const [settings, setSettings] = useState({});
     const [domains, setDomains]: any = useState([]);
     const [displayDomains, setDisplayDomains]: any = useState([]);
-    const [render, setRender] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
 
     useEffect(() => {
@@ -25,12 +23,17 @@ function Settings() {
 
     function getSettings() {
         setLoading(true)
-        ApiService.post(ApiUrls.client_info, { domain: domain })
-            .then((data: ClientConfiguration) => {
-                setSettings(data);
-                setDomains(data['domains']);
-                setDisplayDomains(data['domains']);
-                console.log(data['domains']);
+        Promise.all([
+            ApiService.get(ApiUrls.info),
+            ApiService.get(ApiUrls.domains)
+        ])
+            .then((data) => {
+                console.log(data[0]);
+                setSettings(data[0]);
+
+                console.log(data[1]);
+                setDomains(data[1]);
+                setDisplayDomains(data[1]);
                 setLoading(false);
             })
             .catch((error) => {
@@ -52,18 +55,18 @@ function Settings() {
     function handleSave() {
         const list: any = [];
         domains.map(value => {
-            if(value !== ''){
+            if (value !== '') {
                 list.push(value);
             }
         })
-        
+
         console.log(list);
 
         const object = {
             "domains": list
         }
 
-        ApiService.put(ApiUrls.updateDomains, object)
+        ApiService.put(ApiUrls.domains, object)
             .then(data => {
                 if (!data.errorSummary) {
                     setIsEdit(false);
@@ -79,13 +82,13 @@ function Settings() {
     const DisplayField = ({ displayName, value }) => {
         return (
             <>
+                {console.log(value)}
                 <div style={{ width: "100%", display: "flex", marginBottom: "10px" }}>
                     <div style={{ width: "50%" }}>
-                        <b>{displayName}</b>
+                        <b>{displayName}:</b>
                     </div>
                     <div>{value}</div>
                 </div>
-
             </>
         );
     };
@@ -93,16 +96,19 @@ function Settings() {
     return (
         <>
             <div className='content-header'>
-                Settings
+                {Account}
             </div>
+
             <Skeleton loading={loading}>
                 <div className="content-container rounded-grey-border">
                     {
-                        Object.keys(settingsFieldNames).map(key => <DisplayField
-                            displayName={settingsFieldNames[key]}
-                            value={settings[key]}
-                            key={key}
-                        />)
+                        Object.keys(settingsFieldNames).map(key =>
+                            <DisplayField
+                                displayName={settingsFieldNames[key]}
+                                value={settings[key]}
+                                key={key}
+                            />
+                        )
                     }
 
                     <Divider style={{ borderTop: '1px solid #d7d7dc' }} />
@@ -113,7 +119,7 @@ function Settings() {
                     }
                     <div style={{ width: "100%", display: "flex", marginBottom: "10px", paddingTop: '20px' }}>
                         <div style={{ width: "50%" }}>
-                            <b>Domain(s)</b>
+                            <b>Domain(s):</b>
                         </div>
                         <div>
                             {
@@ -139,7 +145,9 @@ function Settings() {
                                             <DeleteOutlined />
                                         </Button>
                                     </div>
-                                })}
+                                })
+                            }
+
                             {
                                 isEdit ? <div style={{ padding: '5px' }}>
                                     <Button onClick={() => {

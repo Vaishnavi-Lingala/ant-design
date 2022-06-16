@@ -158,10 +158,20 @@ export const machineFieldNames = {
 }
 
 export const settingsFieldNames = {
-    uid: "Account ID",
     name: "Company Name",
-    idp_portal_oidc_client_id: "Client ID",
-    issuer_url: "Issuer"
+    uid: "Account ID",
+    idp_type: "Idp Type",
+    idp_portal_oidc_client_id: "Portal Client ID",
+    idp_app_oidc_client_id: "App Client ID",
+    admin_token: "Admin Token",
+    install_token: "Install Token",
+    uninstall_token: "Uninstall Token",
+    address_1: "Address 1",
+    address_2: "Address 2",
+    state: "State",
+    country: "Country",
+    city: "City",
+    zip: "Zip"
 }
 
 // Literal Constants
@@ -192,6 +202,7 @@ export const Mechanisms = "Mechanisms";
 export const Policies = "Policies";
 export const ActivityLogs = "Activity Logs";
 export const Devices = "Devices";
+export const Account = "Account";
 
 // Sidebar item keys
 export const dashboard = "dashboard";
@@ -202,7 +213,7 @@ export const devices = "devices";
 export const mechanisms = "mechanism";
 export const policies = "policies";
 export const activityLogs = "activitylogs";
-export const settings = "settings";
+export const account = "account";
 
 // Policy types
 export const PIN = "PIN";
@@ -217,7 +228,7 @@ export const Settings = "Settings";
 
 export const MenuItemPaths = {
     [Directory]: "/dashboard",
-    [Settings]: "/settings",
+    [Settings]: "/account",
     [TecTANGO]: "/mechanism",
     [TecBIO]: "/mechanism"
 }

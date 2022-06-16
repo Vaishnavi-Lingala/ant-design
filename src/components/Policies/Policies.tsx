@@ -211,8 +211,14 @@ export default function Policies() {
 		/>
 	);
 
-	const CardEnrollmentDraggableBodyRow = ({ className, style, ...restProps }) => {
+	const kioskDraggableBodyRow = ({ className, style, ...restProps }) => {
 		const index = activeKioskPolicies.findIndex(x => x.index === restProps['data-row-key']);
+		return <SortableItem index={index} {...restProps} />;
+	};
+
+	const CardEnrollmentDraggableBodyRow = ({ className, style, ...restProps }) => {
+		//@ts-ignore	
+		const index = activeCardEnrollmentPolicies.findIndex(x => x.index === restProps['data-row-key']);
 		return <SortableItem index={index} {...restProps} />;
 	};
 
@@ -239,11 +245,6 @@ export default function Policies() {
 			{...props}
 		/>
 	);
-
-	const kioskDraggableBodyRow = ({ className, style, ...restProps }) => {
-		const index = activeKioskPolicies.findIndex(x => x.index === restProps['data-row-key']);
-		return <SortableItem index={index} {...restProps} />;
-	};
 
 	function handleGetPolicies() {
 		getPolicies();

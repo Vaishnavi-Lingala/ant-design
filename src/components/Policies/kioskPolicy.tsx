@@ -170,6 +170,7 @@ export const KioskPolicy = (props: any) => {
     }
 
     function createkioskPolicy() {
+        kioskEditData.policy_req.confirm_assay = confirmPassword;
         props.handleOk("KIOSK", kioskEditData);
     }
 
