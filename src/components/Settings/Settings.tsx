@@ -8,7 +8,7 @@ import Hint from '../Controls/Hint';
 import { openNotification } from '../Layout/Notification';
 import ApiUrls from '../../ApiUtils';
 import ApiService from '../../Api.service';
-import { Account, settingsFieldNames, settingsTokenNames } from '../../constants';
+import { Account, settingsFieldNames, settingsIdpFields, settingsTokenNames } from '../../constants';
 
 function Settings() {
     const [loading, setLoading] = useState(false);
@@ -117,6 +117,18 @@ function Settings() {
                         Object.keys(settingsFieldNames).map(key =>
                             <DisplayField
                                 displayName={settingsFieldNames[key]}
+                                value={settings[key]}
+                                key={key}
+                            />
+                        )
+                    }
+
+                    <Divider style={{ borderTop: '1px solid #d7d7dc' }} />
+
+                    {
+                        Object.keys(settingsIdpFields).map(key =>
+                            <DisplayField
+                                displayName={settingsIdpFields[key]}
                                 value={settings[key]}
                                 key={key}
                             />

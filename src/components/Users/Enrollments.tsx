@@ -5,6 +5,7 @@ import ApiService from "../../Api.service";
 import { openNotification } from "../Layout/Notification";
 import { date_display_format, time_format } from "../../constants";
 import moment from "moment";
+import './Users.css';
 
 export function Enrollments() {
     const [enrollments, setEnrollments]: any = useState(undefined);
@@ -72,7 +73,7 @@ export function Enrollments() {
                             }}
                         />
                     </div>
-                }) : <><div className="content-header">No enrollments for the user.</div></>
+                }) : <><div className="message-header">No enrollments available for the user.</div></>
             }
         </Skeleton>
     </>
