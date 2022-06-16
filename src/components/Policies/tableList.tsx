@@ -96,7 +96,7 @@ function TableList({ handleGetPolicies, policy_type, policy_description, activat
         <>
             <div style={{
                 width: '100%', border: '1px solid #D7D7DC', borderBottom: 'none',
-                padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
+                padding: '10px 10px 10px 25px', backgroundColor: '#d9d9d9'
             }}
             >
                 {policy_description}
