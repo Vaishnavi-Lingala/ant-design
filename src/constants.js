@@ -158,17 +158,17 @@ export const machineFieldNames = {
 }
 
 export const settingsFieldNames = {
-    name: "Company Name",
     uid: "Account ID",
+    name: "Company Name",
     idp_type: "IDP Type",
     idp_portal_oidc_client_id: "Portal OIDC Client ID",
     idp_app_oidc_client_id: "App OIDC Client ID",
     address_1: "Address 1",
     address_2: "Address 2",
-    state: "State",
-    country: "Country",
     city: "City",
-    zip: "Zip"
+    state: "State",
+    zip: "Zip code",
+    country: "Country"
 }
 
 export const settingsTokenNames = {
@@ -245,3 +245,9 @@ export const policyDisplayNames = {
 
 // LocalStorage constants
 export const SELECTED_HEADER = 'SELECTED_HEADER';
+
+//Policies Descriptions
+export const PinPolicyDescription = 'PIN policies enable admins to enforce pin complexities at the user group level and is enforced during enrollment or PIN recovery';
+export const PasswordPolicyDescription = 'Password policies enable admins you to control Grace Period which is the amount of time the user can tap in and out until they are required to re-enter their password after tapping badge';
+export const KioskPolicyDescription = 'KIOSK policies applies to machines where TecTANGO will auto-login with the generic machine user to enable fast user swicthing on a shared or kiosk machines used by multiple users. This policy is applied only when Option 3 is selected in the TecTANGO Installer';
+export const CardEnrollmentPolicyDescription = 'Card enrollment policies enable admins to configure max number of cards allowed per user group during enrollment';
