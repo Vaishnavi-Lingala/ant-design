@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button, Modal, Table } from "antd";
-import { CloseOutlined } from "@ant-design/icons";
+import { CloseOutlined} from "@ant-design/icons";
 
 import CardEnrollmentPolicy from "./CardEnrollmentPolicy";
 import { KioskPolicy } from "./kioskPolicy";
@@ -96,6 +96,13 @@ function TableList({ handleGetPolicies, policy_type, policy_description, activat
         <>
             <div style={{
                 width: '100%', border: '1px solid #D7D7DC', borderBottom: 'none',
+                padding: '10px 10px 10px 25px', backgroundColor: '#d9d9d9'
+            }}
+            >
+                {policy_description}
+            </div>
+            <div style={{
+                width: '100%', border: '1px solid #D7D7DC', borderBottom: 'none',
                 padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
             }}
             >
@@ -105,9 +112,8 @@ function TableList({ handleGetPolicies, policy_type, policy_description, activat
                 >
                     Add {policyDisplayNames[policy_type]} Policy
                 </Button>
-                    <span  style={{ padding: '10px', color:'maroon', fontWeight:'700'}}>{policy_description}</span>
+                   
             </div>
-
             <div style={{
                 fontWeight: 600, fontSize: 'x-large',
                 width: '100%', border: '1px solid #D7D7DC',
