@@ -160,15 +160,18 @@ export const machineFieldNames = {
 export const settingsFieldNames = {
     uid: "Account ID",
     name: "Company Name",
-    idp_type: "IDP Type",
-    idp_portal_oidc_client_id: "Portal OIDC Client ID",
-    idp_app_oidc_client_id: "App OIDC Client ID",
     address_1: "Address 1",
     address_2: "Address 2",
     city: "City",
     state: "State",
     zip: "Zip code",
     country: "Country"
+}
+
+export const settingsIdpFields = {
+    idp_type: "IDP Type",
+    idp_portal_oidc_client_id: "Portal OIDC Client ID",
+    idp_app_oidc_client_id: "App OIDC Client ID"
 }
 
 export const settingsTokenNames = {
