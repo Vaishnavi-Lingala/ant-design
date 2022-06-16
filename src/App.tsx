@@ -55,7 +55,7 @@ function App() {
                     <ProtectedRoute path={`/dashboard`} component={Dashboard} />
                     <ProtectedRoute path={`/product/:productId/mechanism`} exact component={Mechanisms} />
                     <ProtectedRoute path={`/product/:productId/mechanism/:id`} component={Mechanism} />
-                    <ProtectedRoute path={`/settings`} component={Settings} />
+                    <ProtectedRoute path={`/account`} component={Settings} />
                     <ProtectedRoute path={`/groups`} component={Groups} />
                     <ProtectedRoute path={`/users`} component={Users} />
                     <ProtectedRoute path={`/machines`} exact component={Machines} />

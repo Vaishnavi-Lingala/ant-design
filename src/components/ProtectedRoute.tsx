@@ -8,6 +8,10 @@ export default function ProtectedRoute({
 }) {
     const { authState, oktaAuth } = useOktaAuth();
     const history = useHistory();
+    console.log(oktaAuth);
+    console.log(oktaAuth.authStateManager._authState?.isAuthenticated);
+    console.log(oktaAuth.getIdToken());
+    console.log(oktaAuth.getAccessToken());
     const oktaStorage = localStorage.getItem("okta-token-storage");
 
     function removeItems() {
@@ -15,11 +19,9 @@ export default function ProtectedRoute({
         localStorage.removeItem("clientId");
         localStorage.removeItem("issuer");
         localStorage.removeItem("accountId");
-        localStorage.removeItem("policyUid");
-        localStorage.removeItem("mechanismUid");
-        localStorage.removeItem("accountId");
         localStorage.removeItem("productId");
         localStorage.removeItem("productName");
+        localStorage.removeItem("SELECTED_HEADER");
         history.push("/");
     }
 
