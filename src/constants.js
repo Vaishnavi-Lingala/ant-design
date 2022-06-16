@@ -160,18 +160,21 @@ export const machineFieldNames = {
 export const settingsFieldNames = {
     name: "Company Name",
     uid: "Account ID",
-    idp_type: "Idp Type",
-    idp_portal_oidc_client_id: "Portal Client ID",
-    idp_app_oidc_client_id: "App Client ID",
-    admin_token: "Admin Token",
-    install_token: "Install Token",
-    uninstall_token: "Uninstall Token",
+    idp_type: "IDP Type",
+    idp_portal_oidc_client_id: "Portal OIDC Client ID",
+    idp_app_oidc_client_id: "App OIDC Client ID",
     address_1: "Address 1",
     address_2: "Address 2",
     state: "State",
     country: "Country",
     city: "City",
     zip: "Zip"
+}
+
+export const settingsTokenNames = {
+    admin_token: "Admin Token",
+    install_token: "Install Token",
+    uninstall_token: "Uninstall Token"
 }
 
 // Literal Constants

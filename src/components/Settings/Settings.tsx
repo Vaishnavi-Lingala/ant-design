@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
-import { Button, Divider, Input, Modal, Skeleton } from 'antd';
-import { DeleteOutlined } from '@ant-design/icons';
+import { Button, Divider, Input, Modal, Skeleton, Tooltip } from 'antd';
+import { CopyOutlined, DeleteOutlined, InfoCircleOutlined } from '@ant-design/icons';
 
 import './Settings.css'
 
+import Hint from '../Controls/Hint';
 import { openNotification } from '../Layout/Notification';
 import ApiUrls from '../../ApiUtils';
 import ApiService from '../../Api.service';
-import { Account, settingsFieldNames } from '../../constants';
-import { ClientConfiguration } from '../../models/Data.models';
+import { Account, settingsFieldNames, settingsTokenNames } from '../../constants';
 
 function Settings() {
     const [loading, setLoading] = useState(false);
@@ -16,6 +16,7 @@ function Settings() {
     const [domains, setDomains]: any = useState([]);
     const [displayDomains, setDisplayDomains]: any = useState([]);
     const [isEdit, setIsEdit] = useState(false);
+    const [passwordShown, setPasswordShown] = useState(false);
 
     useEffect(() => {
         getSettings();
@@ -82,10 +83,21 @@ function Settings() {
     const DisplayField = ({ displayName, value }) => {
         return (
             <>
-                {console.log(value)}
+
                 <div style={{ width: "100%", display: "flex", marginBottom: "10px" }}>
                     <div style={{ width: "50%" }}>
-                        <b>{displayName}:</b>
+                        <b>
+                            {//@ts-ignore
+                                !["Portal OIDC Client ID", "App OIDC Client ID"].includes(displayName) ?
+                                    <>
+                                        {displayName}:
+                                    </> : <>
+                                        {displayName}<Tooltip placement="right" title={displayName === "Portal OIDC Client ID" ? "Public identifier for the Admin portal login flow." : "Public identifier for App enrollment flows."}>
+                                            <InfoCircleOutlined style={{ padding: '0 4px 0 4px' }} />
+                                        </Tooltip>:
+                                    </>
+                            }
+                        </b>
                     </div>
                     <div>{value}</div>
                 </div>
@@ -112,6 +124,30 @@ function Settings() {
                     }
 
                     <Divider style={{ borderTop: '1px solid #d7d7dc' }} />
+
+                    {
+                        Object.keys(settingsTokenNames).map(key => {
+                            return <div key={key} style={{ width: "100%", display: "flex", marginBottom: "10px" }}>
+                                <div style={{ width: "50%" }}>
+                                    <b>{settingsTokenNames[key]}:</b>
+                                </div>
+                                <div style={{ width: "30%", display: "flex", marginBottom: "10px" }}>
+                                    <Input.Password readOnly
+                                        value={settings[key]}
+                                    />
+                                    &nbsp;
+                                    <Button icon={<CopyOutlined />} onClick={() => {
+                                        navigator.clipboard.writeText(settings[key])
+                                        openNotification('success', `${settingsTokenNames[key]} copied`)
+                                    }} />
+                                </div>
+                            </div>
+                        })
+                    }
+
+
+                    <Divider style={{ borderTop: '1px solid #d7d7dc' }} />
+
                     {!isEdit ?
                         <Button style={{ float: 'right' }} onClick={handleEditClick}>
                             Edit
