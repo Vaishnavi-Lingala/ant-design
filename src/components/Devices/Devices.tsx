@@ -162,7 +162,7 @@ function Devices() {
                 }}
             />
 
-            <Modal visible={isModalVisible} footer={false} closeIcon={<Button><CloseOutlined /></Button>} width='800px' onCancel={handleCancel}
+            <Modal visible={isModalVisible} footer={false} closeIcon={<Button icon={<CloseOutlined />}></Button>} width='800px' onCancel={handleCancel}
                 title={<div style={{ fontSize: '30px' }}>Add New Device</div>} centered maskClosable={false}
             >
                 <Device deviceDetails={device} handleOk={handleOk} handleCancel={handleCancel} />

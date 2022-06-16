@@ -8,6 +8,13 @@ function TableList({ groupType, getGroups, columns, standardMachineGroups, getPa
     const [pageSize, setPageSize] = useState(getPageSize);
     const [totalItems, setTotalItems] = useState(getTotalItems);
 
+    const params = {
+        type: groupType,
+        paginated: true,
+        start: page,
+        limit: pageSize
+    }
+
     function onGroupsPageChange(page, pageSize) {
         const params = {
             type: groupType,
@@ -18,7 +25,7 @@ function TableList({ groupType, getGroups, columns, standardMachineGroups, getPa
         getGroups(params);
     }
     return <>
-        <AddGroup onGroupCreate={getGroups} type={groupType} />
+        <AddGroup onGroupCreate={() => getGroups(params)} type={groupType} />
         <Table
             style={{ border: '1px solid #D7D7DC' }}
             showHeader={true}

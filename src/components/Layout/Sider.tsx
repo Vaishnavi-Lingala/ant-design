@@ -9,7 +9,7 @@ import { ScanOutlined , UserOutlined, DesktopOutlined, TeamOutlined, SettingOutl
 import {
 	ActivityLogs, activityLogs, Dashboard, dashboard, Directory, Groups, groups,
 	Machines, machines, Devices, devices, Mechanisms, mechanisms, MenuItemPaths,
-	Policies, policies, productNames, settings, Settings, TecBIO, TecTANGO, Users, users, TecTango, TecBio
+	Policies, policies, productNames, account, Settings, TecBIO, TecTANGO, Users, users, TecTango, TecBio, Account
 } from "../../constants";
 import { Store } from "../../Store";
 
@@ -62,8 +62,8 @@ const commonProductItems = [
 
 const settingsItems = [
     {
-        label: Settings,
-        key: settings,
+        label: Account,
+        key: account,
         icon: <SettingOutlined />
     }
 ];
