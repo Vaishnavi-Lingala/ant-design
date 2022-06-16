@@ -16,7 +16,7 @@ import { openNotification } from '../Layout/Notification';
 import ProtectedRoute from '../ProtectedRoute';
 import ApiUrls from '../../ApiUtils';
 import ApiService from '../../Api.service';
-import { CARD_ENROLL, KIOSK, PASSWORD, PIN, TecTANGO } from '../../constants';
+import { CardEnrollmentPolicyDescription, CARD_ENROLL, KIOSK, KioskPolicyDescription, PASSWORD, PasswordPolicyDescription, PIN, PinPolicyDescription, TecTANGO } from '../../constants';
 import { Store } from '../../Store';
 
 export default function Policies() {
@@ -505,7 +505,7 @@ export default function Policies() {
 					<TabPane tab="Pin" key="pin">
 						{window.location.pathname.split('/').length === 6 ?
 							<ProtectedRoute path={`/product/${localStorage.getItem("productId")}/policies/pin/:id`} component={PinPolicy} /> :
-							<TableList policy_type={PIN}
+							<TableList policy_type={PIN} policy_description={PinPolicyDescription}
 								activateColumns={activateColumns} deActivateColumns={deActivateColumns} draggableBodyRow={pinDraggableBodyRow}
 								draggableContainer={pinDraggableContainer} inActivePolicies={inActivePinPolicies} activePolicies={activePinPolicies}
 								handleGetPolicies={handleGetPolicies}
@@ -515,7 +515,7 @@ export default function Policies() {
 					<TabPane tab="Password" key="password">
 						{window.location.pathname.split('/').length === 6 ?
 							<ProtectedRoute path={`/product/${localStorage.getItem("productId")}/policies/password/:id`} component={PasswordPolicy} /> :
-							<TableList policy_type={PASSWORD} activateColumns={activateColumns} deActivateColumns={deActivateColumns}
+							<TableList policy_type={PASSWORD} policy_description={PasswordPolicyDescription} activateColumns={activateColumns} deActivateColumns={deActivateColumns}
 								draggableBodyRow={passwordDraggableBodyRow} draggableContainer={passwordDraggableContainer}
 								inActivePolicies={inActivepasswordPolicies} activePolicies={activePasswordPolicies} handleGetPolicies={handleGetPolicies}
 							/>
@@ -524,7 +524,7 @@ export default function Policies() {
 					<TabPane tab="Kiosk" key="kiosk">
 						{window.location.pathname.split('/').length === 6 ?
 							<ProtectedRoute path={`/product/${localStorage.getItem("productId")}/policies/kiosk/:id`} component={KioskPolicy} /> :
-							<TableList policy_type={KIOSK} activateColumns={activateColumns} deActivateColumns={deActivateColumns}
+							<TableList policy_type={KIOSK} policy_description={KioskPolicyDescription} activateColumns={activateColumns} deActivateColumns={deActivateColumns}
 								draggableBodyRow={kioskDraggableBodyRow} draggableContainer={kioskDraggableContainer}
 								inActivePolicies={inActiveKioskPolicies} activePolicies={activeKioskPolicies} handleGetPolicies={handleGetPolicies}
 							/>
@@ -534,7 +534,7 @@ export default function Policies() {
 						<TabPane tab="Card Enrollment" key="card-enrollment">
 							{window.location.pathname.split('/').length === 6 ?
 								<ProtectedRoute path={`/product/${localStorage.getItem("productId")}/policies/card-enrollment/:id`} component={CardEnrollmentPolicy} /> :
-								<TableList policy_type={CARD_ENROLL} activateColumns={activateColumns} deActivateColumns={deActivateColumns}
+								<TableList policy_type={CARD_ENROLL} policy_description={CardEnrollmentPolicyDescription} activateColumns={activateColumns} deActivateColumns={deActivateColumns}
 									draggableBodyRow={CardEnrollmentDraggableBodyRow} draggableContainer={CardEnrollmentDraggableContainer}
 									inActivePolicies={inActiveCardEnrollmentPolicies} activePolicies={activeCardEnrollmentPolicies} handleGetPolicies={handleGetPolicies}
 								/>

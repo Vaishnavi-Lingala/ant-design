@@ -11,7 +11,7 @@ import ApiUrls from "../../ApiUtils";
 import ApiService from "../../Api.service";
 import { CARD_ENROLL, KIOSK, PASSWORD, PIN, policyDisplayNames } from "../../constants";
 
-function TableList({ handleGetPolicies, policy_type, activateColumns, activePolicies, draggableContainer, draggableBodyRow, deActivateColumns, inActivePolicies }) {
+function TableList({ handleGetPolicies, policy_type, policy_description, activateColumns, activePolicies, draggableContainer, draggableBodyRow, deActivateColumns, inActivePolicies }) {
     const [isModal, setIsModal] = useState(false);
     const pinData = {
         description: '',
@@ -105,6 +105,7 @@ function TableList({ handleGetPolicies, policy_type, activateColumns, activePoli
                 >
                     Add {policyDisplayNames[policy_type]} Policy
                 </Button>
+                    <span  style={{ padding: '10px', color:'maroon', fontWeight:'700'}}>{policy_description}</span>
             </div>
 
             <div style={{
