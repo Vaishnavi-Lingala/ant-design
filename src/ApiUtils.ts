@@ -20,7 +20,8 @@ const Urls = {
     client_info: `client/info`,
     getProducts: `account/${accountId}/product`,
     stats:`account/${accountId}/stats`,
-    updateDomains: `account/${accountId}/domains`,
+    domains: `account/${accountId}/domains`,
+    info: `account/${accountId}/info`,
 
     //Device Urls
     devices: `account/${accountId}/devices`,

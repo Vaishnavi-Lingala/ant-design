@@ -57,7 +57,7 @@ export default function AddGroup(props: any) {
             <div style={{ width: '100%', border: '1px solid #D7D7DC', borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6' }}>
                 <Button type='primary' size='large' onClick={showModal}>Add New {props.type.slice(0, 1).toUpperCase() + props.type.slice(1).toLowerCase()} Group</Button>
             </div>
-            <Modal closeIcon={<Button><CloseOutlined /></Button>} title={<Title level={2}>Add Group</Title>} visible={isModalVisible} onOk={handleOk} onCancel={handleCancel} width={500}
+            <Modal closeIcon={<Button icon={<CloseOutlined />}></Button>} title={<Title level={2}>Add Group</Title>} visible={isModalVisible} onOk={handleOk} onCancel={handleCancel} width={500}
                 footer={[
                     <Button key="cancel" onClick={handleCancel}>
                         Cancel
