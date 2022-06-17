@@ -12,7 +12,6 @@ export function Enrollments() {
     const [loadingDetails, setLoadingDetails] = useState(false);
     const [page, setPage]: any = useState(1);
     const [pageSize, setPageSize]: any = useState(10);
-    // const [columns, setColumns]: any = useState([]);
     const columns = [
         { title: "Instrument Id", dataIndex: "instrument_id", width: "25%" },
         {
