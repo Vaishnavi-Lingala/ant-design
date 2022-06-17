@@ -9,9 +9,9 @@ export default function ProtectedRoute({
     const { authState, oktaAuth } = useOktaAuth();
     const history = useHistory();
     console.log(oktaAuth);
-    console.log(oktaAuth.authStateManager._authState?.isAuthenticated);
-    console.log(oktaAuth.getIdToken());
-    console.log(oktaAuth.getAccessToken());
+    console.log(oktaAuth.authStateManager._authState?.isAuthenticated); //false
+    console.log(oktaAuth.getIdToken()); //undefined
+    console.log(oktaAuth.getAccessToken()); //undefined
     const oktaStorage = localStorage.getItem("okta-token-storage");
 
     function removeItems() {

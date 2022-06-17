@@ -3,13 +3,13 @@ import { useHistory } from "react-router-dom";
 import { Menu } from "antd";
 import Sider from "antd/lib/layout/Sider";
 import { ScanOutlined , UserOutlined, DesktopOutlined, TeamOutlined, SettingOutlined, PieChartOutlined,
-	AreaChartOutlined, SolutionOutlined, LockOutlined
+	AreaChartOutlined, SolutionOutlined, LockOutlined, GlobalOutlined
 } from '@ant-design/icons';
 
 import {
 	ActivityLogs, activityLogs, Dashboard, dashboard, Directory, Groups, groups,
 	Machines, machines, Devices, devices, Mechanisms, mechanisms, MenuItemPaths,
-	Policies, policies, productNames, account, Settings, TecBIO, TecTANGO, Users, users, TecTango, TecBio, Account
+	Policies, policies, productNames, account, Settings, TecBIO, TecTANGO, Users, users, TecTango, TecBio, Account, Domain, domain
 } from "../../constants";
 import { Store } from "../../Store";
 
@@ -65,6 +65,11 @@ const settingsItems = [
         label: Account,
         key: account,
         icon: <SettingOutlined />
+    },
+	{
+        label: Domain,
+        key: domain,
+        icon: <GlobalOutlined />
     }
 ];
 

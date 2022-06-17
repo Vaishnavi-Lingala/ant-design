@@ -206,6 +206,7 @@ export const Policies = "Policies";
 export const ActivityLogs = "Activity Logs";
 export const Devices = "Devices";
 export const Account = "Account";
+export const Domain = "Domains";
 
 // Sidebar item keys
 export const dashboard = "dashboard";
@@ -217,6 +218,7 @@ export const mechanisms = "mechanism";
 export const policies = "policies";
 export const activityLogs = "activitylogs";
 export const account = "account";
+export const domain = "domains";
 
 // Policy types
 export const PIN = "PIN";

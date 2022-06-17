@@ -67,6 +67,7 @@ export default function FiltersModal({ onFilterApply, onResetClick }) {
         });
 
         const reducedOptimisedFiltersObj = optimisedFiltersObj.reduce(
+            //@ts-ignore
             (r, c) => Object.assign(r, c),
             {}
         );

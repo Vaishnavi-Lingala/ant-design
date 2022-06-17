@@ -25,6 +25,7 @@ import StoreProvider from "./Store";
 import Devices from "./components/Devices/Devices";
 import Device from "./components/Devices/Device";
 import { User } from "./components/Users/User";
+import Domains from "./components/Domains/Domains";
 
 const oktaAuth = new OktaAuth(config.oidc);
 
@@ -56,6 +57,7 @@ function App() {
                     <ProtectedRoute path={`/product/:productId/mechanism`} exact component={Mechanisms} />
                     <ProtectedRoute path={`/product/:productId/mechanism/:id`} component={Mechanism} />
                     <ProtectedRoute path={`/account`} component={Settings} />
+                    <ProtectedRoute path={`/domains`} component={Domains} />
                     <ProtectedRoute path={`/groups`} component={Groups} />
                     <ProtectedRoute path={`/users`} component={Users} />
                     <ProtectedRoute path={`/machines`} exact component={Machines} />
