@@ -53,7 +53,7 @@ function AppHeader() {
     }, [])
 
     function getProducts() {
-        ApiService.get(ApiUrls.getProducts)
+        ApiService.get(ApiUrls.products)
             .then(data => {
                 var object = {};
                 for (var i = 0; i < data.length; i++) {

@@ -18,7 +18,7 @@ export function getCredentiTokenHeaders() {
 
 const Urls = {
     client_info: `client/info`,
-    getProducts: `account/${accountId}/product`,
+    products: `account/${accountId}/product`,
     stats:`account/${accountId}/stats`,
     domains: `account/${accountId}/domains`,
     info: `account/${accountId}/info`,
@@ -28,10 +28,14 @@ const Urls = {
     device: (uid) => `account/${accountId}/devices/${uid}`,
     addDevice: `account/${accountId}/devices`,
     deviceOptions: `account/${accountId}/devices/options`,
+    deviceFilterableFields: `account/${accountId}/devices/filterable-fields`,
+    deviceFilter: `account/${accountId}/devices/filter`,
 
     //Machine Urls
     machines: `account/${accountId}/machines`,
     machineDetails: (uid) =>  `account/${accountId}/machines/${uid}`,
+    machineFilterableFields: `account/${accountId}/machines/filterable-fields`,
+    machineFilter: `account/${accountId}/machines/filter`,
 
     // Users Urls
     userGroups: (uid) => `account/${accountId}/users/${uid}/groups`,
@@ -40,6 +44,8 @@ const Urls = {
     changeUserStatus: (uid) =>  `account/${accountId}/users/${uid}/lifecycle`,
     lifeCycleOptions: `account/${accountId}/users/lifecycle/options`,
     enrollments: (uid) => `account/${accountId}/users/${uid}/enrollments`,
+    userFilterableFields: `account/${accountId}/users/filterable-fields`,
+    userFilter: `account/${accountId}/users/filter`,
 
     // Groups Urls
     group: (uid) => `account/${accountId}/groups/${uid}`,
@@ -48,6 +54,8 @@ const Urls = {
     usersNotInGroup: (uid) => `account/${accountId}/groups/${uid}/users-not-in-group`,
     groupMachines: (uid) => `account/${accountId}/group/${uid}/machines` ,
     machinesNotInGroup: (uid) => `account/${accountId}/group/${uid}/machines-not-in-group`,
+    groupFilterableFields: `account/${accountId}/groups/filterable-fields`,
+    groupFilter: `account/${accountId}/groups/filter`,
 
     // Policy Urls
     policies: `account/${accountId}/product/${productId}/auth-policies`,

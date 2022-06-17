@@ -5,12 +5,14 @@ import { CloseOutlined } from "@ant-design/icons";
 import { openNotification } from "../Layout/Notification";
 import ApiUrls from '../../ApiUtils';
 import ApiService from "../../Api.service";
+import GroupFiltersModal from "./GroupFilterModel";
 
 export default function AddGroup(props: any) {
     const [loading, setLoading] = useState(false);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const { Title } = Typography;
     const { TextArea } = Input;
+    const [advancedFilters, setAdvancedFilters] = useState({});
     const [newGroup, setNewGroup] = useState({
         'name': '',
         'description': '',
@@ -52,10 +54,30 @@ export default function AddGroup(props: any) {
         setIsModalVisible(false);
     };
 
+    var type: any = [];
+    type.push(props.type);
+
+    const applyAdvancedFilters = (filters) => {
+        filters["group_type"] = type; 
+        setAdvancedFilters(filters)
+    };
+
+    const resetFilters = () => {
+        setAdvancedFilters({group_type: type})
+        props.getGroupsByFilter({ group_type: type });
+    };
+
     return (
         <>
-            <div style={{ width: '100%', border: '1px solid #D7D7DC', borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6' }}>
+            <div style={{ width: '100%', border: '1px solid #D7D7DC', borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6', display: 'flex' }}>
                 <Button type='primary' size='large' onClick={showModal}>Add New {props.type.slice(0, 1).toUpperCase() + props.type.slice(1).toLowerCase()} Group</Button>
+                <div style={{ position: "relative", left: 470, top: 13 }}>
+                    <GroupFiltersModal
+                        getGroups={props.getGroupsByFilter}
+                        onFilterApply={applyAdvancedFilters}
+                        onResetClick={resetFilters}
+                    />
+                </div>
             </div>
             <Modal closeIcon={<Button icon={<CloseOutlined />}></Button>} title={<Title level={2}>Add Group</Title>} visible={isModalVisible} onOk={handleOk} onCancel={handleCancel} width={500}
                 footer={[
