@@ -1,13 +1,16 @@
 import { useEffect, useState } from "react";
 import { Button, Dropdown, Menu, Skeleton, Table, Tooltip } from "antd";
-import { BarsOutlined, MoreOutlined } from "@ant-design/icons"
+import { MoreOutlined } from "@ant-design/icons"
 
 import { AddUser } from "./AddUser";
 import { User } from "./User";
 import { openNotification } from "../Layout/Notification";
 import ApiUrls from '../../ApiUtils';
 import ApiService from "../../Api.service";
-import {useHistory} from "react-router-dom";
+import { useHistory } from "react-router-dom";
+import moment from "moment";
+import { date_display_format, time_format } from "../../constants";
+import SubMenu from "antd/lib/menu/SubMenu";
 
 export default function Users() {
 	const [userDetails, setUserDetails]: any = useState(undefined);
@@ -42,32 +45,30 @@ export default function Users() {
 			dataIndex: 'status'
 		},
 		{
-			title: 'Details',
-			dataIndex: 'details',
-			render: (text: any, record: { uid: any; user_name: any }) => (
-				<Tooltip title="View">
-					<Button icon={<BarsOutlined />} onClick={() => history.push(`/user/${record.uid}/profile`)} />
-
-				</Tooltip>
-			)
+			title: 'Last Login Time',
+			render: (text, record) => <>{record.last_login_ts !== null ? moment.utc((record.last_login_ts)).local().format(`${date_display_format} ${time_format}`) : null}</>
 		},
 		{
 			title: 'Actions',
 			dataIndex: 'actions',
 			render: (text: any, record: { uid: any; user_name: any }) => (
 				<Dropdown overlay={
-					<Menu key={"changeStatus"} title={"Change Status"} >
-						{
-							statusList.map(item => {
-								return <Menu.Item key={item.key} onClick={({ key }) => { changeUserStatus(key, record.uid, record.user_name) }}>
-									{item.value}
-								</Menu.Item>
-							})
-						}
+					<Menu key="actions">
+						<Menu.Item key="view" onClick={() => history.push(`/user/${record.uid}/profile`)}>View</Menu.Item>
+						<SubMenu key={"changeStatus"} title={"Change Status"} >
+							{
+								statusList.map(item => {
+									return <Menu.Item key={item.key} onClick={({ key }) => { changeUserStatus(key, record.uid, record.user_name) }}>
+										{item.value}
+									</Menu.Item>
+								})
+							}
+						</SubMenu>
 					</Menu>
+
 				}>
 					{
-						<Tooltip title="Change status">
+						<Tooltip title="Actions">
 							<Button icon={<MoreOutlined />} onClick={e => e.preventDefault()} />
 
 						</Tooltip>
