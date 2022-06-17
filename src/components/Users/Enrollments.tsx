@@ -111,7 +111,7 @@ export function Enrollments() {
         let statusObj = {
             status: status
         }
-        let result = await ApiService.post(ApiUrls.changeEnrollmentStatus(userId, enrollmentId), statusObj)
+        let result = await ApiService.put(ApiUrls.changeEnrollmentStatus(userId, enrollmentId), statusObj)
             .then(data => {
                 console.log(`output result: ${JSON.stringify(data)}`)
                 openNotification('success', `Status  has been updated successfully with ${status.toLowerCase()}.`);
