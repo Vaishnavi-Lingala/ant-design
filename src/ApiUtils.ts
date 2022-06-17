@@ -40,6 +40,8 @@ const Urls = {
     changeUserStatus: (uid) =>  `account/${accountId}/users/${uid}/lifecycle`,
     lifeCycleOptions: `account/${accountId}/users/lifecycle/options`,
     enrollments: (uid) => `account/${accountId}/users/${uid}/enrollments`,
+    changeEnrollmentStatus: (uid, enrollmentId) =>  `account/${accountId}/users/${uid}/enrollments/${enrollmentId}`,
+    getEnrollmentStatusOptions: `account/${accountId}/users/card-status-options`,
 
     // Groups Urls
     group: (uid) => `account/${accountId}/groups/${uid}`,

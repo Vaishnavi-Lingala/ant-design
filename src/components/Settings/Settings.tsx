@@ -8,7 +8,7 @@ import Hint from '../Controls/Hint';
 import { openNotification } from '../Layout/Notification';
 import ApiUrls from '../../ApiUtils';
 import ApiService from '../../Api.service';
-import { Account, settingsFieldNames, settingsIdpFields, settingsTokenNames } from '../../constants';
+import { Account, accountBillingContact, accountTechnicalContact, settingsFieldNames, settingsIdpFields, settingsTokenNames } from '../../constants';
 
 function Settings() {
     const [loading, setLoading] = useState(false);
@@ -117,6 +117,42 @@ function Settings() {
                         Object.keys(settingsFieldNames).map(key =>
                             <DisplayField
                                 displayName={settingsFieldNames[key]}
+                                value={settings[key]}
+                                key={key}
+                            />
+                        )
+                    }
+
+                    <Divider style={{ borderTop: '1px solid #d7d7dc' }} />
+                    <div style={{ width: "50%", display: "flex", marginBottom: "10px" }}>
+                        <b>
+                            Billing Contact
+                        </b>
+                    </div>
+
+                    {
+                        Object.keys(accountBillingContact).map(key =>
+                            <DisplayField
+                                displayName={accountBillingContact[key]}
+                                value={settings[key]}
+                                key={key}
+                            />
+                        )
+                    }
+
+
+                    <Divider style={{ borderTop: '1px solid #d7d7dc' }} />
+
+                    <div style={{ width: "50%", display: "flex", marginBottom: "10px" }}>
+                        <b>
+                            Technical Contact
+                        </b>
+                    </div>
+
+                    {
+                        Object.keys(accountTechnicalContact).map(key =>
+                            <DisplayField
+                                displayName={accountTechnicalContact[key]}
                                 value={settings[key]}
                                 key={key}
                             />
