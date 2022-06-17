@@ -42,7 +42,7 @@ export function Enrollments() {
                         }
                     </Menu>}>
                     {
-						<Tooltip title="Actions">
+						<Tooltip title="Change status">
 							<Button icon={<MoreOutlined/>} onClick={e => e.preventDefault()} />
 
 						</Tooltip>
