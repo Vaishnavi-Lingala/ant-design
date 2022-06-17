@@ -26,7 +26,7 @@ function TableList({ groupType, getGroups, columns, standardMachineGroups, getPa
     }
 
     const updateColumnTitle = () => {
-        columns[1].title = groupType === 'USER' ? 'Users count' : 'Machines count'
+        columns[1].title = groupType === 'USER' ? 'User count' : 'Machine count'
         return null;
     }
 
