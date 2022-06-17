@@ -43,6 +43,7 @@ pipelines:
                 DEBUG: "true"
       test:
       - step:
+          deployment: test
           services:
             - docker
           size: 2x
