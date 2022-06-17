@@ -24,8 +24,15 @@ function TableList({ groupType, getGroups, columns, standardMachineGroups, getPa
         }
         getGroups(params);
     }
+
+    const updateColumnTitle = () => {
+        columns[1].title = groupType === 'USER' ? 'Users count' : 'Machines count'
+        return null;
+    }
+
     return <>
         <AddGroup onGroupCreate={() => getGroups(params)} type={groupType} />
+        {updateColumnTitle()}
         <Table
             style={{ border: '1px solid #D7D7DC' }}
             showHeader={true}
