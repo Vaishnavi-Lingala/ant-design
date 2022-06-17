@@ -174,6 +174,19 @@ export const settingsIdpFields = {
     idp_app_oidc_client_id: "App OIDC Client ID"
 }
 
+
+export const accountBillingContact = {
+    billing_contact_first_name: 'First name',
+    billing_contact_last_name: 'Last name',
+    billing_contact_email: 'Email'
+}
+
+export const accountTechnicalContact = {
+    technical_contact_first_name: 'First name',
+    technical_contact_last_name: 'Last name',
+    technical_contact_email: 'Email'
+}
+
 export const settingsTokenNames = {
     admin_token: "Admin Token",
     install_token: "Install Token",
