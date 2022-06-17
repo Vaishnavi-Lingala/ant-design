@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Button, Dropdown, Menu, Skeleton, Table, Tooltip } from "antd";
-import { MoreOutlined } from "@ant-design/icons"
+import { Button, Dropdown, Menu, Skeleton, Table, Tooltip, Row, Col } from "antd";
+import { MoreOutlined, BarsOutlined } from "@ant-design/icons"
 
 import { AddUser } from "./AddUser";
 import { User } from "./User";
@@ -26,54 +26,70 @@ export default function Users() {
 	const columns = [
 		{
 			title: 'First Name',
-			dataIndex: 'first_name'
+			dataIndex: 'first_name',
+			width: '15%'
 		},
 		{
 			title: 'Last Name',
-			dataIndex: 'last_name'
+			dataIndex: 'last_name',
+			width: '15%'
 		},
 		{
 			title: 'Email',
-			dataIndex: 'email'
+			dataIndex: 'email',
+			width: '15%'
 		},
 		{
 			title: 'Username',
-			dataIndex: 'user_name'
+			dataIndex: 'user_name',
+			width: '10%'
 		},
 		{
 			title: 'Status',
-			dataIndex: 'status'
+			dataIndex: 'status',
+			width: '10%'
 		},
 		{
 			title: 'Last Login Time',
+			width: '20%',
 			render: (text, record) => <>{record.last_login_ts !== null ? moment.utc((record.last_login_ts)).local().format(`${date_display_format} ${time_format}`) : null}</>
 		},
 		{
 			title: 'Actions',
 			dataIndex: 'actions',
+			width: '15%',
 			render: (text: any, record: { uid: any; user_name: any }) => (
-				<Dropdown overlay={
-					<Menu key="actions">
-						<Menu.Item key="view" onClick={() => history.push(`/user/${record.uid}/profile`)}>View</Menu.Item>
-						<SubMenu key={"changeStatus"} title={"Change Status"} >
-							{
-								statusList.map(item => {
-									return <Menu.Item key={item.key} onClick={({ key }) => { changeUserStatus(key, record.uid, record.user_name) }}>
-										{item.value}
-									</Menu.Item>
-								})
-							}
-						</SubMenu>
-					</Menu>
-
-				}>
-					{
-						<Tooltip title="Actions">
-							<Button icon={<MoreOutlined />} onClick={e => e.preventDefault()} />
+				<Row>
+					<Col span= {12}>
+						<Tooltip title="View">
+							<Button icon={<BarsOutlined />} onClick={() => history.push(`/user/${record.uid}/profile`)} />
 
 						</Tooltip>
-					}
-				</Dropdown>
+					</Col>
+					<Col span= {12}>
+						<Dropdown overlay={
+							<Menu key={"changeStatus"} title={"Change Status"} >
+								{
+									statusList.map(item => {
+										return <Menu.Item key={item.key} onClick={({ key }) => { changeUserStatus(key, record.uid, record.user_name) }}>
+											{item.value}
+										</Menu.Item>
+									})
+								}
+							</Menu>
+						}>
+							{
+								<Tooltip title="Change status">
+									<Button icon={<MoreOutlined />} onClick={e => e.preventDefault()} />
+
+								</Tooltip>
+							}
+						</Dropdown>
+					</Col>
+					
+				</Row>
+				
+				
 			)
 		}
 	];

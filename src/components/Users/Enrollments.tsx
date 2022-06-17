@@ -113,10 +113,13 @@ export function Enrollments() {
         }
         let result = await ApiService.put(ApiUrls.changeEnrollmentStatus(userId, enrollmentId), statusObj)
             .then(data => {
-                console.log(`output result: ${JSON.stringify(data)}`)
-                openNotification('success', `Status  has been updated successfully with ${status.toLowerCase()}.`);
-                console.log(`Enrollment Status is updated successfully with ${status}.`);
-                getEnrollments();
+                if (!data.errorSummary) {
+                    openNotification('success', `Status  has been updated successfully with ${status.toLowerCase()}.`);
+                    setEnrollments(data);
+                } else {
+                    openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
+                }
+                
             })
             .catch(error => {
                 console.error('Error: ', error);
