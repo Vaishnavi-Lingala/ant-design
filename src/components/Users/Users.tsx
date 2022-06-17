@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Button, Dropdown, Menu, Skeleton, Table, Tooltip } from "antd";
-import { BarsOutlined, MoreOutlined } from "@ant-design/icons"
+import { MoreOutlined } from "@ant-design/icons"
 
 import { AddUser } from "./AddUser";
 import { User } from "./User";
@@ -48,16 +48,6 @@ export default function Users() {
 			title: 'Last Login Time',
 			render: (text, record) => <>{record.last_login_ts !== null ? moment.utc((record.last_login_ts)).local().format(`${date_display_format} ${time_format}`) : null}</>
 		},
-		// {
-		// 	title: 'Details',
-		// 	dataIndex: 'details',
-		// 	render: (text: any, record: { uid: any; user_name: any }) => (
-		// 		<Tooltip title="View">
-		// 			<Button icon={<BarsOutlined />} onClick={() => history.push(`/user/${record.uid}/profile`)} />
-
-		// 		</Tooltip>
-		// 	)
-		// },
 		{
 			title: 'Actions',
 			dataIndex: 'actions',
