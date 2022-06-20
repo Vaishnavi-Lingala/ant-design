@@ -84,7 +84,7 @@ function Domains() {
                 <div className="content-container rounded-grey-border">
                     <div style={{ width: "100%", display: "flex", marginBottom: "10px" }}>
                         <div style={{ width: "50%" }}>
-                            <b>Domain(s):</b>
+                            <b>Domain(s) that users can login to:</b>
                         </div>
                         <div>
                             {
