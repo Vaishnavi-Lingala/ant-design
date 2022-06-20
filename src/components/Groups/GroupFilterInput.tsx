@@ -1,8 +1,8 @@
 import { FunctionComponent } from "react";
-import { Input, Row, Col, Select, Button } from "antd"
+import { Input, Row, Col, Select, Button } from "antd";
 import { DeleteOutlined } from '@ant-design/icons';
 
-import { filterableFieldNames } from "../../constants";
+import { groupFilterFieldNames } from "../../constants";
 
 interface FilterInputProps {
     filterInput: { field: string, value: string },
@@ -13,9 +13,8 @@ interface FilterInputProps {
     onCloseClick: () => void
 }
 
-const FilterInput: FunctionComponent<FilterInputProps> = (props: FilterInputProps) => {
+const GroupFilterInput: FunctionComponent<FilterInputProps> = (props: FilterInputProps) => {
     const { index, filterInput, filterableFields, onFilterFieldChange, onFilterValueChange, onCloseClick } = props;
-
     return (<Input.Group key={index}>
         <Row style={{ marginTop: "10px" }} gutter={10}>
             <Col span={9}>
@@ -33,7 +32,7 @@ const FilterInput: FunctionComponent<FilterInputProps> = (props: FilterInputProp
                 >
                     {filterableFields.map((d) => (
                         <Select.Option key={d} value={d}>
-                            {filterableFieldNames[d]}
+                            {groupFilterFieldNames[d]}
                         </Select.Option>
                     ))}
                 </Select>
@@ -64,4 +63,4 @@ const FilterInput: FunctionComponent<FilterInputProps> = (props: FilterInputProp
     </Input.Group>);
 }
 
-export default FilterInput;
+export default GroupFilterInput;

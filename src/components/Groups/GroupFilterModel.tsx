@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import { Button, Modal} from "antd";
 import Link from "antd/lib/typography/Link";
 
-import FilterInput from "./FilterInput";
 import ApiUtils from "../../ApiUtils";
 import ApiService from "../../Api.service";
+import GroupFilterInput from "./GroupFilterInput";
 
-export default function FiltersModal({ onFilterApply, onResetClick }) {
+export default function GroupFiltersModal({ type, getGroups, onFilterApply, onResetClick }) {
     const initialFilterInput = { field: "", value: "" };
     const [isVisible, setIsVisible] = useState(false);
     const [filterableFields, setFilterableFields] = useState([""]);
@@ -15,7 +15,7 @@ export default function FiltersModal({ onFilterApply, onResetClick }) {
 
     useEffect(() => {
         (async function () {
-            var response = await ApiService.get(ApiUtils.filterableFields);
+            var response = await ApiService.get(ApiUtils.groupFilterableFields);
             setFilterableFields([...response]);
         })();
     }, []);
@@ -71,7 +71,9 @@ export default function FiltersModal({ onFilterApply, onResetClick }) {
             (r, c) => Object.assign(r, c),
             {}
         );
+        console.log(reducedOptimisedFiltersObj);
         onFilterApply(reducedOptimisedFiltersObj);
+        getGroups(reducedOptimisedFiltersObj, {group_type: type, start: 1, limit: 10});
     };
 
     return (
@@ -110,7 +112,7 @@ export default function FiltersModal({ onFilterApply, onResetClick }) {
                 </Button>
 
                 {filterInputs.map((filterInput, index) => (
-                    <FilterInput
+                    <GroupFilterInput
                         key={index}
                         filterableFields={filterableFields}
                         filterInput={filterInput}

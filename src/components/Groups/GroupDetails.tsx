@@ -22,16 +22,25 @@ export default function GroupDetails(props: any) {
 
     const columns = [
         {
-            title: 'Name',
-            dataIndex: 'user_name',
-            width: '30%'
-        },
-        {
-            title: 'Email',
-            dataIndex: 'email',
-            width: '40%'
-        }
-
+			title: 'First Name',
+			dataIndex: 'first_name'
+		},
+		{
+			title: 'Last Name',
+			dataIndex: 'last_name'
+		},
+		{
+			title: 'Email',
+			dataIndex: 'email'
+		},
+		{
+			title: 'Username',
+			dataIndex: 'user_name'
+		},
+		{
+			title: 'Status',
+			dataIndex: 'status'
+		}
     ];
 
     const handleOk = (selectedUsers, action) => {
@@ -97,6 +106,7 @@ export default function GroupDetails(props: any) {
                     user.key = user.uid;
                 })
                 setUsers(data[0].results);
+                console.log(data[0].results);
                 setTotalItems(data[0].total_items);
 
                 if (!data[1].errorSummary) {
