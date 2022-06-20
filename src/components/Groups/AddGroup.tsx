@@ -54,17 +54,13 @@ export default function AddGroup(props: any) {
         setIsModalVisible(false);
     };
 
-    var type: any = [];
-    type.push(props.type);
-
     const applyAdvancedFilters = (filters) => {
-        filters["group_type"] = type; 
         setAdvancedFilters(filters)
     };
 
     const resetFilters = () => {
-        setAdvancedFilters({group_type: type})
-        props.getGroupsByFilter({ group_type: type });
+        setAdvancedFilters({})
+        props.getGroupsByFilter({}, { group_type: props.type, start: 1, limit: 10 });
     };
 
     return (
@@ -73,6 +69,7 @@ export default function AddGroup(props: any) {
                 <Button type='primary' size='large' onClick={showModal}>Add New {props.type.slice(0, 1).toUpperCase() + props.type.slice(1).toLowerCase()} Group</Button>
                 <div style={{ position: "relative", left: 470, top: 13 }}>
                     <GroupFiltersModal
+                        type={props.type}
                         getGroups={props.getGroupsByFilter}
                         onFilterApply={applyAdvancedFilters}
                         onResetClick={resetFilters}

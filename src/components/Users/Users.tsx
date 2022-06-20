@@ -12,6 +12,7 @@ import {useHistory} from "react-router-dom";
 export default function Users() {
 	const [userDetails, setUserDetails]: any = useState(undefined);
 	const [loadingDetails, setLoadingDetails] = useState(true);
+	const [tableLoading, setTableLoading] = useState(false);
 	const [arr, setArr]: any = useState([]);
 	const [page, setPage]: any = useState(1);
 	const [pageSize, setPageSize]: any = useState(10);
@@ -106,7 +107,7 @@ export default function Users() {
 
 	useEffect(() => {
 		if (lifeCycleTypes) {
-			getUsersList(page, pageSize);
+			getUsersList({}, {start: page, limit: pageSize});
 		}
 	}, [lifeCycleTypes])
 
@@ -120,9 +121,23 @@ export default function Users() {
 		}
 	}
 
-	const getUsersList = async (page, pageSize) => {
+	const getUsersByFilter = async (object = {}, params={}) => {
+		setTableLoading(true);
+		let data = await ApiService.post(ApiUrls.userFilter, object, params).catch(error => {
+			console.error('Error: ', error);
+			openNotification('error', 'An Error has occured with getting User Lists by Page');
+		}).finally(() => {
+			setTableLoading(false);
+		});
+		const updatedUsers = updateUsersListWithStatusAndKey(data.results);
+		console.log(updatedUsers);
+		setArr(updatedUsers);
+		setTotalItems(data.total_items);
+	}
+
+	const getUsersList = async (object = {}, params={}) => {
 		setLoadingDetails(true);
-		let data = await ApiService.get(ApiUrls.users, { start: page, limit: pageSize }).catch(error => {
+		let data = await ApiService.post(ApiUrls.userFilter, object, params).catch(error => {
 			console.error('Error: ', error);
 			openNotification('error', 'An Error has occured with getting User Lists by Page');
 		}).finally(() => {
@@ -135,7 +150,12 @@ export default function Users() {
 	}
 
 	const getUpdatedUsersList = () => {
-		getUsersList(page, pageSize);
+		const params = {
+			start: page, 
+			limit: pageSize
+		}
+
+		getUsersList({}, params);
 	}
 
 	const updateUsersListWithStatusAndKey = (usersList) => {
@@ -174,8 +194,9 @@ export default function Users() {
 
 			<Skeleton loading={loadingDetails}>
 				{window.location.pathname.split('/').length !== 2 ? <User></User> : <>
-					<AddUser onUserCreate={getUpdatedUsersList}></AddUser>
+					<AddUser getUsersByFilter={getUsersByFilter} onUserCreate={getUpdatedUsersList}></AddUser>
 					<Table
+						loading={tableLoading}
 						style={{ border: '1px solid #D7D7DC' }}
 						showHeader={true}
 						columns={columns}
@@ -188,7 +209,7 @@ export default function Users() {
 							onChange: (page, pageSize) => {
 								setPage(page);
 								setPageSize(pageSize);
-								getUsersList(page, pageSize);
+								getUsersList({}, {start: page, limit: pageSize});
 							}
 						}}
 					/>

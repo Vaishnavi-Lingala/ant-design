@@ -1,5 +1,5 @@
 import { Table } from "antd";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import AddGroup from "./AddGroup";
 
@@ -9,21 +9,21 @@ function TableList({ tableLoading, getGroupsByFilter, groupType, getGroups, colu
     const [totalItems, setTotalItems] = useState(getTotalItems);
 
     const params = {
-        group_type: [groupType],
+        group_type: groupType,
         start: page,
         limit: pageSize
     }
 
     function onGroupsPageChange(page, pageSize) {
         const params = {
-            group_type: [groupType],
+            group_type: groupType,
             start: page,
             limit: pageSize
         }
-        getGroups(params);
+        getGroups({}, params);
     }
     return <>
-        <AddGroup getGroupsByFilter={getGroupsByFilter} onGroupCreate={() => getGroups(params)} type={groupType} />
+        <AddGroup getGroupsByFilter={getGroupsByFilter} onGroupCreate={() => getGroups({}, params)} type={groupType} />
         <Table
             loading={tableLoading}
             style={{ border: '1px solid #D7D7DC' }}

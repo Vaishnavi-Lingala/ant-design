@@ -47,17 +47,23 @@ export default function Groups() {
     var type: any = [];
     type.push(window.location.pathname.split('/').length === 2 ? "USER" : window.location.pathname.split('/')[2].toUpperCase()); 
 
+    const params = {
+        group_type: type, 
+        start: page,
+        limit: pageSize
+    }
+
     useEffect(() => {
         if (window.location.pathname.split('/').length === 2) {
             history.push("/groups/user")
         }
 
-        getGroups({ group_type: type});
+        getGroups({}, params);
     }, [])
 
-    function getGroupsByFilter(param = {}){
+    function getGroupsByFilter(object = {}, param = {}){
         setTableLoading(true);
-        ApiService.post(ApiUrls.groupFilter, param)
+        ApiService.post(ApiUrls.groupFilter, object, param)
             .then(data => {
                 setPage(data.page);
                 setPageSize(data.items_per_page);
@@ -89,9 +95,9 @@ export default function Groups() {
             })
     }
 
-    function getGroups(param = {}) {
+    function getGroups(object = {}, param = {}) {
         setLoadingDetails(true);
-        ApiService.post(ApiUrls.groupFilter, param)
+        ApiService.post(ApiUrls.groupFilter, object, param)
             .then(data => {
                 setPage(data.page);
                 setPageSize(data.items_per_page);
@@ -127,9 +133,11 @@ export default function Groups() {
         var type: any = [];
         type.push(key.toUpperCase());
         const param = {
-            group_type: type
+            group_type: type, 
+            start: page,
+            limit: pageSize
         }
-        getGroups(param);
+        getGroups({}, param);
         history.push('/groups/' + key);
         console.log('Group type: ', key);
     }

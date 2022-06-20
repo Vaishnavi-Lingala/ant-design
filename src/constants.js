@@ -171,6 +171,32 @@ export const settingsFieldNames = {
     zip: "Zip"
 }
 
+export const userFilterFieldNames = {
+    first_name: "First Name",
+    last_name: "Last Name",
+    email: "Email",
+    user_name: "User Name",
+    status: "Status"
+}
+
+export const machineFilterFieldNames = {
+    machine_name: "Machine Name",
+    last_known_ip: "Last Known IP",
+    type: "Type"
+}
+
+export const DeviceFilterFieldNames = {
+    vendor: "Vendor",
+    device_name: "Device Name",
+    device_type: "Device Type",
+    serial_number: "Serial Number",
+    blocked: "Blocked"
+}
+
+export const groupFilterFieldNames = {
+    name: "Name"
+}
+
 export const settingsTokenNames = {
     admin_token: "Admin Token",
     install_token: "Install Token",

@@ -79,7 +79,7 @@ const Urls = {
 
     // Activity Log Urls
     activityLog: `account/${accountId}/product/${productId}/activitylog`,
-    filterableFields: `activitylog/filterable-fields`,
+    filterableFields: `account/${accountId}/activitylog/filterable-fields`,
 
     // Licenses
     licences: `account/${accountId}/license`

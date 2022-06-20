@@ -232,7 +232,13 @@ function Device(props: any) {
                     </div>
                     <div>
                         <Checkbox
-                            defaultChecked={displayDetails['device_name'] !== "" ? displayDetails['is_blocked'] : ""}
+                            defaultChecked={displayDetails['device_name'] !== "" ? displayDetails['is_blocked'] : false}
+                            onChange={(e) => {
+                                setEditData({
+                                    ...editData,
+                                    is_blocked: e.target.checked
+                                })
+                            }}
                             disabled={!isEdit}
                         />
                     </div>

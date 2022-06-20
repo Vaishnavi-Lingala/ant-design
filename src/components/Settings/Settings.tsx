@@ -90,7 +90,7 @@ function Settings() {
                                     &nbsp;
                                     <Button icon={<CopyOutlined />} onClick={() => {
                                         navigator.clipboard.writeText(settings[key])
-                                        openNotification('success', `${settingsTokenNames[key]} copied`)
+                                        openNotification('success', `${settingsTokenNames[key]} Copied`)
                                     }} />
                                 </div>
                             </div>

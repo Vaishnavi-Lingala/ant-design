@@ -4,9 +4,9 @@ import Link from "antd/lib/typography/Link";
 
 import ApiUtils from "../../ApiUtils";
 import ApiService from "../../Api.service";
-import GroupFilterInput from "./GroupFilterInput";
+import MachinesFilterInput from "./MachinesFilterInput";
 
-export default function GroupFiltersModal({ type, getGroups, onFilterApply, onResetClick }) {
+export default function MachinesFiltersModal({ getMachinesByFilter, onFilterApply, onResetClick }) {
     const initialFilterInput = { field: "", value: "" };
     const [isVisible, setIsVisible] = useState(false);
     const [filterableFields, setFilterableFields] = useState([""]);
@@ -15,7 +15,7 @@ export default function GroupFiltersModal({ type, getGroups, onFilterApply, onRe
 
     useEffect(() => {
         (async function () {
-            var response = await ApiService.get(ApiUtils.groupFilterableFields);
+            var response = await ApiService.get(ApiUtils.machineFilterableFields);
             setFilterableFields([...response]);
         })();
     }, []);
@@ -73,7 +73,7 @@ export default function GroupFiltersModal({ type, getGroups, onFilterApply, onRe
         );
         console.log(reducedOptimisedFiltersObj);
         onFilterApply(reducedOptimisedFiltersObj);
-        getGroups(reducedOptimisedFiltersObj, {group_type: type, start: 1, limit: 10});
+        getMachinesByFilter(reducedOptimisedFiltersObj, {});
     };
 
     return (
@@ -112,7 +112,7 @@ export default function GroupFiltersModal({ type, getGroups, onFilterApply, onRe
                 </Button>
 
                 {filterInputs.map((filterInput, index) => (
-                    <GroupFilterInput
+                    <MachinesFilterInput
                         key={index}
                         filterableFields={filterableFields}
                         filterInput={filterInput}

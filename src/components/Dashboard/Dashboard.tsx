@@ -41,14 +41,14 @@ export default function Dashboard() {
 
             <Skeleton loading={loadingDetails}>
                 {Object.keys(statsData).map(type => {
-                    return <div key={statsData[type].count}>
+                    return <div key={type.slice(0, type.length - 1)}>
                         <Card key={type} style={{ border: '1px solid #d7d7dc', width: '550px' }}>
                             <Statistic key={titles[type]}
                                 title={<div className="content-dashboard-key-header">{titles[type]}</div>} value={statsData[type].count}
                             />
 
                             <br />
-                            
+
                             <div className="overview-stat-container">
                                 {Object.keys(statsData[type].stats).map(key => {
                                     return <div key={key}>
@@ -57,7 +57,7 @@ export default function Dashboard() {
                                     </div>
                                 })}
                             </div>
-                            
+
                             <div style={{ textAlign: 'right' }}>
                                 Updated at {dateAndTime.slice(0, 15) + dateAndTime.slice(18)}
                             </div>
