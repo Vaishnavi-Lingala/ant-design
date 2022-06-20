@@ -116,7 +116,7 @@ export default function Machines() {
             <div className='content-header'>
                 <span>Machines</span>
             </div>
-            <div style={{ position: "relative", left: 700, top: -70 }}>
+            <div style={{ position: "relative", left: 700, top: -50 }}>
                 <MachinesFiltersModal
                     getMachinesByFilter={getMachinesByFilter}
                     onFilterApply={applyAdvancedFilters}
