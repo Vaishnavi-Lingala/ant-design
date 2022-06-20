@@ -11,55 +11,72 @@ import { openNotification } from "./Notification";
 import ApiUrls from '../../ApiUtils';
 import ApiService from "../../Api.service";
 import config from "../../config";
-import { Directory, MenuItemPaths, Products, Settings, TecBio, TecBIO, TecTango, TecTANGO } from "../../constants";
+import { Directory, MenuItemPaths, productNames, Products, Settings, TecBio, TecBIO, TecTango, TecTANGO } from "../../constants";
 import { Store } from "../../Store";
 
 const { SubMenu } = Menu;
 const { Header } = Layout;
 
-const headerItems = [
-    {
-        label: Directory,
-        key: Directory
-    },
-    {
-        label: Products,
-        key: Products,
-        children: [
-            {
-                label: TecTango,
-                key: TecTANGO
-            },
-            {
-                label: TecBio,
-                key: TecBIO
-            }
-        ]
-    },
-    {
-        label: Settings,
-        key: Settings
-    }
-];
-
 function AppHeader() {
+    let emptyObj = {};
     const history = useHistory();
     const [selectedMenuOption, setSelectedMenuOption] = useContext(Store);
     const { authState } = useOktaAuth();
-    const [products, setProducts]: any = useState([]);
+    const [products, setProducts] = useState(emptyObj);
+
+    const headerItemsInitialValue = [
+        {
+            label: Directory,
+            key: Directory
+        },
+        {
+            label: Products,
+            key: Products,
+            children: []
+        },
+        {
+            label: Settings,
+            key: Settings
+        }
+    ];
+
+    const [headerItems, setHeaderItems] = useState(headerItemsInitialValue);
 
     useEffect(() => {
         getProducts();
     }, [])
 
+    useEffect(() => {
+        if (products !== emptyObj) {
+            setHeaderItems(state => {
+                const values = state;
+                let productKeys = Object.keys(products);
+
+                values.forEach(value => {
+                    if (value.label === Products) {
+                        // @ts-ignore
+                        values[values.indexOf(value)].children = [...productKeys.map(productKey => {
+                            return {
+                                label: productNames[productKey],
+                                key: productKey
+                            }
+                        })];
+                    }
+                });
+                return JSON.parse(JSON.stringify(values));
+            });
+        }
+    }, [products]);
+
     function getProducts() {
         ApiService.get(ApiUrls.products)
             .then(data => {
-                var object = {};
+                var object = emptyObj;
                 for (var i = 0; i < data.length; i++) {
                     object[data[i].sku] = data[i].uid
                 }
-                setProducts(object);
+
+                setProducts({ ...object });
             })
             .catch((error) => {
                 console.error('Error: ', error);
@@ -98,22 +115,22 @@ function AppHeader() {
         console.log(e.key);
         console.log(MenuItemPaths[e.key]);
         switch (e.key) {
-			case Directory:
-				history.push(`${MenuItemPaths[e.key]}`);
-				break;
-			case Settings:
-				history.push(`${MenuItemPaths[e.key]}`);
-				break;
-			default:
-				history.push(`/product/${products[e.key]}${MenuItemPaths[e.key]}`);
+            case Directory:
+                history.push(`${MenuItemPaths[e.key]}`);
+                break;
+            case Settings:
+                history.push(`${MenuItemPaths[e.key]}`);
+                break;
+            default:
+                history.push(`/product/${products[e.key]}${MenuItemPaths[e.key]}`);
                 window.location.reload();
-		}
+        }
     }
 
     return (
         <Header className="header">
             <div className="logo">
-                <img src="../../Credenti_Logo.png" alt="Credenti TecConnect" width={150}/>
+                <img src="../../Credenti_Logo.png" alt="Credenti TecConnect" width={150} />
             </div>
 
             <Menu className="border-bottom-0" theme="light" mode="horizontal"

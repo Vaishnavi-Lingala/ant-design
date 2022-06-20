@@ -46,6 +46,8 @@ const Urls = {
     enrollments: (uid) => `account/${accountId}/users/${uid}/enrollments`,
     userFilterableFields: `account/${accountId}/users/filterable-fields`,
     userFilter: `account/${accountId}/users/filter`,
+    changeEnrollmentStatus: (uid, enrollmentId) =>  `account/${accountId}/users/${uid}/enrollments/${enrollmentId}`,
+    getEnrollmentStatusOptions: `account/${accountId}/users/card-status-options`,
 
     // Groups Urls
     group: (uid) => `account/${accountId}/groups/${uid}`,

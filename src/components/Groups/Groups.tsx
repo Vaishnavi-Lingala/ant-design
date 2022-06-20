@@ -30,6 +30,11 @@ export default function Groups() {
             width: '30%'
         },
         {
+            title: 'Count',
+            dataIndex: 'count',
+            width: '30%'
+        },
+        {
             title: 'Actions',
             dataIndex: 'actions',
             width: '40%',

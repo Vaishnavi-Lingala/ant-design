@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button, Modal, Table } from "antd";
-import { CloseOutlined } from "@ant-design/icons";
+import { CloseOutlined} from "@ant-design/icons";
 
 import CardEnrollmentPolicy from "./CardEnrollmentPolicy";
 import { KioskPolicy } from "./kioskPolicy";
@@ -11,7 +11,7 @@ import ApiUrls from "../../ApiUtils";
 import ApiService from "../../Api.service";
 import { CARD_ENROLL, KIOSK, PASSWORD, PIN, policyDisplayNames } from "../../constants";
 
-function TableList({ handleGetPolicies, policy_type, activateColumns, activePolicies, draggableContainer, draggableBodyRow, deActivateColumns, inActivePolicies }) {
+function TableList({ handleGetPolicies, policy_type, policy_description, activateColumns, activePolicies, draggableContainer, draggableBodyRow, deActivateColumns, inActivePolicies }) {
     const [isModal, setIsModal] = useState(false);
     const pinData = {
         description: '',
@@ -96,6 +96,13 @@ function TableList({ handleGetPolicies, policy_type, activateColumns, activePoli
         <>
             <div style={{
                 width: '100%', border: '1px solid #D7D7DC', borderBottom: 'none',
+                padding: '10px 10px 10px 25px', backgroundColor: '#d9d9d9'
+            }}
+            >
+                {policy_description}
+            </div>
+            <div style={{
+                width: '100%', border: '1px solid #D7D7DC', borderBottom: 'none',
                 padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
             }}
             >
@@ -105,8 +112,8 @@ function TableList({ handleGetPolicies, policy_type, activateColumns, activePoli
                 >
                     Add {policyDisplayNames[policy_type]} Policy
                 </Button>
+                   
             </div>
-
             <div style={{
                 fontWeight: 600, fontSize: 'x-large',
                 width: '100%', border: '1px solid #D7D7DC',
