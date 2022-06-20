@@ -53,7 +53,7 @@ export default function Machines() {
     ];
 
     useEffect(() => {
-        getMachines({}, {start: page, limit: pageSize});
+        getMachines({}, { start: page, limit: pageSize });
     }, [])
 
     const onMachinesPageChange = async (page, pageSize) => {
@@ -113,17 +113,18 @@ export default function Machines() {
 
     return (
         <>
-            <div className='content-header'>
-                <span>Machines</span>
+            <div style={{display: 'flex'}}>
+                <div className='content-header' style={{width: '75%'}}>
+                    <span>Machines</span>
+                </div>
+                <div style={{paddingTop: '22px'}}>
+                    <MachinesFiltersModal
+                        getMachinesByFilter={getMachinesByFilter}
+                        onFilterApply={applyAdvancedFilters}
+                        onResetClick={resetFilters}
+                    />
+                </div>
             </div>
-            <div style={{ position: "relative", left: 700, top: -50 }}>
-                <MachinesFiltersModal
-                    getMachinesByFilter={getMachinesByFilter}
-                    onFilterApply={applyAdvancedFilters}
-                    onResetClick={resetFilters}
-                />
-            </div>
-
             <Skeleton loading={loadingDetails}>
                 <Table loading={tableLoading}
                     style={{ border: '1px solid #D7D7DC' }}
