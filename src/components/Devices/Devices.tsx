@@ -126,7 +126,7 @@ function Devices() {
     }
 
     useEffect(() => {
-        getDevices({}, {start: page, limit: pageSize});
+        getDevices({}, { start: page, limit: pageSize });
     }, [])
 
     const handleOk = (object: object) => {
@@ -136,7 +136,7 @@ function Devices() {
                     console.log(data);
                     openNotification('success', 'Successfully created Device');
                     setIsModalVisible(false);
-                    getDevices({}, {start: page, limit: pageSize});
+                    getDevices({}, { start: page, limit: pageSize });
                 }
                 else {
                     openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
@@ -165,7 +165,7 @@ function Devices() {
 
     const resetFilters = () => {
         setAdvancedFilters({})
-        getDevicesByFilter({}, { start: page, limit: pageSize});
+        getDevicesByFilter({}, { start: page, limit: pageSize });
     };
 
     return <>
@@ -175,10 +175,12 @@ function Devices() {
 
         <Skeleton loading={loading}>
             <div style={{ width: '100%', border: '1px solid #D7D7DC', borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6', display: 'flex' }}>
-                <Button type='primary' size='large' onClick={() => setIsModalVisible(true)}>
-                    Add New Device
-                </Button>
-                <div style={{ position: "relative", left: 470, top: 13 }}>
+                <div style={{ width: '75%' }}>
+                    <Button type='primary' size='large' onClick={() => setIsModalVisible(true)}>
+                        Add New Device
+                    </Button>
+                </div>
+                <div style={{ paddingTop: '10px' }}>
                     <DeviceFiltersModal
                         getDevicesByFilter={getDevicesByFilter}
                         onFilterApply={applyAdvancedFilters}

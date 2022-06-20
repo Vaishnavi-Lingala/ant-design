@@ -81,7 +81,9 @@ export const logFieldNames = {
         "machine_type": "Machine type",
         "user_agent": "User agent",
         "created_ts": "Created timestamp",
-        "updated_ts": "Updated timestamp"
+        "updated_ts": "Updated timestamp",
+        "failure_reason": "Failure reason",
+        "instrument_id": "Instrument ID"
     },
     user: {
         "uid": "User ID",

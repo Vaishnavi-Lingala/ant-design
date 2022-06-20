@@ -67,9 +67,11 @@ export function AddUser(props) {
     };
 
     return <>
-        <div style={{ width: '100%', border: '1px solid #D7D7DC', borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6', display: 'flex' }}>
-            <Button type="primary" size="large" onClick={showModal}>Add New User</Button>
-            <div style={{ position: "relative", left: 530, top: 13 }}>
+        <div style={{ display: "flex", width: '100%', border: '1px solid #D7D7DC', borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6' }}>
+            <div style={{ width: '75%' }}>
+                <Button type="primary" size="large" onClick={showModal}>Add New User</Button>
+            </div>
+            <div style={{ paddingTop: '10px' }}>
                 <UsersFiltersModal
                     getUsersByFilter={props.getUsersByFilter}
                     onFilterApply={applyAdvancedFilters}
