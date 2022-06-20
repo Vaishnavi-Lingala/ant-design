@@ -198,9 +198,9 @@ export const userFilterFieldNames = {
 }
 
 export const machineFilterFieldNames = {
-    machine_name: "Machine Name",
-    last_known_ip: "Last Known IP",
-    type: "Type"
+    machine_name: "Machine name",
+    last_known_ip: "Last known IP",
+    type: "Machine type"
 }
 
 export const DeviceFilterFieldNames = {
