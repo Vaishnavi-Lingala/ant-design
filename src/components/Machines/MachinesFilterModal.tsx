@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import { Button, Modal} from "antd";
 import Link from "antd/lib/typography/Link";
 
-import FilterInput from "./FilterInput";
 import ApiUtils from "../../ApiUtils";
 import ApiService from "../../Api.service";
+import MachinesFilterInput from "./MachinesFilterInput";
 
-export default function FiltersModal({ onFilterApply, onResetClick }) {
+export default function MachinesFiltersModal({ getMachinesByFilter, onFilterApply, onResetClick }) {
     const initialFilterInput = { field: "", value: "" };
     const [isVisible, setIsVisible] = useState(false);
     const [filterableFields, setFilterableFields] = useState([""]);
@@ -15,7 +15,7 @@ export default function FiltersModal({ onFilterApply, onResetClick }) {
 
     useEffect(() => {
         (async function () {
-            var response = await ApiService.get(ApiUtils.filterableFields);
+            var response = await ApiService.get(ApiUtils.machineFilterableFields);
             setFilterableFields([...response]);
         })();
     }, []);
@@ -71,7 +71,9 @@ export default function FiltersModal({ onFilterApply, onResetClick }) {
             (r, c) => Object.assign(r, c),
             {}
         );
+        console.log(reducedOptimisedFiltersObj);
         onFilterApply(reducedOptimisedFiltersObj);
+        getMachinesByFilter(reducedOptimisedFiltersObj, {});
     };
 
     return (
@@ -110,7 +112,7 @@ export default function FiltersModal({ onFilterApply, onResetClick }) {
                 </Button>
 
                 {filterInputs.map((filterInput, index) => (
-                    <FilterInput
+                    <MachinesFilterInput
                         key={index}
                         filterableFields={filterableFields}
                         filterInput={filterInput}

@@ -187,6 +187,32 @@ export const accountTechnicalContact = {
     technical_contact_email: 'Email'
 }
 
+export const userFilterFieldNames = {
+    first_name: "First Name",
+    last_name: "Last Name",
+    email: "Email",
+    user_name: "User Name",
+    status: "Status"
+}
+
+export const machineFilterFieldNames = {
+    machine_name: "Machine Name",
+    last_known_ip: "Last Known IP",
+    type: "Type"
+}
+
+export const DeviceFilterFieldNames = {
+    vendor: "Vendor",
+    device_name: "Device Name",
+    device_type: "Device Type",
+    serial_number: "Serial Number",
+    blocked: "Blocked"
+}
+
+export const groupFilterFieldNames = {
+    name: "Name"
+}
+
 export const settingsTokenNames = {
     admin_token: "Admin Token",
     install_token: "Install Token",
@@ -222,6 +248,7 @@ export const Policies = "Policies";
 export const ActivityLogs = "Activity Logs";
 export const Devices = "Devices";
 export const Account = "Account";
+export const Domain = "Domains";
 
 // Sidebar item keys
 export const dashboard = "dashboard";
@@ -233,6 +260,7 @@ export const mechanisms = "mechanism";
 export const policies = "policies";
 export const activityLogs = "activitylogs";
 export const account = "account";
+export const domain = "domains";
 
 // Policy types
 export const PIN = "PIN";
@@ -264,6 +292,6 @@ export const SELECTED_HEADER = 'SELECTED_HEADER';
 
 //Policies Descriptions
 export const PinPolicyDescription = 'PIN policies enable admins to enforce pin complexities at the user group level and is enforced during enrollment or PIN recovery';
-export const PasswordPolicyDescription = 'Password policies enable admins you to control Grace Period which is the amount of time the user can tap in and out until they are required to re-enter their password after tapping badge';
+export const PasswordPolicyDescription = 'Password policies enable admins to control grace period which is the amount of time the user can tap in and out until they are required to re-enter their password';
 export const KioskPolicyDescription = 'KIOSK policies applies to machines where TecTANGO will auto-login with the generic machine user to enable fast user swicthing on a shared or kiosk machines used by multiple users. This policy is applied only when Option 3 is selected in the TecTANGO Installer';
 export const CardEnrollmentPolicyDescription = 'Card enrollment policies enable admins to configure max number of cards allowed per user group during enrollment';

@@ -5,6 +5,7 @@ import { CloseOutlined } from "@ant-design/icons";
 import ApiUrls from "../../ApiUtils"
 import ApiService from "../../Api.service";
 import { openNotification } from "../Layout/Notification";
+import UsersFiltersModal from "./UsersFilterModal";
 
 export function AddUser(props) {
     const { Title } = Typography;
@@ -16,6 +17,7 @@ export function AddUser(props) {
         'login_domain': ''
     });
     const [loading, setLoading] = useState(false);
+    const [advancedFilters, setAdvancedFilters] = useState({});
     const [isModalVisible, setIsModalVisible] = useState(false);
 
     const showModal = () => {
@@ -41,7 +43,7 @@ export function AddUser(props) {
             }
             else {
                 console.log(data);
-				openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
+                openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
             }
         }).catch(error => {
             console.error('Error: ', error);
@@ -51,14 +53,31 @@ export function AddUser(props) {
         });
     };
 
+    const applyAdvancedFilters = (filters) => {
+        setAdvancedFilters(filters)
+    };
+
+    const resetFilters = () => {
+        setAdvancedFilters({})
+        props.getUsersByFilter({}, {});
+    };
+
     const handleCancel = () => {
         setIsModalVisible(false);
     };
 
     return <>
-        <div style={{ width: "100%", border: "1px solid #D7D7DC", borderBottom: "none", padding: "10px 10px 10px 25px", backgroundColor: "#f5f5f6" }}>
+        <div style={{ width: '100%', border: '1px solid #D7D7DC', borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6', display: 'flex' }}>
             <Button type="primary" size="large" onClick={showModal}>Add New User</Button>
+            <div style={{ position: "relative", left: 530, top: 13 }}>
+                <UsersFiltersModal
+                    getUsersByFilter={props.getUsersByFilter}
+                    onFilterApply={applyAdvancedFilters}
+                    onResetClick={resetFilters}
+                />
+            </div>
         </div>
+
         <Modal closeIcon={<Button icon={<CloseOutlined />}></Button>} title={<Title level={2}>Add User</Title>} visible={isModalVisible} onOk={handleOk} onCancel={handleCancel} width={500}
             footer={[
                 <Button key="cancel" onClick={handleCancel}>
