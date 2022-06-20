@@ -1,10 +1,11 @@
-import { useState } from "react";
-import { Button, Col, Input, Modal, Row, Typography } from "antd";
+import { useEffect, useState } from "react";
+import { Button, Col, Input, Modal, Row, Select, Typography } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
 
 import ApiUrls from "../../ApiUtils"
 import ApiService from "../../Api.service";
 import { openNotification } from "../Layout/Notification";
+import { Option } from "antd/lib/mentions";
 
 export function AddUser(props) {
     const { Title } = Typography;
@@ -13,10 +14,13 @@ export function AddUser(props) {
         'last_name': '',
         'user_name': '',
         'email': '',
-        'login_domain': ''
+        'login_domain': '',
+        'sam': '',
+        'upn': ''
     });
     const [loading, setLoading] = useState(false);
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [domains, setDomains]: any = useState([]);
 
     const showModal = () => {
         setNewUser({
@@ -24,14 +28,37 @@ export function AddUser(props) {
             'last_name': '',
             'user_name': '',
             'email': '',
-            'login_domain': ''
+            'login_domain': '',
+            'sam': '',
+            'upn': ''
         })
         setIsModalVisible(true);
     };
 
+    useEffect(() => {
+        getDomains();
+    }, []);
+
+    const getDomains = async () => {
+        setLoading(true);
+        let data = await ApiService.get(ApiUrls.domains).catch(error => {
+            openNotification(`error`, `Error in getting domains: ${JSON.stringify(error)}`);
+        }).finally(() => {
+            setLoading(false);
+        });
+        if (!data.errorSummary) {
+            console.log('Domains list ', JSON.stringify(data));
+            setIsModalVisible(false);
+        }
+        else {
+            console.log(data);
+            openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
+        }
+        setDomains(data);
+    }
+
     const handleOk = () => {
         setLoading(true);
-        newUser.login_domain = 'WORK_GROUP';
         console.log(newUser);
         ApiService.post(ApiUrls.users, newUser).then(data => {
             if (!data.errorSummary) {
@@ -41,7 +68,7 @@ export function AddUser(props) {
             }
             else {
                 console.log(data);
-				openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
+                openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
             }
         }).catch(error => {
             console.error('Error: ', error);
@@ -144,6 +171,69 @@ export function AddUser(props) {
                             })}
                             value={newUser.email}
                         />
+
+                    </span>
+                </Col>
+                <Col span={6}>
+                    <p style={{ fontWeight: 600, fontSize: 'medium' }}>SAM:</p>
+                </Col>
+                <Col span={18}>
+                    <span style={{ paddingRight: '20px' }}>
+
+                        <Input
+                            name="sam"
+                            type="text"
+                            className="form-control"
+                            onChange={(e) => setNewUser({
+                                ...newUser,
+                                sam: e.target.value
+                            })}
+                            value={newUser.sam}
+                        />
+
+                    </span>
+                </Col>
+                <Col span={6}>
+                    <p style={{ fontWeight: 600, fontSize: 'medium' }}>UPN:</p>
+                </Col>
+                <Col span={18}>
+                    <span style={{ paddingRight: '20px' }}>
+
+                        <Input
+                            name="upn"
+                            type="text"
+                            className="form-control"
+                            onChange={(e) => setNewUser({
+                                ...newUser,
+                                upn: e.target.value
+                            })}
+                            value={newUser.upn}
+                        />
+
+                    </span>
+                </Col>
+                <Col span={6}>
+                    <p style={{ fontWeight: 600, fontSize: 'medium' }}>Login Domain:</p>
+                </Col>
+                <Col span={18}>
+                    <span style={{ paddingRight: '20px' }}>
+
+                        <Select style={{
+                            width: 120,
+                        }} onChange={(value) => {
+                            console.log(`Selected value: ${value}`);
+                            setNewUser({
+                                ...newUser,
+                                login_domain: value
+                            })
+                        }}>
+                            {
+                                domains.map(eachDomain => {
+                                    return <Select.Option value={eachDomain} key={eachDomain}> {eachDomain} </Select.Option>
+                                })
+                            }
+
+                        </Select>
 
                     </span>
                 </Col>
