@@ -84,32 +84,37 @@ export default function ProtectedRoute({
 //         history.push("/");
 //     }
 
-//     if (oktaAuth.authStateManager._authState?.isAuthenticated !== false || oktaAuth.getIdToken() !== undefined
+//     //@ts-ignore    
+//     if (oktaAuth.authStateManager._authState !== null || oktaAuth.authStateManager._authState?.isAuthenticated !== false || oktaAuth.getIdToken() !== undefined
 //         || oktaAuth.getAccessToken() !== undefined) {
 //         localStorage.setItem("clientId", oktaAuth.authStateManager._authState?.accessToken?.claims.cid);
 //         //@ts-ignore
 //         localStorage.setItem("issuer", oktaAuth.authStateManager._authState?.accessToken?.claims.iss);
 //     }
 //     else {
+//         oktaAuth.signOut({
+//             postLogoutRedirectUri: window.location.origin + history.createHref({ pathname: '/' })
+//         });
 //         removeItems();
 //     }
 
-//     // return (
-//     //     <Route
-//     //         {...restOfProps}
-//     //         render={(props) =>
-//     //             oktaAuth.authStateManager._authState?.isAuthenticated !== false || oktaAuth.getIdToken() !== undefined
-//     //                 || oktaAuth.getAccessToken() !== undefined ? (
-//     //                 <SecureRoute>
-//     //                     <Component
-//     //                         authStatus={authState}
-//     //                         oktaAuth={oktaAuth}
-//     //                         {...props}
-//     //                     />
-//     //                 </SecureRoute>
-//     //             ) : (
-//     //                 <Redirect to={"/"} />
-//     //             )
-//     //         }
-//     //     />
-//     // );
+//     return (
+//         <Route
+//             {...restOfProps}
+//             render={(props) =>
+//                 //@ts-ignore
+//                 oktaAuth.authStateManager._authState !== null || oktaAuth.authStateManager._authState?.isAuthenticated !== false || oktaAuth.getIdToken() !== undefined
+//                     || oktaAuth.getAccessToken() !== undefined ? (
+//                     <SecureRoute>
+//                         <Component
+//                             authStatus={authState}
+//                             oktaAuth={oktaAuth}
+//                             {...props}
+//                         />
+//                     </SecureRoute>
+//                 ) : (
+//                     <Redirect to={"/"} />
+//                 )
+//             }
+//         />
+//     );

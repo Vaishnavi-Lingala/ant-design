@@ -66,8 +66,10 @@ export default function AddGroup(props: any) {
     return (
         <>
             <div style={{ width: '100%', border: '1px solid #D7D7DC', borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6', display: 'flex' }}>
-                <Button type='primary' size='large' onClick={showModal}>Add New {props.type.slice(0, 1).toUpperCase() + props.type.slice(1).toLowerCase()} Group</Button>
-                <div style={{ position: "relative", left: 470, top: 13 }}>
+                <div style={{ width: '75%' }}>
+                    <Button type='primary' size='large' onClick={showModal}>Add New {props.type.slice(0, 1).toUpperCase() + props.type.slice(1).toLowerCase()} Group</Button>
+                </div>
+                <div style={{paddingTop: '10px'}}>
                     <GroupFiltersModal
                         type={props.type}
                         getGroups={props.getGroupsByFilter}
