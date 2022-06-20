@@ -35,7 +35,8 @@ function Login() {
                     if (data.issuer_url !== "" && data.idp_portal_oidc_client_id !== "") {
                         const oktaAuth = new OktaAuth(config.oidc);
                         oktaAuth.signInWithRedirect({
-                            originalUri: '/dashboard'
+                            originalUri: '/dashboard',
+                            loginHint: email
                         }).then((data) => {
                             setSelectedHeader(Directory);
                         }).catch((error) => {
