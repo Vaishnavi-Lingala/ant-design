@@ -292,6 +292,6 @@ export const SELECTED_HEADER = 'SELECTED_HEADER';
 
 //Policies Descriptions
 export const PinPolicyDescription = 'PIN policies enable admins to enforce pin complexities at the user group level and is enforced during enrollment or PIN recovery';
-export const PasswordPolicyDescription = 'Password policies enable admins you to control Grace Period which is the amount of time the user can tap in and out until they are required to re-enter their password after tapping badge';
+export const PasswordPolicyDescription = 'Password policies enable admins to control grace period which is the amount of time the user can tap in and out until they are required to re-enter their password';
 export const KioskPolicyDescription = 'KIOSK policies applies to machines where TecTANGO will auto-login with the generic machine user to enable fast user swicthing on a shared or kiosk machines used by multiple users. This policy is applied only when Option 3 is selected in the TecTANGO Installer';
 export const CardEnrollmentPolicyDescription = 'Card enrollment policies enable admins to configure max number of cards allowed per user group during enrollment';
