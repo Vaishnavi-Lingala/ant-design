@@ -297,3 +297,14 @@ export const PinPolicyDescription = 'PIN policies enable admins to enforce pin c
 export const PasswordPolicyDescription = 'Password policies enable admins to control grace period which is the amount of time the user can tap in and out until they are required to re-enter their password';
 export const KioskPolicyDescription = 'KIOSK policies applies to machines where TecTANGO will auto-login with the generic machine user to enable fast user swicthing on a shared or kiosk machines used by multiple users. This policy is applied only when Option 3 is selected in the TecTANGO Installer';
 export const CardEnrollmentPolicyDescription = 'Card enrollment policies enable admins to configure max number of cards allowed per user group during enrollment';
+
+export const userRequiredFields = ['first_name', 'last_name', 'user_name', 'email', 'sam', 'upn'];
+export const userDataModel = {
+    first_name: 'First Name',
+    last_name: 'Last Name',
+    user_name: 'Username',
+    email: 'Email',
+    sam: 'SAM',
+    upn: 'UPN'
+}
+export const requiredFieldsErrorMsg = `Please fill required attributes`;
