@@ -1,6 +1,7 @@
-import { useOktaAuth } from "@okta/okta-react";
+import {  useOktaAuth} from "@okta/okta-react";
 import { Redirect, Route, useHistory } from "react-router-dom";
 import { SecureRoute } from "@okta/okta-react";
+import { useEffect } from "react";
 
 export default function ProtectedRoute({
     component: Component,
@@ -8,11 +9,17 @@ export default function ProtectedRoute({
 }) {
     const { authState, oktaAuth } = useOktaAuth();
     const history = useHistory();
-    console.log(oktaAuth);
-    console.log(oktaAuth.authStateManager._authState?.isAuthenticated); //false
-    console.log(oktaAuth.getIdToken()); //undefined
-    console.log(oktaAuth.getAccessToken()); //undefined
+    // console.log(oktaAuth);
+    // console.log(oktaAuth.authStateManager._authState?.isAuthenticated); //false
+    // console.log('OktaAuth IsAuthenticated: ',oktaAuth.isAuthenticated()); //undefined
+    // console.log('OktaAuth AccessToken: ', oktaAuth.getAccessToken()); //undefined
+    // console.log('Authstate IsAuthenticated: ', authState?.isAuthenticated);
+    // console.log('Authstate AccessToken: ', authState?.accessToken);
     const oktaStorage = localStorage.getItem("okta-token-storage");
+
+    useEffect(() => {
+        console.log('AuthState: ', authState);
+    }, [authState, oktaAuth])
 
     function removeItems() {
         localStorage.removeItem("domain");
