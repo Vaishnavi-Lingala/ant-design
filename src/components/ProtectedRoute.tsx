@@ -48,6 +48,7 @@ export default function ProtectedRoute({
         <Route
             {...restOfProps}
             render={(props) =>
+                // authState.isAuthenticated !== false && authState?.accessToken?.accessToken !== undefined
                 oktaStorage !== null ? (
                     <SecureRoute>
                         <Component
@@ -65,56 +66,46 @@ export default function ProtectedRoute({
 }
 
 
-// const { authState, oktaAuth } = useOktaAuth();
-//     const history = useHistory();
-//     console.log(oktaAuth);
-//     console.log(oktaAuth.authStateManager._authState?.isAuthenticated); //false
-//     console.log(oktaAuth.getIdToken()); //undefined
-//     console.log(oktaAuth.getAccessToken()); //undefined
-//     // const oktaStorage = localStorage.getItem("okta-token-storage");
+// console.log(oktaAuth); //null
+    // // console.log(oktaAuth.closeSession()); //null
+    // console.log(oktaAuth.authStateManager._authState?.isAuthenticated); //false
+    // console.log(oktaAuth.getIdToken()); //undefined
+    // console.log('IsAuthenticated: ', isAuthenticated);
+    // console.log('Access token: ', authState?.accessToken?.accessToken); //undefined
+    // const oktaStorage = localStorage.getItem("okta-token-storage");
 
-//     function removeItems() {
-//         localStorage.removeItem("domain");
-//         localStorage.removeItem("clientId");
-//         localStorage.removeItem("issuer");
-//         localStorage.removeItem("accountId");
-//         localStorage.removeItem("productId");
-//         localStorage.removeItem("productName");
-//         localStorage.removeItem("SELECTED_HEADER");
-//         history.push("/");
-//     }
+    // function removeItems() {
+    //     localStorage.removeItem("domain");
+    //     localStorage.removeItem("clientId");
+    //     localStorage.removeItem("issuer");
+    //     localStorage.removeItem("accountId");
+    //     localStorage.removeItem("productId");
+    //     localStorage.removeItem("productName");
+    //     localStorage.removeItem("SELECTED_HEADER");
+    // }
 
-//     //@ts-ignore    
-//     if (oktaAuth.authStateManager._authState !== null || oktaAuth.authStateManager._authState?.isAuthenticated !== false || oktaAuth.getIdToken() !== undefined
-//         || oktaAuth.getAccessToken() !== undefined) {
-//         localStorage.setItem("clientId", oktaAuth.authStateManager._authState?.accessToken?.claims.cid);
-//         //@ts-ignore
-//         localStorage.setItem("issuer", oktaAuth.authStateManager._authState?.accessToken?.claims.iss);
-//     }
-//     else {
-//         oktaAuth.signOut({
-//             postLogoutRedirectUri: window.location.origin + history.createHref({ pathname: '/' })
-//         });
-//         removeItems();
-//     }
+    // function autoLogout() {
+    //     const basename = window.location.origin + history.createHref({ pathname: '/' });
+    //     config.oidc.clientId = String(localStorage.getItem("clientId"));
+    //     config.oidc.issuer = String(localStorage.getItem("issuer"));
+    //     const oktaAuth = new OktaAuth(config.oidc);
+    //     // oktaAuth.closeSession();
+    //     oktaAuth.signOut({
+    //         postLogoutRedirectUri: basename
+    //     }).then(data => {
+    //         removeItems();
+    //     }).catch((err) => {
+    //         console.error(err)
+    //     })
+    // }
 
-//     return (
-//         <Route
-//             {...restOfProps}
-//             render={(props) =>
-//                 //@ts-ignore
-//                 oktaAuth.authStateManager._authState !== null || oktaAuth.authStateManager._authState?.isAuthenticated !== false || oktaAuth.getIdToken() !== undefined
-//                     || oktaAuth.getAccessToken() !== undefined ? (
-//                     <SecureRoute>
-//                         <Component
-//                             authStatus={authState}
-//                             oktaAuth={oktaAuth}
-//                             {...props}
-//                         />
-//                     </SecureRoute>
-//                 ) : (
-//                     <Redirect to={"/"} />
-//                 )
-//             }
-//         />
-//     );
+    // //@ts-ignore
+    // if (authState.isAuthenticated !== false && authState?.accessToken?.accessToken !== undefined) {
+    //     //@ts-ignore
+    //     localStorage.setItem("clientId", oktaAuth.authStateManager._authState?.accessToken?.claims.cid);
+    //     //@ts-ignore
+    //     localStorage.setItem("issuer", oktaAuth.authStateManager._authState?.accessToken?.claims.iss);
+    // }
+    // else {
+    //     autoLogout();
+    // }

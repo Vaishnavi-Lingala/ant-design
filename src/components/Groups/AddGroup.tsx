@@ -60,7 +60,7 @@ export default function AddGroup(props: any) {
 
     const resetFilters = () => {
         setAdvancedFilters({})
-        props.getGroupsByFilter({}, { group_type: props.type, start: 1, limit: 10 });
+        props.getGroupsByFilter({}, { group_type: props.type });
     };
 
     return (

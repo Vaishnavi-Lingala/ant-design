@@ -10,16 +10,9 @@ function TableList({ tableLoading, getGroupsByFilter, groupType, getGroups, colu
 
     const params = {
         group_type: groupType,
-        start: page,
-        limit: pageSize
     }
 
     function onGroupsPageChange(page, pageSize) {
-        const params = {
-            group_type: groupType,
-            start: page,
-            limit: pageSize
-        }
         getGroups({}, params);
     }
 
@@ -37,16 +30,8 @@ function TableList({ tableLoading, getGroupsByFilter, groupType, getGroups, colu
             showHeader={true}
             columns={columns}
             dataSource={standardMachineGroups}
-            pagination={{
-                current: page,
-                pageSize: pageSize,
-                total: totalItems,
-                onChange: (page, pageSize) => {
-                    setPage(page);
-                    setPageSize(pageSize);
-                    onGroupsPageChange(page, pageSize);
-                }
-            }}
+            scroll={{ x: true }}
+            pagination={false}
         />
     </>
 }

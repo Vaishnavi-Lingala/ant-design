@@ -21,7 +21,7 @@ function AppHeader() {
     let emptyObj = {};
     const history = useHistory();
     const [selectedMenuOption, setSelectedMenuOption] = useContext(Store);
-    const { authState } = useOktaAuth();
+    const { authState, oktaAuth } = useOktaAuth();
     const [products, setProducts] = useState(emptyObj);
 
     const headerItemsInitialValue = [
@@ -109,6 +109,10 @@ function AppHeader() {
         })
     };
 
+    if (oktaAuth.getIdToken() === undefined && oktaAuth.getAccessToken() === undefined) {
+        logout();
+    }
+
     function headerMenuClickHandler(e) {
         setSelectedMenuOption(e.key);
         localStorage.setItem("productId", products[e.key]);
@@ -139,7 +143,8 @@ function AppHeader() {
             />
 
             <Menu className="border-bottom-0" theme="light" mode="horizontal" id="logout-menu">
-                <SubMenu title={authState?.idToken?.claims.name?.split(" ")[0]}
+                <SubMenu title={//@ts-ignore
+                    oktaAuth.authStateManager._authState?.idToken?.claims.name.split(" ")[0]}
                     icon={<UserOutlined />}
                     key={'sub'}
                 >
@@ -147,7 +152,7 @@ function AppHeader() {
                         style={{ userSelect: 'text' }} disabled
                     >
                         <p style={{ fontWeight: 600, fontSize: 'medium', position: 'relative', top: '8px', padding: '0px 0px 0px 10px' }}>
-                            {authState?.idToken?.claims.name}
+                            {oktaAuth.authStateManager._authState?.idToken?.claims.name}
                         </p>
                     </Menu.Item>
 
@@ -157,7 +162,7 @@ function AppHeader() {
                     }}
                         disabled
                     >
-                        {authState?.idToken?.claims.email}
+                        {oktaAuth.authStateManager._authState?.idToken?.claims.email}
                     </Menu.Item>
 
                     <Menu.Item key="logout" onClick={logout} style={{
