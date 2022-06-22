@@ -1,6 +1,6 @@
 import { Route, useHistory, Switch } from "react-router-dom";
 import { OktaAuth, toRelativeUrl } from "@okta/okta-auth-js";
-import { Security, LoginCallback } from "@okta/okta-react";
+import { Security, LoginCallback, SecureRoute } from "@okta/okta-react";
 import { ConfigProvider } from "antd";
 
 import "antd/dist/antd.variable.min.css";

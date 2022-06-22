@@ -32,7 +32,8 @@ export default function Groups() {
         {
             title: 'Count',
             dataIndex: 'count',
-            width: '30%'
+            width: '30%',
+            sorter: (a: { count: number; }, b: { count: number; }) => a.count - b.count,
         },
         {
             title: 'Actions',
@@ -54,8 +55,6 @@ export default function Groups() {
 
     const params = {
         group_type: type, 
-        start: page,
-        limit: pageSize
     }
 
     useEffect(() => {
@@ -111,7 +110,7 @@ export default function Groups() {
                 let userGroupsList: Group[] = [];
                 let kioskGroupsList: Group[] = [];
                 let standardGroupsList: Group[] = [];
-                data['results'].forEach((group: Group) => {
+                data.forEach((group: Group) => {
                     group.key = group.uid;
                     if (group.type === 'USER') {
                         userGroupsList.push(group);
@@ -139,8 +138,6 @@ export default function Groups() {
         type.push(key.toUpperCase());
         const param = {
             group_type: type, 
-            start: page,
-            limit: pageSize
         }
         getGroups({}, param);
         history.push('/groups/' + key);
