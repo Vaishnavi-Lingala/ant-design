@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react";
+import { FunctionComponent, useState } from "react";
 import { Input, Row, Col, Select, Button } from "antd";
 import { DeleteOutlined } from '@ant-design/icons';
 
@@ -15,6 +15,7 @@ interface FilterInputProps {
 
 const UsersFilterInput: FunctionComponent<FilterInputProps> = (props: FilterInputProps) => {
     const { index, filterInput, filterableFields, onFilterFieldChange, onFilterValueChange, onCloseClick } = props;
+    const [fieldName, setFieldName] = useState("");
 
     return (<Input.Group key={index}>
         <Row style={{ marginTop: "10px" }} gutter={10}>
@@ -27,6 +28,12 @@ const UsersFilterInput: FunctionComponent<FilterInputProps> = (props: FilterInpu
                     showArrow={false}
                     filterOption={true}
                     onChange={(value) => {
+                        if (value === "inactivity_in_days" || value === "is_enrolled") {
+                            setFieldName(value)
+                        }
+                        else {
+                            setFieldName("")
+                        }
                         onFilterFieldChange(value);
                     }}
                     notFoundContent={null}
@@ -45,14 +52,46 @@ const UsersFilterInput: FunctionComponent<FilterInputProps> = (props: FilterInpu
                 ></Select>
             </Col>
             <Col span={8}>
-                <Input
-                    value={filterInput.value}
-                    onChange={(event) => {
-                        onFilterValueChange(
-                            event.target.value
-                        );
-                    }}
-                />
+                {
+                    fieldName !== "inactivity_in_days" ?
+                        fieldName !== "is_enrolled" ?
+                            <Input
+                                value={filterInput.value}
+                                onChange={(event) => {
+                                    onFilterValueChange(
+                                        event.target.value
+                                    );
+                                }}
+                            /> : <Select style={{ width: '210px' }}
+                                value={filterInput.value}
+                                onChange={(value) => {
+                                    onFilterValueChange(value)
+                                }}
+                            >
+                                <Select.Option key={1} value={true}>
+                                    True
+                                </Select.Option>
+                                <Select.Option key={2} value={false}>
+                                    False
+                                </Select.Option>
+                            </Select> :
+                        <Select style={{ width: '210px' }}
+                            value={filterInput.value}
+                            onChange={(value) => {
+                                onFilterValueChange(value)
+                            }}
+                        >
+                            <Select.Option key={30} value={30}>
+                                30
+                            </Select.Option>
+                            <Select.Option key={60} value={60}>
+                                60
+                            </Select.Option>
+                            <Select.Option key={90} value={90}>
+                                90
+                            </Select.Option>
+                        </Select>
+                }
             </Col>
             <Col span={2}>
                 <Button icon={<DeleteOutlined />}
@@ -61,7 +100,7 @@ const UsersFilterInput: FunctionComponent<FilterInputProps> = (props: FilterInpu
                 </Button>
             </Col>
         </Row>
-    </Input.Group>);
+    </Input.Group >);
 }
 
 export default UsersFilterInput;

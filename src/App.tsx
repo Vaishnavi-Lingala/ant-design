@@ -26,7 +26,6 @@ import Devices from "./components/Devices/Devices";
 import Device from "./components/Devices/Device";
 import { User } from "./components/Users/User";
 import Domains from "./components/Domains/Domains";
-import { useEffect } from "react";
 
 const oktaAuth = new OktaAuth(config.oidc);
 
@@ -52,22 +51,22 @@ function App() {
                     <Route path="/" exact component={Login} />
                     <Route path="/login/callback" component={LoginCallback} />
                 <Layout>
-                    <SecureRoute path={`/product/:productId/policies`} component={Policies} />
-                    <SecureRoute path={`/product/:productId/activitylogs`} component={ActivityLogs} />
-                    <SecureRoute path={`/dashboard`} component={Dashboard} />
-                    <SecureRoute path={`/product/:productId/mechanism`} exact component={Mechanisms} />
-                    <SecureRoute path={`/product/:productId/mechanism/:id`} component={Mechanism} />
-                    <SecureRoute path={`/account`} component={Settings} />
-                    <SecureRoute path={`/domains`} component={Domains} />
-                    <SecureRoute path={`/groups`} component={Groups} />
-                    <SecureRoute path={`/users`} component={Users} />
-                    <SecureRoute path={`/machines`} exact component={Machines} />
-                    <SecureRoute path={`/machines/:id`} component={MachineDetails} />
-                    <SecureRoute path={`/devices`} exact component={Devices} />
-                    <SecureRoute path={`/devices/:id`} exact component={Device} />
-                    <SecureRoute path={`/user/:id/profile`} exact component={User} />
-                    <SecureRoute path={`/user/:id/groups`} exact component={User} />
-                    <SecureRoute path={`/user/:id/enrollments`} exact component={User} />
+                    <ProtectedRoute path={`/product/:productId/policies`} component={Policies} />
+                    <ProtectedRoute path={`/product/:productId/activitylogs`} component={ActivityLogs} />
+                    <ProtectedRoute path={`/dashboard`} component={Dashboard} />
+                    <ProtectedRoute path={`/product/:productId/mechanism`} exact component={Mechanisms} />
+                    <ProtectedRoute path={`/product/:productId/mechanism/:id`} component={Mechanism} />
+                    <ProtectedRoute path={`/account`} component={Settings} />
+                    <ProtectedRoute path={`/domains`} component={Domains} />
+                    <ProtectedRoute path={`/groups`} component={Groups} />
+                    <ProtectedRoute path={`/users`} component={Users} />
+                    <ProtectedRoute path={`/machines`} exact component={Machines} />
+                    <ProtectedRoute path={`/machines/:id`} component={MachineDetails} />
+                    <ProtectedRoute path={`/devices`} exact component={Devices} />
+                    <ProtectedRoute path={`/devices/:id`} exact component={Device} />
+                    <ProtectedRoute path={`/user/:id/profile`} exact component={User} />
+                    <ProtectedRoute path={`/user/:id/groups`} exact component={User} />
+                    <ProtectedRoute path={`/user/:id/enrollments`} exact component={User} />
                 </Layout>
 
                 <Route component={PageNotFound} />

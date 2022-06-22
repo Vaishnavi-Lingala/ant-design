@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Modal} from "antd";
+import { Button, Modal } from "antd";
 import Link from "antd/lib/typography/Link";
 
 import ApiUtils from "../../ApiUtils";
@@ -62,6 +62,9 @@ export default function UsersFiltersModal({ getUsersByFilter, onFilterApply, onR
 
         const optimisedFiltersObj = filterInputs.map((filterInput) => {
             if (filterInput.field !== "" && filterInput.value !== "") {
+                if (filterInput.field === "inactivity_in_days" || filterInput.field === "is_enrolled") {
+                    return { [filterInput.field]: filterInput.value };
+                }
                 return { [filterInput.field]: [filterInput.value] };
             }
         });
@@ -73,7 +76,7 @@ export default function UsersFiltersModal({ getUsersByFilter, onFilterApply, onR
         );
         console.log(reducedOptimisedFiltersObj);
         onFilterApply(reducedOptimisedFiltersObj);
-        getUsersByFilter(reducedOptimisedFiltersObj, {start: 1, limit: 10});
+        getUsersByFilter(reducedOptimisedFiltersObj, { start: 1, limit: 10 });
     };
 
     return (
@@ -101,7 +104,7 @@ export default function UsersFiltersModal({ getUsersByFilter, onFilterApply, onR
                 footer={false}
                 width={700}
             >
-                <p style={{ fontWeight: 600, fontSize: 'medium'}}>Advanced Filters</p>
+                <p style={{ fontWeight: 600, fontSize: 'medium' }}>Advanced Filters</p>
 
                 <Button
                     onClick={() => {
