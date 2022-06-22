@@ -24,6 +24,10 @@ function AppHeader() {
     const { authState } = useOktaAuth();
     const [products, setProducts] = useState(emptyObj);
 
+    const directoryPaths = ['dashboard', '/users', '/groups', '/machines', '/devices'];
+    const commonProductPaths = ['/product', '/mechanism', '/policies', '/activitylogs'];
+    const settingsPaths = ['/account', '/domains'];
+
     const headerItemsInitialValue = [
         {
             label: Directory,
@@ -66,6 +70,34 @@ function AppHeader() {
                 return JSON.parse(JSON.stringify(values));
             });
         }
+
+        const splitPath = window.location.pathname?.split("/");
+        console.log({ splitPath });
+
+        if (splitPath?.length) {
+            console.log(window.location.pathname);
+            if (directoryPaths.some(path => window.location.pathname.includes(path))) {
+                console.log({ Directory });
+                setSelectedMenuOption(Directory);
+            }
+            else if (settingsPaths.some(path => window.location.pathname.includes(path))) {
+                setSelectedMenuOption(Settings);
+            }
+            else if (commonProductPaths.some(path => window.location.pathname.includes(path))) {
+                let product = Object.keys(products).find(key => {
+                    console.log(products[key]);
+                    console.log(splitPath[2]);
+                    return products[key] === splitPath[2]
+                });
+                console.log({ splitPath });
+                console.log({ products });
+                console.log({ product });
+                if (product) {
+                    setSelectedMenuOption(product);
+                }
+            }
+        }
+
     }, [products]);
 
     function getProducts() {
@@ -130,7 +162,7 @@ function AppHeader() {
     return (
         <Header className="header">
             <div className="logo">
-                <img src="../../Credenti_Logo.png" alt="Credenti TecConnect" width={150} />
+                <img src={ window.location.origin + "/Credenti_Logo.png" } alt="Credenti TecConnect" width={150} />
             </div>
 
             <Menu className="border-bottom-0" theme="light" mode="horizontal"
