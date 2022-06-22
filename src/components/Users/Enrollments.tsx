@@ -7,6 +7,7 @@ import { date_display_format, time_format } from "../../constants";
 import moment from "moment";
 import './Users.css';
 import { MoreOutlined } from "@ant-design/icons"
+import { ColumnType } from "antd/lib/table";
 
 export function Enrollments() {
     const [enrollments, setEnrollments]: any = useState(undefined);
@@ -15,7 +16,7 @@ export function Enrollments() {
     const [pageSize, setPageSize]: any = useState(10);
     const [definedStatusList, setDefinedStatusList]: any = useState([]);
     const [statusList, setStatusList]: any = useState([]);
-    const columns = [
+    const columns: any = [
         { title: "Instrument Id", dataIndex: "instrument_id", width: "25%" },
         {
             title: "Enrollment Time",
@@ -28,7 +29,25 @@ export function Enrollments() {
             width: "20%"
         },
         { title: "Product Version", dataIndex: "product_version", width: "15%" },
-        { title: "Status", dataIndex: "status", width: "10%" },
+        {
+            title: "Status",
+            dataIndex: "status",
+            width: "10%",
+            filters:[{
+                text: 'Active',
+                value: 'Active'
+            },
+            {
+                text: 'Block',
+                value: 'Block'
+            },
+            {
+                text: 'Unenrolled',
+                value: 'Unenrolled'
+            }],
+            defaultFilteredValue: ['Active'],
+            onFilter:(value, record) => value? record.status.indexOf(value) === 0 : true
+        },
         {
             title: "Actions", dataIndex: "activate", width: "10%", render: (text, record) => (
                 <Dropdown overlay={
@@ -42,11 +61,11 @@ export function Enrollments() {
                         }
                     </Menu>}>
                     {
-						<Tooltip title="Change status">
-							<Button icon={<MoreOutlined/>} onClick={e => e.preventDefault()} />
+                        <Tooltip title="Change status">
+                            <Button icon={<MoreOutlined />} onClick={e => e.preventDefault()} />
 
-						</Tooltip>
-					}
+                        </Tooltip>
+                    }
 
                 </Dropdown>
             )
@@ -54,27 +73,30 @@ export function Enrollments() {
     ]
 
     useEffect(() => {
+        setLoadingDetails(true);
         const statusTypes = [
-			{
-				key: 'ACTIVE',
-				value: 'Activate'
-			},
-			{
-				key: 'BLOCK',
-				value: 'Block'
-			},
-			{
-				key: 'UNENROLLED',
-				value: 'Unenroll'
-			}
+            {
+                key: 'ACTIVE',
+                value: 'Activate'
+            },
+            {
+                key: 'BLOCK',
+                value: 'Block'
+            },
+            {
+                key: 'UNENROLLED',
+                value: 'Unenroll'
+            }
         ]
         setDefinedStatusList(statusTypes);
         getEnrollmentStatusOptions();
     }, []);
 
     useEffect(() => {
-        getEnrollments();
-        console.log( `status list: ${JSON.stringify(statusList)}`)
+        if (Object.keys(statusList).length > 0) {
+            getEnrollments();
+            console.log(`status list: ${JSON.stringify(statusList)}`)
+        }
     }, [statusList]);
 
     const getEnrollmentStatusOptions = async () => {
@@ -91,8 +113,10 @@ export function Enrollments() {
     const getEnrollments = () => {
         setLoadingDetails(true);
         ApiService.get(ApiUrls.enrollments(window.location.pathname.split('/')[2])).then(result => {
-            console.log(`enrollments: ${JSON.stringify(result)}`)
-            setEnrollments(result);
+            let modifiedEnrollments = JSON.parse(JSON.stringify(result));
+            let productsWithStatus = updateEnrollmentListWithStatus(result.products);
+            modifiedEnrollments.products = productsWithStatus;
+            setEnrollments(modifiedEnrollments);
         }).catch(error => {
             console.error(`Error in getting user enrollments: ${error}`);
             openNotification('error', 'Error in getting user enrollments')
@@ -101,25 +125,37 @@ export function Enrollments() {
         })
     }
 
+    const updateEnrollmentListWithStatus = (productsData) => {
+		Object.keys(productsData).forEach(eachProduct => {
+            productsData[eachProduct].forEach(each => {
+                each.status = statusList[each.status];
+            });
+		})
+        console.log(`Updated enrollments: ${JSON.stringify(productsData)}`);
+        return productsData;
+	}
+
     const updateColumnTitle = (eachProduct) => {
         columns[0].title = eachProduct.toLowerCase() === 'tectango' ? 'Card' : (eachProduct.toLowerCase() === 'tecbio' ? 'Finger' : 'Instrument Id')
         return null;
     }
 
-    const changeEnrollmentStatus = async (status, userId: string, enrollmentId: string) => {
+    const changeEnrollmentStatus = (status, userId: string, enrollmentId: string) => {
         setLoadingDetails(true);
         let statusObj = {
             status: status
         }
-        let result = await ApiService.put(ApiUrls.changeEnrollmentStatus(userId, enrollmentId), statusObj)
+        let result = ApiService.put(ApiUrls.changeEnrollmentStatus(userId, enrollmentId), statusObj)
             .then(data => {
                 if (!data.errorSummary) {
                     openNotification('success', `Status  has been updated successfully with ${status.toLowerCase()}.`);
-                    setEnrollments(data);
+                    let modifiedEnrollments = JSON.parse(JSON.stringify(data));
+                    let productsWithStatus = updateEnrollmentListWithStatus(data.products);
+                    modifiedEnrollments.products = productsWithStatus;
+                    setEnrollments(modifiedEnrollments);
                 } else {
                     openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
                 }
-                
             })
             .catch(error => {
                 console.error('Error: ', error);
