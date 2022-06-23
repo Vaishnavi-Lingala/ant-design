@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import { Button, Collapse, Skeleton, DatePicker, Table } from "antd";
 import { CaretRightOutlined } from '@ant-design/icons';
 import moment from "moment";
@@ -97,6 +98,7 @@ export default function ActivityLogs() {
     const [logResponse, setLogResponse] = useState<any>({});
     const [loading, setLoading] = useState(true);
     const [tableLoading, setTableLoading] = useState(false);
+    const { productId } = useParams();
 
     const initialDateTimeFilters = {
         start: {
@@ -159,7 +161,7 @@ export default function ActivityLogs() {
             setTableLoading(true);
             try {
                 const data = await ApiService.post(
-                    ApiUrls.activityLog,
+                    ApiUrls.activityLog(productId),
                     generateFilterPayload()
                 );
                     console.log(data);
@@ -179,7 +181,7 @@ export default function ActivityLogs() {
             setTableLoading(true);
             try {
                 var response = await ApiService.post(
-                    `${ApiUrls.activityLog}${url.search}`,
+                    `${ApiUrls.activityLog(productId)}${url.search}`,
                     generateFilterPayload()
                 );
                 setTableLoading(false);

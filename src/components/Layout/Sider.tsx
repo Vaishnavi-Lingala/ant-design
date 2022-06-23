@@ -101,9 +101,9 @@ function AppSider() {
 			{
 				label: <div className="sidebar-header-content">
 					{productNames[selectedHeaderOption] === TecTango ?
-					  <img height={28} width={28} src={"../../TecTango.png"} /> : 
+					  <img height={28} width={28} src={window.location.origin + "/TecTango.png"} /> : 
 					  productNames[selectedHeaderOption] === TecBio? 
-					  <img height={28} width={28} src={"../../TecBioIcon.png"} /> : <></>}
+					  <img height={28} width={28} src={window.location.origin + "/TecBioIcon.png"} /> : <></>}
 					{productNames[selectedHeaderOption]}
 				</div>,
 				key: selectedHeaderOption

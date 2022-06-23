@@ -45,6 +45,30 @@ export const hiddenFields = {
     ]
 };
 
+export const userFieldNames = {
+    "uid": "User ID",
+    "user_id": "User ID",
+    "first_name": "First name",
+    "last_name": "Last name",
+    "display_name": "Display name",
+    "user_name": "User name",
+    "email": "Email",
+    "sam": "samAccount Name",
+    "upn": "UPN",
+    "idp_user_id": "IDP user ID",
+    "account_id": "Account ID",
+    "last_invite_accepted": "Last invite accepted",
+    "sourced_by": "Sourced by",
+    "last_portal_login": "Last portal login",
+    "status": "Status",
+    "login_domain": "Login domain",
+    "login_user_name": "Login username",
+    "last_invite_sent": "Last invite sent",
+    "eula_accepted_date": "Eula accepted date",
+    "state_token": "State token",
+    "active_session": "Session ID",
+}
+
 // Field in activity logs are displayed in this order with the below names
 export const logFieldNames = {
     uid: "Uid",
@@ -196,7 +220,7 @@ export const userFilterFieldNames = {
     email: "Email",
     user_name: "User Name",
     status: "Status",
-    is_enrolled: "Enrolled",
+    is_enrolled: "Enrollment Status",
     inactivity_in_days: "Inactivity in Days"
 }
 
@@ -233,14 +257,17 @@ export const end_time = "end_time";
 // Product names
 export const TecTango = "TecTango";
 export const TecBio = "TecBio";
+export const TecUnify = "TecUnify";
 
 // Product keys
 export const TecTANGO = "TecTANGO";
 export const TecBIO = "TecBIO";
+export const TecUNIFY = "TecUNIFY";
 
 export const productNames = {
     [TecTANGO]: TecTango,
-    [TecBIO]: TecBio
+    [TecBIO]: TecBio,
+    [TecUNIFY]: TecUnify
 }
 
 // Sidebar item names
