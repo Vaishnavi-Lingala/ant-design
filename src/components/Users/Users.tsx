@@ -46,7 +46,7 @@ export default function Users() {
 			width: '10%'
 		},
 		{
-			title: 'Enrollment Status',
+			title: 'Enrolled',
 			dataIndex: 'is_user_enrolled',
 			width: '10%'
 		},
