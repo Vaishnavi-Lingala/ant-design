@@ -28,12 +28,12 @@ export default function Users() {
 		{
 			title: 'First Name',
 			dataIndex: 'first_name',
-			width: '15%'
+			width: '10%'
 		},
 		{
 			title: 'Last Name',
 			dataIndex: 'last_name',
-			width: '15%'
+			width: '10%'
 		},
 		{
 			title: 'Email',
@@ -43,6 +43,11 @@ export default function Users() {
 		{
 			title: 'Username',
 			dataIndex: 'user_name',
+			width: '10%'
+		},
+		{
+			title: 'Enrollment Status',
+			dataIndex: 'is_user_enrolled',
 			width: '10%'
 		},
 		{
@@ -58,7 +63,7 @@ export default function Users() {
 		{
 			title: 'Actions',
 			dataIndex: 'actions',
-			width: '15%',
+			width: '25%',
 			render: (text: any, record: { uid: any; user_name: any }) => (
 				<Row>
 					<Col span= {12}>
@@ -146,6 +151,9 @@ export default function Users() {
 		}).finally(() => {
 			setTableLoading(false);
 		});
+		data.results.map((value) => {
+			value['is_user_enrolled'] === true ? value['is_user_enrolled'] = 'true' : value['is_user_enrolled'] = 'false'
+		})
 		const updatedUsers = updateUsersListWithStatusAndKey(data.results);
 		console.log(updatedUsers);
 		setArr(updatedUsers);
@@ -160,6 +168,9 @@ export default function Users() {
 		}).finally(() => {
 			setLoadingDetails(false);
 		});
+		data.results.map((value) => {
+			value['is_user_enrolled'] === true ? value['is_user_enrolled'] = 'true' : value['is_user_enrolled'] = 'false'
+		})
 		const updatedUsers = updateUsersListWithStatusAndKey(data.results);
 		console.log(updatedUsers);
 		setArr(updatedUsers);
@@ -205,7 +216,7 @@ export default function Users() {
 	return (
 		<>
 			<div className='content-header'>
-				{window.location.pathname.split('/').length === 2 ? <span>Users</span> : <span>User</span>}
+				{window.location.pathname.split('/').length === 2 ? <span>Users</span> : <></>}
 				{window.location.pathname.split('/').length !== 2 ? <Button style={{ marginLeft: 'auto', alignSelf: 'end' }} onClick={() => { setUserDetails(undefined) }}>Back</Button> : <></>}
 			</div>
 

@@ -71,12 +71,13 @@ function AppHeader() {
     function getProducts() {
         ApiService.get(ApiUrls.products)
             .then(data => {
-                var object = emptyObj;
-                for (var i = 0; i < data.length; i++) {
-                    object[data[i].sku] = data[i].uid
+                if (!data.errorSummary) {
+                    var object = emptyObj;
+                    for (var i = 0; i < data.length; i++) {
+                        object[data[i].sku] = data[i].uid
+                    }
+                    setProducts({ ...object });
                 }
-
-                setProducts({ ...object });
             })
             .catch((error) => {
                 console.error('Error: ', error);
