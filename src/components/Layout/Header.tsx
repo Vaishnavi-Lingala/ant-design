@@ -23,6 +23,11 @@ function AppHeader() {
     const [selectedMenuOption, setSelectedMenuOption] = useContext(Store);
     const { authState, oktaAuth } = useOktaAuth();
     const [products, setProducts] = useState(emptyObj);
+    
+    let selectedHeaderKeys: any = [];
+    if (Object.keys(productNames).includes(selectedMenuOption)) {
+        selectedHeaderKeys = [Products].concat([selectedMenuOption]);
+    }
 
     const directoryPaths = ['dashboard', '/users', '/groups', '/machines', '/devices'];
     const commonProductPaths = ['/product', '/mechanism', '/policies', '/activitylogs'];
@@ -169,7 +174,7 @@ function AppHeader() {
             </div>
 
             <Menu className="border-bottom-0" theme="light" mode="horizontal"
-                selectedKeys={[selectedMenuOption]} onClick={headerMenuClickHandler}
+                selectedKeys={selectedHeaderKeys} onClick={headerMenuClickHandler}
                 items={headerItems}
             />
 
