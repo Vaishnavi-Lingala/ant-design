@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import { Button, Input, Radio, Select, Skeleton } from "antd";
 
 import './Mechanism.css'
@@ -30,8 +30,7 @@ function Mechanism(props: any) {
     const [disabledFactors1]: any = useState([]);
     const [selectedHeader] = useContext(Store);
     const history = useHistory();
-
-    const productId = localStorage.getItem("productId");
+    const { productId } = useParams();
     
     const mechanism = {
         challenge_factors: [
@@ -59,7 +58,7 @@ function Mechanism(props: any) {
     }
 
     useEffect(() => {
-        ApiService.get(ApiUrls.mechanism(window.location.pathname.split('/')[4]))
+        ApiService.get(ApiUrls.mechanism(window.location.pathname.split('/')[4], productId))
             .then((data: MechanismType) => {
                 //@ts-ignore
                 if (!data.errorSummary) {
@@ -124,7 +123,7 @@ function Mechanism(props: any) {
         Promise.all(([
             ApiService.get(ApiUrls.groups, { type: "USER" }),
             ApiService.get(ApiUrls.mechanismOptions),
-            ApiService.get(ApiUrls.mechanismChallengeFactors),
+            ApiService.get(ApiUrls.mechanismChallengeFactors(productId)),
         ]))
             .then(data => {
                 for (var i = 0; i < data[0].length; i++) {
@@ -159,7 +158,7 @@ function Mechanism(props: any) {
     function updateMechanism() {
         console.log(groupUids);
         editData.mechanism_groups = groupUids
-        ApiService.put(ApiUrls.mechanism(displayDetails['uid']), editData)
+        ApiService.put(ApiUrls.mechanism(displayDetails['uid'], productId), editData)
             .then(data => {
                 if (!data.errorSummary) {
                     groupNames.length = 0;

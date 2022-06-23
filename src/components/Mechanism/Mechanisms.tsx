@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Button, Skeleton, Table, Tooltip } from 'antd';
 import Modal from 'antd/lib/modal/Modal';
@@ -10,7 +10,7 @@ import './Mechanism.css';
 
 import Mechanism from './mechanism';
 import { openNotification } from '../Layout/Notification';
-import ApiUrls, { productId } from '../../ApiUtils';
+import ApiUrls from '../../ApiUtils';
 import ApiService from '../../Api.service';
 
 export default function Mechanisms() {
@@ -19,6 +19,7 @@ export default function Mechanisms() {
 	const [inactiveMechanisms, setInactiveMechanisms]: any = useState([]);
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const history = useHistory();
+	const { productId } = useParams();
 
 	const inactiveColumns = [
 		{
@@ -102,7 +103,7 @@ export default function Mechanisms() {
 
 	function getMechanisms() {
 		setLoading(true);
-		ApiService.get(ApiUrls.mechanisms)
+		ApiService.get(ApiUrls.mechanisms(productId))
 			.then(data => {
 				console.log(data);
 				var activeCounter = 0;
@@ -150,7 +151,7 @@ export default function Mechanisms() {
 	}, [])
 
 	const handleOk = (object: object) => {
-		ApiService.post(ApiUrls.addMechanism, object)
+		ApiService.post(ApiUrls.addMechanism(productId), object)
 			.then(data => {
 				if (!data.errorSummary) {
 					console.log(data);
@@ -172,7 +173,7 @@ export default function Mechanisms() {
 	}
 
 	function activateMechanism(uid: string) {
-		ApiService.get(ApiUrls.activateMechanism(uid))
+		ApiService.get(ApiUrls.activateMechanism(uid, productId))
 			.then(data => {
 				if (!data.errorSummary) {
 					openNotification('success', 'Successfully activated Mechanism');
@@ -189,7 +190,7 @@ export default function Mechanisms() {
 	}
 
 	function deActivateMechanism(uid: string) {
-		ApiService.get(ApiUrls.deActivateMechanism(uid))
+		ApiService.get(ApiUrls.deActivateMechanism(uid, productId))
 			.then(data => {
 				if (!data.errorSummary) {
 					openNotification('success', 'Successfully de-activated Mechanism');
@@ -210,7 +211,7 @@ export default function Mechanisms() {
 			mechanism_id: uid,
 			order: order
 		}
-		ApiService.post(ApiUrls.reOrderMechanisms, data)
+		ApiService.post(ApiUrls.reOrderMechanisms(productId), data)
 			.then(data => {
 				if (!data.errorSummary) {
 					console.log(data)

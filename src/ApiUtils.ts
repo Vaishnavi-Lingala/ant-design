@@ -1,7 +1,5 @@
 export const accountId = localStorage.getItem('accountId');
 
-export const productId = localStorage.getItem("productId");
-
 export const base_url = process.env.REACT_APP_API_URL
 
 export function getAccessToken() {
@@ -60,27 +58,27 @@ const Urls = {
     groupFilter: `account/${accountId}/groups/filter`,
 
     // Policy Urls
-    policies: `account/${accountId}/product/${productId}/auth-policies`,
+    policies: (productId) => `account/${accountId}/product/${productId}/auth-policies`,
     policy: (uid) => `account/${accountId}/auth-policies/${uid}`, // For GET and UPDATE APIs
-    addPolicy: `account/${accountId}/product/${productId}/auth-policies`, // For CREATE API
-    activatePolicy: (uid) => `account/${accountId}/product/${productId}/auth-policy/${uid}/activate`,
-    deActivatePolicy: (uid) => `account/${accountId}/product/${productId}/auth-policy/${uid}/inactivate`,
-    reOrderPolicies: `account/${accountId}/product/${productId}/auth-policy/reorder`,
+    addPolicy: (productId) => `account/${accountId}/product/${productId}/auth-policies`, // For CREATE API
+    activatePolicy: (uid, productId) => `account/${accountId}/product/${productId}/auth-policy/${uid}/activate`,
+    deActivatePolicy: (uid, productId) => `account/${accountId}/product/${productId}/auth-policy/${uid}/inactivate`,
+    reOrderPolicies: (productId) => `account/${accountId}/product/${productId}/auth-policy/reorder`,
     loginTypeOptions: `account/${accountId}/auth-policy/login-type`,
 
     // Mechanism Urls
-    mechanisms: `account/${accountId}/product/${productId}/mechanism`,
-    addMechanism: `account/${accountId}/product/${productId}/mechanism`,
-    mechanism: (uid) => `account/${accountId}/product/${productId}/mechanism/${uid}`, // For GET and UPDATE APIs
+    mechanisms: (productId) => `account/${accountId}/product/${productId}/mechanism`,
+    addMechanism: (productId) => `account/${accountId}/product/${productId}/mechanism`,
+    mechanism: (uid, productId) => `account/${accountId}/product/${productId}/mechanism/${uid}`, // For GET and UPDATE APIs
     mechanismOptions: `account/${accountId}/mechanism/options`,
-    mechanismChallengeFactors: `account/${accountId}/mechanism/challenge-factor-options?product_id=${productId}`,
+    mechanismChallengeFactors: (productId) => `account/${accountId}/mechanism/challenge-factor-options?product_id=${productId}`,
     mechanismPasswordGraceOptions: `account/${accountId}/mechanism/password-grace-options`,
-    activateMechanism: (uid) => `account/${accountId}/product/${productId}/mechanism/${uid}/activate`,
-    deActivateMechanism: (uid) => `account/${accountId}/product/${productId}/mechanism/${uid}/inactivate`,
-    reOrderMechanisms: `account/${accountId}/product/${productId}/mechanism/reorder`,
+    activateMechanism: (uid, productId) => `account/${accountId}/product/${productId}/mechanism/${uid}/activate`,
+    deActivateMechanism: (uid, productId) => `account/${accountId}/product/${productId}/mechanism/${uid}/inactivate`,
+    reOrderMechanisms: (productId) => `account/${accountId}/product/${productId}/mechanism/reorder`,
 
     // Activity Log Urls
-    activityLog: `account/${accountId}/product/${productId}/activitylog`,
+    activityLog: (productId) => `account/${accountId}/product/${productId}/activitylog`,
     filterableFields: `account/${accountId}/activitylog/filterable-fields`,
 
     // Licenses
