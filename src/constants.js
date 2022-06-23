@@ -73,7 +73,7 @@ export const logFieldNames = {
         "api_end_point": "API end point",
         "mechanism_id": "Mechanism ID",
         "mechanism_name": "Mechanism name",
-        "display_name": "Display name",
+        "display_name": "Actor",
         "event_context": "Event context",
         "event_display_message": "Event display message",
         "event_outcome": "Event outcome",
