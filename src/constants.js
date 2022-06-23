@@ -97,7 +97,7 @@ export const logFieldNames = {
         "api_end_point": "API end point",
         "mechanism_id": "Mechanism ID",
         "mechanism_name": "Mechanism name",
-        "display_name": "Display name",
+        "display_name": "Actor",
         "event_context": "Event context",
         "event_display_message": "Event display message",
         "event_outcome": "Event outcome",
@@ -195,7 +195,7 @@ export const settingsFieldNames = {
 }
 
 export const settingsIdpFields = {
-    idp_type: "IDP Type",
+    idp_type: "IDP",
     idp_portal_oidc_client_id: "Portal OIDC Client ID",
     idp_app_oidc_client_id: "App OIDC Client ID"
 }
