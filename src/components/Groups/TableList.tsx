@@ -10,19 +10,8 @@ function TableList({ tableLoading, getGroupsByFilter, groupType, getGroups, colu
 
     const params = {
         group_type: groupType,
-        start: page,
-        limit: pageSize
     }
-
-    function onGroupsPageChange(page, pageSize) {
-        const params = {
-            group_type: groupType,
-            start: page,
-            limit: pageSize
-        }
-        getGroups({}, params);
-    }
-
+    
     const updateColumnTitle = () => {
         columns[1].title = groupType === 'USER' ? 'User count' : 'Machine count'
         return null;
@@ -40,11 +29,9 @@ function TableList({ tableLoading, getGroupsByFilter, groupType, getGroups, colu
             pagination={{
                 current: page,
                 pageSize: pageSize,
-                total: totalItems,
                 onChange: (page, pageSize) => {
                     setPage(page);
                     setPageSize(pageSize);
-                    onGroupsPageChange(page, pageSize);
                 }
             }}
         />

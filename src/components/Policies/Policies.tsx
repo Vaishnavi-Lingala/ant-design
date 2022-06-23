@@ -106,7 +106,7 @@ export default function Policies() {
 			render: (text: any, record: { policy_id: any; }) => (
 				<Tooltip title="View">
 					<Button icon={<BarsOutlined />} onClick={() => {
-						history.push('/policies/' + window.location.pathname.split("/")[2] + "/" + record.policy_id);
+						history.push(`/product/${localStorage.getItem("productId")}/policies/` + window.location.pathname.split("/")[4] + "/" + record.policy_id);
 					}}>
 					</Button>
 				</Tooltip>
