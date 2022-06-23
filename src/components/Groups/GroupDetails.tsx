@@ -147,7 +147,7 @@ export default function GroupDetails(props: any) {
             <div className="content-container rounded-grey-border">
                 <Skeleton loading={loadingDetails}>
                     <div className="row-container">
-                        <div className='content-header'>
+                        <div className='group-content-header'>
                             {groupDetails['name']}
                         </div>
                         <>
@@ -159,8 +159,14 @@ export default function GroupDetails(props: any) {
                             </Button>
                         </>
                     </div>
-                    <div style={{ fontWeight: 600, fontSize: 'medium' }}>
-                        Created: {Moment(groupDetails['created_ts']).format('MM/DD/YYYY')}
+                    <div style={{ fontSize: 'medium' }}>
+                        <b>Description:</b> {groupDetails['description']}
+                    </div>
+                    <div style={{ fontSize: 'medium' }}>
+                    <b>Sourced by:</b> {groupDetails['sourced_by']}
+                    </div>
+                    <div style={{ fontSize: 'medium' }}>
+                    <b>Created:</b> {Moment(groupDetails['created_ts']).format('MM/DD/YYYY')}
                     </div>
                     <Divider style={{ borderTop: '1px solid #d7d7dc' }} />
                     <div style={{ width: '100%', border: '1px solid #D7D7DC', borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6' }}>

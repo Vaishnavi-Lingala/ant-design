@@ -171,7 +171,7 @@ export const settingsFieldNames = {
 }
 
 export const settingsIdpFields = {
-    idp_type: "IDP Type",
+    idp_type: "IDP",
     idp_portal_oidc_client_id: "Portal OIDC Client ID",
     idp_app_oidc_client_id: "App OIDC Client ID"
 }
