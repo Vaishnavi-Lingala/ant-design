@@ -255,7 +255,7 @@ export default function Policies() {
 		console.log(path);
 		if (path === 5) {
 			setLoadingDetails(true)
-			ApiService.get(ApiUrls.policies)
+			ApiService.get(ApiUrls.policies(productId))
 				.then(data => {
 					console.log(data);
 					var pinCounter = 0;
@@ -430,7 +430,7 @@ export default function Policies() {
 
 	function activatePolicy(uid: string) {
 		console.log(uid);
-		ApiService.get(ApiUrls.activatePolicy(uid))
+		ApiService.get(ApiUrls.activatePolicy(uid, productId))
 			.then(data => {
 				if (!data.errorSummary) {
 					openNotification('success', 'Successfully activated Policy');
@@ -448,7 +448,7 @@ export default function Policies() {
 
 	function deActivatePolicy(uid: string) {
 		console.log(uid);
-		ApiService.get(ApiUrls.deActivatePolicy(uid))
+		ApiService.get(ApiUrls.deActivatePolicy(uid, productId))
 			.then(data => {
 				if (!data.errorSummary) {
 					openNotification('success', 'Successfully de-activated Policy');
@@ -470,7 +470,7 @@ export default function Policies() {
 			auth_policy_uid: uid,
 			policy_type: policyType
 		}
-		ApiService.post(ApiUrls.reOrderPolicies, data)
+		ApiService.post(ApiUrls.reOrderPolicies(productId), data)
 			.then(data => {
 				if (!data.errorSummary) {
 					console.log(data)

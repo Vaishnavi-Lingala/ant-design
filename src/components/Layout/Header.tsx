@@ -155,7 +155,6 @@ function AppHeader() {
                 break;
             default:
                 history.push(`/product/${products[e.key]}${MenuItemPaths[e.key]}`);
-                window.location.reload();
         }
     }
 

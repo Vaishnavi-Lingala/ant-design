@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useParams } from 'react-router-dom';
 import { Button, Modal, Table } from "antd";
 import { CloseOutlined} from "@ant-design/icons";
 
@@ -13,6 +14,8 @@ import { CARD_ENROLL, KIOSK, PASSWORD, PIN, policyDisplayNames } from "../../con
 
 function TableList({ handleGetPolicies, policy_type, policy_description, activateColumns, activePolicies, draggableContainer, draggableBodyRow, deActivateColumns, inActivePolicies }) {
     const [isModal, setIsModal] = useState(false);
+	const { productId } = useParams();
+
     const pinData = {
         description: '',
         name: '',
@@ -71,7 +74,7 @@ function TableList({ handleGetPolicies, policy_type, policy_description, activat
     }
 
     const handleOk = (policyType: string, object: object) => {
-        ApiService.post(ApiUrls.addPolicy, object)
+        ApiService.post(ApiUrls.addPolicy(productId), object)
             .then(data => {
                 if (!data.errorSummary) {
                     console.log(data);
