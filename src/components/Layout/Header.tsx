@@ -23,6 +23,15 @@ function AppHeader() {
     const [selectedMenuOption, setSelectedMenuOption] = useContext(Store);
     const { authState, oktaAuth } = useOktaAuth();
     const [products, setProducts] = useState(emptyObj);
+    
+    let selectedHeaderKeys: any = [];
+    if (Object.keys(productNames).includes(selectedMenuOption)) {
+        selectedHeaderKeys = [Products].concat([selectedMenuOption]);
+    }
+
+    const directoryPaths = ['dashboard', '/users', '/groups', '/machines', '/devices'];
+    const commonProductPaths = ['/product', '/mechanism', '/policies', '/activitylogs'];
+    const settingsPaths = ['/account', '/domains'];
 
     const headerItemsInitialValue = [
         {
@@ -66,6 +75,34 @@ function AppHeader() {
                 return JSON.parse(JSON.stringify(values));
             });
         }
+
+        const splitPath = window.location.pathname?.split("/");
+        console.log({ splitPath });
+
+        if (splitPath?.length) {
+            console.log(window.location.pathname);
+            if (directoryPaths.some(path => window.location.pathname.includes(path))) {
+                console.log({ Directory });
+                setSelectedMenuOption(Directory);
+            }
+            else if (settingsPaths.some(path => window.location.pathname.includes(path))) {
+                setSelectedMenuOption(Settings);
+            }
+            else if (commonProductPaths.some(path => window.location.pathname.includes(path))) {
+                let product = Object.keys(products).find(key => {
+                    console.log(products[key]);
+                    console.log(splitPath[2]);
+                    return products[key] === splitPath[2]
+                });
+                console.log({ splitPath });
+                console.log({ products });
+                console.log({ product });
+                if (product) {
+                    setSelectedMenuOption(product);
+                }
+            }
+        }
+
     }, [products]);
 
     function getProducts() {
@@ -127,18 +164,17 @@ function AppHeader() {
                 break;
             default:
                 history.push(`/product/${products[e.key]}${MenuItemPaths[e.key]}`);
-                window.location.reload();
         }
     }
 
     return (
         <Header className="header">
             <div className="logo">
-                <img src="../../Credenti_Logo.png" alt="Credenti TecConnect" width={150} />
+                <img src={ window.location.origin + "/Credenti_Logo.png" } alt="Credenti TecConnect" width={150} />
             </div>
 
             <Menu className="border-bottom-0" theme="light" mode="horizontal"
-                selectedKeys={[selectedMenuOption]} onClick={headerMenuClickHandler}
+                selectedKeys={selectedHeaderKeys} onClick={headerMenuClickHandler}
                 items={headerItems}
             />
 

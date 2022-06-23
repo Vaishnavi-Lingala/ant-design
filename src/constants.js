@@ -232,14 +232,17 @@ export const end_time = "end_time";
 // Product names
 export const TecTango = "TecTango";
 export const TecBio = "TecBio";
+export const TecUnify = "TecUnify";
 
 // Product keys
 export const TecTANGO = "TecTANGO";
 export const TecBIO = "TecBIO";
+export const TecUNIFY = "TecUNIFY";
 
 export const productNames = {
     [TecTANGO]: TecTango,
-    [TecBIO]: TecBio
+    [TecBIO]: TecBio,
+    [TecUNIFY]: TecUnify
 }
 
 // Sidebar item names
