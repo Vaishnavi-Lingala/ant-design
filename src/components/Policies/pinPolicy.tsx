@@ -273,7 +273,7 @@ export const PinPolicy = (props: any) => {
 								Special characters (e.g., !@#$%^&*)
 							</Checkbox>
 						</div>
-						<div>
+						{/* <div>
 							<Checkbox
 								onChange={(e) => pinEditData.policy_req.is_pin_history_req = e.target.checked}
 								defaultChecked={!isEdit ? policyRequirements['is_pin_history_req'] : pinEditData.policy_req.is_pin_history_req}
@@ -285,7 +285,7 @@ export const PinPolicy = (props: any) => {
 										defaultValue={policyRequirements['pin_history_period'].toString()} /> : policyRequirements['pin_history_period']
 								} {policyRequirements['pin_history_period'] > 1 ? "PINS" : "PIN"}
 							</Checkbox>
-						</div>
+						</div> */}
 
 						<div>
 							<Checkbox
