@@ -47,7 +47,6 @@ export const hiddenFields = {
 
 export const userFieldNames = {
     "uid": "User ID",
-    "user_id": "User ID",
     "first_name": "First name",
     "last_name": "Last name",
     "display_name": "Display name",
