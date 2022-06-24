@@ -31,7 +31,7 @@ function TableList({ handleGetPolicies, policy_type, policy_description, activat
             is_upper_case_req: false,
             is_lower_case_req: false,
             is_non_consecutive_char_req: false,
-            max_length: 4,
+            max_length: 6,
             is_pin_history_req: false,
             is_num_req: true
         }
