@@ -221,6 +221,7 @@ export const PinPolicy = (props: any) => {
 					<div>
 						{
 							isEdit ? <InputNumber
+								min={4}
 								onChange={(val) => { pinEditData.policy_req.min_length = parseInt(val); }}
 								defaultValue={policyRequirements['min_length'].toString()} /> : policyRequirements['min_length']
 						}
