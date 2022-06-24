@@ -13,7 +13,8 @@ export default function Dashboard() {
     const titles = {
         users: 'Users',
         groups: 'Groups',
-        machines: 'Machines'
+        machines: 'Machines',
+        enrollment: 'Enrollments'
     }
 
     useEffect(() => {
