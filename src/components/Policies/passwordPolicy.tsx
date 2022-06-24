@@ -259,7 +259,7 @@ export const PasswordPolicy = (props: any) => {
             </div> : <></>) : <div style={{ paddingTop: '10px', paddingRight: '45px', paddingBottom: '20px' }}>
                 <Button style={{ float: 'right', marginLeft: '10px' }}
                     onClick={setCancelClick}>Cancel</Button>
-                <Button type='primary' style={{ float: 'right' }}
+                <Button type='primary' loading={props.buttonLoading} style={{ float: 'right' }}
                     onClick={createPasswordPolicy}>Create</Button></div>
         }
     </Skeleton>
