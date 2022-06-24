@@ -28,7 +28,7 @@ function Login() {
 
     const validateEmail = async () => {
         setButtonLoading(true);
-        ApiService.post(ApiUrls.client_info, { domain: domain })
+        ApiService.post(ApiUrls.client_info, { domain: domain})
             .then((data: ClientConfiguration) => {
                 //@ts-ignore
                 if (!data.errorSummary) {
@@ -124,7 +124,7 @@ function Login() {
                         >
                             <Input
                                 style={{ borderRadius: '5px' }}
-                                onChange={(e) => { setEmail(e.target.value) }}
+                                onChange={(e) => { setEmail(e.target.value.split(" ").join("")) }}
                                 size="large"
                             />
                             <div style={{ color: 'red', textAlign: 'left' }}>{message}</div>
