@@ -8,6 +8,7 @@ import moment from "moment";
 import './Users.css';
 import { MoreOutlined } from "@ant-design/icons"
 import { ColumnType } from "antd/lib/table";
+import { stat } from "fs/promises";
 
 export function Enrollments() {
     const [enrollments, setEnrollments]: any = useState(undefined);
@@ -54,7 +55,7 @@ export function Enrollments() {
                     <Menu key={"changeStatus"} title={"Change Status"} >
                         {
                             definedStatusList.map(item => {
-                                return <Menu.Item key={item.key} onClick={({ key }) => { changeEnrollmentStatus(key, window.location.pathname.split('/')[2], record.uid) }}>
+                                return <Menu.Item key={item.key} disabled={disableStatus(item.key, record.status)} onClick={({ key }) => { changeEnrollmentStatus(key, window.location.pathname.split('/')[2], record.uid) }}>
                                     {item.value}
                                 </Menu.Item>
                             })
@@ -138,6 +139,11 @@ export function Enrollments() {
     const updateColumnTitle = (eachProduct) => {
         columns[0].title = eachProduct.toLowerCase() === 'tectango' ? 'Card' : (eachProduct.toLowerCase() === 'tecbio' ? 'Finger' : 'Instrument Id')
         return null;
+    }
+
+    const disableStatus = (key, currentStatus) => {
+        const currentStatusKey = Object.keys(statusList).find(eachItem => statusList[eachItem] === currentStatus );
+        return (key === currentStatusKey)? true: false;
     }
 
     const changeEnrollmentStatus = (status, userId: string, enrollmentId: string) => {

@@ -64,7 +64,7 @@ export default function Users() {
 			title: 'Actions',
 			dataIndex: 'actions',
 			width: '25%',
-			render: (text: any, record: { uid: any; user_name: any }) => (
+			render: (text: any, record: { uid: any; user_name: any, status: string }) => (
 				<Row>
 					<Col span= {12}>
 						<Tooltip title="View">
@@ -77,7 +77,7 @@ export default function Users() {
 							<Menu key={"changeStatus"} title={"Change Status"} >
 								{
 									statusList.map(item => {
-										return <Menu.Item key={item.key} onClick={({ key }) => { changeUserStatus(key, record.uid, record.user_name) }}>
+										return <Menu.Item key={item.key} disabled={disableStatus(item.key, record.status)} onClick={({ key }) => { changeUserStatus(key, record.uid, record.user_name) }}>
 											{item.value}
 										</Menu.Item>
 									})
@@ -212,6 +212,11 @@ export default function Users() {
 		console.log(`Status for ${user_name} is updated successfully with ${status}.`);
 		getUpdatedUsersList();
 	}
+
+	const disableStatus = (key, currentStatus) => {
+        const currentStatusKey = Object.keys(lifeCycleTypes).find(eachItem => lifeCycleTypes[eachItem] === currentStatus );
+        return (key === currentStatusKey)? true: false;
+    }
 
 	return (
 		<>
