@@ -16,6 +16,7 @@ export default function Machines() {
     const [pageSize, setPageSize]: any = useState(10);
     const [totalItems, setTotalItems]: any = useState(0);
     const [advancedFilters, setAdvancedFilters] = useState({});
+    const [object, setObject] = useState({});
     const history = useHistory();
 
     const columns = [
@@ -61,12 +62,13 @@ export default function Machines() {
             start: page,
             limit: pageSize
         }
-        getMachines({}, params);
+        getMachinesByFilter(object, params);
     }
 
-    function getMachinesByFilter(object = {}, params = {}) {
+    function getMachinesByFilter(objectData = {}, params = {}) {
         setTableLoading(true);
-        ApiService.post(ApiUrls.machineFilter, object, params).then(data => {
+        setObject(objectData);
+        ApiService.post(ApiUrls.machineFilter, objectData, params).then(data => {
             console.log('Machines: ', data);
             data.results.forEach(machine => {
                 machine.key = machine.uid;

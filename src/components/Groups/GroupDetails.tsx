@@ -166,16 +166,16 @@ export default function GroupDetails(props: any) {
                     <b>Sourced by:</b> {groupDetails['sourced_by']}
                     </div>
                     <div style={{ fontSize: 'medium' }}>
-                    <b>Created:</b> {Moment(groupDetails['created_ts']).format('MM/DD/YYYY')}
+                    <b>Created on:</b> {Moment(groupDetails['created_ts']).format('MM/DD/YYYY')}
                     </div>
                     <Divider style={{ borderTop: '1px solid #d7d7dc' }} />
                     <div style={{ width: '100%', border: '1px solid #D7D7DC', borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6' }}>
                         <Row>
                             <Col span={12}>
-                                <Button type='primary' size='large' onClick={() => setAction('Add')}>Add Users</Button>
+                                <Button type='primary' disabled={groupDetails['is_default']} size='large' onClick={() => setAction('Add')}>Add Users</Button>
                             </Col>
                             <Col span={6} offset={6}>
-                                <Button type='primary' size='large' onClick={() => setAction('Remove')}>Remove Users</Button>
+                                <Button type='primary' disabled={groupDetails['is_default']} size='large' onClick={() => setAction('Remove')}>Remove Users</Button>
                             </Col>
                         </Row>
 

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useParams } from 'react-router-dom';
 import { Button, Modal, Table } from "antd";
-import { CloseOutlined} from "@ant-design/icons";
+import { CloseOutlined } from "@ant-design/icons";
 
 import CardEnrollmentPolicy from "./CardEnrollmentPolicy";
 import { KioskPolicy } from "./kioskPolicy";
@@ -14,7 +14,8 @@ import { CARD_ENROLL, KIOSK, PASSWORD, PIN, policyDisplayNames } from "../../con
 
 function TableList({ handleGetPolicies, policy_type, policy_description, activateColumns, activePolicies, draggableContainer, draggableBodyRow, deActivateColumns, inActivePolicies }) {
     const [isModal, setIsModal] = useState(false);
-	const { productId } = useParams();
+    const { productId } = useParams();
+    const [buttonLoading, setButtonLoading] = useState(false);
 
     const pinData = {
         description: '',
@@ -30,7 +31,7 @@ function TableList({ handleGetPolicies, policy_type, policy_description, activat
             is_upper_case_req: false,
             is_lower_case_req: false,
             is_non_consecutive_char_req: false,
-            max_length: 4,
+            max_length: 6,
             is_pin_history_req: false,
             is_num_req: true
         }
@@ -74,20 +75,24 @@ function TableList({ handleGetPolicies, policy_type, policy_description, activat
     }
 
     const handleOk = (policyType: string, object: object) => {
+        setButtonLoading(true);
         ApiService.post(ApiUrls.addPolicy(productId), object)
             .then(data => {
                 if (!data.errorSummary) {
                     console.log(data);
-                    openNotification('success', `Successfully added ${policyType.slice(0, 1) + policyType.slice(1).toLowerCase()} Policy`);
+                    openNotification('success', `Successfully created ${policyType.slice(0, 1) + policyType.slice(1).toLowerCase()} Policy`);
                     setIsModal(false);
+                    setButtonLoading(false);
                     handleGetPolicies();
                 }
                 else {
                     openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
+                    setButtonLoading(false);
                 }
             }, error => {
                 console.error('Error: ', error);
-                openNotification('error', `An Error has occured with adding ${policyType.slice(0, 1) + policyType.slice(1).toLowerCase()} Policy`);
+                setButtonLoading(false);
+                openNotification('error', `An Error has occured with creating ${policyType.slice(0, 1) + policyType.slice(1).toLowerCase()} Policy`);
             })
     }
 
@@ -115,7 +120,7 @@ function TableList({ handleGetPolicies, policy_type, policy_description, activat
                 >
                     Add {policyDisplayNames[policy_type]} Policy
                 </Button>
-                   
+
             </div>
             <div style={{
                 fontWeight: 600, fontSize: 'x-large',
@@ -164,12 +169,12 @@ function TableList({ handleGetPolicies, policy_type, policy_description, activat
                 title={<div style={{ fontSize: '30px' }}>Add {policyDisplayNames[policy_type]} Policy </div>}
             >
                 {policy_type === PIN ?
-                    <PinPolicy pinDetails={pinData} handleOk={handleOk} handleCancel={handleCancel} /> :
+                    <PinPolicy pinDetails={pinData} buttonLoading={buttonLoading} handleOk={handleOk} handleCancel={handleCancel} /> :
                     policy_type === PASSWORD ?
-                        <PasswordPolicy passwordDetails={passwordData} handleOk={handleOk} handleCancel={handleCancel} /> :
+                        <PasswordPolicy passwordDetails={passwordData} buttonLoading={buttonLoading} handleOk={handleOk} handleCancel={handleCancel} /> :
                         policy_type === KIOSK ?
-                            <KioskPolicy kioskDetails={kioskData} handleOk={handleOk} handleCancel={handleCancel} /> :
-                            <CardEnrollmentPolicy policyDetails={cardEnrollData} handleOk={handleOk} handleCancel={handleCancel} />
+                            <KioskPolicy kioskDetails={kioskData} buttonLoading={buttonLoading} handleOk={handleOk} handleCancel={handleCancel} /> :
+                            <CardEnrollmentPolicy policyDetails={cardEnrollData} buttonLoading={buttonLoading} handleOk={handleOk} handleCancel={handleCancel} />
                 }
             </Modal>
         </>

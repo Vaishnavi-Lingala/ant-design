@@ -10,7 +10,6 @@ import ApiService from "../../Api.service";
 import { useHistory } from "react-router-dom";
 import moment from "moment";
 import { date_display_format, time_format } from "../../constants";
-import SubMenu from "antd/lib/menu/SubMenu";
 
 export default function Users() {
 	const [userDetails, setUserDetails]: any = useState(undefined);
@@ -23,6 +22,7 @@ export default function Users() {
 	const [statusList, setStatusList]: any = useState([]);
 	const [lifeCycleTypes, setLifeCycleTypes]: any = useState(undefined);
 	const history = useHistory();
+	const [object, setObject] = useState({});
 
 	const columns = [
 		{
@@ -46,7 +46,7 @@ export default function Users() {
 			width: '10%'
 		},
 		{
-			title: 'Enrollment Status',
+			title: 'Enrolled',
 			dataIndex: 'is_user_enrolled',
 			width: '10%'
 		},
@@ -64,15 +64,22 @@ export default function Users() {
 			title: 'Actions',
 			dataIndex: 'actions',
 			width: '25%',
-			render: (text: any, record: { uid: any; user_name: any, status: string }) => (
+			render: (text: any, record: { uid: any; user_name: any, first_name: any, last_name: any, email: any, status: string }) => (
 				<Row>
-					<Col span= {12}>
+					<Col span={12}>
 						<Tooltip title="View">
-							<Button icon={<BarsOutlined />} onClick={() => history.push(`/user/${record.uid}/profile`)} />
+							<Button icon={<BarsOutlined />} onClick={() => {
+								sessionStorage.setItem("email", record.email);
+								sessionStorage.setItem("first_name", record.first_name);
+								sessionStorage.setItem("last_name", record.last_name);
+								sessionStorage.setItem("user_name", record.user_name);
+								history.push(`/user/${record.uid}/profile`)
+							}}
+							/>
 
 						</Tooltip>
 					</Col>
-					<Col span= {12}>
+					<Col span={12}>
 						<Dropdown overlay={
 							<Menu key={"changeStatus"} title={"Change Status"} >
 								{
@@ -92,10 +99,10 @@ export default function Users() {
 							}
 						</Dropdown>
 					</Col>
-					
+
 				</Row>
-				
-				
+
+
 			)
 		}
 	];
@@ -129,7 +136,7 @@ export default function Users() {
 
 	useEffect(() => {
 		if (lifeCycleTypes) {
-			getUsersList({}, {start: page, limit: pageSize});
+			getUsersList({}, { start: page, limit: pageSize });
 		}
 	}, [lifeCycleTypes])
 
@@ -143,9 +150,11 @@ export default function Users() {
 		}
 	}
 
-	const getUsersByFilter = async (object = {}, params={}) => {
+	const getUsersByFilter = async (objectData = {}, params = {}) => {
 		setTableLoading(true);
-		let data = await ApiService.post(ApiUrls.userFilter, object, params).catch(error => {
+		setObject(objectData);
+		console.log(objectData)
+		let data = await ApiService.post(ApiUrls.userFilter, objectData, params).catch(error => {
 			console.error('Error: ', error);
 			openNotification('error', 'An Error has occured with getting User Lists by Page');
 		}).finally(() => {
@@ -155,12 +164,13 @@ export default function Users() {
 			value['is_user_enrolled'] === true ? value['is_user_enrolled'] = 'true' : value['is_user_enrolled'] = 'false'
 		})
 		const updatedUsers = updateUsersListWithStatusAndKey(data.results);
+
 		console.log(updatedUsers);
 		setArr(updatedUsers);
 		setTotalItems(data.total_items);
 	}
 
-	const getUsersList = async (object = {}, params={}) => {
+	const getUsersList = async (object: {}, params = {}) => {
 		setLoadingDetails(true);
 		let data = await ApiService.post(ApiUrls.userFilter, object, params).catch(error => {
 			console.error('Error: ', error);
@@ -179,7 +189,7 @@ export default function Users() {
 
 	const getUpdatedUsersList = () => {
 		const params = {
-			start: page, 
+			start: page,
 			limit: pageSize
 		}
 
@@ -242,7 +252,7 @@ export default function Users() {
 							onChange: (page, pageSize) => {
 								setPage(page);
 								setPageSize(pageSize);
-								getUsersList({}, {start: page, limit: pageSize});
+								getUsersByFilter(object, { start: page, limit: pageSize });
 							}
 						}}
 					/>
