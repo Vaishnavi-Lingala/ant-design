@@ -221,6 +221,10 @@ const CardEnrollmentPolicy = (props) => {
                                 onChange={handleGroups}
                                 style={{ width: '275px' }}
                                 options={groups}
+                                filterOption={(input, option) =>
+									//@ts-ignore
+									option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
+								}
                             /> : Object.keys(groupNames).map(name =>
                                 <><Button style={{ cursor: 'text' }}>{groupNames[name]}</Button>&nbsp;</>)
                         }

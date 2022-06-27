@@ -291,6 +291,10 @@ function Mechanism(props: any) {
                                 // disabled={!isEdit}
                                 style={{ width: '275px' }}
                                 options={groups}
+                                filterOption={(input, option) =>
+									//@ts-ignore
+									option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
+								}
                             /> : Object.keys(groupNames).map(name =>
                                 <div style={{ display: 'inline-block', marginRight: '3px', paddingBottom: '3px' }}>
                                     <Button style={{ cursor: 'text' }}>{groupNames[name]}</Button>
