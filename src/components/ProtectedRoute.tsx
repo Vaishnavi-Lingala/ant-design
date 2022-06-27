@@ -22,13 +22,13 @@ export default function ProtectedRoute({
         history.push('/');
     }
 
-    // if (oktaStorage !== null && oktaStorage !== "" && oktaStorage !== "{}" &&
-    //     JSON.parse(oktaStorage).idToken && JSON.parse(oktaStorage).accessToken) {
-    //         console.log(oktaStorage);
-    // }
-    // else {
-    //     removeItems();
-    // }
+    if (oktaStorage !== null && oktaStorage !== "" && oktaStorage !== "{}" &&
+        JSON.parse(oktaStorage).idToken && JSON.parse(oktaStorage).accessToken) {
+            console.log(oktaStorage);
+    }
+    else {
+        removeItems();
+    }
 
     return (
         <Route

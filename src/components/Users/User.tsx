@@ -20,31 +20,34 @@ export function User() {
         <>
             <div className='content-header'>
                 {sessionStorage.getItem("first_name") === "null" ? "" : sessionStorage.getItem("first_name")} {sessionStorage.getItem("last_name") === "null" ? "" : sessionStorage.getItem("last_name")} <br />
-                <Button style={{ marginLeft: 'auto', alignSelf: 'end' }} onClick={() => { history.push('/users') }}>Back</Button>
+                <Button style={{ marginLeft: 'auto', alignSelf: 'end' }} onClick={() => {
+                    sessionStorage.clear();
+                    history.push('/users');
+                }}>Back</Button>
             </div>
             <div style={{ fontSize: 'medium', fontWeight: 600, paddingLeft: '5px' }}>
                 Email: {sessionStorage.getItem("email")} <br />
                 Username: {sessionStorage.getItem("user_name")}
             </div>
-                <Tabs activeKey={window.location.pathname.split("/")[3]}
-                    type="card"
-                    size={"middle"}
-                    animated={false}
-                    onChange={(key) => {
-                        history.push("/user/" + urlParams[2] + "/" + key);
-                    }}
-                    tabBarStyle={{ marginBottom: '0px' }}>
-                    <TabPane tab="Profile" key="profile">
-                        <UserInfo></UserInfo>
-                    </TabPane>
-                    <TabPane tab="Groups" key="groups">
-                        <UserGroups></UserGroups>
-                    </TabPane>
-                    <TabPane tab="Enrollments" key="enrollments">
+            <Tabs activeKey={window.location.pathname.split("/")[3]}
+                type="card"
+                size={"middle"}
+                animated={false}
+                onChange={(key) => {
+                    history.push("/user/" + urlParams[2] + "/" + key);
+                }}
+                tabBarStyle={{ marginBottom: '0px' }}>
+                <TabPane tab="Profile" key="profile">
+                    <UserInfo></UserInfo>
+                </TabPane>
+                <TabPane tab="Groups" key="groups">
+                    <UserGroups></UserGroups>
+                </TabPane>
+                <TabPane tab="Enrollments" key="enrollments">
 
-                        <Enrollments></Enrollments>
-                    </TabPane>
-                </Tabs>
+                    <Enrollments></Enrollments>
+                </TabPane>
+            </Tabs>
         </>
     )
 }
