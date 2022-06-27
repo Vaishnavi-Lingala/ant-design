@@ -19,6 +19,8 @@ function Devices() {
     const [pageSize, setPageSize]: any = useState(10);
     const [totalItems, setTotalItems] = useState(0);
     const [advancedFilters, setAdvancedFilters] = useState({});
+    const [buttonLoading, setButtonLoading] = useState(false);
+    const [object, setObject] = useState({});
 
     const device = {
         "device_name": "",
@@ -71,9 +73,10 @@ function Devices() {
         }
     ];
 
-    function getDevicesByFilter(object = {}, param = {}) {
+    function getDevicesByFilter(objectData = {}, param = {}) {
         setTableLoading(true);
-        ApiService.post(ApiUrls.deviceFilter, object, param)
+        setObject(objectData);
+        ApiService.post(ApiUrls.deviceFilter, objectData, param)
             .then((data) => {
                 console.log(data);
                 setPage(data.page);
@@ -130,19 +133,23 @@ function Devices() {
     }, [])
 
     const handleOk = (object: object) => {
+        setButtonLoading(true);
         ApiService.post(ApiUrls.addDevice, object)
             .then(data => {
                 if (!data.errorSummary) {
                     console.log(data);
                     openNotification('success', 'Successfully created Device');
                     setIsModalVisible(false);
+                    setButtonLoading(false);
                     getDevices({}, { start: page, limit: pageSize });
                 }
                 else {
                     openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
+                    setButtonLoading(false);
                 }
             }, error => {
                 console.error('Add mechanism error: ', error);
+                setButtonLoading(false);
                 openNotification('error', 'An Error has occured with adding Device');
             })
     }
@@ -156,7 +163,7 @@ function Devices() {
             start: page,
             limit: pageSize
         }
-        getDevices({}, params);
+        getDevicesByFilter(object, params);
     }
 
     const applyAdvancedFilters = (filters) => {
@@ -209,7 +216,7 @@ function Devices() {
             <Modal visible={isModalVisible} footer={false} closeIcon={<Button icon={<CloseOutlined />}></Button>} width='800px' onCancel={handleCancel}
                 title={<div style={{ fontSize: '30px' }}>Add New Device</div>} centered maskClosable={false}
             >
-                <Device deviceDetails={device} handleOk={handleOk} handleCancel={handleCancel} />
+                <Device deviceDetails={device} buttonLoading={buttonLoading} handleOk={handleOk} handleCancel={handleCancel} />
             </Modal>
         </Skeleton>
     </>

@@ -137,7 +137,7 @@ export function AddUser(props) {
             </div>
         </div>
 
-        <Modal closeIcon={<Button icon={<CloseOutlined />}></Button>} title={<Title level={2}>Add User</Title>} visible={isModalVisible} onOk={handleOk} onCancel={handleCancel} width={500}
+        <Modal closeIcon={<Button icon={<CloseOutlined />}></Button>} title={<Title level={2}>Add User</Title>} visible={isModalVisible} onOk={handleOk} onCancel={handleCancel} width='800px'
             footer={[
                 <Button key="cancel" onClick={handleCancel}>
                     Cancel
@@ -149,7 +149,7 @@ export function AddUser(props) {
         >
             <Row gutter={16}>
                 <Col span={6}>
-                    <p style={{ fontWeight: 600, fontSize: 'medium' }}>First Name:</p>
+                    <p style={{ fontWeight: 600, fontSize: 'medium' }}>First Name<span className="mandatory">*</span> :</p>
                 </Col>
                 <Col span={18}>
                     <span style={{ paddingRight: '20px' }}>
@@ -168,7 +168,7 @@ export function AddUser(props) {
                     </span>
                 </Col>
                 <Col span={6}>
-                    <p style={{ fontWeight: 600, fontSize: 'medium' }}>Last Name:</p>
+                    <p style={{ fontWeight: 600, fontSize: 'medium' }}>Last Name<span className="mandatory">*</span> :</p>
                 </Col>
                 <Col span={18}>
                     <span style={{ paddingRight: '20px' }}>
@@ -188,7 +188,7 @@ export function AddUser(props) {
                 </Col>
 
                 <Col span={6}>
-                    <p style={{ fontWeight: 600, fontSize: 'medium' }}>Username:</p>
+                    <p style={{ fontWeight: 600, fontSize: 'medium' }}>Username<span className="mandatory">*</span> :</p>
                 </Col>
                 <Col span={18}>
                     <span style={{ paddingRight: '20px' }}>
@@ -208,7 +208,7 @@ export function AddUser(props) {
                 </Col>
 
                 <Col span={6}>
-                    <p style={{ fontWeight: 600, fontSize: 'medium' }}>Email:</p>
+                    <p style={{ fontWeight: 600, fontSize: 'medium' }}>Email<span className="mandatory">*</span> :</p>
                 </Col>
                 <Col span={18}>
                     <span style={{ paddingRight: '20px' }}>
@@ -226,7 +226,7 @@ export function AddUser(props) {
                     </span>
                 </Col>
                 <Col span={6}>
-                    <p style={{ fontWeight: 600, fontSize: 'medium' }}>SAM:</p>
+                    <p style={{ fontWeight: 600, fontSize: 'medium' }}>SAM<span className="mandatory">*</span> :</p>
                 </Col>
                 <Col span={18}>
                     <span style={{ paddingRight: '20px' }}>
@@ -245,7 +245,7 @@ export function AddUser(props) {
                     </span>
                 </Col>
                 <Col span={6}>
-                    <p style={{ fontWeight: 600, fontSize: 'medium' }}>UPN:</p>
+                    <p style={{ fontWeight: 600, fontSize: 'medium' }}>UPN<span className="mandatory">*</span> :</p>
                 </Col>
                 <Col span={18}>
                     <span style={{ paddingRight: '20px' }}>

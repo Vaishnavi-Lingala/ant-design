@@ -221,6 +221,10 @@ const CardEnrollmentPolicy = (props) => {
                                 onChange={handleGroups}
                                 style={{ width: '275px' }}
                                 options={groups}
+                                filterOption={(input, option) =>
+									//@ts-ignore
+									option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
+								}
                             /> : Object.keys(groupNames).map(name =>
                                 <><Button style={{ cursor: 'text' }}>{groupNames[name]}</Button>&nbsp;</>)
                         }
@@ -261,7 +265,7 @@ const CardEnrollmentPolicy = (props) => {
                 </div> : <></>) : <div style={{ paddingTop: '10px', paddingRight: '45px', paddingBottom: '20px' }}>
                     <Button style={{ float: 'right', marginLeft: '10px' }}
                         onClick={setCancelClick}>Cancel</Button>
-                    <Button type='primary' style={{ float: 'right' }}
+                    <Button type='primary' loading={props.buttonLoading} style={{ float: 'right' }}
                         onClick={createCardEnrollPolicy}>Create</Button></div>
             }
         </Skeleton>

@@ -19,6 +19,7 @@ export default function Mechanisms() {
 	const [inactiveMechanisms, setInactiveMechanisms]: any = useState([]);
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const history = useHistory();
+    const [buttonLoading, setButtonLoading] = useState(false);
 	const { productId } = useParams();
 
 	const inactiveColumns = [
@@ -151,20 +152,24 @@ export default function Mechanisms() {
 	}, [])
 
 	const handleOk = (object: object) => {
+		setButtonLoading(true);
 		ApiService.post(ApiUrls.addMechanism(productId), object)
 			.then(data => {
 				if (!data.errorSummary) {
 					console.log(data);
-					openNotification('success', 'Successfully updated Mechanism');
+					openNotification('success', 'Successfully created Mechanism');
 					setIsModalVisible(false)
+					setButtonLoading(false);
 					getMechanisms();
 				}
 				else {
 					openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
+					setButtonLoading(false);
 				}
 			}, error => {
 				console.error('Add mechanism error: ', error);
-				openNotification('error', 'An Error has occured with adding Mechanism');
+				setButtonLoading(false);
+				openNotification('error', 'An Error has occured with creating Mechanism');
 			})
 	}
 
@@ -322,7 +327,7 @@ export default function Mechanisms() {
 				<Modal visible={isModalVisible} closeIcon={<Button icon={<CloseOutlined />}></Button>} footer={false} onCancel={handleCancel} width='800px'
 					title={<div style={{ fontSize: '30px' }}>Add New Mechanism</div>} centered maskClosable={false}
 				>
-					<Mechanism handleOk={handleOk} handleCancel={handleCancel} />
+					<Mechanism handleOk={handleOk} buttonLoading={buttonLoading} handleCancel={handleCancel} />
 				</Modal>
 
 			</Skeleton>

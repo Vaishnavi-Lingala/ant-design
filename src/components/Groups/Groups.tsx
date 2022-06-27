@@ -76,7 +76,7 @@ export default function Groups() {
                 let userGroupsList: Group[] = [];
                 let kioskGroupsList: Group[] = [];
                 let standardGroupsList: Group[] = [];
-                data['results'].forEach((group: Group) => {
+                data.forEach((group: Group) => {
                     group.key = group.uid;
                     if (group.type === 'USER') {
                         userGroupsList.push(group);

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Button, Tabs } from "antd";
 import { useHistory } from "react-router-dom";
 import { Enrollments } from "./Enrollments";
@@ -19,8 +19,15 @@ export function User() {
     return (
         <>
             <div className='content-header'>
-                User
-                <Button style={{ marginLeft: 'auto', alignSelf: 'end' }} onClick={() => { history.push('/users') }}>Back</Button>
+                {sessionStorage.getItem("first_name") === "null" ? "" : sessionStorage.getItem("first_name")} {sessionStorage.getItem("last_name") === "null" ? "" : sessionStorage.getItem("last_name")} <br />
+                <Button style={{ marginLeft: 'auto', alignSelf: 'end' }} onClick={() => {
+                    sessionStorage.clear();
+                    history.push('/users');
+                }}>Back</Button>
+            </div>
+            <div style={{ fontSize: 'medium', fontWeight: 600, paddingLeft: '5px' }}>
+                Email: {sessionStorage.getItem("email")} <br />
+                Username: {sessionStorage.getItem("user_name")}
             </div>
             <Tabs activeKey={window.location.pathname.split("/")[3]}
                 type="card"

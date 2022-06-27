@@ -45,6 +45,22 @@ export const hiddenFields = {
     ]
 };
 
+export const userFieldNames = {
+    "status": "Status",
+    "uid": "User ID",
+    "first_name": "First name",
+    "last_name": "Last name",
+    "display_name": "Display name",
+    "user_name": "User name",
+    "email": "Email",
+    "sam": "samAccount Name",
+    "upn": "UPN",
+    "idp_user_id": "IDP user ID",
+    "account_id": "Account ID",
+    "sourced_by": "Sourced by",
+    "login_domain": "Login domain"
+}
+
 // Field in activity logs are displayed in this order with the below names
 export const logFieldNames = {
     uid: "Uid",
@@ -73,7 +89,7 @@ export const logFieldNames = {
         "api_end_point": "API end point",
         "mechanism_id": "Mechanism ID",
         "mechanism_name": "Mechanism name",
-        "display_name": "Display name",
+        "display_name": "Actor",
         "event_context": "Event context",
         "event_display_message": "Event display message",
         "event_outcome": "Event outcome",
@@ -171,21 +187,20 @@ export const settingsFieldNames = {
 }
 
 export const settingsIdpFields = {
-    idp_type: "IDP Type",
+    idp_type: "IDP",
+    tenant_type: "Tenant type",
     idp_portal_oidc_client_id: "Portal OIDC Client ID",
     idp_app_oidc_client_id: "App OIDC Client ID"
 }
 
 
 export const accountBillingContact = {
-    billing_contact_first_name: 'First name',
-    billing_contact_last_name: 'Last name',
+    billing_contact_name: 'Name',
     billing_contact_email: 'Email'
 }
 
 export const accountTechnicalContact = {
-    technical_contact_first_name: 'First name',
-    technical_contact_last_name: 'Last name',
+    technical_contact_name: 'Name',
     technical_contact_email: 'Email'
 }
 

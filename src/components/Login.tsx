@@ -24,8 +24,10 @@ function Login() {
     const [, setSelectedHeader] = useContext(Store);
     const { authState, oktaAuth } = useOktaAuth();
     const history = useHistory();
+    const [buttonLoading, setButtonLoading] = useState(false);
 
     const validateEmail = async () => {
+        setButtonLoading(true);
         ApiService.post(ApiUrls.client_info, { domain: domain })
             .then((data: ClientConfiguration) => {
                 //@ts-ignore
@@ -55,14 +57,17 @@ function Login() {
                             document.getElementById('root')
                         )
                     }
+                    setButtonLoading(false);
                 }
                 else {
                     //@ts-ignore
-                    setErrorMessage(data.errorSummary);
+                    setErrorMessage("Login failed due to an internal error");
+                    setButtonLoading(false);
                     console.log(data);
                 }
             }).catch((error) => {
                 setErrorMessage(error.message + ". Please contact Admin");
+                setButtonLoading(false);
                 console.log(error);
             })
     }
@@ -119,14 +124,15 @@ function Login() {
                         >
                             <Input
                                 style={{ borderRadius: '5px' }}
-                                onChange={(e) => { setEmail(e.target.value) }}
+                                autoFocus
+                                onChange={(e) => { setEmail(e.target.value.split(" ").join("")) }}
                                 size="large"
                             />
                             <div style={{ color: 'red', textAlign: 'left' }}>{message}</div>
                         </Form.Item>
 
                         <Form.Item style={{ marginBottom: '16px' }}>
-                            <Button type="primary" className="submit-button" size="large"
+                            <Button type="primary" loading={buttonLoading} className="submit-button" size="large"
                                 htmlType="submit"
                             >
                                 Next

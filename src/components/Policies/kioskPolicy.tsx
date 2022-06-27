@@ -266,6 +266,10 @@ export const KioskPolicy = (props: any) => {
                             // disabled={!isEdit}
                             style={{ width: '275px' }}
                             options={groups}
+                            filterOption={(input, option) =>
+                                //@ts-ignore
+                                option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                            }
                         /> : Object.keys(groupNames).map(name =>
                             <div style={{ display: 'inline-block', marginRight: '3px', paddingBottom: '3px' }}>
                                 <Button style={{ cursor: 'text' }}>{groupNames[name]}</Button>
@@ -286,6 +290,10 @@ export const KioskPolicy = (props: any) => {
                             // disabled={!isEdit}
                             style={{ width: '275px' }}
                             options={kioskGroups}
+                            filterOption={(input, option) =>
+                                //@ts-ignore
+                                option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                            }
                             listHeight={120}
                         /> : Object.keys(kioskGroupNames).map(name =>
                             <><Button style={{ cursor: 'text' }}>
@@ -403,7 +411,7 @@ export const KioskPolicy = (props: any) => {
                 </div> : <></>) : <div style={{ paddingTop: '10px', paddingRight: '45px', paddingBottom: '20px' }}>
                     <Button style={{ float: 'right', marginLeft: '10px' }}
                         onClick={setCancelClick}>Cancel</Button>
-                    <Button type='primary' style={{ float: 'right' }}
+                    <Button type='primary' loading={props.buttonLoading} style={{ float: 'right' }}
                         onClick={createkioskPolicy}>Create</Button></div>
             }
         </Skeleton>
