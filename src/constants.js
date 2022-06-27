@@ -195,14 +195,12 @@ export const settingsIdpFields = {
 
 
 export const accountBillingContact = {
-    billing_contact_first_name: 'First name',
-    billing_contact_last_name: 'Last name',
+    billing_contact_name: 'Name',
     billing_contact_email: 'Email'
 }
 
 export const accountTechnicalContact = {
-    technical_contact_first_name: 'First name',
-    technical_contact_last_name: 'Last name',
+    technical_contact_name: 'Name',
     technical_contact_email: 'Email'
 }
 
