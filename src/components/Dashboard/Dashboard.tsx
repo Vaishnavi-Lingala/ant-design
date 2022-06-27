@@ -28,6 +28,9 @@ export default function Dashboard() {
                 openNotification('error', 'An error has occured with getting Dashboard details');
                 setLoadingDetails(false);
             })
+        
+        ApiService.get(ApiUrls.account_info, { domain: localStorage.getItem('domain')})
+            .then(data => console.log(data));
     }, [])
 
     const dateAndTime = new Date().toLocaleString('en-US', {
