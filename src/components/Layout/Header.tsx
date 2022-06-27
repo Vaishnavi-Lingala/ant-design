@@ -24,7 +24,7 @@ function AppHeader() {
     const { authState, oktaAuth } = useOktaAuth();
     const [products, setProducts] = useState(emptyObj);
     
-    let selectedHeaderKeys: any = [];
+    let selectedHeaderKeys: any = [selectedMenuOption];
     if (Object.keys(productNames).includes(selectedMenuOption)) {
         selectedHeaderKeys = [Products].concat([selectedMenuOption]);
     }
