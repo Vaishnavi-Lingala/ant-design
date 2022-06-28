@@ -98,7 +98,7 @@ export default function ActivityLogs() {
     const [logResponse, setLogResponse] = useState<any>({});
     const [loading, setLoading] = useState(true);
     const [tableLoading, setTableLoading] = useState(false);
-    const { productId } = useParams();
+    const { productId } = useParams<any>();
     
     const initialDateTimeFilters = {
         start: {

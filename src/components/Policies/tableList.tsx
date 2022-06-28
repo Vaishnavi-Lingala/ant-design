@@ -14,7 +14,7 @@ import { CARD_ENROLL, KIOSK, PASSWORD, PIN, policyDisplayNames } from "../../con
 
 function TableList({ handleGetPolicies, policy_type, policy_description, activateColumns, activePolicies, draggableContainer, draggableBodyRow, deActivateColumns, inActivePolicies }) {
     const [isModal, setIsModal] = useState(false);
-    const { productId } = useParams();
+    const { productId } = useParams<any>();
     const [buttonLoading, setButtonLoading] = useState(false);
 
     const pinData = {

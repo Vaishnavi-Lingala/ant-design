@@ -1,6 +1,7 @@
 export const accountId = localStorage.getItem('accountId');
 
 export const base_url = process.env.REACT_APP_API_URL
+export const unify_url = process.env.REACT_APP_UNIFY_API_URL
 
 export function getAccessToken() {
     const okta_token_storage = localStorage.getItem("okta-token-storage");
@@ -36,7 +37,7 @@ const Urls = {
     machineFilter: `account/${accountId}/machines/filter`,
 
     // Users Urls
-    userGroups: (uid) => `account/${accountId}/users/${uid}/groups`,
+    userGroups: (uid: string) => `account/${accountId}/users/${uid}/groups`,
     users: `account/${accountId}/users`,
     userInfo: (uid) => `account/${accountId}/users/${uid}`,
     changeUserStatus: (uid) =>  `account/${accountId}/users/${uid}/lifecycle`,
@@ -48,7 +49,7 @@ const Urls = {
     getEnrollmentStatusOptions: `account/${accountId}/users/card-status-options`,
 
     // Groups Urls
-    group: (uid) => `account/${accountId}/groups/${uid}`,
+    group: (uid: string) => `account/${accountId}/groups/${uid}`,
     groups: `account/${accountId}/groups`,
     groupUsers: (uid) => `account/${accountId}/groups/${uid}/users` ,
     usersNotInGroup: (uid) => `account/${accountId}/groups/${uid}/users-not-in-group`,
@@ -82,7 +83,15 @@ const Urls = {
     filterableFields: `account/${accountId}/activitylog/filterable-fields`,
 
     // Licenses
-    licences: `account/${accountId}/license`
+    licences: `account/${accountId}/license`,
+
+    // app templates
+    templateById: (id: number) => `app-template?id=${id}`,
+    controlNameByTemplateId: (template_id: number) => `app-control-names?template_id=${template_id}`,
+    appConfigById: (config_id: number) =>  `app-configuration?id=${config_id}`,
+    xrefByAccount: (account_id: number) => `app-xref?account_id=${account_id}`,
+    allAccountConfigs: (account_id: number) => `combo-account?id=${account_id}`,
+    templatesByConfigId: (config_id: number) => `combo-config?id=${config_id}`
 }
 
 export default Urls;

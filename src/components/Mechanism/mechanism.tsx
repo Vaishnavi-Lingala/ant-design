@@ -30,7 +30,7 @@ function Mechanism(props: any) {
     const [disabledFactors1]: any = useState([]);
     const [selectedHeader] = useContext(Store);
     const history = useHistory();
-    const { productId } = useParams();
+    const { productId } = useParams<any>();
     
     const mechanism = {
         challenge_factors: [

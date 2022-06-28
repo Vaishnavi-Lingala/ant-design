@@ -20,7 +20,7 @@ export default function Mechanisms() {
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const history = useHistory();
     const [buttonLoading, setButtonLoading] = useState(false);
-	const { productId } = useParams();
+	const { productId } = useParams<any>();
 
 	const inactiveColumns = [
 		{

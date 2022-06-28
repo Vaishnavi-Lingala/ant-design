@@ -1,0 +1,191 @@
+.content-header > button {
+    margin-left: auto;
+    align-self: end;
+}
+
+._NoBorder {
+    border: 0px;
+}
+
+._Pointer {
+    cursor: pointer;
+}
+
+._FlexColumn {
+    flex-direction: column;
+}
+
+._FlexRow {
+    flex-direction: row;
+}
+
+._Padding {
+    padding: 1vmax;
+}
+
+.AppSettings {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-left: 5px;
+}
+
+.AppSettings_TabContent {
+    border-bottom: 1px solid #d7d7dc;
+    border-right: 1px solid #d7d7dc;
+    border-left: 1px solid #d7d7dc;
+    border-radius: 2px;
+}
+
+.Sidebar {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    border-right: 1px solid #d7d7dc;
+}
+
+.BulkAssignment {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.BulkAssignment-ListGroup {
+    display: flex;
+    flex-direction: row;
+}
+
+.BulkAssignment-List {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #d7d7dc;
+    border-radius: 2px;
+    overflow: hidden;
+    margin-block-start: 1vmax;
+    margin-inline: 3vmax;
+    padding-bottom: 1%;
+    flex-grow: 1;
+}
+
+.BulkAssignment-ListHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f5f5f6; 
+    border-bottom: 1px solid #d7d7dc;
+}
+
+.BulkAssignment-ListHeader > span {
+    padding-left: 7px;
+}
+
+.BulkAssignment-ListSubHeader {
+    display: flex;
+    justify-content: space-between;
+    background-color: #f5f5f6; 
+    border-bottom: 1px solid #d7d7dc;
+    border-top: 1px solid #d7d7dc;
+}
+
+.BulkAssignment-ListSubHeader > span {
+    margin-inline: 7px;
+    transition: .3s ease-out;
+}
+
+.BulkAssignment-ListSubHeader > span:hover {
+    color: var(--ant-primary-color);
+}
+
+.BulkAssignment-ListItems {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 10px;
+    padding: 1px 0px;
+}
+
+.AppList {
+    display: flex;
+    flex: 1 1 auto;
+    flex-wrap: wrap;
+    padding: 10px;
+    gap: 10px;
+    list-style: none;
+}
+
+.AppList-Item, .AppList-Card, AppList-Banner {
+    display: flex;
+    padding: 3px;
+    border: 1px solid #d7d7dc;
+    box-shadow: 0 2px 4px 0 rgb(0 0 0 / 20%);
+    border-radius: 2px;
+}
+
+.AppList-Banner {
+    align-items: center;
+}
+
+.AppList-Card {
+    width: 20%;
+    height: 50%;
+    transition: transform .2s;
+}
+
+.AppList-CardHeader {
+    font-size: 1.5rem;
+}
+
+.AppList-CardBody {
+    display: flex;
+    flex-direction: column;
+}
+
+.AppList-CardHeader_ImgSize {
+    width: 50%;
+}
+
+@media (max-width: 1000px) {
+    .AppList-CardHeader > img {
+        display: none;
+    }
+}
+
+.AppList-Card:hover {
+    transform: scale(1.01);
+}
+
+.AppList-Item > a {
+    margin: 0 auto 0 0;
+    text-decoration-line: underline;
+    text-decoration-color: transparent;
+    color: var(--ant-primary-color);
+    transition: .3s ease-out;
+}
+
+.AppList-Item > a:hover {
+    text-decoration-color: var(--ant-primary-color);
+}
+
+.AppList-Item > img:hover {
+    cursor: pointer;
+}
+
+.Content-HeaderContainer, .Content-SubHeader {
+    display: flex;
+    flex-direction: row;
+    background-color: #f5f5f6;
+    border: 1px solid #d7d7dc;
+    padding: 10px;
+    gap: 10px;
+}
+
+.Content-SubHeader {
+    justify-content: space-between;
+}
+
+.Content-ComponentView {
+    display: flex;
+    min-height: 65vh;
+    border: 1px solid #d7d7dc;
+    border-top: 0px;
+}
