@@ -166,6 +166,11 @@ function Devices() {
         getDevicesByFilter(object, params);
     }
 
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+    });
+
     const applyAdvancedFilters = (filters) => {
         setAdvancedFilters(filters)
     };

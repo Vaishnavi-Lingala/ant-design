@@ -100,6 +100,11 @@ export default function ActivityLogs() {
     const [tableLoading, setTableLoading] = useState(false);
     const { productId } = useParams();
 
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+    });
+    
     const initialDateTimeFilters = {
         start: {
             date: moment().startOf("day").subtract(7, "days").format(date_format),

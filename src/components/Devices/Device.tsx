@@ -22,6 +22,11 @@ function Device(props: any) {
         props.handleOk(editData);
     }
 
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+    });
+
     useEffect(() => {
         setLoading(true);
         Promise.all(([

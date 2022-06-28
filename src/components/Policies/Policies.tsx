@@ -88,6 +88,11 @@ export default function Policies() {
 		}
 	];
 
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+    });
+
 	const deActivateColumns = [
 		{
 			title: 'Policy Name',

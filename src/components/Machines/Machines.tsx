@@ -53,6 +53,11 @@ export default function Machines() {
         }
     ];
 
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+    });
+
     useEffect(() => {
         getMachines({}, { start: page, limit: pageSize });
     }, [])
