@@ -9,8 +9,8 @@ import { Domain } from '../../constants';
 
 function Domains() {
     const [loading, setLoading] = useState(false);
-    const [domains, setDomains]: any = useState([]);
-    const [displayDomains, setDisplayDomains]: any = useState([]);
+    const [domains, setDomains] = useState([]);
+    const [displayDomains, setDisplayDomains] = useState([]);
     const [isEdit, setIsEdit] = useState(false);
 
     useEffect(() => {
@@ -38,9 +38,9 @@ function Domains() {
 
     function handleCancel() {
         console.log(displayDomains);
-        setDomains(displayDomains);
+        setDomains([...displayDomains]);
         setIsEdit(false);
-    }
+    }       
 
     function handleSave() {
         const list: any = [];
@@ -77,7 +77,7 @@ function Domains() {
 
             <Skeleton loading={loading}>
                 {!isEdit ?
-                    <Button style={{ marginTop:'-75px', float: 'right' }} onClick={handleEditClick}>
+                    <Button style={{ marginTop: '-75px', float: 'right' }} onClick={handleEditClick}>
                         Edit
                     </Button> : <></>
                 }
@@ -89,26 +89,27 @@ function Domains() {
                         <div>
                             {
                                 !isEdit ? domains.map((value, index) => {
-                                    return <div key={index}>
+                                    return <div key={value}>
                                         {value}
                                     </div>
                                 }) : domains.map((value, index) => {
-                                    return <div key={index} style={{ padding: '5px' }}>
+                                    return <div key={value} style={{ padding: '5px' }}>
                                         <Input className="form-control"
                                             defaultValue={value} onChange={(e) => {
+                                                //@ts-ignore
                                                 domains[index] = e.target.value
                                                 setDomains(domains);
                                             }} style={{ width: '200px' }}
                                         /> &nbsp;
-                                        <Button onClick={() => {
-                                            const list = [...domains];
-                                            let index = domains.indexOf(value);
-                                            list.splice(index, 1);
-                                            console.log(list);
-                                            setDomains(list);
-                                        }}>
-                                            <DeleteOutlined />
-                                        </Button>
+                                        <Button
+                                            icon={<DeleteOutlined />}
+                                            onClick={() => {
+                                                const list = [...domains];
+                                                list.splice(index, 1);
+                                                console.log(list);
+                                                setDomains([...list]);
+                                            }}
+                                        />
                                     </div>
                                 })
                             }
@@ -116,6 +117,7 @@ function Domains() {
                             {
                                 isEdit ? <div style={{ padding: '5px' }}>
                                     <Button onClick={() => {
+                                        //@ts-ignore
                                         setDomains([...domains, ''])
                                     }}>
                                         Add Domain
