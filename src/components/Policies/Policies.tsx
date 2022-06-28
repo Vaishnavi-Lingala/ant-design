@@ -1,26 +1,41 @@
-import { Button, Skeleton, Tabs, Tooltip } from 'antd';
-import { BarsOutlined, PoweroffOutlined, StopOutlined } from "@ant-design/icons"
-import { MenuOutlined } from '@ant-design/icons';
 import { useEffect, useState, useContext } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
+import { Button, Skeleton, Tabs, Tooltip } from 'antd';
+import { BarsOutlined, MenuOutlined, PoweroffOutlined, StopOutlined } from "@ant-design/icons"
 import { arrayMoveImmutable } from 'array-move';
 
 import './Policies.css';
 
-import { PinPolicy } from './pinPolicy';
+import CardEnrollmentPolicy from './CardEnrollmentPolicy';
+import { KioskPolicy } from './kioskPolicy';
 import { PasswordPolicy } from './passwordPolicy'
+import { PinPolicy } from './pinPolicy';
+import TableList from './tableList';
+import { openNotification } from '../Layout/Notification';
+import ProtectedRoute from '../ProtectedRoute';
 import ApiUrls from '../../ApiUtils';
 import ApiService from '../../Api.service';
-import { KioskPolicy } from './kioskPolicy';
-import { openNotification } from '../Layout/Notification';
-import { CARD_ENROLL, KIOSK, PASSWORD, PIN, TecTANGO } from '../../constants';
-import CardEnrollmentPolicy from './CardEnrollmentPolicy';
-import TableList from './tableList';
+import { CardEnrollmentPolicyDescription, CARD_ENROLL, KIOSK, KioskPolicyDescription, PASSWORD, PasswordPolicyDescription, PIN, PinPolicyDescription, TecTANGO } from '../../constants';
 import { Store } from '../../Store';
-import ProtectedRoute from '../ProtectedRoute';
 
 export default function Policies() {
+	const history = useHistory();
+	const [seletedProduct] = useContext(Store);
+	const [loadingDetails, setLoadingDetails] = useState(false);
+	const [activePinPolicies, setActivePinPolicies]: any = useState([]);
+	const [inActivePinPolicies, setInActivePinPolicies]: any = useState([]);
+	const [activePasswordPolicies, setActivePasswordPolicies]: any = useState([]);
+	const [inActivepasswordPolicies, setInActivePasswordPolicies]: any = useState([]);
+	const [activeKioskPolicies, setActiveKioskPolicies]: any = useState([]);
+	const [inActiveKioskPolicies, setInActiveKioskPolicies]: any = useState([]);
+	const [activeCardEnrollmentPolicies, setActiveCardEnrollmentPolicies] = useState([]);
+	const [inActiveCardEnrollmentPolicies, setInActiveCardEnrollmentPolicies] = useState([]);
+	const path = window.location.pathname.split('/').length;
+	const [maxEnroll, setMaxEnroll] = useState(null);
+	const { productId } = useParams();
+	const { TabPane } = Tabs;
+
 	const activateColumns = [
 		{
 			title: 'Sort',
@@ -53,7 +68,7 @@ export default function Policies() {
 			render: (text: any, record: { policy_id: any; }) => (
 				<Tooltip title="View">
 					<Button icon={<BarsOutlined />} onClick={() => {
-						history.push('/policies/' + window.location.pathname.split("/")[2] + "/" + record.policy_id);
+						history.push(`/product/${productId}/policies/` + window.location.pathname.split("/")[4] + "/" + record.policy_id);
 					}}>
 					</Button>
 				</Tooltip>
@@ -91,7 +106,7 @@ export default function Policies() {
 			render: (text: any, record: { policy_id: any; }) => (
 				<Tooltip title="View">
 					<Button icon={<BarsOutlined />} onClick={() => {
-						history.push('/policies/' + window.location.pathname.split("/")[2] + "/" + record.policy_id);
+						history.push(`/product/${localStorage.getItem("productId")}/policies/` + window.location.pathname.split("/")[4] + "/" + record.policy_id);
 					}}>
 					</Button>
 				</Tooltip>
@@ -110,21 +125,6 @@ export default function Policies() {
 			)
 		}
 	];
-
-	const history = useHistory();
-	const [seletedProduct] = useContext(Store);
-	const [loadingDetails, setLoadingDetails] = useState(false);
-	const [activePinPolicies, setActivePinPolicies]: any = useState([]);
-	const [inActivePinPolicies, setInActivePinPolicies]: any = useState([]);
-	const [activePasswordPolicies, setActivePasswordPolicies]: any = useState([]);
-	const [inActivepasswordPolicies, setInActivePasswordPolicies]: any = useState([]);
-	const [activeKioskPolicies, setActiveKioskPolicies]: any = useState([]);
-	const [inActiveKioskPolicies, setInActiveKioskPolicies]: any = useState([]);
-	const [activeCardEnrollmentPolicies, setActiveCardEnrollmentPolicies] = useState([]);
-	const [inActiveCardEnrollmentPolicies, setInActiveCardEnrollmentPolicies] = useState([]);
-	const path = window.location.pathname.split('/').length;
-	const [maxEnroll, setMaxEnroll] = useState(null);
-	const { TabPane } = Tabs;
 
 	const DragHandle = SortableHandle(() => <MenuOutlined style={{ cursor: 'grab', color: '#999' }} />);
 	const SortableItem = SortableElement(props => <tr {...props} />);
@@ -212,8 +212,14 @@ export default function Policies() {
 		/>
 	);
 
-	const CardEnrollmentDraggableBodyRow = ({ className, style, ...restProps }) => {
+	const kioskDraggableBodyRow = ({ className, style, ...restProps }) => {
 		const index = activeKioskPolicies.findIndex(x => x.index === restProps['data-row-key']);
+		return <SortableItem index={index} {...restProps} />;
+	};
+
+	const CardEnrollmentDraggableBodyRow = ({ className, style, ...restProps }) => {
+		//@ts-ignore	
+		const index = activeCardEnrollmentPolicies.findIndex(x => x.index === restProps['data-row-key']);
 		return <SortableItem index={index} {...restProps} />;
 	};
 
@@ -241,20 +247,15 @@ export default function Policies() {
 		/>
 	);
 
-	const kioskDraggableBodyRow = ({ className, style, ...restProps }) => {
-		const index = activeKioskPolicies.findIndex(x => x.index === restProps['data-row-key']);
-		return <SortableItem index={index} {...restProps} />;
-	};
-
 	function handleGetPolicies() {
 		getPolicies();
 	}
 
 	function getPolicies() {
 		console.log(path);
-		if (path === 3) {
+		if (path === 5) {
 			setLoadingDetails(true)
-			ApiService.get(ApiUrls.policies)
+			ApiService.get(ApiUrls.policies(productId))
 				.then(data => {
 					console.log(data);
 					var pinCounter = 0;
@@ -400,10 +401,10 @@ export default function Policies() {
 	}
 
 	useEffect(() => {
-		if (['password', 'kiosk', 'card-enrollment'].includes(window.location.pathname.split("/")[2]) === false && window.location.pathname.split("/").length !== 4) {
-			history.push('/policies/pin');
+		if (['password', 'kiosk', 'card-enrollment'].includes(window.location.pathname.split("/")[4]) === false && window.location.pathname.split("/").length !== 6) {
+			history.push(`/product/${productId}/policies/pin`);
 		}
-
+		
 		getPolicies();
 	}, [path]);
 
@@ -429,7 +430,7 @@ export default function Policies() {
 
 	function activatePolicy(uid: string) {
 		console.log(uid);
-		ApiService.get(ApiUrls.activatePolicy(uid))
+		ApiService.get(ApiUrls.activatePolicy(uid, productId))
 			.then(data => {
 				if (!data.errorSummary) {
 					openNotification('success', 'Successfully activated Policy');
@@ -447,7 +448,7 @@ export default function Policies() {
 
 	function deActivatePolicy(uid: string) {
 		console.log(uid);
-		ApiService.get(ApiUrls.deActivatePolicy(uid))
+		ApiService.get(ApiUrls.deActivatePolicy(uid, productId))
 			.then(data => {
 				if (!data.errorSummary) {
 					openNotification('success', 'Successfully de-activated Policy');
@@ -469,7 +470,7 @@ export default function Policies() {
 			auth_policy_uid: uid,
 			policy_type: policyType
 		}
-		ApiService.post(ApiUrls.reOrderPolicies, data)
+		ApiService.post(ApiUrls.reOrderPolicies(productId), data)
 			.then(data => {
 				if (!data.errorSummary) {
 					console.log(data)
@@ -488,63 +489,58 @@ export default function Policies() {
 		<>
 			<div className='content-header'>
 				Policy
-				{window.location.pathname.split('/').length === 4 ? <Button style={{ marginLeft: 'auto', alignSelf: 'end' }} onClick={() => {
-					console.log(window.location.pathname.split('/')[2]);
-					history.push('/policies/' + window.location.pathname.split('/')[2]);
+				{window.location.pathname.split('/').length === 6 ? <Button style={{ marginLeft: 'auto', alignSelf: 'end' }} onClick={() => {
+					history.push(`/product/${productId}/policies/` + window.location.pathname.split('/')[4]);
 				}}>
 					Back
 				</Button> : <></>}
 			</div>
 
 			<Skeleton loading={loadingDetails}>
-				<Tabs activeKey={window.location.pathname.split("/")[2]}
+				<Tabs activeKey={window.location.pathname.split("/")[4]}
 					type="card" size={"middle"} animated={false}
 					tabBarStyle={{ marginBottom: '0px' }}
 					onChange={(key) => {
-						history.push("/policies/" + key);
+						history.push(`/product/${productId}/policies/` + key);
 					}}
 				>
 					<TabPane tab="Pin" key="pin">
-							{window.location.pathname.split('/').length === 4 ?
-								<ProtectedRoute path={`/policies/pin/:id`} component={PinPolicy} /> :
-								<TableList policy_type={"pin"}
-									activateColumns={activateColumns} deActivateColumns={deActivateColumns} draggableBodyRow={pinDraggableBodyRow}
-									draggableContainer={pinDraggableContainer} inActivePolicies={inActivePinPolicies} activePolicies={activePinPolicies}
-									handleGetPolicies={handleGetPolicies}
-								/>
-							}
+						{window.location.pathname.split('/').length === 6 ?
+							<ProtectedRoute path={`/product/${productId}/policies/pin/:id`} component={PinPolicy} /> :
+							<TableList policy_type={PIN} policy_description={PinPolicyDescription}
+								activateColumns={activateColumns} deActivateColumns={deActivateColumns} draggableBodyRow={pinDraggableBodyRow}
+								draggableContainer={pinDraggableContainer} inActivePolicies={inActivePinPolicies} activePolicies={activePinPolicies}
+								handleGetPolicies={handleGetPolicies}
+							/>
+						}
 					</TabPane>
 					<TabPane tab="Password" key="password">
-							{window.location.pathname.split('/').length === 4 ?
-								<ProtectedRoute path={`/policies/password/:id`} component={PasswordPolicy} /> :
-								<TableList policy_type={"password"} activateColumns={activateColumns} deActivateColumns={deActivateColumns}
-									draggableBodyRow={passwordDraggableBodyRow} draggableContainer={passwordDraggableContainer}
-									inActivePolicies={inActivepasswordPolicies} activePolicies={activePasswordPolicies} handleGetPolicies={handleGetPolicies}
-								/>
-							}
+						{window.location.pathname.split('/').length === 6 ?
+							<ProtectedRoute path={`/product/${productId}/policies/password/:id`} component={PasswordPolicy} /> :
+							<TableList policy_type={PASSWORD} policy_description={PasswordPolicyDescription} activateColumns={activateColumns} deActivateColumns={deActivateColumns}
+								draggableBodyRow={passwordDraggableBodyRow} draggableContainer={passwordDraggableContainer}
+								inActivePolicies={inActivepasswordPolicies} activePolicies={activePasswordPolicies} handleGetPolicies={handleGetPolicies}
+							/>
+						}
 					</TabPane>
 					<TabPane tab="Kiosk" key="kiosk">
-							{window.location.pathname.split('/').length === 4 ?
-								<ProtectedRoute path={`/policies/kiosk/:id`} component={KioskPolicy} /> :
-								<>
-									<TableList policy_type={"kiosk"} activateColumns={activateColumns} deActivateColumns={deActivateColumns}
-										draggableBodyRow={kioskDraggableBodyRow} draggableContainer={kioskDraggableContainer}
-										inActivePolicies={inActiveKioskPolicies} activePolicies={activeKioskPolicies} handleGetPolicies={handleGetPolicies}
-									/>
-								</>
-							}
+						{window.location.pathname.split('/').length === 6 ?
+							<ProtectedRoute path={`/product/${productId}/policies/kiosk/:id`} component={KioskPolicy} /> :
+							<TableList policy_type={KIOSK} policy_description={KioskPolicyDescription} activateColumns={activateColumns} deActivateColumns={deActivateColumns}
+								draggableBodyRow={kioskDraggableBodyRow} draggableContainer={kioskDraggableContainer}
+								inActivePolicies={inActiveKioskPolicies} activePolicies={activeKioskPolicies} handleGetPolicies={handleGetPolicies}
+							/>
+						}
 					</TabPane>
 					{seletedProduct === TecTANGO && maxEnroll ?
-						<TabPane tab="Card enrollment" key="card-enrollment">
-								{window.location.pathname.split('/').length === 4 ?
-									<ProtectedRoute path={`/policies/card-enrollment/:id`} component={CardEnrollmentPolicy} /> :
-									<>
-										<TableList policy_type={"card-enrollment"} activateColumns={activateColumns} deActivateColumns={deActivateColumns}
-											draggableBodyRow={CardEnrollmentDraggableBodyRow} draggableContainer={CardEnrollmentDraggableContainer}
-											inActivePolicies={inActiveCardEnrollmentPolicies} activePolicies={activeCardEnrollmentPolicies} handleGetPolicies={handleGetPolicies}
-										/>
-									</>
-								}
+						<TabPane tab="Card Enrollment" key="card-enrollment">
+							{window.location.pathname.split('/').length === 6 ?
+								<ProtectedRoute path={`/product/${productId}/policies/card-enrollment/:id`} component={CardEnrollmentPolicy} /> :
+								<TableList policy_type={CARD_ENROLL} policy_description={CardEnrollmentPolicyDescription} activateColumns={activateColumns} deActivateColumns={deActivateColumns}
+									draggableBodyRow={CardEnrollmentDraggableBodyRow} draggableContainer={CardEnrollmentDraggableContainer}
+									inActivePolicies={inActiveCardEnrollmentPolicies} activePolicies={activeCardEnrollmentPolicies} handleGetPolicies={handleGetPolicies}
+								/>
+							}
 						</TabPane> : null}
 				</Tabs>
 			</Skeleton>

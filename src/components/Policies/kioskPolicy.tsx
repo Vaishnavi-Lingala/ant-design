@@ -1,16 +1,13 @@
+import { useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
 import { Divider, Checkbox, Button, Input, Select, Skeleton, Radio } from "antd";
-import { useContext, useEffect, useState } from "react";
+import TextArea from "antd/lib/input/TextArea";
 
 import './Policies.css';
 
-// import { AuthenticationPolicy } from "../../models/Data.models";
-import { kioskPolicyType } from "../../models/Data.models";
 import ApiService from "../../Api.service";
 import ApiUrls from '../../ApiUtils';
-import TextArea from "antd/lib/input/TextArea";
-
 import { openNotification } from "../Layout/Notification";
-import { useHistory } from "react-router-dom";
 
 export const KioskPolicy = (props: any) => {
 
@@ -38,7 +35,7 @@ export const KioskPolicy = (props: any) => {
             ApiService.get(ApiUrls.groups, { type: "USER" }),
             ApiService.get(ApiUrls.groups, { type: "KIOSK" }),
             ApiService.get(ApiUrls.loginTypeOptions),
-            ApiService.get(ApiUrls.policy(window.location.pathname.split('/')[3]))
+            ApiService.get(ApiUrls.policy(window.location.pathname.split('/')[5]))
         ]))
             .then(data => {
                 console.log(data[0]);
@@ -103,7 +100,7 @@ export const KioskPolicy = (props: any) => {
                     });
                     setLoading(false);
                 }
-                else if(window.location.pathname.split('/').length === 3){
+                else if(window.location.pathname.split('/').length === 5){
                     setKioskDisplayData(props.kioskDetails);
                     setKioskEditedData(props.kioskDetails);
                     setPolicyRequirements(props.kioskDetails.policy_req);
@@ -113,7 +110,7 @@ export const KioskPolicy = (props: any) => {
                 else{
                     console.log('else: ', data[3]);
                     openNotification('error', data[3].errorCauses.length !== 0 ? data[3].errorCauses[3].errorSummary : data[3].errorSummary);
-                    history.push('/policies/kiosk');
+                    history.push(`/product/${localStorage.getItem("productId")}/policies/kiosk`);
                 }
             }, error => {
                 console.error('Error: ', error);
@@ -161,7 +158,6 @@ export const KioskPolicy = (props: any) => {
 
     function handleEditClick() {
         setIsEdit(!isEdit);
-        // setKioskEditedData({ ...kioskDisplayData });
     }
 
     function handleCancelClick() {
@@ -171,10 +167,10 @@ export const KioskPolicy = (props: any) => {
 
     function handleSaveClick() {
         updateKioskPolicy();
-        // setIsEdit(false);
     }
 
     function createkioskPolicy() {
+        kioskEditData.policy_req.confirm_assay = confirmPassword;
         props.handleOk("KIOSK", kioskEditData);
     }
 
@@ -270,6 +266,10 @@ export const KioskPolicy = (props: any) => {
                             // disabled={!isEdit}
                             style={{ width: '275px' }}
                             options={groups}
+                            filterOption={(input, option) =>
+                                //@ts-ignore
+                                option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                            }
                         /> : Object.keys(groupNames).map(name =>
                             <div style={{ display: 'inline-block', marginRight: '3px', paddingBottom: '3px' }}>
                                 <Button style={{ cursor: 'text' }}>{groupNames[name]}</Button>
@@ -290,6 +290,10 @@ export const KioskPolicy = (props: any) => {
                             // disabled={!isEdit}
                             style={{ width: '275px' }}
                             options={kioskGroups}
+                            filterOption={(input, option) =>
+                                //@ts-ignore
+                                option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                            }
                             listHeight={120}
                         /> : Object.keys(kioskGroupNames).map(name =>
                             <><Button style={{ cursor: 'text' }}>
@@ -407,7 +411,7 @@ export const KioskPolicy = (props: any) => {
                 </div> : <></>) : <div style={{ paddingTop: '10px', paddingRight: '45px', paddingBottom: '20px' }}>
                     <Button style={{ float: 'right', marginLeft: '10px' }}
                         onClick={setCancelClick}>Cancel</Button>
-                    <Button type='primary' style={{ float: 'right' }}
+                    <Button type='primary' loading={props.buttonLoading} style={{ float: 'right' }}
                         onClick={createkioskPolicy}>Create</Button></div>
             }
         </Skeleton>

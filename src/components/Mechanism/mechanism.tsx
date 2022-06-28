@@ -1,12 +1,12 @@
-import { Button, Input, Radio, Select, Skeleton } from "antd";
 import { useContext, useEffect, useState } from "react";
+import { useHistory, useParams } from "react-router-dom";
+import { Button, Input, Radio, Select, Skeleton } from "antd";
 
 import './Mechanism.css'
 
-import ApiService from "../../Api.service";
-import ApiUrls from '../../ApiUtils';
 import { openNotification } from "../Layout/Notification";
-import { useHistory } from "react-router-dom";
+import ApiUrls from '../../ApiUtils';
+import ApiService from "../../Api.service";
 import { MechanismType } from "../../models/Data.models";
 import { Store } from "../../Store";
 
@@ -30,6 +30,8 @@ function Mechanism(props: any) {
     const [disabledFactors1]: any = useState([]);
     const [selectedHeader] = useContext(Store);
     const history = useHistory();
+    const { productId } = useParams();
+    
     const mechanism = {
         challenge_factors: [
             {
@@ -56,7 +58,7 @@ function Mechanism(props: any) {
     }
 
     useEffect(() => {
-        ApiService.get(ApiUrls.mechanism(window.location.pathname.split('/')[2]))
+        ApiService.get(ApiUrls.mechanism(window.location.pathname.split('/')[4], productId))
             .then((data: MechanismType) => {
                 //@ts-ignore
                 if (!data.errorSummary) {
@@ -100,7 +102,7 @@ function Mechanism(props: any) {
                     }
                     setLoading(false);
                 }
-                else if (window.location.pathname.split('/').length === 2) {
+                else if (window.location.pathname.split('/').length === 4) {
                     setDisplayDetails(mechanism);
                     setEditData(mechanism);
                     setIsEdit(true);
@@ -112,7 +114,7 @@ function Mechanism(props: any) {
                     console.log('else: ', data);
                     //@ts-ignore
                     openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses.errorSummary : data.errorSummary);
-                    history.push('/mechanism');
+                    history.push(`/product/${productId}/mechanism`);
                 }
             })
     }, [])
@@ -121,7 +123,7 @@ function Mechanism(props: any) {
         Promise.all(([
             ApiService.get(ApiUrls.groups, { type: "USER" }),
             ApiService.get(ApiUrls.mechanismOptions),
-            ApiService.get(ApiUrls.mechanismChallengeFactors),
+            ApiService.get(ApiUrls.mechanismChallengeFactors(productId)),
         ]))
             .then(data => {
                 for (var i = 0; i < data[0].length; i++) {
@@ -156,11 +158,10 @@ function Mechanism(props: any) {
     function updateMechanism() {
         console.log(groupUids);
         editData.mechanism_groups = groupUids
-        ApiService.put(ApiUrls.mechanism(displayDetails['uid']), editData)
+        ApiService.put(ApiUrls.mechanism(displayDetails['uid'], productId), editData)
             .then(data => {
                 if (!data.errorSummary) {
                     groupNames.length = 0;
-                    // setDisplayDetails({ ...editData });
                     openNotification('success', 'Successfully updated Mechanism');
                     Object.keys(data.mechanism_groups).map(index => {
                         groupNames.push(data.mechanism_groups[index].name);
@@ -229,12 +230,17 @@ function Mechanism(props: any) {
     }
 
     return (<>
-        <div className='content-header'>
-            Mechanism
-            <Button style={{ marginLeft: 'auto', alignSelf: 'end' }} onClick={() => {
-                history.push('/mechanism')
-            }}>Back</Button>
-        </div>
+        {window.location.pathname.split('/').length === 5 ?
+            <div className='content-header'>
+                Mechanism
+                {displayDetails['uid'] !== undefined ?
+                    <Button style={{ marginLeft: 'auto', alignSelf: 'end' }} onClick={() => {
+                        history.push(`/product/${productId}/mechanism`);
+                    }}>Back</Button>
+                    : <></>
+                }
+            </div> : <></>
+        }
 
         <Skeleton loading={loading || loadingDetails}>
             <div className="content-container rounded-grey-border">
@@ -285,6 +291,10 @@ function Mechanism(props: any) {
                                 // disabled={!isEdit}
                                 style={{ width: '275px' }}
                                 options={groups}
+                                filterOption={(input, option) =>
+									//@ts-ignore
+									option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
+								}
                             /> : Object.keys(groupNames).map(name =>
                                 <div style={{ display: 'inline-block', marginRight: '3px', paddingBottom: '3px' }}>
                                     <Button style={{ cursor: 'text' }}>{groupNames[name]}</Button>
@@ -333,33 +343,6 @@ function Mechanism(props: any) {
                             }
                         </Radio.Group>
                     </div>
-                    {/*{localStorage.getItem("productName") === 'TecTANGO' ?
-                        <>
-                            <div className="content-mechanism-key-header" style={{ paddingTop: '20px', paddingBottom: '40px' }}>
-                                Reader Type:
-                            </div>
-                            <div style={{ paddingTop: '20px' }}>
-                                <Radio.Group name="Reader" defaultValue={displayDetails?.reader_type}
-                                    onChange={(e) =>
-                                        setEditData((editData: any) => ({
-                                            ...editData,
-                                            reader_type: e.target.value
-                                        }))} disabled={!isEdit}
-                                >
-                                    {
-                                        Object.keys(readerOptions).map(factor => {
-                                            return <div key={factor}>
-                                                <Radio value={factor}>
-                                                    {readerOptions[factor]}
-                                                </Radio>
-                                                <br />
-                                            </div>
-                                        })
-                                    }
-                                </Radio.Group>
-                            </div>
-                        </> : <></>
-                    } */}
 
                     {challengeFactors.length === 2 ?
                         <>
@@ -440,7 +423,7 @@ function Mechanism(props: any) {
                 </div> : <></>) : <div style={{ paddingTop: '10px', paddingRight: '45px', paddingBottom: '20px' }}>
                     <Button style={{ float: 'right', marginLeft: '10px' }}
                         onClick={setCancelClick}>Cancel</Button>
-                    <Button type='primary' style={{ float: 'right' }}
+                    <Button loading={props.buttonLoading} type='primary' style={{ float: 'right' }}
                         onClick={createMechanism}>Create</Button></div>
             }
         </Skeleton>

@@ -1,17 +1,22 @@
-import { Button, Modal, Table } from "antd";
 import { useState } from "react";
+import { useParams } from 'react-router-dom';
+import { Button, Modal, Table } from "antd";
+import { CloseOutlined } from "@ant-design/icons";
 
-import ApiService from "../../Api.service";
-import ApiUrls from "../../ApiUtils";
-import { CARD_ENROLL, KIOSK, PASSWORD, PIN } from "../../constants";
-import { openNotification } from "../Layout/Notification";
 import CardEnrollmentPolicy from "./CardEnrollmentPolicy";
 import { KioskPolicy } from "./kioskPolicy";
 import { PasswordPolicy } from "./passwordPolicy";
 import { PinPolicy } from "./pinPolicy";
+import { openNotification } from "../Layout/Notification";
+import ApiUrls from "../../ApiUtils";
+import ApiService from "../../Api.service";
+import { CARD_ENROLL, KIOSK, PASSWORD, PIN, policyDisplayNames } from "../../constants";
 
-function TableList({ handleGetPolicies, policy_type, activateColumns, activePolicies, draggableContainer, draggableBodyRow, deActivateColumns, inActivePolicies }) {
+function TableList({ handleGetPolicies, policy_type, policy_description, activateColumns, activePolicies, draggableContainer, draggableBodyRow, deActivateColumns, inActivePolicies }) {
     const [isModal, setIsModal] = useState(false);
+    const { productId } = useParams();
+    const [buttonLoading, setButtonLoading] = useState(false);
+
     const pinData = {
         description: '',
         name: '',
@@ -26,7 +31,7 @@ function TableList({ handleGetPolicies, policy_type, activateColumns, activePoli
             is_upper_case_req: false,
             is_lower_case_req: false,
             is_non_consecutive_char_req: false,
-            max_length: 4,
+            max_length: 6,
             is_pin_history_req: false,
             is_num_req: true
         }
@@ -70,20 +75,24 @@ function TableList({ handleGetPolicies, policy_type, activateColumns, activePoli
     }
 
     const handleOk = (policyType: string, object: object) => {
-        ApiService.post(ApiUrls.addPolicy, object)
+        setButtonLoading(true);
+        ApiService.post(ApiUrls.addPolicy(productId), object)
             .then(data => {
                 if (!data.errorSummary) {
                     console.log(data);
-                    openNotification('success', `Successfully added ${policyType.slice(0, 1) + policyType.slice(1).toLowerCase()} Policy`);
+                    openNotification('success', `Successfully created ${policyType.slice(0, 1) + policyType.slice(1).toLowerCase()} Policy`);
                     setIsModal(false);
+                    setButtonLoading(false);
                     handleGetPolicies();
                 }
                 else {
                     openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
+                    setButtonLoading(false);
                 }
             }, error => {
                 console.error('Error: ', error);
-                openNotification('error', `An Error has occured with adding ${policyType.slice(0, 1) + policyType.slice(1).toLowerCase()} Policy`);
+                setButtonLoading(false);
+                openNotification('error', `An Error has occured with creating ${policyType.slice(0, 1) + policyType.slice(1).toLowerCase()} Policy`);
             })
     }
 
@@ -95,6 +104,13 @@ function TableList({ handleGetPolicies, policy_type, activateColumns, activePoli
         <>
             <div style={{
                 width: '100%', border: '1px solid #D7D7DC', borderBottom: 'none',
+                padding: '10px 10px 10px 25px', backgroundColor: '#d9d9d9'
+            }}
+            >
+                {policy_description}
+            </div>
+            <div style={{
+                width: '100%', border: '1px solid #D7D7DC', borderBottom: 'none',
                 padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6'
             }}
             >
@@ -102,8 +118,9 @@ function TableList({ handleGetPolicies, policy_type, activateColumns, activePoli
                     setIsModal(true);
                 }}
                 >
-                    Add {policy_type.slice(0, 1).toUpperCase() + policy_type.slice(1)} Policy
+                    Add {policyDisplayNames[policy_type]} Policy
                 </Button>
+
             </div>
             <div style={{
                 fontWeight: 600, fontSize: 'x-large',
@@ -113,6 +130,7 @@ function TableList({ handleGetPolicies, policy_type, activateColumns, activePoli
             >
                 ACTIVE
             </div>
+
             <Table
                 style={{ border: '1px solid #D7D7DC' }}
                 showHeader={true}
@@ -127,7 +145,9 @@ function TableList({ handleGetPolicies, policy_type, activateColumns, activePoli
                 }}
                 pagination={false}
             />
+
             <br />
+
             <div style={{
                 fontWeight: 600, fontSize: 'x-large',
                 width: '100%', border: '1px solid #D7D7DC',
@@ -144,17 +164,17 @@ function TableList({ handleGetPolicies, policy_type, activateColumns, activePoli
                 dataSource={inActivePolicies}
                 pagination={false}
             />
-            
-            <Modal visible={isModal} footer={false} centered width={900} maskClosable={false}
-                title={<div style={{fontSize: '30px'}}>Add {policy_type.slice(0, 1).toUpperCase() + policy_type.slice(1)} Policy </div>}
+
+            <Modal visible={isModal} closeIcon={<Button icon={<CloseOutlined />}></Button>} footer={false} centered width={900} maskClosable={true} onCancel={handleCancel}
+                title={<div style={{ fontSize: '30px' }}>Add {policyDisplayNames[policy_type]} Policy </div>}
             >
-                {policy_type.toUpperCase() === PIN ?
-                    <PinPolicy pinDetails={pinData} handleOk={handleOk} handleCancel={handleCancel} /> :
-                    policy_type.toUpperCase() === PASSWORD ?
-                        <PasswordPolicy passwordDetails={passwordData} handleOk={handleOk} handleCancel={handleCancel} /> :
-                        policy_type.toUpperCase() === KIOSK ?
-                            <KioskPolicy kioskDetails={kioskData} handleOk={handleOk} handleCancel={handleCancel} /> :
-                            <CardEnrollmentPolicy policyDetails={cardEnrollData} handleOk={handleOk} handleCancel={handleCancel} />
+                {policy_type === PIN ?
+                    <PinPolicy pinDetails={pinData} buttonLoading={buttonLoading} handleOk={handleOk} handleCancel={handleCancel} /> :
+                    policy_type === PASSWORD ?
+                        <PasswordPolicy passwordDetails={passwordData} buttonLoading={buttonLoading} handleOk={handleOk} handleCancel={handleCancel} /> :
+                        policy_type === KIOSK ?
+                            <KioskPolicy kioskDetails={kioskData} buttonLoading={buttonLoading} handleOk={handleOk} handleCancel={handleCancel} /> :
+                            <CardEnrollmentPolicy policyDetails={cardEnrollData} buttonLoading={buttonLoading} handleOk={handleOk} handleCancel={handleCancel} />
                 }
             </Modal>
         </>

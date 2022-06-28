@@ -1,6 +1,6 @@
 export interface ClientConfiguration {
     uid: string;
-    portal_oidc_client_id: string;
+    idp_portal_oidc_client_id: string;
     issuer_url: string;
 }
 
@@ -63,7 +63,6 @@ export interface kioskPolicyType {
 export interface MechanismType{
     uid: string,
     on_tap_out: string,
-    // reader_type: string,
     order: number,
     product_id: string,
     name: string,
@@ -124,4 +123,13 @@ export interface Group {
     name: string
     type: string
     uid: string
+}
+
+export interface MachineProducts {
+    key: string,
+    active: boolean,
+    product_version: string,
+    updated_t: string,
+    created_ts: string,
+    product_sku: string
 }

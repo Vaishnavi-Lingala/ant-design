@@ -1,14 +1,21 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Table, Button, Modal, Typography, Input } from "antd";
-import ApiService from "../../Api.service";
-import ApiUrls from '../../ApiUtils';
 
 import { openNotification } from "../Layout/Notification";
+import ApiUrls from '../../ApiUtils';
+import ApiService from "../../Api.service";
 
 export default function UsersSelection(props: any) {
-
+    const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+    const [usersList, setUsersList] = useState([]);
+    const [searchText, setSearchText] = useState('');
+    const [loadingDetails, setLoadingDetails] = useState(false);
+    const [page, setPage]: any = useState(1);
+    const [pageSize, setPageSize]: any = useState(10);
+    const [totalItems, setTotalItems]: any = useState(0);
     const { Title } = Typography;
     const { Search } = Input;
+
     const columns = [
         {
             title: 'Name',
@@ -21,14 +28,6 @@ export default function UsersSelection(props: any) {
             width: '40%'
         }
     ];
-
-    const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-    const [usersList, setUsersList] = useState([]);
-    const [searchText, setSearchText] = useState('');
-    const [loadingDetails, setLoadingDetails] = useState(false);
-    const [page, setPage]: any = useState(1);
-    const [pageSize, setPageSize]: any = useState(10);
-    const [totalItems, setTotalItems]: any = useState(0);
 
     useEffect(() => {
         if (props.action === 'Add') {
@@ -129,7 +128,6 @@ export default function UsersSelection(props: any) {
 
     }
 
-
     return (
         <>
             <Modal title={<Title level={2}>{props.action} Users</Title>} visible={true} onOk={handleOk} onCancel={handleCancel} width={1000}
@@ -154,7 +152,6 @@ export default function UsersSelection(props: any) {
                     columns={columns}
                     dataSource={usersList}
                     rowSelection={rowSelection}
-                    // bordered={true}
                     pagination={{
                         current: page,
                         pageSize: pageSize,

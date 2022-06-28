@@ -1,5 +1,7 @@
 import { useState, createContext, useEffect } from "react";
+
 import { SELECTED_HEADER } from "./constants";
+
 export const Store = createContext();
 
 function StoreProvider({ children }) {

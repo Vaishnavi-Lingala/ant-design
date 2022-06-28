@@ -1,6 +1,7 @@
+import { useState, useEffect } from "react";
+import { useHistory } from "react-router-dom";
 import { Button, Input, InputNumber, Select, Skeleton } from "antd";
 import TextArea from "antd/lib/input/TextArea";
-import { useState, useEffect } from "react";
 
 import './Policies.css';
 
@@ -9,7 +10,6 @@ import ApiUrls from '../../ApiUtils';
 import { CARD_ENROLL, TecTANGO } from "../../constants";
 import { openNotification } from "../Layout/Notification";
 import Hint from "../Controls/Hint";
-import { useHistory } from "react-router-dom";
 
 const CardEnrollmentPolicy = (props) => {
     const [isEdit, setIsEdit] = useState(false);
@@ -21,14 +21,14 @@ const CardEnrollmentPolicy = (props) => {
     const [groupNames, setGroupNames]: any = useState([]);
     const [groupUids, setGroupUids]: any = useState([]);
     const [groupsChange, setGroupsChange]: any = useState([]);
-    const [maxEnroll, setMaxEnroll] = useState(null);
+    const [maxEnroll, setMaxEnroll] = useState(1);
     const [isLimitReached, setIsLimitReached] = useState(false);
     const history = useHistory();
 
     useEffect(() => {
         Promise.all(([
             ApiService.get(ApiUrls.groups, { type: "USER" }),
-            ApiService.get(ApiUrls.policy(window.location.pathname.split('/')[3]))
+            ApiService.get(ApiUrls.policy(window.location.pathname.split('/')[5]))
         ]))
             .then(data => {
                 console.log('GROUPS: ', data[0]);
@@ -57,10 +57,9 @@ const CardEnrollmentPolicy = (props) => {
                         setGroupNames(groupNames);
                         setGroupUids(groupUids);
                     });
-
                     setLoading(false);
                 }
-                else if (window.location.pathname.split('/').length === 3) {
+                else if (window.location.pathname.split('/').length === 5) {
                     setCardEnrollDisplayData(props.policyDetails);
                     setCardEnrollEditedData(props.policyDetails);
                     setPolicyRequirements(props.policyDetails.policy_req);
@@ -70,7 +69,7 @@ const CardEnrollmentPolicy = (props) => {
                 else {
                     console.log('else: ', data[1]);
                     openNotification('error', data[1].errorCauses.length !== 0 ? data[1].errorCauses[1].errorSummary : data[1].errorSummary);
-                    history.push('/policies/card-enrollment');
+                    history.push(`/product/${localStorage.getItem("productId")}/policies/card-enrollment`);
                 }
             }, error => {
                 console.error('Error: ', error);
@@ -162,8 +161,10 @@ const CardEnrollmentPolicy = (props) => {
                     <div>
                         {cardEnrollDisplayData['uid'] === undefined ? <></> :
                             <div>
-                                <div className="content-heading">{isEdit ? 'Edit' : null} Card Enrollment Policy </div>
-                                <div>
+                                <div style={{display: 'inline-block', marginRight: '3px'}} className="content-heading">
+                                    {isEdit ? 'Edit' : null} Card Enrollment Policy 
+                                </div>
+                                <div style={{display: 'inline-block', marginRight: '3px'}}>
                                     <Hint text={"This policy allows you to control how many cards can be enrolled per user"} />
                                 </div>
                             </div>
@@ -220,6 +221,10 @@ const CardEnrollmentPolicy = (props) => {
                                 onChange={handleGroups}
                                 style={{ width: '275px' }}
                                 options={groups}
+                                filterOption={(input, option) =>
+									//@ts-ignore
+									option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
+								}
                             /> : Object.keys(groupNames).map(name =>
                                 <><Button style={{ cursor: 'text' }}>{groupNames[name]}</Button>&nbsp;</>)
                         }
@@ -231,11 +236,10 @@ const CardEnrollmentPolicy = (props) => {
                     <div style={{ paddingTop: '20px' }}>
                         {isEdit ? <>
                             <InputNumber className="form-control"
-                                max={maxEnroll}
                                 min={1}
                                 style={{ width: "275px" }}
                                 onChange={(e) => {
-                                    setIsLimitReached(parseInt(e) === maxEnroll);
+                                    setIsLimitReached(parseInt(e) > maxEnroll);
                                     setCardEnrollEditedData({
                                         ...cardEnrollEditData,
                                         policy_req: { max_card_enrollment: parseInt(e) }
@@ -244,7 +248,8 @@ const CardEnrollmentPolicy = (props) => {
                                 defaultValue={policyRequirements['max_card_enrollment']}
                             />
                             {isLimitReached ? <div style={{ padding: '5px', color: 'red' }}>
-                                Max card enrollment limit is {maxEnroll}. Please contact Tecnics to update it.
+                            By policy, users will not be allowed to enroll more than the {maxEnroll} cards. If higher limit is required, please contact support team.
+                                {/* Max card enrollment limit is {maxEnroll}. Please contact Tecnics to update it. */}
                             </div> : null}
                         </> : policyRequirements['max_card_enrollment']
                         }
@@ -255,13 +260,13 @@ const CardEnrollmentPolicy = (props) => {
                 (isEdit ? <div style={{ paddingTop: '10px', paddingRight: '45px' }}>
                     <Button style={{ float: 'right', marginLeft: '10px' }}
                         onClick={handleCancelClick}>Cancel</Button>
-                    <Button type='primary' style={{ float: 'right' }}
+                    <Button disabled={isLimitReached} type='primary' style={{ float: 'right' }}
                         onClick={handleSaveClick}>Save</Button>
                 </div> : <></>) : <div style={{ paddingTop: '10px', paddingRight: '45px', paddingBottom: '20px' }}>
                     <Button style={{ float: 'right', marginLeft: '10px' }}
                         onClick={setCancelClick}>Cancel</Button>
-                    <Button type='primary' style={{ float: 'right' }}
-                        onClick={createCardEnrollPolicy}>create</Button></div>
+                    <Button type='primary' loading={props.buttonLoading} style={{ float: 'right' }}
+                        onClick={createCardEnrollPolicy}>Create</Button></div>
             }
         </Skeleton>
     );

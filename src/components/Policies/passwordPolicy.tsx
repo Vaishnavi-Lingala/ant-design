@@ -1,15 +1,13 @@
-import { Button, Divider, Input, Radio, Select, Skeleton } from "antd";
 import { useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
+import { Button, Divider, Input, Radio, Select, Skeleton } from "antd";
 import TextArea from "antd/lib/input/TextArea";
 
 import './Policies.css'
 
-import { PasswordPolicyType } from "../../models/Data.models";
 import ApiService from "../../Api.service";
 import ApiUrls from '../../ApiUtils';
-
 import { openNotification } from "../Layout/Notification";
-import { useHistory } from "react-router-dom";
 
 export const PasswordPolicy = (props: any) => {
     const [isEdit, setIsEdit] = useState(false);
@@ -19,7 +17,6 @@ export const PasswordPolicy = (props: any) => {
     const [loading, setLoading] = useState(true);
     const [graceOptions, setGraceOptions]: any = useState({});
     const [groups, setGroups]: any = useState([]);
-    const { Option } = Select;
     const [groupNames, setGroupNames]: any = useState([]);
     const [groupUids, setGroupUids]: any = useState([]);
     const [groupsChange, setGroupsChange]: any = useState([]);
@@ -27,7 +24,7 @@ export const PasswordPolicy = (props: any) => {
 
     useEffect(() => {
         Promise.all(([
-            ApiService.get(ApiUrls.policy(window.location.pathname.split('/')[3])),
+            ApiService.get(ApiUrls.policy(window.location.pathname.split('/')[5])),
             ApiService.get(ApiUrls.groups, { type: "USER" }),
             ApiService.get(ApiUrls.mechanismPasswordGraceOptions)
         ]))
@@ -45,7 +42,7 @@ export const PasswordPolicy = (props: any) => {
                         console.log(groupUids);
                     });
                 }
-                else if (window.location.pathname.split('/').length === 3) {
+                else if (window.location.pathname.split('/').length === 5) {
                     setPasswordDisplayData(props.passwordDetails);
                     setPasswordEditedData(props.passwordDetails);
                     setPolicyRequirements(props.passwordDetails.policy_req);
@@ -54,7 +51,7 @@ export const PasswordPolicy = (props: any) => {
                 else {
                     console.log('else: ', data[0]);
                     openNotification('error', data[0].errorCauses.length !== 0 ? data[0].errorCauses[0].errorSummary : data[0].errorSummary);
-                    history.push('/policies/password');
+                    history.push(`/product/${localStorage.getItem("productId")}/policies/password`);
                 }
 
                 console.log('GROUPS: ', data[1]);
@@ -64,11 +61,13 @@ export const PasswordPolicy = (props: any) => {
                         value: data[1][i].uid
                     })
                 }
+                setGroups(groups)
                 var object = {};
                 for (var i = 0; i < data[1].length; i++) {
                     object[data[1][i].name] = data[1][i].uid
                 }
                 groupsChange.push(object);
+                setGroupsChange(groupsChange);
                 console.log(groups);
                 console.log(data[2]);
                 setGraceOptions(data[2].password_grace_options);
@@ -198,6 +197,10 @@ export const PasswordPolicy = (props: any) => {
                             onChange={handleGroups}
                             style={{ width: '275px' }}
                             options={groups}
+                            filterOption={(input, option) =>
+                                //@ts-ignore
+                                option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                            }
                         /> : Object.keys(groupNames).map(name =>
                             <div style={{ display: 'inline-block', marginRight: '3px', paddingBottom: '3px' }}>
                                 <Button style={{ cursor: 'text' }}>{groupNames[name]}</Button>
@@ -260,8 +263,8 @@ export const PasswordPolicy = (props: any) => {
             </div> : <></>) : <div style={{ paddingTop: '10px', paddingRight: '45px', paddingBottom: '20px' }}>
                 <Button style={{ float: 'right', marginLeft: '10px' }}
                     onClick={setCancelClick}>Cancel</Button>
-                <Button type='primary' style={{ float: 'right' }}
-                    onClick={createPasswordPolicy}>create</Button></div>
+                <Button type='primary' loading={props.buttonLoading} style={{ float: 'right' }}
+                    onClick={createPasswordPolicy}>Create</Button></div>
         }
     </Skeleton>
 }

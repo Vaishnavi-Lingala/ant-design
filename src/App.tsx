@@ -1,23 +1,15 @@
 import { Route, useHistory, Switch } from "react-router-dom";
 import { OktaAuth, toRelativeUrl } from "@okta/okta-auth-js";
-import { Security, LoginCallback } from "@okta/okta-react";
+import { Security, LoginCallback, SecureRoute } from "@okta/okta-react";
 import { ConfigProvider } from "antd";
 
 import "antd/dist/antd.variable.min.css";
 import "./App.css";
 
-// TecTango
-import config from "./config";
-import Login from "./components/Login";
-import Policies from "./components/Policies/Policies";
-import ProtectedRoute from "./components/ProtectedRoute";
-import Settings from "./components/Settings/Settings";
-import PageNotFound from "./components/PageNotFound";
 import ActivityLogs from "./components/ActivityLogs/ActivityLogs";
 import Dashboard from "./components/Dashboard/Dashboard";
-import Mechanisms from "./components/Mechanism/Mechanisms";
 import Groups from "./components/Groups/Groups";
-import Users from "./components/Users/Users";
+import Login from "./components/Login";
 import Machines from "./components/Machines/Machines";
 import { MachineDetails } from "./components/Machines/MachineDetails";
 
@@ -25,8 +17,19 @@ import { MachineDetails } from "./components/Machines/MachineDetails";
 import Applications from "./components/tecUnify/Applications";
 import AppSettings from "./components/tecUnify/AppSettings";
 import Layout from "./components/Layout/Layout";
+import Mechanisms from "./components/Mechanism/Mechanisms";
 import Mechanism from "./components/Mechanism/mechanism";
+import PageNotFound from "./components/PageNotFound";
+import Policies from "./components/Policies/Policies";
+import ProtectedRoute from "./components/ProtectedRoute";
+import Settings from "./components/Settings/Settings";
+import Users from "./components/Users/Users";
+import config from "./config";
 import StoreProvider from "./Store";
+import Devices from "./components/Devices/Devices";
+import Device from "./components/Devices/Device";
+import { User } from "./components/Users/User";
+import Domains from "./components/Domains/Domains";
 
 const oktaAuth = new OktaAuth(config.oidc);
 
@@ -52,18 +55,24 @@ function App() {
                     <Route path="/" exact component={Login} />
                     <Route path="/login/callback" component={LoginCallback} />
                 <Layout>
-                    <ProtectedRoute path={`/policies`} component={Policies} />
-                    <ProtectedRoute path={`/activitylogs`} component={ActivityLogs} />
+                    <ProtectedRoute path={`/product/:productId/policies`} component={Policies} />
+                    <ProtectedRoute path={`/product/:productId/activitylogs`} component={ActivityLogs} />
                     <ProtectedRoute path={`/dashboard`} component={Dashboard} />
-                    <ProtectedRoute path={`/mechanism`} exact component={Mechanisms} />
-                    <ProtectedRoute path={`/mechanism/:id`} component={Mechanism} />
-                    <ProtectedRoute path={`/settings`} component={Settings} />
+                    <ProtectedRoute path={`/product/:productId/mechanism`} exact component={Mechanisms} />
+                    <ProtectedRoute path={`/product/:productId/mechanism/:id`} component={Mechanism} />
+                    <ProtectedRoute path={`/account`} component={Settings} />
+                    <ProtectedRoute path={`/domains`} component={Domains} />
                     <ProtectedRoute path={`/groups`} component={Groups} />
                     <ProtectedRoute path={`/users`} component={Users} />
                     <ProtectedRoute path={`/apps/:app_id/:app_name`} component={AppSettings} />
                     <ProtectedRoute path={`/apps`} component={Applications} />
                     <ProtectedRoute path={`/machines`} exact component={Machines} />
                     <ProtectedRoute path={`/machines/:id`} component={MachineDetails} />
+                    <ProtectedRoute path={`/devices`} exact component={Devices} />
+                    <ProtectedRoute path={`/devices/:id`} exact component={Device} />
+                    <ProtectedRoute path={`/user/:id/profile`} exact component={User} />
+                    <ProtectedRoute path={`/user/:id/groups`} exact component={User} />
+                    <ProtectedRoute path={`/user/:id/enrollments`} exact component={User} />
                 </Layout>
 
                 <Route component={PageNotFound} />

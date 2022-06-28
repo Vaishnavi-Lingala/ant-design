@@ -1,21 +1,23 @@
-import { useContext, useEffect, useState } from "react"
-import { Button, Skeleton, Table, Modal, Input, Row, Col, Typography } from 'antd';
-import ApiService from "../../Api.service";
-import ApiUrls from '../../ApiUtils';
+import { useState } from "react"
+import { Button, Col, Input, Modal, Row, Typography } from 'antd';
+import { CloseOutlined } from "@ant-design/icons";
 
 import { openNotification } from "../Layout/Notification";
+import ApiUrls from '../../ApiUtils';
+import ApiService from "../../Api.service";
+import GroupFiltersModal from "./GroupFilterModel";
 
 export default function AddGroup(props: any) {
-
+    const [loading, setLoading] = useState(false);
+    const [isModalVisible, setIsModalVisible] = useState(false);
     const { Title } = Typography;
     const { TextArea } = Input;
+    const [advancedFilters, setAdvancedFilters] = useState({});
     const [newGroup, setNewGroup] = useState({
         'name': '',
         'description': '',
         'type': props.type
     });
-    const [loading, setLoading] = useState(false);
-    const [isModalVisible, setIsModalVisible] = useState(false);
 
     const showModal = () => {
         setNewGroup({
@@ -52,12 +54,31 @@ export default function AddGroup(props: any) {
         setIsModalVisible(false);
     };
 
+    const applyAdvancedFilters = (filters) => {
+        setAdvancedFilters(filters)
+    };
+
+    const resetFilters = () => {
+        setAdvancedFilters({})
+        props.getGroupsByFilter({}, { group_type: props.type });
+    };
+
     return (
         <>
-            <div style={{ width: '100%', border: '1px solid #D7D7DC', borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6' }}>
-                <Button type='primary' size='large' onClick={showModal}>Add New {props.type.slice(0, 1).toUpperCase() + props.type.slice(1).toLowerCase()} Group</Button>
+            <div style={{ width: '100%', border: '1px solid #D7D7DC', borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6', display: 'flex' }}>
+                <div style={{ width: '75%' }}>
+                    <Button type='primary' size='large' onClick={showModal}>Add New {props.type.slice(0, 1).toUpperCase() + props.type.slice(1).toLowerCase()} Group</Button>
+                </div>
+                <div style={{paddingTop: '10px'}}>
+                    <GroupFiltersModal
+                        type={props.type}
+                        getGroups={props.getGroupsByFilter}
+                        onFilterApply={applyAdvancedFilters}
+                        onResetClick={resetFilters}
+                    />
+                </div>
             </div>
-            <Modal title={<Title level={2}>Add Group</Title>} visible={isModalVisible} onOk={handleOk} onCancel={handleCancel} width={500}
+            <Modal closeIcon={<Button icon={<CloseOutlined />}></Button>} title={<Title level={2}>Add Group</Title>} visible={isModalVisible} onOk={handleOk} onCancel={handleCancel} width={500}
                 footer={[
                     <Button key="cancel" onClick={handleCancel}>
                         Cancel

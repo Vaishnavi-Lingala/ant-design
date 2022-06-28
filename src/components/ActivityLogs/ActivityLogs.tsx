@@ -1,14 +1,15 @@
-import { Button, Collapse, Skeleton } from "antd";
-import { CaretRightOutlined } from '@ant-design/icons';
 import { useEffect, useState } from "react";
-import { DatePicker, Table } from "antd";
+import { useParams } from "react-router-dom";
+import { Button, Collapse, Skeleton, DatePicker, Table } from "antd";
+import { CaretRightOutlined } from '@ant-design/icons';
 import moment from "moment";
 
 import "./ActivityLogs.css";
 
-import ApiService from "../../Api.service";
-import ApiUrls from "../../ApiUtils";
 import FiltersModal from "./FiltersModal";
+import { openNotification } from "../Layout/Notification";
+import ApiUrls from "../../ApiUtils";
+import ApiService from "../../Api.service";
 import {
     date_format,
     time_format,
@@ -21,7 +22,6 @@ import {
     logFieldNames,
     date_display_format
 } from '../../constants';
-import { openNotification } from "../Layout/Notification";
 
 const { Panel } = Collapse;
 
@@ -98,6 +98,7 @@ export default function ActivityLogs() {
     const [logResponse, setLogResponse] = useState<any>({});
     const [loading, setLoading] = useState(true);
     const [tableLoading, setTableLoading] = useState(false);
+    const { productId } = useParams();
 
     const initialDateTimeFilters = {
         start: {
@@ -160,10 +161,10 @@ export default function ActivityLogs() {
             setTableLoading(true);
             try {
                 const data = await ApiService.post(
-                    ApiUrls.activityLog,
+                    ApiUrls.activityLog(productId),
                     generateFilterPayload()
                 );
-
+                    console.log(data);
                 setLogResponse(data);
             } catch (error) {
                 console.error('Error: ', error);
@@ -180,7 +181,7 @@ export default function ActivityLogs() {
             setTableLoading(true);
             try {
                 var response = await ApiService.post(
-                    `${url.pathname}${url.search}`,
+                    `${ApiUrls.activityLog(productId)}${url.search}`,
                     generateFilterPayload()
                 );
                 setTableLoading(false);

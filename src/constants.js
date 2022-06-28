@@ -45,6 +45,22 @@ export const hiddenFields = {
     ]
 };
 
+export const userFieldNames = {
+    "status": "Status",
+    "uid": "User ID",
+    "first_name": "First name",
+    "last_name": "Last name",
+    "display_name": "Display name",
+    "user_name": "User name",
+    "email": "Email",
+    "sam": "samAccount Name",
+    "upn": "UPN",
+    "idp_user_id": "IDP user ID",
+    "account_id": "Account ID",
+    "sourced_by": "Sourced by",
+    "login_domain": "Login domain"
+}
+
 // Field in activity logs are displayed in this order with the below names
 export const logFieldNames = {
     uid: "Uid",
@@ -73,15 +89,17 @@ export const logFieldNames = {
         "api_end_point": "API end point",
         "mechanism_id": "Mechanism ID",
         "mechanism_name": "Mechanism name",
-        "display_name": "Display name",
+        "display_name": "Actor",
         "event_context": "Event context",
         "event_display_message": "Event display message",
-        "event_outcome": "Event outcome",        
+        "event_outcome": "Event outcome",
         "auth_profile_id": "Auth profile ID",
         "machine_type": "Machine type",
         "user_agent": "User agent",
         "created_ts": "Created timestamp",
-        "updated_ts": "Updated timestamp"
+        "updated_ts": "Updated timestamp",
+        "failure_reason": "Failure reason",
+        "instrument_id": "Instrument ID"
     },
     user: {
         "uid": "User ID",
@@ -160,8 +178,64 @@ export const machineFieldNames = {
 export const settingsFieldNames = {
     uid: "Account ID",
     name: "Company Name",
-    portal_oidc_client_id: "Client ID",
-    issuer_url: "Issuer"
+    address_1: "Address 1",
+    address_2: "Address 2",
+    city: "City",
+    state: "State",
+    zip: "Zip code",
+    country: "Country"
+}
+
+export const settingsIdpFields = {
+    idp_type: "IDP",
+    tenant_type: "Tenant type",
+    idp_portal_oidc_client_id: "Portal OIDC Client ID",
+    idp_app_oidc_client_id: "App OIDC Client ID"
+}
+
+
+export const accountBillingContact = {
+    billing_contact_name: 'Name',
+    billing_contact_email: 'Email'
+}
+
+export const accountTechnicalContact = {
+    technical_contact_name: 'Name',
+    technical_contact_email: 'Email'
+}
+
+export const userFilterFieldNames = {
+    first_name: "First Name",
+    last_name: "Last Name",
+    email: "Email",
+    user_name: "User Name",
+    status: "Status",
+    is_enrolled: "Enrolled",
+    inactivity_in_days: "Inactivity in Days"
+}
+
+export const machineFilterFieldNames = {
+    machine_name: "Machine name",
+    last_known_ip: "Last known IP",
+    type: "Machine type"
+}
+
+export const DeviceFilterFieldNames = {
+    vendor: "Vendor",
+    device_name: "Device Name",
+    device_type: "Device Type",
+    serial_number: "Serial Number",
+    blocked: "Blocked"
+}
+
+export const groupFilterFieldNames = {
+    name: "Name"
+}
+
+export const settingsTokenNames = {
+    admin_token: "Admin Token",
+    install_token: "Install Token",
+    uninstall_token: "Uninstall Token"
 }
 
 // Literal Constants
@@ -171,9 +245,44 @@ export const end_date = "end_date";
 export const end_time = "end_time";
 
 // Product names
+export const TecTango = "TecTango";
+export const TecBio = "TecBio";
+export const TecUnify = "TecUnify";
+
+// Product keys
 export const TecTANGO = "TecTANGO";
 export const TecBIO = "TecBIO";
-export const TecUnify = "TecUnify";
+export const TecUNIFY = "TecUNIFY";
+
+export const productNames = {
+    [TecTANGO]: TecTango,
+    [TecBIO]: TecBio,
+    [TecUNIFY]: TecUnify
+}
+
+// Sidebar item names
+export const Dashboard = "Dashboard";
+export const Users = "Users";
+export const Groups = "Groups";
+export const Machines = "Machines";
+export const Mechanisms = "Mechanisms";
+export const Policies = "Policies";
+export const ActivityLogs = "Activity Logs";
+export const Devices = "Devices";
+export const Account = "Account";
+export const Domain = "Domains";
+
+// Sidebar item keys
+export const dashboard = "dashboard";
+export const users = "users";
+export const groups = "groups";
+export const machines = "machines";
+export const devices = "devices";
+export const mechanisms = "mechanism";
+export const policies = "policies";
+export const activityLogs = "activitylogs";
+export const account = "account";
+export const domain = "domains";
 
 // Policy types
 export const PIN = "PIN";
@@ -188,11 +297,35 @@ export const Settings = "Settings";
 
 export const MenuItemPaths = {
     [Directory]: "/dashboard",
-    [Settings]: "/settings",
+    [Settings]: "/account",
     [TecTANGO]: "/mechanism",
     [TecBIO]: "/mechanism",
     [TecUnify]: "/apps"
 }
 
+export const policyDisplayNames = {
+    [PIN]: "Pin",
+    [PASSWORD]: "Password",
+    [KIOSK]: "Kiosk",
+    [CARD_ENROLL]: "Card Enrollment"
+}
+
 // LocalStorage constants
 export const SELECTED_HEADER = 'SELECTED_HEADER';
+
+//Policies Descriptions
+export const PinPolicyDescription = 'PIN policies enable admins to enforce pin complexities at the user group level and is enforced during enrollment or PIN recovery';
+export const PasswordPolicyDescription = 'Password policies enable admins to control grace period which is the amount of time the user can tap in and out until they are required to re-enter their password';
+export const KioskPolicyDescription = 'KIOSK policies applies to machines where TecTANGO will auto-login with the generic machine user to enable fast user swicthing on a shared or kiosk machines used by multiple users. This policy is applied only when Option 3 is selected in the TecTANGO Installer';
+export const CardEnrollmentPolicyDescription = 'Card enrollment policies enable admins to configure max number of cards allowed per user group during enrollment';
+
+export const userRequiredFields = ['first_name', 'last_name', 'user_name', 'email', 'sam', 'upn'];
+export const userDataModel = {
+    first_name: 'First Name',
+    last_name: 'Last Name',
+    user_name: 'Username',
+    email: 'Email',
+    sam: 'SAM',
+    upn: 'UPN'
+}
+export const requiredFieldsErrorMsg = `Please fill required attributes`;

@@ -1,20 +1,26 @@
-import { Button, Skeleton, Table, Tooltip } from 'antd';
-import { BarsOutlined, PoweroffOutlined, StopOutlined } from "@ant-design/icons"
 import { useEffect, useState } from 'react';
-import { MenuOutlined } from '@ant-design/icons';
+import { useHistory, useParams } from 'react-router-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
+import { Button, Skeleton, Table, Tooltip } from 'antd';
+import Modal from 'antd/lib/modal/Modal';
+import { BarsOutlined, CloseOutlined, MenuOutlined, PoweroffOutlined, StopOutlined } from "@ant-design/icons"
 import { arrayMoveImmutable } from 'array-move';
-import { useHistory } from 'react-router-dom';
 
 import './Mechanism.css';
 
-import ApiService from '../../Api.service';
-import ApiUrls from '../../ApiUtils';
 import Mechanism from './mechanism';
 import { openNotification } from '../Layout/Notification';
-import Modal from 'antd/lib/modal/Modal';
+import ApiUrls from '../../ApiUtils';
+import ApiService from '../../Api.service';
 
 export default function Mechanisms() {
+	const [loading, setLoading] = useState(false);
+	const [activeMechanisms, setActiveMechanisms]: any = useState([]);
+	const [inactiveMechanisms, setInactiveMechanisms]: any = useState([]);
+	const [isModalVisible, setIsModalVisible] = useState(false);
+	const history = useHistory();
+    const [buttonLoading, setButtonLoading] = useState(false);
+	const { productId } = useParams();
 
 	const inactiveColumns = [
 		{
@@ -29,7 +35,7 @@ export default function Mechanisms() {
 			render: (text: any, record: { mechanism_id: any; }) => (
 				<Tooltip title="View">
 					<Button icon={<BarsOutlined />} onClick={() => {
-						history.push('/mechanism/' + record.mechanism_id)
+						history.push(`/product/${productId}/mechanism/${record.mechanism_id}`);
 					}}>
 					</Button>
 				</Tooltip>
@@ -75,7 +81,7 @@ export default function Mechanisms() {
 			render: (text: any, record: { mechanism_id: any }) => (
 				<Tooltip title="View">
 					<Button icon={<BarsOutlined />} onClick={() => {
-						history.push('/mechanism/' + record.mechanism_id)
+						history.push(`/product/${productId}/mechanism/${record.mechanism_id}`)
 					}}>
 					</Button>
 				</Tooltip>
@@ -96,15 +102,9 @@ export default function Mechanisms() {
 		}
 	];
 
-	const [loading, setLoading] = useState(false);
-	const [activeMechanisms, setActiveMechanisms]: any = useState([]);
-	const [inactiveMechanisms, setInactiveMechanisms]: any = useState([]);
-	const [isModalVisible, setIsModalVisible] = useState(false);
-	const history = useHistory();
-
 	function getMechanisms() {
 		setLoading(true);
-		ApiService.get(ApiUrls.mechanisms)
+		ApiService.get(ApiUrls.mechanisms(productId))
 			.then(data => {
 				console.log(data);
 				var activeCounter = 0;
@@ -152,20 +152,24 @@ export default function Mechanisms() {
 	}, [])
 
 	const handleOk = (object: object) => {
-		ApiService.post(ApiUrls.addMechanism, object)
+		setButtonLoading(true);
+		ApiService.post(ApiUrls.addMechanism(productId), object)
 			.then(data => {
 				if (!data.errorSummary) {
 					console.log(data);
-					openNotification('success', 'Successfully updated Mechanism');
+					openNotification('success', 'Successfully created Mechanism');
 					setIsModalVisible(false)
+					setButtonLoading(false);
 					getMechanisms();
 				}
 				else {
 					openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
+					setButtonLoading(false);
 				}
 			}, error => {
 				console.error('Add mechanism error: ', error);
-				openNotification('error', 'An Error has occured with adding Mechanism');
+				setButtonLoading(false);
+				openNotification('error', 'An Error has occured with creating Mechanism');
 			})
 	}
 
@@ -174,7 +178,7 @@ export default function Mechanisms() {
 	}
 
 	function activateMechanism(uid: string) {
-		ApiService.get(ApiUrls.activateMechanism(uid))
+		ApiService.get(ApiUrls.activateMechanism(uid, productId))
 			.then(data => {
 				if (!data.errorSummary) {
 					openNotification('success', 'Successfully activated Mechanism');
@@ -191,7 +195,7 @@ export default function Mechanisms() {
 	}
 
 	function deActivateMechanism(uid: string) {
-		ApiService.get(ApiUrls.deActivateMechanism(uid))
+		ApiService.get(ApiUrls.deActivateMechanism(uid, productId))
 			.then(data => {
 				if (!data.errorSummary) {
 					openNotification('success', 'Successfully de-activated Mechanism');
@@ -212,7 +216,7 @@ export default function Mechanisms() {
 			mechanism_id: uid,
 			order: order
 		}
-		ApiService.post(ApiUrls.reOrderMechanisms, data)
+		ApiService.post(ApiUrls.reOrderMechanisms(productId), data)
 			.then(data => {
 				if (!data.errorSummary) {
 					console.log(data)
@@ -320,10 +324,10 @@ export default function Mechanisms() {
 					dataSource={inactiveMechanisms}
 					pagination={false}
 				/>
-				<Modal visible={isModalVisible} footer={false} width='800px'
-					title={<div style={{ fontSize: '30px' }}>Add New Mechanism</div>} centered maskClosable={false} onOk={handleCancel} onCancel={handleCancel}
+				<Modal visible={isModalVisible} closeIcon={<Button icon={<CloseOutlined />}></Button>} footer={false} onCancel={handleCancel} width='800px'
+					title={<div style={{ fontSize: '30px' }}>Add New Mechanism</div>} centered maskClosable={false}
 				>
-					<Mechanism handleOk={handleOk} handleCancel={handleCancel} />
+					<Mechanism handleOk={handleOk} buttonLoading={buttonLoading} handleCancel={handleCancel} />
 				</Modal>
 
 			</Skeleton>
