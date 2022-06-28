@@ -129,7 +129,7 @@ function AppSider() {
 			case TecTANGO:
 				return productItemsWithHeader;
 			case TecBIO:
-				return commonProductItems;
+				return productItemsWithHeader;
       case TecUNIFY:
         return tecUnifyItems;
 			default:
