@@ -143,7 +143,11 @@ export function Enrollments() {
 
     const disableStatus = (key, currentStatus) => {
         const currentStatusKey = Object.keys(statusList).find(eachItem => statusList[eachItem] === currentStatus);
-        return (key === currentStatusKey) ? true : false;
+        if (currentStatusKey === "UNENROLLED") {
+            return true;
+        } else {
+            return (key === currentStatusKey) ? true : false;
+        }  
     }
 
     const changeEnrollmentStatus = (status, userId: string, enrollmentId: string) => {
