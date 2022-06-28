@@ -119,7 +119,7 @@ export default function Machines() {
                 <div className='content-header' style={{width: '75%'}}>
                     <span>Machines</span>
                 </div>
-                <div style={{paddingTop: '22px'}}>
+                <div style={{paddingTop: '24px'}}>
                     <MachinesFiltersModal
                         getMachinesByFilter={getMachinesByFilter}
                         onFilterApply={applyAdvancedFilters}

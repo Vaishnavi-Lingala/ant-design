@@ -182,7 +182,7 @@ function Devices() {
 
         <Skeleton loading={loading}>
             <div style={{ width: '100%', border: '1px solid #D7D7DC', borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6', display: 'flex' }}>
-                <div style={{ width: '75%' }}>
+                <div style={{ width: '72%' }}>
                     <Button type='primary' size='large' onClick={() => setIsModalVisible(true)}>
                         Add New Device
                     </Button>
