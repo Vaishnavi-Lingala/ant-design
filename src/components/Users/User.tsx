@@ -16,6 +16,11 @@ export function User() {
         }
     }, []);
 
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+    });
+
     return (
         <>
             <div className='content-header'>
@@ -29,6 +34,9 @@ export function User() {
                 Email: {sessionStorage.getItem("email")} <br />
                 Username: {sessionStorage.getItem("user_name")}
             </div>
+
+            <br />
+            
             <Tabs activeKey={window.location.pathname.split("/")[3]}
                 type="card"
                 size={"middle"}

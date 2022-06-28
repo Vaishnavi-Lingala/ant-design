@@ -34,6 +34,11 @@ export function MachineDetails(props: any) {
         }
     ]
 
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+    });
+
     const DisplayField = ({ displayName, value }) => {
         return (
             <>
