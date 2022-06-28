@@ -99,11 +99,6 @@ export default function ActivityLogs() {
     const [loading, setLoading] = useState(true);
     const [tableLoading, setTableLoading] = useState(false);
     const { productId } = useParams();
-
-    window.scrollTo({
-        top: 0,
-        behavior: 'smooth',
-    });
     
     const initialDateTimeFilters = {
         start: {
@@ -178,6 +173,11 @@ export default function ActivityLogs() {
             setLoading(false);
             setTableLoading(false);
         })();
+
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
     }, [datetimeFilters, advancedFilters]);
 
     async function showMoreClick() {
