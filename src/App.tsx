@@ -13,9 +13,6 @@ import Login from "./components/Login";
 import Machines from "./components/Machines/Machines";
 import { MachineDetails } from "./components/Machines/MachineDetails";
 
-// TecUnify
-import Applications from "./components/tecUnify/Applications";
-import AppSettings from "./components/tecUnify/AppSettings";
 import Layout from "./components/Layout/Layout";
 import Mechanisms from "./components/Mechanism/Mechanisms";
 import Mechanism from "./components/Mechanism/mechanism";
@@ -30,6 +27,9 @@ import Devices from "./components/Devices/Devices";
 import Device from "./components/Devices/Device";
 import { User } from "./components/Users/User";
 import Domains from "./components/Domains/Domains";
+
+import Applications from "./components/tecUnify/Applications";
+import AppSettings from "./components/tecUnify/AppSettings";
 
 const oktaAuth = new OktaAuth(config.oidc);
 
@@ -64,7 +64,7 @@ function App() {
                     <ProtectedRoute path={`/domains`} component={Domains} />
                     <ProtectedRoute path={`/groups`} component={Groups} />
                     <ProtectedRoute path={`/users`} component={Users} />
-                    <ProtectedRoute path={`/product/:productId/apps`} component={Applications} />
+                    <ProtectedRoute path={`/product/:productId/apps`} exact component={Applications} />
                     <ProtectedRoute path={`/product/:productId/apps/:app_id/:app_name`} component={AppSettings} />
                     <ProtectedRoute path={`/machines`} exact component={Machines} />
                     <ProtectedRoute path={`/machines/:id`} component={MachineDetails} />

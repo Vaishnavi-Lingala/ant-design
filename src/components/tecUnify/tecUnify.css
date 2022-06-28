@@ -1,26 +1,25 @@
-.content-header > button {
-    margin-left: auto;
-    align-self: end;
+._NoBorder {
+    border: 0px !important;
 }
 
-._NoBorder {
-    border: 0px;
+._TopBorder {
+    border-top: 1px solid #d7d7dc !important;
 }
 
 ._Pointer {
-    cursor: pointer;
+    cursor: pointer !important;
 }
 
 ._FlexColumn {
-    flex-direction: column;
+    flex-direction: column !important;
 }
 
 ._FlexRow {
-    flex-direction: row;
+    flex-direction: row !important;
 }
 
 ._Padding {
-    padding: 1vmax;
+    padding: 1vmax !important;
 }
 
 .AppSettings {
@@ -179,6 +178,11 @@
     gap: 10px;
 }
 
+.content-header > button {
+    margin-left: auto;
+    align-self: end;
+}
+
 .Content-SubHeader {
     justify-content: space-between;
 }
@@ -188,4 +192,8 @@
     min-height: 65vh;
     border: 1px solid #d7d7dc;
     border-top: 0px;
+}
+
+.Modal-Header {
+    font-size: x-large;
 }
