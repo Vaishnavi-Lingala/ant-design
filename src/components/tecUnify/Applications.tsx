@@ -61,7 +61,7 @@ function Applications() {
       case 'configured':
         return <AccountIntegrations appList={data} />;
       case 'supported':
-        return <></>;
+        return <>Component In Progress</>;
       // return <SupportedIntegrations templateList={}/>;
       case 'assignment':
         return <BulkAssignment activeList={data.active} />;
@@ -100,16 +100,19 @@ function Applications() {
             Bulk assign apps
           </Button>
 
-          <Button id='new' size='large' type='primary' onClick={() => toggleModal(curr => !curr)}>
-            Configure new App
-          </Button>
+          {
+            isConfiguredPage &&
+            <Button id='new' size='large' type='primary' onClick={() => toggleModal(curr => !curr)}>
+              Configure new App
+            </Button>
+          }
         </div>
 
         <div className='Content-ComponentView'>
           <RenderOptions />
         </div>
       </Skeleton>
-        <NewAppForm showModal={modalVisible} toggleModal={() => toggleModal(curr => !curr)}/>
+      <NewAppForm showModal={modalVisible} toggleModal={() => toggleModal(curr => !curr)} />
     </>
   );
 }

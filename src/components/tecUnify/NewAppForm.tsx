@@ -86,6 +86,9 @@ function NewAppForm({ showModal, toggleModal }: NFProps) {
           <Input disabled placeholder='Determine where to place in database.' />
         </Form.Item>
 
+        <Form.Item label='Citrix Gatewayt URL' name=''>
+        </Form.Item>
+
         <Form.Item label='Window Title:' name='window_title'>
           <Input />
         </Form.Item>
