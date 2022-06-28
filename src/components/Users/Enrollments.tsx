@@ -34,7 +34,7 @@ export function Enrollments() {
             title: "Status",
             dataIndex: "status",
             width: "10%",
-            filters:[{
+            filters: [{
                 text: 'Active',
                 value: 'Active'
             },
@@ -47,7 +47,7 @@ export function Enrollments() {
                 value: 'Unenrolled'
             }],
             defaultFilteredValue: ['Active'],
-            onFilter:(value, record) => value? record.status.indexOf(value) === 0 : true
+            onFilter: (value, record) => value ? record.status.indexOf(value) === 0 : true
         },
         {
             title: "Actions", dataIndex: "activate", width: "10%", render: (text, record) => (
@@ -127,14 +127,14 @@ export function Enrollments() {
     }
 
     const updateEnrollmentListWithStatus = (productsData) => {
-		Object.keys(productsData).forEach(eachProduct => {
+        Object.keys(productsData).forEach(eachProduct => {
             productsData[eachProduct].forEach(each => {
                 each.status = statusList[each.status];
             });
-		})
+        })
         console.log(`Updated enrollments: ${JSON.stringify(productsData)}`);
         return productsData;
-	}
+    }
 
     const updateColumnTitle = (eachProduct) => {
         columns[0].title = eachProduct.toLowerCase() === 'tectango' ? 'Card' : (eachProduct.toLowerCase() === 'tecbio' ? 'Finger' : 'Instrument Id')
@@ -142,16 +142,15 @@ export function Enrollments() {
     }
 
     const disableStatus = (key, currentStatus) => {
-        const currentStatusKey = Object.keys(statusList).find(eachItem => statusList[eachItem] === currentStatus );
-        return (key === currentStatusKey)? true: false;
+        const currentStatusKey = Object.keys(statusList).find(eachItem => statusList[eachItem] === currentStatus);
+        return (key === currentStatusKey) ? true : false;
     }
 
     const changeEnrollmentStatus = (status, userId: string, enrollmentId: string) => {
-        setLoadingDetails(true);
         let statusObj = {
             status: status
         }
-        let result = ApiService.put(ApiUrls.changeEnrollmentStatus(userId, enrollmentId), statusObj)
+        ApiService.put(ApiUrls.changeEnrollmentStatus(userId, enrollmentId), statusObj)
             .then(data => {
                 if (!data.errorSummary) {
                     openNotification('success', `Status  has been updated successfully with ${status.toLowerCase()}.`);
@@ -166,9 +165,7 @@ export function Enrollments() {
             .catch(error => {
                 console.error('Error: ', error);
                 openNotification('error', 'An Error has occured with Updating User Status');
-            }).finally(() => {
-                setLoadingDetails(false);
-            });
+            })
     }
 
     return <>
