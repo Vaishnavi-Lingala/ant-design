@@ -12,7 +12,7 @@ function AppListItem({app, optionsMenu}: ABProps): JSX.Element {
   return (
     <li className='AppList-Item AppList-Banner' key={app.config_id}>
       <Link to={{
-        pathname: `/apps/${app.config_id}/${app.name}`,
+        pathname: `/apps/${app.config_id}/${app.display_name}`,
         state: {app}
       }}>
         { 
@@ -20,7 +20,7 @@ function AppListItem({app, optionsMenu}: ABProps): JSX.Element {
             <img src={app.logo} width={50} height={50}/> :
             <img src={placeholderImg} width={50} height={50}/>
         }
-        {app.name}
+        {app.display_name}
       </Link>
       {optionsMenu}
     </li>

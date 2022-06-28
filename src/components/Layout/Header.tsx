@@ -11,7 +11,7 @@ import { openNotification } from "./Notification";
 import ApiUrls from '../../ApiUtils';
 import ApiService from "../../Api.service";
 import config from "../../config";
-import { Directory, MenuItemPaths, productNames, Products, Settings, TecBio, TecBIO, TecTango, TecTANGO } from "../../constants";
+import { Directory, MenuItemPaths, productNames, Products, Settings, TecBio, TecBIO, TecTango, TecTANGO, TecUNIFY } from "../../constants";
 import { Store } from "../../Store";
 
 const { SubMenu } = Menu;
@@ -113,19 +113,13 @@ function AppHeader() {
                     for (var i = 0; i < data.length; i++) {
                         object[data[i].sku] = data[i].uid
                     }
+                    if (!localStorage.getItem("productName")) {
+                        localStorage.setItem("productId", object[data[0].sku])
+                        localStorage.setItem("productName", data[0].sku)
+                        window.location.reload();
+                    }
                     setProducts({ ...object });
                 }
-                if (!localStorage.getItem("productName")) {
-                    localStorage.setItem("productId", object[data[0].sku])
-                    localStorage.setItem("productName", data[0].sku)
-                    window.location.reload();
-                }
-                // NOTE: TEMP!!
-                object = {
-                  TecUnify: 'oprc773399d0c',
-                  ...object
-                }
-                setProducts(object);
             })
             .catch((error) => {
                 console.error('Error: ', error);

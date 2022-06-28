@@ -16,9 +16,9 @@ interface HookResponseType {
 // configs linked to the account. Afterwards strip the template IDs,
 // make calls to the database to get templates by their ID. and then
 // combine the configs array and template arrays. Returning the result
-async function fetchApps(): Promise<AppList> {
+async function fetchApps(account_id: number): Promise<AppList> {
   const configs: Config[] = await ApiService
-    .get(ApiUrls.allAccountConfigs(48), undefined, true);
+    .get(ApiUrls.allAccountConfigs(account_id), undefined, true);
   
   // The above call should for a fact return an array of configs, even if there is a single config linked
   // to the account, type guard below to break early if no data was properly fetched
@@ -60,14 +60,14 @@ async function fetchApps(): Promise<AppList> {
   };
 }
 
-// Fetch apps using above async functions, resolve the promises and sort
-export function useFetch(initObject: AppList): HookResponseType {
+// Fetch apps using above async function, resolve the promises and sort
+export function useFetch(account_id: number, initObject: AppList): HookResponseType {
   const [data, setData] = useState(initObject);
   const [isFetching, toggleFetching] = useState(true);
   const [refresh, toggleRefresh] = useState(false);
 
   useEffect(() => {
-    fetchApps()
+    fetchApps(account_id)
       .then((appList) => {
         console.log("Fetching Account Apps");
         toggleFetching(false);

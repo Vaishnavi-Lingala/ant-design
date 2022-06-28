@@ -38,7 +38,7 @@ function useFilter({ appList }: FProps) {
       const filteredApps: App[] = appList[filter.activity]
         .filter(
           (app: App): boolean =>
-            app.name.toLowerCase().includes(filter.search));
+            app.display_name.toLowerCase().includes(filter.search));
 
       setFilteredAppList({
         ...appList,

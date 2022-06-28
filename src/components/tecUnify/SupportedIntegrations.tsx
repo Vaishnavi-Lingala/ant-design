@@ -21,11 +21,11 @@ function SupportedIntegrations({templateList}: SIProps): JSX.Element {
   function handleClick(e) {
   }
 
-  function AppCard({app_id, name, window_title}: Template) {
+  function AppCard({app_id, display_name, window_title}: Template) {
     return (
       <>
         <h4 className='AppList-CardHeader'>
-          {name}
+          {display_name}
           <img className='AppList-CardBody_ImgSize' alt='app logo' src='https://placeholder.pics/svg/100' />
         </h4>
         <div className='AppList-CardBody'>

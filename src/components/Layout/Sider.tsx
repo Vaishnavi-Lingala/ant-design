@@ -9,7 +9,8 @@ import { ScanOutlined , UserOutlined, DesktopOutlined, TeamOutlined, SettingOutl
 import {
 	ActivityLogs, activityLogs, Dashboard, dashboard, Directory, Groups, groups,
 	Machines, machines, Devices, devices, Mechanisms, mechanisms, MenuItemPaths,
-	Policies, policies, productNames, account, Settings, TecBIO, TecTANGO, Users, users, TecTango, TecUnify, TecBio, Account, Domain, domain
+	Policies, policies, productNames, account, Settings, TecBIO, TecTANGO, Users, 
+  users, TecTango, TecUNIFY, TecBio, Account, Domain, domain, Applications, applications
 } from "../../constants";
 
 import { Store } from "../../Store";
@@ -36,11 +37,11 @@ const directoryItems = [
         key: machines,
         icon: <DesktopOutlined />
     },
-	{
-		label: Devices,
-		key: devices,
-		icon: <ScanOutlined />
-	}
+    {
+      label: Devices,
+      key: devices,
+      icon: <ScanOutlined />
+    }
 ];
 
 const commonProductItems = [
@@ -71,6 +72,14 @@ const settingsItems = [
         label: Domain,
         key: domain,
         icon: <GlobalOutlined />
+    }
+];
+
+const tecUnifyItems = [
+    {
+        label: Applications,
+        key: applications,
+        icon: <AppstoreOutlined />        
     }
 ];
 
@@ -121,14 +130,14 @@ function AppSider() {
 				return productItemsWithHeader;
 			case TecBIO:
 				return commonProductItems;
-      case TecUnify:
-        return <Menu.Item key="apps"><AppstoreOutlined/> Applications</Menu.Item>;
+      case TecUNIFY:
+        return tecUnifyItems;
 			default:
 				return [];
 		}
 	}
 
-	const sidebarItems = useMemo(() => renderItems(), [selectedHeaderOption]);
+	const sidebarItems  = useMemo(() => renderItems(), [selectedHeaderOption]);
 
 	return (
 		<Sider width='250'
@@ -138,7 +147,7 @@ function AppSider() {
 				onSelect={(e: any) => {openScreen(e.key)}}
 				selectedKeys={[window.location.pathname.split("/")[window.location.pathname.split("/")[1] === 'product' ? 3 : 1]]}
 				className="sider-menu"
-				items={sidebarItems}
+				items={sidebarItems as any}
 			/>
 		</Sider>
 	);

@@ -31,8 +31,7 @@ function capitalizeFirst(s: string): string {
 
 function Applications(): JSX.Element {
   const [currPage, setCurrPage] = useState(initialComponent);
-  const { data, isFetching, update } = useFetch(initAppList);
-
+  const { data, isFetching, update } = useFetch(48, initAppList);
 
   const isBulkAssignmentPage = (currPage.name === 'assignment');
   const isConfiguredPage = (currPage.name === 'configured');
@@ -60,6 +59,8 @@ function Applications(): JSX.Element {
         return <BulkAssignment activeList={data.active} />;
       case 'settings':
         return <AppSettings />;
+      case 'new':
+        return <></>;
       default:
         return null;
     }
@@ -91,6 +92,10 @@ function Applications(): JSX.Element {
 
           <Button id='assignment' size='large' type='primary' onClick={handleClick}>
             Bulk assign apps
+          </Button>
+
+          <Button id='new' size='large' type='primary' onClick={handleClick}>
+            Configure new App
           </Button>
         </div>
 

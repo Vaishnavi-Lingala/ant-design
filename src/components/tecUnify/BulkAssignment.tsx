@@ -110,7 +110,7 @@ function BulkAssignment({ activeList }: BAProps) {
         />
 
         <h4 style={{ alignSelf: 'center', marginBottom: '0px', marginRight: 'auto' }}>
-          {isUser ? item.user_name : item.name}
+          {isUser ? item.user_name : item.display_name}
         </h4>
 
         {

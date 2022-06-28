@@ -271,6 +271,7 @@ export const ActivityLogs = "Activity Logs";
 export const Devices = "Devices";
 export const Account = "Account";
 export const Domain = "Domains";
+export const Applications = "Applications";
 
 // Sidebar item keys
 export const dashboard = "dashboard";
@@ -283,6 +284,7 @@ export const policies = "policies";
 export const activityLogs = "activitylogs";
 export const account = "account";
 export const domain = "domains";
+export const applications = "apps";
 
 // Policy types
 export const PIN = "PIN";
@@ -300,7 +302,7 @@ export const MenuItemPaths = {
     [Settings]: "/account",
     [TecTANGO]: "/mechanism",
     [TecBIO]: "/mechanism",
-    [TecUnify]: "/apps"
+    [TecUNIFY]: "/apps"
 }
 
 export const policyDisplayNames = {

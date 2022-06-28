@@ -64,8 +64,8 @@ function App() {
                     <ProtectedRoute path={`/domains`} component={Domains} />
                     <ProtectedRoute path={`/groups`} component={Groups} />
                     <ProtectedRoute path={`/users`} component={Users} />
-                    <ProtectedRoute path={`/apps/:app_id/:app_name`} component={AppSettings} />
-                    <ProtectedRoute path={`/apps`} component={Applications} />
+                    <ProtectedRoute path={`/product/:productId/apps`} component={Applications} />
+                    <ProtectedRoute path={`/product/:productId/apps/:app_id/:app_name`} component={AppSettings} />
                     <ProtectedRoute path={`/machines`} exact component={Machines} />
                     <ProtectedRoute path={`/machines/:id`} component={MachineDetails} />
                     <ProtectedRoute path={`/devices`} exact component={Devices} />

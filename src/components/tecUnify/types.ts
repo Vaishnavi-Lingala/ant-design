@@ -35,35 +35,34 @@ export interface ControlName {
 }
 
 export interface Template {
-  id: number;
-  app_id: string;
-  display_name: string;
-  template_type: number;
-  url: string;
-  wait_time: number;
-  retry_count: number;
-  window_title: string;
-  check_window: string;
+  file_path: string;
   operator_value: number;
-  app_type: number;
-  launch_required: boolean;
-  desktop_args: string;
-  single_instance: boolean;
-  browserapp: string;
-  substr: string;
-  startidx: number;
-  endidx: number;
-  udf: string;
-  creadted_ts: Date; // Date object?
-  update_ts: Date;
-  logo: string; // byte array?
+  url: string;
+  check_window: string;
+  logo: string;
   deleted: boolean;
-  mfa: number;
-  display: boolean;
-  name: string;
-  name_ex: string;
   path: string;
-};
+  retry_count: number;
+  app_id: string;
+  udf: string;
+  display: boolean;
+  single_instance: boolean;
+  published_app_name: string;
+  desktop_args: string;
+  app_name: string;
+  app_type_name: string;
+  wait_time: number;
+  template_type_name: string;
+  template_type: number;
+  display_name: string;
+  app_type: number;
+  id: number;
+  launch_required: boolean;
+  domain: string;
+  window_title: string;
+  browserapp: string;
+  operator_value_name: string;
+}
 
 export interface Config {
   min2tray: boolean;
