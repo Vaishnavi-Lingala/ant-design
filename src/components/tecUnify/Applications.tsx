@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Button, Skeleton } from 'antd';
+import { useHistory, useParams } from 'react-router-dom';
+import { Button, Skeleton, Modal } from 'antd';
 
 import './tecUnify.css';
 
@@ -9,6 +10,7 @@ import BulkAssignment from './BulkAssignment';
 import AppSettings from './AppSettings';
 import { useFetch } from './useUnifyFetch';
 import { AppList } from './types';
+import NewAppForm from './NewAppForm';
 
 interface PageType {
   name: string;
@@ -29,14 +31,19 @@ function capitalizeFirst(s: string): string {
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
-function Applications(): JSX.Element {
+function Applications() {
   const [currPage, setCurrPage] = useState(initialComponent);
+  const [modalVisible, toggleModal] = useState(false);
   const { data, isFetching, update } = useFetch(48, initAppList);
+
+  const { productId } = useParams<any>();
 
   const isBulkAssignmentPage = (currPage.name === 'assignment');
   const isConfiguredPage = (currPage.name === 'configured');
 
-  function handleClick(e: any): void {
+  let history = useHistory();
+
+  function handleClick(e: any) {
     const currentPage = {
       name: e.target.parentNode.id,
       isLoading: false
@@ -45,7 +52,7 @@ function Applications(): JSX.Element {
     setCurrPage(currentPage);
   }
 
-  function handleBack(): void {
+  function handleBack() {
     setCurrPage(initialComponent);
   }
 
@@ -54,13 +61,12 @@ function Applications(): JSX.Element {
       case 'configured':
         return <AccountIntegrations appList={data} />;
       case 'supported':
+        return <>Component In Progress</>;
       // return <SupportedIntegrations templateList={}/>;
       case 'assignment':
         return <BulkAssignment activeList={data.active} />;
       case 'settings':
         return <AppSettings />;
-      case 'new':
-        return <></>;
       default:
         return null;
     }
@@ -94,15 +100,19 @@ function Applications(): JSX.Element {
             Bulk assign apps
           </Button>
 
-          <Button id='new' size='large' type='primary' onClick={handleClick}>
-            Configure new App
-          </Button>
+          {
+            isConfiguredPage &&
+            <Button id='new' size='large' type='primary' onClick={() => toggleModal(curr => !curr)}>
+              Configure new App
+            </Button>
+          }
         </div>
 
         <div className='Content-ComponentView'>
           <RenderOptions />
         </div>
       </Skeleton>
+      <NewAppForm showModal={modalVisible} toggleModal={() => toggleModal(curr => !curr)} />
     </>
   );
 }
