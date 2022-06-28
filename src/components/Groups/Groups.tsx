@@ -159,7 +159,7 @@ export default function Groups() {
                 <TabPane tab="User" key="user">
                     <Skeleton loading={loadingDetails}>
                         {window.location.pathname.split('/').length === 4 ?
-                            <ProtectedRoute path={`/groups/user/:id`} component={GroupDetails} /> :
+                            <ProtectedRoute path={`/groups/user/:id`} component={GroupDetails} subRoute/> :
                             <TableList tableLoading={tableLoading} getGroupsByFilter={getGroupsByFilter} getPage={page} getPageSize={pageSize} getTotalItems={totalItems} groupType={'USER'} getGroups={getGroups} columns={columns} standardMachineGroups={userGroups} />
                         }
                     </Skeleton>
@@ -167,7 +167,7 @@ export default function Groups() {
                 <TabPane tab="Kiosk Machine" key="kiosk">
                     <Skeleton loading={loadingDetails}>
                         {window.location.pathname.split('/').length === 4 ?
-                            <ProtectedRoute path={`/groups/kiosk/:id`} component={MachineGroupDetails} /> :
+                            <ProtectedRoute path={`/groups/kiosk/:id`} component={MachineGroupDetails} subRoute/> :
                             <TableList tableLoading={tableLoading} getGroupsByFilter={getGroupsByFilter} getPage={page} getPageSize={pageSize} getTotalItems={totalItems} groupType={'KIOSK'} getGroups={getGroups} columns={columns} standardMachineGroups={kioskMachineGroups} />
                         }
                     </Skeleton>
@@ -175,7 +175,7 @@ export default function Groups() {
                 <TabPane tab="Standard Machine" key="standard">
                     <Skeleton loading={loadingDetails}>
                         {window.location.pathname.split('/').length === 4 ?
-                            <ProtectedRoute path={`/groups/standard/:id`} component={MachineGroupDetails} /> :
+                            <ProtectedRoute path={`/groups/standard/:id`} component={MachineGroupDetails} subRoute/> :
                             <TableList tableLoading={tableLoading} getGroupsByFilter={getGroupsByFilter} getPage={page} getPageSize={pageSize} getTotalItems={totalItems} groupType={'STANDARD'} getGroups={getGroups} columns={columns} standardMachineGroups={standardMachineGroups} />
                         }
                     </Skeleton>

@@ -50,7 +50,7 @@ function App() {
                 <Switch>
                     <Route path="/" exact component={Login} />
                     <Route path="/login/callback" component={LoginCallback} />
-                <Layout>
+
                     <ProtectedRoute path={`/product/:productId/policies`} component={Policies} />
                     <ProtectedRoute path={`/product/:productId/activitylogs`} component={ActivityLogs} />
                     <ProtectedRoute path={`/dashboard`} component={Dashboard} />
@@ -67,9 +67,8 @@ function App() {
                     <ProtectedRoute path={`/user/:id/profile`} exact component={User} />
                     <ProtectedRoute path={`/user/:id/groups`} exact component={User} />
                     <ProtectedRoute path={`/user/:id/enrollments`} exact component={User} />
-                </Layout>
 
-                <Route component={PageNotFound} />
+                    <Route component={PageNotFound} />
             </Switch>
             </StoreProvider>
         </Security>

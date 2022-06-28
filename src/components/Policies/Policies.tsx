@@ -402,11 +402,13 @@ export default function Policies() {
 
 	useEffect(() => {
 		if (['password', 'kiosk', 'card-enrollment'].includes(window.location.pathname.split("/")[4]) === false && window.location.pathname.split("/").length !== 6) {
-			history.push(`/product/${productId}/policies/pin`);
+			if (window.location.pathname.split("/")[4] !== 'pin') {
+				history.push(`/product/${productId}/policies/pin`);
+			}
 		}
 		
 		getPolicies();
-	}, [path]);
+	}, []);
 
 	useEffect(() => {
 		(async function () {
@@ -506,7 +508,7 @@ export default function Policies() {
 				>
 					<TabPane tab="Pin" key="pin">
 						{window.location.pathname.split('/').length === 6 ?
-							<ProtectedRoute path={`/product/${productId}/policies/pin/:id`} component={PinPolicy} /> :
+							<ProtectedRoute path={`/product/${productId}/policies/pin/:id`} component={PinPolicy} subRoute/> :
 							<TableList policy_type={PIN} policy_description={PinPolicyDescription}
 								activateColumns={activateColumns} deActivateColumns={deActivateColumns} draggableBodyRow={pinDraggableBodyRow}
 								draggableContainer={pinDraggableContainer} inActivePolicies={inActivePinPolicies} activePolicies={activePinPolicies}
@@ -516,7 +518,7 @@ export default function Policies() {
 					</TabPane>
 					<TabPane tab="Password" key="password">
 						{window.location.pathname.split('/').length === 6 ?
-							<ProtectedRoute path={`/product/${productId}/policies/password/:id`} component={PasswordPolicy} /> :
+							<ProtectedRoute path={`/product/${productId}/policies/password/:id`} component={PasswordPolicy} subRoute/> :
 							<TableList policy_type={PASSWORD} policy_description={PasswordPolicyDescription} activateColumns={activateColumns} deActivateColumns={deActivateColumns}
 								draggableBodyRow={passwordDraggableBodyRow} draggableContainer={passwordDraggableContainer}
 								inActivePolicies={inActivepasswordPolicies} activePolicies={activePasswordPolicies} handleGetPolicies={handleGetPolicies}
@@ -525,7 +527,7 @@ export default function Policies() {
 					</TabPane>
 					<TabPane tab="Kiosk" key="kiosk">
 						{window.location.pathname.split('/').length === 6 ?
-							<ProtectedRoute path={`/product/${productId}/policies/kiosk/:id`} component={KioskPolicy} /> :
+							<ProtectedRoute path={`/product/${productId}/policies/kiosk/:id`} component={KioskPolicy} subRoute/> :
 							<TableList policy_type={KIOSK} policy_description={KioskPolicyDescription} activateColumns={activateColumns} deActivateColumns={deActivateColumns}
 								draggableBodyRow={kioskDraggableBodyRow} draggableContainer={kioskDraggableContainer}
 								inActivePolicies={inActiveKioskPolicies} activePolicies={activeKioskPolicies} handleGetPolicies={handleGetPolicies}
@@ -535,7 +537,7 @@ export default function Policies() {
 					{seletedProduct === TecTANGO && maxEnroll ?
 						<TabPane tab="Card Enrollment" key="card-enrollment">
 							{window.location.pathname.split('/').length === 6 ?
-								<ProtectedRoute path={`/product/${productId}/policies/card-enrollment/:id`} component={CardEnrollmentPolicy} /> :
+								<ProtectedRoute path={`/product/${productId}/policies/card-enrollment/:id`} component={CardEnrollmentPolicy} subRoute/> :
 								<TableList policy_type={CARD_ENROLL} policy_description={CardEnrollmentPolicyDescription} activateColumns={activateColumns} deActivateColumns={deActivateColumns}
 									draggableBodyRow={CardEnrollmentDraggableBodyRow} draggableContainer={CardEnrollmentDraggableContainer}
 									inActivePolicies={inActiveCardEnrollmentPolicies} activePolicies={activeCardEnrollmentPolicies} handleGetPolicies={handleGetPolicies}
