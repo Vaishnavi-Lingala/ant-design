@@ -34,6 +34,11 @@ export default function Dashboard() {
         timeZone: 'CST',
     });
 
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+    });
+
     return (
         <>
             <div className='content-header'>

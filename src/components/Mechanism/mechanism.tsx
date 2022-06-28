@@ -229,6 +229,11 @@ function Mechanism(props: any) {
         console.log(editData.mechanism_groups);
     }
 
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+    });
+
     return (<>
         {window.location.pathname.split('/').length === 5 ?
             <div className='content-header'>

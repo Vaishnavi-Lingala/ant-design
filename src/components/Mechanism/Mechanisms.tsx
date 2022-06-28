@@ -261,6 +261,11 @@ export default function Mechanisms() {
 		/>
 	);
 
+	window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+    });
+
 	const DraggableBodyRow = ({ className, style, ...restProps }) => {
 		const index = activeMechanisms.findIndex(x => x.index === restProps['data-row-key']);
 		return <SortableItem index={index} {...restProps} />;
