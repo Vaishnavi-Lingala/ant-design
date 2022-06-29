@@ -31,7 +31,7 @@ function Mechanism(props: any) {
     const [selectedHeader] = useContext(Store);
     const history = useHistory();
     const { productId } = useParams<any>();
-    
+
     const mechanism = {
         challenge_factors: [
             {
@@ -153,6 +153,11 @@ function Mechanism(props: any) {
             .catch(error => {
                 openNotification('error', error.message);
             })
+            
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth',
+            });
     }, [])
 
     function updateMechanism() {
@@ -185,6 +190,7 @@ function Mechanism(props: any) {
     }
 
     function handleCancelClick() {
+        setEditData({ ...displayDetails });
         setIsEdit(false);
     }
 
@@ -228,11 +234,6 @@ function Mechanism(props: any) {
         editData.mechanism_groups = value;
         console.log(editData.mechanism_groups);
     }
-
-    window.scrollTo({
-        top: 0,
-        behavior: 'smooth',
-    });
 
     return (<>
         {window.location.pathname.split('/').length === 5 ?
@@ -293,13 +294,12 @@ function Mechanism(props: any) {
                                 placeholder="Please select groups"
                                 defaultValue={displayDetails['name'] !== "" ? groupNames : []}
                                 onChange={handleGroups}
-                                // disabled={!isEdit}
                                 style={{ width: '275px' }}
                                 options={groups}
                                 filterOption={(input, option) =>
-									//@ts-ignore
-									option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
-								}
+                                    //@ts-ignore
+                                    option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                }
                             /> : Object.keys(groupNames).map(name =>
                                 <div style={{ display: 'inline-block', marginRight: '3px', paddingBottom: '3px' }}>
                                     <Button style={{ cursor: 'text' }}>{groupNames[name]}</Button>
@@ -328,7 +328,7 @@ function Mechanism(props: any) {
                         Tapout Action:
                     </div>
                     <div style={{ paddingTop: '20px' }}>
-                        <Radio.Group name="Tapout Action" defaultValue={displayDetails['on_tap_out']}
+                        <Radio.Group name="Tapout Action" value={editData?.on_tap_out}
                             onChange={(e) => {
                                 setEditData({
                                     ...editData,

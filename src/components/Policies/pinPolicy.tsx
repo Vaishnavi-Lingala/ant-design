@@ -107,6 +107,7 @@ export const PinPolicy = (props: any) => {
 	}
 
 	function handleCancelClick() {
+		setPinEditedData({ ...pinDisplayData });
 		setIsEdit(false);
 	}
 
@@ -226,8 +227,14 @@ export const PinPolicy = (props: any) => {
 						{
 							isEdit ? <InputNumber
 								min={4}
-								onChange={(val) => { pinEditData.policy_req.min_length = parseInt(val); }}
-								defaultValue={policyRequirements['min_length'].toString()} /> : policyRequirements['min_length']
+								onChange={(value) => setPinEditedData((state) => {
+									const { policy_req } = state;
+									return {
+										...pinEditData,
+										policy_req: { ...policy_req, min_length: value }
+									}
+								})}
+								value={pinEditData?.policy_req?.min_length} /> : policyRequirements['min_length']
 						}
 					</div>
 
@@ -235,8 +242,14 @@ export const PinPolicy = (props: any) => {
 					<div>
 						{
 							isEdit ? <InputNumber
-								onChange={(val) => { pinEditData.policy_req.max_length = parseInt(val); }}
-								defaultValue={policyRequirements['max_length'].toString()} /> : policyRequirements['max_length']
+								onChange={(value) => setPinEditedData((state) => {
+									const { policy_req } = state;
+									return {
+										...pinEditData,
+										policy_req: { ...policy_req, max_length: value }
+									}
+								})}
+								value={pinEditData?.policy_req?.max_length} /> : policyRequirements['max_length']
 						}
 					</div>
 				</div>
@@ -248,55 +261,107 @@ export const PinPolicy = (props: any) => {
 					<div className="checkbox-container" style={{ padding: '20px 0 10px 0' }}>
 						<div>
 							<Checkbox
-								onChange={(e) => pinEditData.policy_req.is_lower_case_req = e.target.checked}
-								defaultChecked={!isEdit ? policyRequirements['is_lower_case_req'] : policyRequirements['is_lower_case_req']}
-								disabled={!isEdit}>
+								checked={pinEditData?.policy_req?.is_lower_case_req}
+								disabled={!isEdit}
+								onChange={(e) => setPinEditedData((state) => {
+									const { policy_req } = state;
+									return {
+										...pinEditData,
+										policy_req: { ...policy_req, is_lower_case_req: e.target.checked }
+									}
+								})}
+							>
 								Lower case letter
 							</Checkbox>
 						</div>
+
 						<div>
 							<Checkbox
-								onChange={(e) => pinEditData.policy_req.is_upper_case_req = e.target.checked}
-								defaultChecked={!isEdit ? policyRequirements['is_upper_case_req'] : pinEditData.policy_req.is_upper_case_req}
-								disabled={!isEdit}>
+								checked={pinEditData?.policy_req?.is_upper_case_req}
+								disabled={!isEdit}
+								onChange={(e) => setPinEditedData((state) => {
+									const { policy_req } = state;
+									return {
+										...pinEditData,
+										policy_req: { ...policy_req, is_upper_case_req: e.target.checked }
+									}
+								})}
+							>
 								Upper case letter
 							</Checkbox>
 						</div>
+
 						<div>
 							<Checkbox
-								onChange={(e) => pinEditData.policy_req.is_num_req = e.target.checked}
-								defaultChecked={!isEdit ? policyRequirements['is_num_req'] : pinEditData.policy_req.is_num_req}
-								disabled={!isEdit}>
+								checked={pinEditData?.policy_req?.is_num_req}
+								disabled={!isEdit}
+								onChange={(e) => setPinEditedData((state) => {
+									const { policy_req } = state;
+									return {
+										...pinEditData,
+										policy_req: { ...policy_req, is_num_req: e.target.checked }
+									}
+								})}
+							>
 								Number (0-9)
 							</Checkbox>
 						</div>
+
 						<div>
 							<Checkbox
-								onChange={(e) => pinEditData.policy_req.is_special_char_req = e.target.checked}
-								defaultChecked={!isEdit ? policyRequirements['is_special_char_req'] : pinEditData.policy_req.is_special_char_req}
-								disabled={!isEdit}>
+								checked={pinEditData?.policy_req?.is_special_char_req}
+								disabled={!isEdit}
+								onChange={(e) => setPinEditedData((state) => {
+									const { policy_req } = state;
+									return {
+										...pinEditData,
+										policy_req: { ...policy_req, is_special_char_req: e.target.checked }
+									}
+								})}
+							>
 								Special characters (e.g., !@#$%^&*)
 							</Checkbox>
 						</div>
+
 						{/* <div>
 							<Checkbox
-								onChange={(e) => pinEditData.policy_req.is_pin_history_req = e.target.checked}
-								defaultChecked={!isEdit ? policyRequirements['is_pin_history_req'] : pinEditData.policy_req.is_pin_history_req}
-								disabled={!isEdit}>
-								Enforce PIN history for last&nbsp;
+								checked={pinEditData?.policy_req?.is_pin_history_req}
+								disabled={!isEdit}
+								onChange={(e) => setPinEditedData((state) => {
+									const { policy_req } = state;
+									return {
+										...pinEditData,
+										policy_req: { ...policy_req, is_pin_history_req: e.target.checked }
+									}
+								})}
+							>
+								Enforce PIN history for last &nbsp;
 								{
 									isEdit ? <InputNumber
-										onChange={(val) => { pinEditData.policy_req.pin_history_period = parseInt(val) }}
-										defaultValue={policyRequirements['pin_history_period'].toString()} /> : policyRequirements['pin_history_period']
+										onChange={(value) => setPinEditedData((state) => {
+											const { policy_req } = state;
+											return {
+												...pinEditData,
+												policy_req: { ...policy_req, pin_history_period: value }
+											}
+										})}
+										value={pinEditData?.policy_req?.pin_history_period} /> : policyRequirements['pin_history_period']
 								} {policyRequirements['pin_history_period'] > 1 ? "PINS" : "PIN"}
 							</Checkbox>
 						</div> */}
 
 						<div>
 							<Checkbox
-								onChange={(e) => pinEditData.policy_req.is_non_consecutive_char_req = e.target.checked}
-								defaultChecked={!isEdit ? policyRequirements['is_non_consecutive_char_req'] : pinEditData.policy_req.is_non_consecutive_char_req}
-								disabled={!isEdit}>
+								checked={pinEditData?.policy_req?.is_non_consecutive_char_req}
+								disabled={!isEdit}
+								onChange={(e) => setPinEditedData((state) => {
+									const { policy_req } = state;
+									return {
+										...pinEditData,
+										policy_req: { ...policy_req, is_non_consecutive_char_req: e.target.checked }
+									}
+								})}
+							>
 								No consecutive characters or numbers
 							</Checkbox>
 						</div>
@@ -308,9 +373,15 @@ export const PinPolicy = (props: any) => {
 					<div>
 						<div>
 							{
-								isEdit ? <InputNumber
-									onChange={(val) => { pinEditData.policy_req.expires_in_x_days = parseInt(val) }}
-									defaultValue={policyRequirements['expires_in_x_days'].toString()} /> : policyRequirements['expires_in_x_days']
+								isEdit ? <InputNumber min={1}
+									onChange={(value) => setPinEditedData((state) => {
+										const { policy_req } = state;
+										return {
+											...pinEditData,
+											policy_req: { ...policy_req, expires_in_x_days: value }
+										}
+									})}
+									value={pinEditData?.policy_req?.expires_in_x_days} /> : policyRequirements['expires_in_x_days']
 							} {policyRequirements['expires_in_x_days'] > 1 ? "days" : "day"}
 						</div>
 					</div>
