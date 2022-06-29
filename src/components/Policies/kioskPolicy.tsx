@@ -68,9 +68,9 @@ export const KioskPolicy = (props: any) => {
                 kioskGroupsChange.push(object);
                 console.log(kioskGroups);
                 setkioskGroupsChange(kioskGroupsChange);
-                
+
                 setLoginTypeOptions(data[2]);
-                
+
                 if (!data[3].errorSummary) {
                     console.log(data[3]);
                     setKioskDisplayData(data[3]);
@@ -90,7 +90,7 @@ export const KioskPolicy = (props: any) => {
                         setGroupNames(groupNames);
                         console.log(groupUids);
                     });
-                    
+
                     Object.keys(data[3].kiosk_machine_groups).map(index => {
                         kioskGroupNames.push(data[3].kiosk_machine_groups[index].name);
                         kioskGroupUids.push(data[3].kiosk_machine_groups[index].uid)
@@ -100,14 +100,14 @@ export const KioskPolicy = (props: any) => {
                     });
                     setLoading(false);
                 }
-                else if(window.location.pathname.split('/').length === 5){
+                else if (window.location.pathname.split('/').length === 5) {
                     setKioskDisplayData(props.kioskDetails);
                     setKioskEditedData(props.kioskDetails);
                     setPolicyRequirements(props.kioskDetails.policy_req);
                     setIsEdit(true);
                     setLoading(false);
                 }
-                else{
+                else {
                     console.log('else: ', data[3]);
                     openNotification('error', data[3].errorCauses.length !== 0 ? data[3].errorCauses[3].errorSummary : data[3].errorSummary);
                     history.push(`/product/${localStorage.getItem("productId")}/policies/kiosk`);
@@ -157,11 +157,14 @@ export const KioskPolicy = (props: any) => {
     }
 
     function handleEditClick() {
+        setKioskEditedData({ ...kioskDisplayData });
+        setConfirmPassword(kioskEditData?.policy_req?.assay)
         setIsEdit(!isEdit);
     }
 
     function handleCancelClick() {
         setKioskEditedData({ ...kioskDisplayData });
+        setConfirmPassword(kioskEditData?.policy_req?.assay)
         setIsEdit(false);
     }
 
@@ -319,9 +322,15 @@ export const KioskPolicy = (props: any) => {
                         User Type
                     </div>
                     <div>
-                        <Radio.Group defaultValue={policyRequirements['login_type']}
+                        <Radio.Group value={kioskEditData?.policy_req?.login_type}
                             disabled={!isEdit}
-                            onChange={(e) => kioskEditData.policy_req.login_type = e.target.value}
+                            onChange={(e) => setKioskEditedData((state) => {
+                                const { policy_req } = state;
+                                return {
+                                    ...kioskEditData,
+                                    policy_req: { ...policy_req, login_type: e.target.value }
+                                }
+                            })}
                         >
                             {
                                 Object.keys(loginTypeOptions).map(option => {
@@ -339,7 +348,16 @@ export const KioskPolicy = (props: any) => {
                         Username
                         &nbsp;<Checkbox
                             onChange={(e) => {
-                                kioskEditData.policy_req.id_as_machine_name = e.target.checked
+                                setKioskEditedData((state) => {
+                                    const { policy_req } = state;
+                                    return {
+                                        ...kioskEditData,
+                                        policy_req: {
+                                            ...policy_req,
+                                            id_as_machine_name: e.target.checked
+                                        }
+                                    }
+                                })
                                 if (e.target.checked === true) {
                                     policyRequirements['access_key_id'] = "%machineName%"
                                     setRender(!render);
@@ -349,7 +367,7 @@ export const KioskPolicy = (props: any) => {
                                     setRender(!render);
                                 }
                             }}
-                            defaultChecked={isEdit ? policyRequirements['id_as_machine_name'] : policyRequirements['id_as_machine_name']}
+                            checked={kioskEditData?.policy_req?.id_as_machine_name}
                             disabled={!isEdit}
                         >
                             Same as machine name
@@ -358,15 +376,21 @@ export const KioskPolicy = (props: any) => {
                     <div>
                         {
                             isEdit ?
-                                policyRequirements['id_as_machine_name'] === false ?
+                                kioskEditData?.policy_req?.id_as_machine_name === false ?
                                     <Input className="form-control"
                                         style={{ width: "275px" }}
-                                        onChange={(e) => kioskEditData.policy_req.access_key_id = e.target.value}
-                                        defaultValue={policyRequirements['access_key_id']}
+                                        value={kioskEditData?.policy_req?.access_key_id}
+                                        onChange={(e) => setKioskEditedData((state) => {
+                                            const { policy_req } = state;
+                                            return {
+                                                ...kioskEditData,
+                                                policy_req: { ...policy_req, access_key_id: e.target.value }
+                                            }
+                                        })}
                                         placeholder='Enter username'
                                     /> : "%machineName%"
-                                : policyRequirements['id_as_machine_name'] ? "%machineName%"
-                                    : policyRequirements['access_key_id']
+                                : kioskEditData?.policy_req?.id_as_machine_name ? "%machineName%"
+                                    : kioskEditData?.policy_req?.access_key_id
                         }
                     </div>
                     <div>
@@ -376,8 +400,14 @@ export const KioskPolicy = (props: any) => {
                         {
                             isEdit ? <Input.Password className="form-control"
                                 style={{ width: "275px" }}
-                                onChange={(e) => kioskEditData.policy_req.assay = e.target.value}
-                                defaultValue={policyRequirements['assay']}
+                                value={kioskEditData?.policy_req?.assay}
+                                onChange={(e) => setKioskEditedData((state) => {
+                                    const { policy_req } = state;
+                                    return {
+                                        ...kioskEditData,
+                                        policy_req: { ...policy_req, assay: e.target.value }
+                                    }
+                                })}
                                 placeholder='Enter password'
                             /> : password
                         }
@@ -393,9 +423,9 @@ export const KioskPolicy = (props: any) => {
                                         isEdit ? <Input.Password className="form-control"
                                             style={{ width: "275px" }}
                                             onChange={(e) => setConfirmPassword(e.target.value)}
-                                            defaultValue={confirmPassword}
+                                            value={confirmPassword}
                                             placeholder='Enter confirm password'
-                                        /> : policyRequirements['confirm_assay']
+                                        /> : kioskEditData?.policy_req?.confirm_assay
                                     }
                                 </div>
                             </> : <></>

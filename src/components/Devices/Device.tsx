@@ -22,11 +22,6 @@ function Device(props: any) {
         props.handleOk(editData);
     }
 
-    window.scrollTo({
-        top: 0,
-        behavior: 'smooth',
-    });
-
     useEffect(() => {
         setLoading(true);
         Promise.all(([
@@ -57,6 +52,12 @@ function Device(props: any) {
             }, error => {
                 openNotification('error', 'An Error has occured with Device details');
             })
+
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
+
     }, [])
 
     function updateDevice() {
@@ -84,6 +85,7 @@ function Device(props: any) {
     }
 
     function handleCancelClick() {
+        setEditData({ ...displayDetails });
         setIsEdit(false);
     }
 
@@ -237,7 +239,7 @@ function Device(props: any) {
                     </div>
                     <div>
                         <Checkbox
-                            defaultChecked={displayDetails['device_name'] !== "" ? displayDetails['is_blocked'] : false}
+                            checked={editData?.is_blocked}
                             onChange={(e) => {
                                 setEditData({
                                     ...editData,
