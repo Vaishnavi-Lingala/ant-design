@@ -17,6 +17,7 @@ function Device(props: any) {
     const [editData, setEditData]: any = useState();
     const [deviceTypeOptions, setDeviceTypeOptions] = useState({});
     const [vendorOptions, setVendorOptions] = useState({});
+    const accountId = localStorage.getItem('accountId');
 
     function createDevice() {
         props.handleOk(editData);
@@ -25,8 +26,8 @@ function Device(props: any) {
     useEffect(() => {
         setLoading(true);
         Promise.all(([
-            ApiService.get(ApiUrls.deviceOptions),
-            ApiService.get(ApiUrls.device(window.location.pathname.split('/')[2]))
+            ApiService.get(ApiUrls.deviceOptions(accountId)),
+            ApiService.get(ApiUrls.device(accountId, window.location.pathname.split('/')[2]))
         ]))
             .then(data => {
                 console.log(data[0]);
@@ -52,11 +53,17 @@ function Device(props: any) {
             }, error => {
                 openNotification('error', 'An Error has occured with Device details');
             })
+
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
+
     }, [])
 
     function updateDevice() {
         console.log(editData);
-        ApiService.put(ApiUrls.device(displayDetails['uid']), editData)
+        ApiService.put(ApiUrls.device(accountId, displayDetails['uid']), editData)
             .then(data => {
                 if (!data.errorSummary) {
                     console.log(data);
@@ -79,6 +86,7 @@ function Device(props: any) {
     }
 
     function handleCancelClick() {
+        setEditData({ ...displayDetails });
         setIsEdit(false);
     }
 
@@ -107,9 +115,9 @@ function Device(props: any) {
             <div className="content-container rounded-grey-border">
                 <div className="row-containers">
                     <div>
-                        {displayDetails['uid'] === undefined ? <></> :
+                        {/* {displayDetails['uid'] === undefined ? <></> :
                             <div className="device-content-heading" style={{ marginTop: '-10px' }}>Edit Device</div>
-                        }
+                        } */}
                     </div>
                     <div style={{ paddingRight: '50px', paddingBottom: '20px' }}>
                         {displayDetails['device_name'] !== "" ? <Button style={{ float: 'right' }} onClick={handleEditClick}>
@@ -232,7 +240,13 @@ function Device(props: any) {
                     </div>
                     <div>
                         <Checkbox
-                            defaultChecked={displayDetails['device_name'] !== "" ? displayDetails['is_blocked'] : ""}
+                            checked={editData?.is_blocked}
+                            onChange={(e) => {
+                                setEditData({
+                                    ...editData,
+                                    is_blocked: e.target.checked
+                                })
+                            }}
                             disabled={!isEdit}
                         />
                     </div>
@@ -266,7 +280,7 @@ function Device(props: any) {
                 </div> : <></>) : <div style={{ paddingTop: '10px', paddingRight: '45px', paddingBottom: '20px' }}>
                     <Button style={{ float: 'right', marginLeft: '10px' }}
                         onClick={setCancelClick}>Cancel</Button>
-                    <Button type='primary' style={{ float: 'right' }}
+                    <Button type='primary' loading={props.buttonLoading} style={{ float: 'right' }}
                         onClick={createDevice}>Create</Button></div>
             }
         </Skeleton>

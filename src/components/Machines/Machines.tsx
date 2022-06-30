@@ -6,14 +6,19 @@ import { BarsOutlined } from "@ant-design/icons"
 import { openNotification } from "../Layout/Notification";
 import ApiUrls from '../../ApiUtils';
 import ApiService from "../../Api.service"
+import MachinesFiltersModal from "./MachinesFilterModal";
 
 export default function Machines() {
     const [loadingDetails, setLoadingDetails] = useState(false);
+    const [tableLoading, setTableLoading] = useState(false);
     const [machines, setMachines]: any = useState([]);
     const [page, setPage]: any = useState(1);
     const [pageSize, setPageSize]: any = useState(10);
     const [totalItems, setTotalItems]: any = useState(0);
+    const [advancedFilters, setAdvancedFilters] = useState({});
+    const [object, setObject] = useState({});
     const history = useHistory();
+    const accountId = localStorage.getItem('accountId');
 
     const columns = [
         {
@@ -49,8 +54,13 @@ export default function Machines() {
         }
     ];
 
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+    });
+
     useEffect(() => {
-        getMachines();
+        getMachines({}, { start: page, limit: pageSize });
     }, [])
 
     const onMachinesPageChange = async (page, pageSize) => {
@@ -58,16 +68,38 @@ export default function Machines() {
             start: page,
             limit: pageSize
         }
-        getMachines(params);    
+        getMachinesByFilter(object, params);
     }
 
-    function getMachines(params = {}) {
-        setLoadingDetails(true);
-        ApiService.get(ApiUrls.machines, params).then(data => {
+    function getMachinesByFilter(objectData = {}, params = {}) {
+        setTableLoading(true);
+        setObject(objectData);
+        ApiService.post(ApiUrls.machineFilter(accountId), objectData, params).then(data => {
             console.log('Machines: ', data);
             data.results.forEach(machine => {
                 machine.key = machine.uid;
             })
+            setPage(data.page);
+            setPageSize(data.items_per_page);
+            setMachines(data.results);
+            setTotalItems(data.total_items);
+            setTableLoading(false);
+        }, error => {
+            console.error('Error: ', error);
+            openNotification('error', 'An Error has occured with getting Machines');
+            setTableLoading(false);
+        })
+    }
+
+    function getMachines(object = {}, params = {}) {
+        setLoadingDetails(true);
+        ApiService.post(ApiUrls.machineFilter(accountId), object, params).then(data => {
+            console.log('Machines: ', data);
+            data.results.forEach(machine => {
+                machine.key = machine.uid;
+            })
+            setPage(data.page);
+            setPageSize(data.items_per_page);
             setMachines(data.results);
             setTotalItems(data.total_items);
             setLoadingDetails(false);
@@ -78,14 +110,31 @@ export default function Machines() {
         })
     }
 
+    const applyAdvancedFilters = (filters) => {
+        setAdvancedFilters(filters)
+    };
+
+    const resetFilters = () => {
+        setAdvancedFilters({})
+        getMachinesByFilter();
+    };
+
     return (
         <>
-            <div className='content-header'>
-                <span>Machines</span>
+            <div style={{display: 'flex'}}>
+                <div className='content-header' style={{width: '75%'}}>
+                    <span>Machines</span>
+                </div>
+                <div style={{paddingTop: '24px'}}>
+                    <MachinesFiltersModal
+                        getMachinesByFilter={getMachinesByFilter}
+                        onFilterApply={applyAdvancedFilters}
+                        onResetClick={resetFilters}
+                    />
+                </div>
             </div>
-
             <Skeleton loading={loadingDetails}>
-                <Table
+                <Table loading={tableLoading}
                     style={{ border: '1px solid #D7D7DC' }}
                     showHeader={true}
                     columns={columns}

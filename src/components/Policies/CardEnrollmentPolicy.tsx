@@ -7,7 +7,7 @@ import './Policies.css';
 
 import ApiService from "../../Api.service";
 import ApiUrls from '../../ApiUtils';
-import { CARD_ENROLL, TecTANGO } from "../../constants";
+import { CARD_ENROLL, policyDisplayNames, TecTANGO } from "../../constants";
 import { openNotification } from "../Layout/Notification";
 import Hint from "../Controls/Hint";
 
@@ -24,11 +24,12 @@ const CardEnrollmentPolicy = (props) => {
     const [maxEnroll, setMaxEnroll] = useState(1);
     const [isLimitReached, setIsLimitReached] = useState(false);
     const history = useHistory();
+    const accountId = localStorage.getItem('accountId');
 
     useEffect(() => {
         Promise.all(([
-            ApiService.get(ApiUrls.groups, { type: "USER" }),
-            ApiService.get(ApiUrls.policy(window.location.pathname.split('/')[5]))
+            ApiService.get(ApiUrls.groups(accountId), { type: "USER" }),
+            ApiService.get(ApiUrls.policy(accountId, window.location.pathname.split('/')[5]))
         ]))
             .then(data => {
                 console.log('GROUPS: ', data[0]);
@@ -81,7 +82,7 @@ const CardEnrollmentPolicy = (props) => {
     useEffect(() => {
         (async function () {
             try {
-                let licenses = await ApiService.get(ApiUrls.licences);
+                let licenses = await ApiService.get(ApiUrls.licences(accountId));
                 licenses.forEach(license => {
                     if (license.product.sku === TecTANGO && license.max_enroll_allowed) {
                         setMaxEnroll(license.max_enroll_allowed);
@@ -97,7 +98,7 @@ const CardEnrollmentPolicy = (props) => {
 
     function updateCardEnrollPolicy() {
         cardEnrollEditData['auth_policy_groups'] = groupUids;
-        ApiService.put(ApiUrls.policy(cardEnrollDisplayData['uid']), cardEnrollEditData)
+        ApiService.put(ApiUrls.policy(accountId, cardEnrollDisplayData['uid']), cardEnrollEditData)
             .then(data => {
                 if (!data.errorSummary) {
                     groupNames.length = 0;
@@ -161,13 +162,13 @@ const CardEnrollmentPolicy = (props) => {
                     <div>
                         {cardEnrollDisplayData['uid'] === undefined ? <></> :
                             <div>
-                                <div style={{display: 'inline-block', marginRight: '3px'}} className="content-heading">
+                                {/* <div style={{display: 'inline-block', marginRight: '3px'}} className="content-heading">
                                     {isEdit ? 'Edit' : null} Card Enrollment Policy 
                                 </div>
                                 <div style={{display: 'inline-block', marginRight: '3px'}}>
                                     <Hint text={"This policy allows you to control how many cards can be enrolled per user"} />
-                                </div>
-                            </div>
+                                </div> */}
+                            </div>  
                         }
                     </div>
                     <div>
@@ -221,9 +222,20 @@ const CardEnrollmentPolicy = (props) => {
                                 onChange={handleGroups}
                                 style={{ width: '275px' }}
                                 options={groups}
+                                filterOption={(input, option) =>
+									//@ts-ignore
+									option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
+								}
                             /> : Object.keys(groupNames).map(name =>
                                 <><Button style={{ cursor: 'text' }}>{groupNames[name]}</Button>&nbsp;</>)
                         }
+                    </div>
+
+                    <div className="content-policy-key-header">
+                        Policy Type:
+                    </div>
+                    <div>
+                        {policyDisplayNames[cardEnrollDisplayData['policy_type']]}
                     </div>
 
                     <div className="content-policy-key-header" style={{ paddingTop: '20px' }}>
@@ -261,7 +273,7 @@ const CardEnrollmentPolicy = (props) => {
                 </div> : <></>) : <div style={{ paddingTop: '10px', paddingRight: '45px', paddingBottom: '20px' }}>
                     <Button style={{ float: 'right', marginLeft: '10px' }}
                         onClick={setCancelClick}>Cancel</Button>
-                    <Button type='primary' style={{ float: 'right' }}
+                    <Button type='primary' loading={props.buttonLoading} style={{ float: 'right' }}
                         onClick={createCardEnrollPolicy}>Create</Button></div>
             }
         </Skeleton>

@@ -56,7 +56,7 @@ export function MachineDetails(props: any) {
     useEffect(() => {
         setLoadingDetails(true);
         let machineId = window.location.pathname.split('/')[2];
-        ApiService.get(ApiUrls.machineDetails(machineId)).then((data: any) => {
+        ApiService.get(ApiUrls.machineDetails(localStorage.getItem('accountId'), machineId)).then((data: any) => {
             console.log('Machine details:', data);
             let machineProducts: MachineProducts[] = [];
             Object.keys(data.products).map((product) => {
@@ -75,6 +75,11 @@ export function MachineDetails(props: any) {
         }).finally(() => {
             setLoadingDetails(false);
         });
+
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
     }, []);
 
     return (
@@ -87,7 +92,10 @@ export function MachineDetails(props: any) {
             </div>
             <Skeleton loading={loadingDetails}>
                 <div className="content-container rounded-grey-border">
-                    <div style={{ fontWeight: '600', fontSize: '30px'}}>Details</div>
+                    <div style={{ fontWeight: '600', fontSize: '30px'}}>{machineDetails['machine_name']}</div>
+
+                    <Divider style={{ borderTop: '1px solid #d7d7dc' }} />
+                    
                     {
                         Object.keys(machineDetails).map((machineField) => (
                             machineField !== 'products' && machineDetails[machineField] !== 'object' ?

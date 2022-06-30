@@ -1,17 +1,20 @@
 import { useEffect, useState } from "react";
-import { Button, Dropdown, Menu, Skeleton, Table, Tooltip } from "antd";
-import { BarsOutlined, MoreOutlined } from "@ant-design/icons"
+import { Button, Dropdown, Menu, Skeleton, Table, Tooltip, Row, Col } from "antd";
+import { MoreOutlined, BarsOutlined } from "@ant-design/icons"
 
 import { AddUser } from "./AddUser";
 import { User } from "./User";
 import { openNotification } from "../Layout/Notification";
 import ApiUrls from '../../ApiUtils';
 import ApiService from "../../Api.service";
-import {useHistory} from "react-router-dom";
+import { useHistory } from "react-router-dom";
+import moment from "moment";
+import { date_display_format, time_format } from "../../constants";
 
 export default function Users() {
 	const [userDetails, setUserDetails]: any = useState(undefined);
 	const [loadingDetails, setLoadingDetails] = useState(true);
+	const [tableLoading, setTableLoading] = useState(false);
 	const [arr, setArr]: any = useState([]);
 	const [page, setPage]: any = useState(1);
 	const [pageSize, setPageSize]: any = useState(10);
@@ -19,60 +22,88 @@ export default function Users() {
 	const [statusList, setStatusList]: any = useState([]);
 	const [lifeCycleTypes, setLifeCycleTypes]: any = useState(undefined);
 	const history = useHistory();
+	const [object, setObject] = useState({});
+	const accountId = localStorage.getItem('accountId');
 
 	const columns = [
 		{
 			title: 'First Name',
-			dataIndex: 'first_name'
+			dataIndex: 'first_name',
+			width: '10%'
 		},
 		{
 			title: 'Last Name',
-			dataIndex: 'last_name'
+			dataIndex: 'last_name',
+			width: '10%'
 		},
 		{
 			title: 'Email',
-			dataIndex: 'email'
+			dataIndex: 'email',
+			width: '15%'
 		},
 		{
 			title: 'Username',
-			dataIndex: 'user_name'
+			dataIndex: 'user_name',
+			width: '10%'
+		},
+		{
+			title: 'Enrolled',
+			dataIndex: 'is_user_enrolled',
+			width: '10%'
 		},
 		{
 			title: 'Status',
-			dataIndex: 'status'
+			dataIndex: 'status',
+			width: '10%'
 		},
 		{
-			title: 'Details',
-			dataIndex: 'details',
-			render: (text: any, record: { uid: any; user_name: any }) => (
-				<Tooltip title="View">
-					<Button icon={<BarsOutlined />} onClick={() => history.push(`/user/${record.uid}/profile`)} />
-
-				</Tooltip>
-			)
+			title: 'Last Login Time',
+			width: '20%',
+			render: (text, record) => <>{record.last_login_ts !== null ? moment.utc((record.last_login_ts)).local().format(`${date_display_format} ${time_format}`) : null}</>
 		},
 		{
 			title: 'Actions',
 			dataIndex: 'actions',
-			render: (text: any, record: { uid: any; user_name: any }) => (
-				<Dropdown overlay={
-					<Menu key={"changeStatus"} title={"Change Status"} >
-						{
-							statusList.map(item => {
-								return <Menu.Item key={item.key} onClick={({ key }) => { changeUserStatus(key, record.uid, record.user_name) }}>
-									{item.value}
-								</Menu.Item>
-							})
-						}
-					</Menu>
-				}>
-					{
-						<Tooltip title="Change status">
-							<Button icon={<MoreOutlined />} onClick={e => e.preventDefault()} />
+			width: '25%',
+			render: (text: any, record: { uid: any; user_name: any, first_name: any, last_name: any, email: any, status: string }) => (
+				<Row>
+					<Col span={12}>
+						<Tooltip title="View">
+							<Button icon={<BarsOutlined />} onClick={() => {
+								sessionStorage.setItem("email", record.email);
+								sessionStorage.setItem("first_name", record.first_name);
+								sessionStorage.setItem("last_name", record.last_name);
+								sessionStorage.setItem("user_name", record.user_name);
+								history.push(`/user/${record.uid}/profile`)
+							}}
+							/>
 
 						</Tooltip>
-					}
-				</Dropdown>
+					</Col>
+					<Col span={12}>
+						<Dropdown overlay={
+							<Menu key={"changeStatus"} title={"Change Status"} >
+								{
+									statusList.map(item => {
+										return <Menu.Item key={item.key} disabled={disableStatus(item.key, record.status)} onClick={({ key }) => { changeUserStatus(key, record.uid, record.user_name) }}>
+											{item.value}
+										</Menu.Item>
+									})
+								}
+							</Menu>
+						}>
+							{
+								<Tooltip title="Change status">
+									<Button icon={<MoreOutlined />} onClick={e => e.preventDefault()} />
+
+								</Tooltip>
+							}
+						</Dropdown>
+					</Col>
+
+				</Row>
+
+
 			)
 		}
 	];
@@ -106,13 +137,13 @@ export default function Users() {
 
 	useEffect(() => {
 		if (lifeCycleTypes) {
-			getUsersList(page, pageSize);
+			getUsersList({}, { start: page, limit: pageSize });
 		}
 	}, [lifeCycleTypes])
 
 	const getLifeCycleOptions = async () => {
 		if (lifeCycleTypes === undefined) {
-			let userStatusTypes = await ApiService.get(ApiUrls.lifeCycleOptions).catch(error => {
+			let userStatusTypes = await ApiService.get(ApiUrls.lifeCycleOptions(accountId)).catch(error => {
 				console.error('Error: ', error);
 				openNotification('error', 'An Error has occured with getting Life Cycle Types');
 			});
@@ -120,14 +151,42 @@ export default function Users() {
 		}
 	}
 
-	const getUsersList = async (page, pageSize) => {
+	const getUsersByFilter = async (objectData = {}, params = {}) => {
+		setTableLoading(true);
+		setObject(objectData);
+		console.log(objectData)
+		let data = await ApiService.post(ApiUrls.userFilter(accountId), objectData, params).catch(error => {
+			console.error('Error: ', error);
+			openNotification('error', 'An Error has occured with getting User Lists by Page');
+		}).finally(() => {
+			setTableLoading(false);
+		});
+		data.results.map((value) => {
+			value['is_user_enrolled'] === true ? value['is_user_enrolled'] = 'true' : value['is_user_enrolled'] = 'false'
+		})
+		const updatedUsers = updateUsersListWithStatusAndKey(data.results);
+
+		console.log(updatedUsers);
+		setArr(updatedUsers);
+		setTotalItems(data.total_items);
+	}
+
+	window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+    });
+
+	const getUsersList = async (object: {}, params = {}) => {
 		setLoadingDetails(true);
-		let data = await ApiService.get(ApiUrls.users, { start: page, limit: pageSize }).catch(error => {
+		let data = await ApiService.post(ApiUrls.userFilter(accountId), object, params).catch(error => {
 			console.error('Error: ', error);
 			openNotification('error', 'An Error has occured with getting User Lists by Page');
 		}).finally(() => {
 			setLoadingDetails(false);
 		});
+		data.results.map((value) => {
+			value['is_user_enrolled'] === true ? value['is_user_enrolled'] = 'true' : value['is_user_enrolled'] = 'false'
+		})
 		const updatedUsers = updateUsersListWithStatusAndKey(data.results);
 		console.log(updatedUsers);
 		setArr(updatedUsers);
@@ -135,7 +194,12 @@ export default function Users() {
 	}
 
 	const getUpdatedUsersList = () => {
-		getUsersList(page, pageSize);
+		const params = {
+			start: page,
+			limit: pageSize
+		}
+
+		getUsersList({}, params);
 	}
 
 	const updateUsersListWithStatusAndKey = (usersList) => {
@@ -151,7 +215,7 @@ export default function Users() {
 		let statusObj = {
 			status: status
 		}
-		let result = await ApiService.post(ApiUrls.changeUserStatus(userId), statusObj)
+		let result = await ApiService.post(ApiUrls.changeUserStatus(accountId, userId), statusObj)
 			.then(data => {
 				openNotification('success', `Status for ${user_name.split('@')[0]} has been updated successfully with ${status.toLowerCase()}.`);
 			})
@@ -165,17 +229,23 @@ export default function Users() {
 		getUpdatedUsersList();
 	}
 
+	const disableStatus = (key, currentStatus) => {
+        const currentStatusKey = Object.keys(lifeCycleTypes).find(eachItem => lifeCycleTypes[eachItem] === currentStatus );
+        return (key === currentStatusKey)? true: false;
+    }
+
 	return (
 		<>
 			<div className='content-header'>
-				{window.location.pathname.split('/').length === 2 ? <span>Users</span> : <span>User</span>}
+				{window.location.pathname.split('/').length === 2 ? <span>Users</span> : <></>}
 				{window.location.pathname.split('/').length !== 2 ? <Button style={{ marginLeft: 'auto', alignSelf: 'end' }} onClick={() => { setUserDetails(undefined) }}>Back</Button> : <></>}
 			</div>
 
 			<Skeleton loading={loadingDetails}>
 				{window.location.pathname.split('/').length !== 2 ? <User></User> : <>
-					<AddUser onUserCreate={getUpdatedUsersList}></AddUser>
+					<AddUser getUsersByFilter={getUsersByFilter} onUserCreate={getUpdatedUsersList}></AddUser>
 					<Table
+						loading={tableLoading}
 						style={{ border: '1px solid #D7D7DC' }}
 						showHeader={true}
 						columns={columns}
@@ -188,7 +258,7 @@ export default function Users() {
 							onChange: (page, pageSize) => {
 								setPage(page);
 								setPageSize(pageSize);
-								getUsersList(page, pageSize);
+								getUsersByFilter(object, { start: page, limit: pageSize });
 							}
 						}}
 					/>

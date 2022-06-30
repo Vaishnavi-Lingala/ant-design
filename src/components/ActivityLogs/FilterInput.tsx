@@ -1,5 +1,6 @@
 import { FunctionComponent } from "react";
-import { Input, Row, Col, Select, Button } from "antd";
+import { Input, Row, Col, Select, Button } from "antd"
+import { DeleteOutlined } from '@ant-design/icons';
 
 import { filterableFieldNames } from "../../constants";
 
@@ -54,10 +55,9 @@ const FilterInput: FunctionComponent<FilterInputProps> = (props: FilterInputProp
                 />
             </Col>
             <Col span={2}>
-                <Button
+                <Button icon={<DeleteOutlined />}
                     onClick={onCloseClick}
                 >
-                    X
                 </Button>
             </Col>
         </Row>

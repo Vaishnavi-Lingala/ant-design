@@ -15,7 +15,7 @@ export default function FiltersModal({ onFilterApply, onResetClick }) {
 
     useEffect(() => {
         (async function () {
-            var response = await ApiService.get(ApiUtils.filterableFields);
+            var response = await ApiService.get(ApiUtils.filterableFields(localStorage.getItem('accountId')));
             setFilterableFields([...response]);
         })();
     }, []);
@@ -67,6 +67,7 @@ export default function FiltersModal({ onFilterApply, onResetClick }) {
         });
 
         const reducedOptimisedFiltersObj = optimisedFiltersObj.reduce(
+            //@ts-ignore
             (r, c) => Object.assign(r, c),
             {}
         );

@@ -21,12 +21,20 @@ export default function Groups() {
     const [kioskMachineGroups, setKioskMachineGroups] = useState<Group[]>([]);
     const [standardMachineGroups, setStandardMachineGroups] = useState<Group[]>([]);
     const [loadingDetails, setLoadingDetails] = useState(false);
+    const [tableLoading, setTableLoading] = useState(false);
+    const accountId = localStorage.getItem('accountId');
     const { TabPane } = Tabs;
     const columns = [
         {
             title: 'Name',
             dataIndex: 'name',
             width: '30%'
+        },
+        {
+            title: 'Count',
+            dataIndex: 'count',
+            width: '30%',
+            sorter: (a: { count: number; }, b: { count: number; }) => a.count - b.count,
         },
         {
             title: 'Actions',
@@ -43,17 +51,29 @@ export default function Groups() {
         }
     ];
 
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+    });
+
+    var type: any = [];
+    type.push(window.location.pathname.split('/').length === 2 ? "USER" : window.location.pathname.split('/')[2].toUpperCase()); 
+
+    const params = {
+        group_type: type, 
+    }
+
     useEffect(() => {
         if (window.location.pathname.split('/').length === 2) {
             history.push("/groups/user")
         }
 
-        getGroups({ paginated: true, type: window.location.pathname.split('/').length === 2 ? "USER" : window.location.pathname.split('/')[2].toUpperCase() });
+        getGroups({}, params);
     }, [])
 
-    function getGroups(param = {}) {
-        setLoadingDetails(true);
-        ApiService.get(ApiUrls.groups, param)
+    function getGroupsByFilter(object = {}, param = {}){
+        setTableLoading(true);
+        ApiService.post(ApiUrls.groupFilter(accountId), object, param)
             .then(data => {
                 setPage(data.page);
                 setPageSize(data.items_per_page);
@@ -62,7 +82,41 @@ export default function Groups() {
                 let userGroupsList: Group[] = [];
                 let kioskGroupsList: Group[] = [];
                 let standardGroupsList: Group[] = [];
-                data['results'].forEach((group: Group) => {
+                data.forEach((group: Group) => {
+                    group.key = group.uid;
+                    if (group.type === 'USER') {
+                        userGroupsList.push(group);
+                    }
+                    if (group.type === 'KIOSK') {
+                        kioskGroupsList.push(group);
+                    }
+                    if (group.type === 'STANDARD') {
+                        standardGroupsList.push(group);
+                    }
+                })
+                setUserGroups(userGroupsList);
+                setKioskMachineGroups(kioskGroupsList);
+                setStandardMachineGroups(standardGroupsList);
+                setTableLoading(false);
+            }, error => {
+                console.error('Error: ', error);
+                openNotification('error', 'An Error has occured with getting Groups');
+                setTableLoading(false);
+            })
+    }
+
+    function getGroups(object = {}, param = {}) {
+        setLoadingDetails(true);
+        ApiService.post(ApiUrls.groupFilter(accountId), object, param)
+            .then(data => {
+                setPage(data.page);
+                setPageSize(data.items_per_page);
+                setTotalItems(data.total_items);
+                console.log('Groups: ', data);
+                let userGroupsList: Group[] = [];
+                let kioskGroupsList: Group[] = [];
+                let standardGroupsList: Group[] = [];
+                data.forEach((group: Group) => {
                     group.key = group.uid;
                     if (group.type === 'USER') {
                         userGroupsList.push(group);
@@ -86,11 +140,12 @@ export default function Groups() {
     }
 
     function onGroupTypeChange(key) {
+        var type: any = [];
+        type.push(key.toUpperCase());
         const param = {
-            paginated: true,
-            type: key.toUpperCase()
+            group_type: type, 
         }
-        getGroups(param);
+        getGroups({}, param);
         history.push('/groups/' + key);
         console.log('Group type: ', key);
     }
@@ -110,24 +165,24 @@ export default function Groups() {
                 <TabPane tab="User" key="user">
                     <Skeleton loading={loadingDetails}>
                         {window.location.pathname.split('/').length === 4 ?
-                            <ProtectedRoute path={`/groups/user/:id`} component={GroupDetails} /> :
-                            <TableList getPage={page} getPageSize={pageSize} getTotalItems={totalItems} groupType={'USER'} getGroups={getGroups} columns={columns} standardMachineGroups={userGroups} />
+                            <ProtectedRoute path={`/groups/user/:id`} component={GroupDetails} subRoute/> :
+                            <TableList tableLoading={tableLoading} getGroupsByFilter={getGroupsByFilter} getPage={page} getPageSize={pageSize} getTotalItems={totalItems} groupType={'USER'} getGroups={getGroups} columns={columns} standardMachineGroups={userGroups} />
                         }
                     </Skeleton>
                 </TabPane>
                 <TabPane tab="Kiosk Machine" key="kiosk">
                     <Skeleton loading={loadingDetails}>
                         {window.location.pathname.split('/').length === 4 ?
-                            <ProtectedRoute path={`/groups/kiosk/:id`} component={MachineGroupDetails} /> :
-                            <TableList getPage={page} getPageSize={pageSize} getTotalItems={totalItems} groupType={'KIOSK'} getGroups={getGroups} columns={columns} standardMachineGroups={kioskMachineGroups} />
+                            <ProtectedRoute path={`/groups/kiosk/:id`} component={MachineGroupDetails} subRoute/> :
+                            <TableList tableLoading={tableLoading} getGroupsByFilter={getGroupsByFilter} getPage={page} getPageSize={pageSize} getTotalItems={totalItems} groupType={'KIOSK'} getGroups={getGroups} columns={columns} standardMachineGroups={kioskMachineGroups} />
                         }
                     </Skeleton>
                 </TabPane>
                 <TabPane tab="Standard Machine" key="standard">
                     <Skeleton loading={loadingDetails}>
                         {window.location.pathname.split('/').length === 4 ?
-                            <ProtectedRoute path={`/groups/standard/:id`} component={MachineGroupDetails} /> :
-                            <TableList getPage={page} getPageSize={pageSize} getTotalItems={totalItems} groupType={'STANDARD'} getGroups={getGroups} columns={columns} standardMachineGroups={standardMachineGroups} />
+                            <ProtectedRoute path={`/groups/standard/:id`} component={MachineGroupDetails} subRoute/> :
+                            <TableList tableLoading={tableLoading} getGroupsByFilter={getGroupsByFilter} getPage={page} getPageSize={pageSize} getTotalItems={totalItems} groupType={'STANDARD'} getGroups={getGroups} columns={columns} standardMachineGroups={standardMachineGroups} />
                         }
                     </Skeleton>
                 </TabPane>

@@ -1,17 +1,16 @@
 import { useOktaAuth } from "@okta/okta-react";
 import { Redirect, Route, useHistory } from "react-router-dom";
 import { SecureRoute } from "@okta/okta-react";
+import Layout from "./Layout/Layout";
 
 export default function ProtectedRoute({
+    subRoute = false,
     component: Component,
     ...restOfProps
 }) {
     const { authState, oktaAuth } = useOktaAuth();
     const history = useHistory();
-    console.log(oktaAuth);
-    console.log(oktaAuth.authStateManager._authState?.isAuthenticated);
-    console.log(oktaAuth.getIdToken());
-    console.log(oktaAuth.getAccessToken());
+
     const oktaStorage = localStorage.getItem("okta-token-storage");
 
     function removeItems() {
@@ -22,43 +21,38 @@ export default function ProtectedRoute({
         localStorage.removeItem("productId");
         localStorage.removeItem("productName");
         localStorage.removeItem("SELECTED_HEADER");
-        history.push("/");
+        history.push('/');
     }
 
-    if (oktaStorage !== null && oktaStorage !== "") {
-        if (oktaStorage !== "{}") {
-            if (JSON.parse(oktaStorage).idToken && JSON.parse(oktaStorage).accessToken) {
-                const idToken = JSON.parse(oktaStorage).idToken;
-                localStorage.setItem("clientId", idToken.clientId);
-                localStorage.setItem("issuer", idToken.issuer);
-            }
-            else {
-                removeItems();
-            }
-        }
-        else {
-            removeItems();
-        }
+    if (oktaStorage !== null && oktaStorage !== "" && oktaStorage !== "{}" &&
+        JSON.parse(oktaStorage).idToken && JSON.parse(oktaStorage).accessToken) {
+        console.log(oktaStorage);
     }
     else {
         removeItems();
     }
 
+    const SecureComponent = (props) => <SecureRoute>
+        <Component
+            authStatus={authState}
+            oktaAuth={oktaAuth}
+            {...props}
+        />
+    </SecureRoute>;
+
     return (
         <Route
             {...restOfProps}
             render={(props) =>
-                oktaStorage !== null ? (
-                    <SecureRoute>
-                        <Component
-                            authStatus={authState}
-                            oktaAuth={oktaAuth}
-                            {...props}
-                        />
-                    </SecureRoute>
-                ) : (
-                    <Redirect to={"/"} />
-                )
+                !authState ? <Redirect to={location.pathname} /> : authState && authState.isAuthenticated ?
+                    (
+                        subRoute ?
+                            <SecureComponent {...props} /> : <Layout>
+                                <SecureComponent {...props} />
+                            </Layout>
+                    ) : (
+                        <Redirect to={"/"} />
+                    )
             }
         />
     );

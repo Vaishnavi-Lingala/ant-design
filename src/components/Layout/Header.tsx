@@ -11,55 +11,119 @@ import { openNotification } from "./Notification";
 import ApiUrls from '../../ApiUtils';
 import ApiService from "../../Api.service";
 import config from "../../config";
-import { Directory, MenuItemPaths, Products, Settings, TecBio, TecBIO, TecTango, TecTANGO } from "../../constants";
+import { Directory, MenuItemPaths, productNames, Products, Settings, TecBio, TecBIO, TecTango, TecTANGO, TecUNIFY } from "../../constants";
 import { Store } from "../../Store";
 
 const { SubMenu } = Menu;
 const { Header } = Layout;
 
-const headerItems = [
-    {
-        label: Directory,
-        key: Directory
-    },
-    {
-        label: Products,
-        key: Products,
-        children: [
-            {
-                label: TecTango,
-                key: TecTANGO
-            },
-            {
-                label: TecBio,
-                key: TecBIO
-            }
-        ]
-    },
-    {
-        label: Settings,
-        key: Settings
-    }
-];
-
 function AppHeader() {
+    let emptyObj = {};
     const history = useHistory();
     const [selectedMenuOption, setSelectedMenuOption] = useContext(Store);
-    const { authState } = useOktaAuth();
-    const [products, setProducts]: any = useState([]);
+    const { authState, oktaAuth } = useOktaAuth();
+    const [products, setProducts] = useState(emptyObj);
+    
+    let selectedHeaderKeys: any = [selectedMenuOption];
+    if (Object.keys(productNames).includes(selectedMenuOption)) {
+        selectedHeaderKeys = [Products].concat([selectedMenuOption]);
+    }
+
+    const directoryPaths = ['dashboard', '/users', '/groups', '/machines', '/devices'];
+    const commonProductPaths = ['/product', '/mechanism', '/policies', '/activitylogs'];
+    const settingsPaths = ['/account', '/domains'];
+
+    const headerItemsInitialValue = [
+        {
+            label: Directory,
+            key: Directory
+        },
+        {
+            label: Products,
+            key: Products,
+            children: []
+        },
+        {
+            label: Settings,
+            key: Settings
+        }
+    ];
+
+    const [headerItems, setHeaderItems] = useState(headerItemsInitialValue);
 
     useEffect(() => {
-        getProducts();
-    }, [])
-
-    function getProducts() {
-        ApiService.get(ApiUrls.getProducts)
+        ApiService.get(ApiUrls.account_info, { domain: localStorage.getItem('domain')})
             .then(data => {
-                var object = {};
-                for (var i = 0; i < data.length; i++) {
-                    object[data[i].sku] = data[i].uid
+                getProducts(data.uid);
+                localStorage.setItem('accountId', data.uid);
+            })
+    }, []);
+
+    useEffect(() => {
+        if (products !== emptyObj) {
+            setHeaderItems(state => {
+                const values = state;
+                let productKeys = Object.keys(products);
+
+                values.forEach(value => {
+                    if (value.label === Products) {
+                        // @ts-ignore
+                        values[values.indexOf(value)].children = [...productKeys.map(productKey => {
+                            return {
+                                label: productNames[productKey],
+                                key: productKey
+                            }
+                        })];
+                    }
+                });
+                return JSON.parse(JSON.stringify(values));
+            });
+        }
+
+        const splitPath = window.location.pathname?.split("/");
+        console.log({ splitPath });
+
+        if (splitPath?.length) {
+            console.log(window.location.pathname);
+            if (directoryPaths.some(path => window.location.pathname.includes(path))) {
+                console.log({ Directory });
+                setSelectedMenuOption(Directory);
+            }
+            else if (settingsPaths.some(path => window.location.pathname.includes(path))) {
+                setSelectedMenuOption(Settings);
+            }
+            else if (commonProductPaths.some(path => window.location.pathname.includes(path))) {
+                let product = Object.keys(products).find(key => {
+                    console.log(products[key]);
+                    console.log(splitPath[2]);
+                    return products[key] === splitPath[2]
+                });
+                console.log({ splitPath });
+                console.log({ products });
+                console.log({ product });
+                if (product) {
+                    setSelectedMenuOption(product);
                 }
-                setProducts(object);
+            }
+        }
+
+    }, [products]);
+
+    function getProducts(accountId) {
+        ApiService.get(ApiUrls.products(accountId))
+            .then(data => {
+                if (!data.errorSummary) {
+                    var object = emptyObj;
+                    for (var i = 0; i < data.length; i++) {
+                        object[data[i].sku] = data[i].uid
+                    }
+                    if (!localStorage.getItem("productName")) {
+                        localStorage.setItem("productId", object[data[0].sku])
+                        localStorage.setItem("productName", data[0].sku)
+                        window.location.reload();
+                    }
+                    setProducts({ ...object });
+                }
             })
             .catch((error) => {
                 console.error('Error: ', error);
@@ -92,37 +156,41 @@ function AppHeader() {
         })
     };
 
+    if (oktaAuth.getIdToken() === undefined && oktaAuth.getAccessToken() === undefined) {
+        logout();
+    }
+
     function headerMenuClickHandler(e) {
         setSelectedMenuOption(e.key);
         localStorage.setItem("productId", products[e.key]);
         console.log(e.key);
         console.log(MenuItemPaths[e.key]);
         switch (e.key) {
-			case Directory:
-				history.push(`${MenuItemPaths[e.key]}`);
-				break;
-			case Settings:
-				history.push(`${MenuItemPaths[e.key]}`);
-				break;
-			default:
-				history.push(`/product/${products[e.key]}${MenuItemPaths[e.key]}`);
-                window.location.reload();
-		}
+            case Directory:
+                history.push(`${MenuItemPaths[e.key]}`);
+                break;
+            case Settings:
+                history.push(`${MenuItemPaths[e.key]}`);
+                break;
+            default:
+                history.push(`/product/${products[e.key]}${MenuItemPaths[e.key]}`);
+        }
     }
 
     return (
         <Header className="header">
             <div className="logo">
-                <img src="../../Credenti_Logo.png" alt="Credenti TecConnect" width={150}/>
+                <img src={ window.location.origin + "/Credenti_Logo.png" } alt="Credenti TecConnect" width={150} />
             </div>
 
             <Menu className="border-bottom-0" theme="light" mode="horizontal"
-                selectedKeys={[selectedMenuOption]} onClick={headerMenuClickHandler}
+                selectedKeys={selectedHeaderKeys} onClick={headerMenuClickHandler}
                 items={headerItems}
             />
 
             <Menu className="border-bottom-0" theme="light" mode="horizontal" id="logout-menu">
-                <SubMenu title={authState?.idToken?.claims.name?.split(" ")[0]}
+                <SubMenu title={//@ts-ignore
+                    oktaAuth.authStateManager._authState?.idToken?.claims.name.split(" ")[0]}
                     icon={<UserOutlined />}
                     key={'sub'}
                 >
@@ -130,7 +198,7 @@ function AppHeader() {
                         style={{ userSelect: 'text' }} disabled
                     >
                         <p style={{ fontWeight: 600, fontSize: 'medium', position: 'relative', top: '8px', padding: '0px 0px 0px 10px' }}>
-                            {authState?.idToken?.claims.name}
+                            {oktaAuth.authStateManager._authState?.idToken?.claims.name}
                         </p>
                     </Menu.Item>
 
@@ -140,7 +208,7 @@ function AppHeader() {
                     }}
                         disabled
                     >
-                        {authState?.idToken?.claims.email}
+                        {oktaAuth.authStateManager._authState?.idToken?.claims.email}
                     </Menu.Item>
 
                     <Menu.Item key="logout" onClick={logout} style={{

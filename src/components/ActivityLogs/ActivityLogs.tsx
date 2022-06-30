@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import { Button, Collapse, Skeleton, DatePicker, Table } from "antd";
 import { CaretRightOutlined } from '@ant-design/icons';
 import moment from "moment";
@@ -97,7 +98,10 @@ export default function ActivityLogs() {
     const [logResponse, setLogResponse] = useState<any>({});
     const [loading, setLoading] = useState(true);
     const [tableLoading, setTableLoading] = useState(false);
+    const { productId } = useParams<any>();
+    const accountId = localStorage.getItem('accountId');
 
+    
     const initialDateTimeFilters = {
         start: {
             date: moment().startOf("day").subtract(7, "days").format(date_format),
@@ -159,10 +163,10 @@ export default function ActivityLogs() {
             setTableLoading(true);
             try {
                 const data = await ApiService.post(
-                    ApiUrls.activityLog,
+                    ApiUrls.activityLog(accountId, productId),
                     generateFilterPayload()
                 );
-
+                    console.log(data);
                 setLogResponse(data);
             } catch (error) {
                 console.error('Error: ', error);
@@ -171,6 +175,11 @@ export default function ActivityLogs() {
             setLoading(false);
             setTableLoading(false);
         })();
+
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
     }, [datetimeFilters, advancedFilters]);
 
     async function showMoreClick() {
@@ -179,7 +188,7 @@ export default function ActivityLogs() {
             setTableLoading(true);
             try {
                 var response = await ApiService.post(
-                    `${ApiUrls.activityLog}${url.search}`,
+                    `${ApiUrls.activityLog(accountId, productId)}${url.search}`,
                     generateFilterPayload()
                 );
                 setTableLoading(false);

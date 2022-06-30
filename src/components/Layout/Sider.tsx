@@ -3,14 +3,16 @@ import { useHistory } from "react-router-dom";
 import { Menu } from "antd";
 import Sider from "antd/lib/layout/Sider";
 import { ScanOutlined , UserOutlined, DesktopOutlined, TeamOutlined, SettingOutlined, PieChartOutlined,
-	AreaChartOutlined, SolutionOutlined, LockOutlined
+	AreaChartOutlined, SolutionOutlined, LockOutlined, GlobalOutlined, AppstoreOutlined
 } from '@ant-design/icons';
 
 import {
 	ActivityLogs, activityLogs, Dashboard, dashboard, Directory, Groups, groups,
 	Machines, machines, Devices, devices, Mechanisms, mechanisms, MenuItemPaths,
-	Policies, policies, productNames, account, Settings, TecBIO, TecTANGO, Users, users, TecTango, TecBio, Account
+	Policies, policies, productNames, account, Settings, TecBIO, TecTANGO, Users, 
+  users, TecTango, TecUNIFY, TecBio, Account, Domain, domain, Applications, applications
 } from "../../constants";
+
 import { Store } from "../../Store";
 
 // Sidebar items
@@ -35,11 +37,11 @@ const directoryItems = [
         key: machines,
         icon: <DesktopOutlined />
     },
-	{
-		label: Devices,
-		key: devices,
-		icon: <ScanOutlined />
-	}
+    {
+      label: Devices,
+      key: devices,
+      icon: <ScanOutlined />
+    }
 ];
 
 const commonProductItems = [
@@ -65,6 +67,19 @@ const settingsItems = [
         label: Account,
         key: account,
         icon: <SettingOutlined />
+    },
+	{
+        label: Domain,
+        key: domain,
+        icon: <GlobalOutlined />
+    }
+];
+
+const tecUnifyItems = [
+    {
+        label: Applications,
+        key: applications,
+        icon: <AppstoreOutlined />        
     }
 ];
 
@@ -96,9 +111,9 @@ function AppSider() {
 			{
 				label: <div className="sidebar-header-content">
 					{productNames[selectedHeaderOption] === TecTango ?
-					  <img height={28} width={28} src={"../../TecTango.png"} /> : 
+					  <img height={28} width={28} src={window.location.origin + "/TecTango.png"} /> : 
 					  productNames[selectedHeaderOption] === TecBio? 
-					  <img height={28} width={28} src={"../../TecBioIcon.png"} /> : <></>}
+					  <img height={28} width={28} src={window.location.origin + "/TecBioIcon.png"} /> : <></>}
 					{productNames[selectedHeaderOption]}
 				</div>,
 				key: selectedHeaderOption
@@ -115,12 +130,14 @@ function AppSider() {
 				return productItemsWithHeader;
 			case TecBIO:
 				return productItemsWithHeader;
+      case TecUNIFY:
+        return tecUnifyItems;
 			default:
 				return [];
 		}
 	}
 
-	const sidebarItems = useMemo(() => renderItems(), [selectedHeaderOption]);
+	const sidebarItems  = useMemo(() => renderItems(), [selectedHeaderOption]);
 
 	return (
 		<Sider width='250'
@@ -130,7 +147,7 @@ function AppSider() {
 				onSelect={(e: any) => {openScreen(e.key)}}
 				selectedKeys={[window.location.pathname.split("/")[window.location.pathname.split("/")[1] === 'product' ? 3 : 1]]}
 				className="sider-menu"
-				items={sidebarItems}
+				items={sidebarItems as any}
 			/>
 		</Sider>
 	);

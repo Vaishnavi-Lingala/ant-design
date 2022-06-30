@@ -1,6 +1,7 @@
 import { useState } from "react";
+import { useParams } from 'react-router-dom';
 import { Button, Modal, Table } from "antd";
-import { CloseOutlined} from "@ant-design/icons";
+import { CloseOutlined } from "@ant-design/icons";
 
 import CardEnrollmentPolicy from "./CardEnrollmentPolicy";
 import { KioskPolicy } from "./kioskPolicy";
@@ -9,10 +10,14 @@ import { PinPolicy } from "./pinPolicy";
 import { openNotification } from "../Layout/Notification";
 import ApiUrls from "../../ApiUtils";
 import ApiService from "../../Api.service";
-import { CARD_ENROLL, KIOSK, PASSWORD, PIN, policyDisplayNames } from "../../constants";
+import { CARD_ENROLL, KIOSK, LOCAL_USER_PROVISIONING, PASSWORD, PIN, policyDisplayNames } from "../../constants";
+import UserProvisioningPolicy from "./UserProvisioningPolicy";
 
 function TableList({ handleGetPolicies, policy_type, policy_description, activateColumns, activePolicies, draggableContainer, draggableBodyRow, deActivateColumns, inActivePolicies }) {
     const [isModal, setIsModal] = useState(false);
+    const { productId } = useParams<any>();
+    const [buttonLoading, setButtonLoading] = useState(false);
+
     const pinData = {
         description: '',
         name: '',
@@ -20,14 +25,14 @@ function TableList({ handleGetPolicies, policy_type, policy_description, activat
         policy_type: PIN,
         auth_policy_groups: [],
         policy_req: {
-            expires_in_x_days: 1,
+            expires_in_x_days: 365,
             is_special_char_req: false,
             pin_history_period: 0,
             min_length: 4,
             is_upper_case_req: false,
             is_lower_case_req: false,
             is_non_consecutive_char_req: false,
-            max_length: 4,
+            max_length: 6,
             is_pin_history_req: false,
             is_num_req: true
         }
@@ -70,21 +75,37 @@ function TableList({ handleGetPolicies, policy_type, policy_description, activat
         auth_policy_groups: [],
     }
 
+    const userProvisioningData = {
+        name: "",
+        description: "",
+        auth_policy_groups: [],
+        kiosk_machine_groups: [],
+        policy_type: LOCAL_USER_PROVISIONING,
+        policy_req: {
+            local_profile_format: "",
+            local_profile_user_type: ""
+        }
+    }
+
     const handleOk = (policyType: string, object: object) => {
-        ApiService.post(ApiUrls.addPolicy, object)
+        setButtonLoading(true);
+        ApiService.post(ApiUrls.addPolicy(localStorage.getItem('accountId'), productId), object)
             .then(data => {
                 if (!data.errorSummary) {
                     console.log(data);
-                    openNotification('success', `Successfully added ${policyType.slice(0, 1) + policyType.slice(1).toLowerCase()} Policy`);
+                    openNotification('success', `Successfully created ${policyType.slice(0, 1) + policyType.slice(1).toLowerCase()} Policy`);
                     setIsModal(false);
+                    setButtonLoading(false);
                     handleGetPolicies();
                 }
                 else {
                     openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
+                    setButtonLoading(false);
                 }
             }, error => {
                 console.error('Error: ', error);
-                openNotification('error', `An Error has occured with adding ${policyType.slice(0, 1) + policyType.slice(1).toLowerCase()} Policy`);
+                setButtonLoading(false);
+                openNotification('error', `An Error has occured with creating ${policyType.slice(0, 1) + policyType.slice(1).toLowerCase()} Policy`);
             })
     }
 
@@ -112,7 +133,7 @@ function TableList({ handleGetPolicies, policy_type, policy_description, activat
                 >
                     Add {policyDisplayNames[policy_type]} Policy
                 </Button>
-                   
+
             </div>
             <div style={{
                 fontWeight: 600, fontSize: 'x-large',
@@ -157,16 +178,18 @@ function TableList({ handleGetPolicies, policy_type, policy_description, activat
                 pagination={false}
             />
 
-            <Modal visible={isModal} closeIcon={<Button icon={<CloseOutlined />}></Button>} footer={false} centered width={900} maskClosable={true} onCancel={handleCancel}
+            <Modal visible={isModal} closeIcon={<Button icon={<CloseOutlined />}></Button>} footer={false} centered width={900} maskClosable={false} onCancel={handleCancel}
                 title={<div style={{ fontSize: '30px' }}>Add {policyDisplayNames[policy_type]} Policy </div>}
             >
                 {policy_type === PIN ?
-                    <PinPolicy pinDetails={pinData} handleOk={handleOk} handleCancel={handleCancel} /> :
+                    <PinPolicy pinDetails={pinData} buttonLoading={buttonLoading} handleOk={handleOk} handleCancel={handleCancel} /> :
                     policy_type === PASSWORD ?
-                        <PasswordPolicy passwordDetails={passwordData} handleOk={handleOk} handleCancel={handleCancel} /> :
+                        <PasswordPolicy passwordDetails={passwordData} buttonLoading={buttonLoading} handleOk={handleOk} handleCancel={handleCancel} /> :
                         policy_type === KIOSK ?
-                            <KioskPolicy kioskDetails={kioskData} handleOk={handleOk} handleCancel={handleCancel} /> :
-                            <CardEnrollmentPolicy policyDetails={cardEnrollData} handleOk={handleOk} handleCancel={handleCancel} />
+                            <KioskPolicy kioskDetails={kioskData} buttonLoading={buttonLoading} handleOk={handleOk} handleCancel={handleCancel} /> :
+                            policy_type === CARD_ENROLL ?
+                                <CardEnrollmentPolicy policyDetails={cardEnrollData} buttonLoading={buttonLoading} handleOk={handleOk} handleCancel={handleCancel} /> :
+                                <UserProvisioningPolicy policyDetails={userProvisioningData} buttonLoading={buttonLoading} handleOk={handleOk} handleCancel={handleCancel} />
                 }
             </Modal>
         </>

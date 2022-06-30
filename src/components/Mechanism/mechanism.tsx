@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import { Button, Input, Radio, Select, Skeleton } from "antd";
 
 import './Mechanism.css'
@@ -30,9 +30,10 @@ function Mechanism(props: any) {
     const [disabledFactors1]: any = useState([]);
     const [selectedHeader] = useContext(Store);
     const history = useHistory();
-
-    const productId = localStorage.getItem("productId");
+    const { productId } = useParams<any>();
+    const accountId = localStorage.getItem('accountId');
     
+
     const mechanism = {
         challenge_factors: [
             {
@@ -59,7 +60,7 @@ function Mechanism(props: any) {
     }
 
     useEffect(() => {
-        ApiService.get(ApiUrls.mechanism(window.location.pathname.split('/')[4]))
+        ApiService.get(ApiUrls.mechanism(accountId, productId, window.location.pathname.split('/')[4]))
             .then((data: MechanismType) => {
                 //@ts-ignore
                 if (!data.errorSummary) {
@@ -122,9 +123,9 @@ function Mechanism(props: any) {
 
     useEffect(() => {
         Promise.all(([
-            ApiService.get(ApiUrls.groups, { type: "USER" }),
-            ApiService.get(ApiUrls.mechanismOptions),
-            ApiService.get(ApiUrls.mechanismChallengeFactors),
+            ApiService.get(ApiUrls.groups(accountId), { type: "USER" }),
+            ApiService.get(ApiUrls.mechanismOptions(accountId)),
+            ApiService.get(ApiUrls.mechanismChallengeFactors(accountId, productId)),
         ]))
             .then(data => {
                 for (var i = 0; i < data[0].length; i++) {
@@ -154,12 +155,17 @@ function Mechanism(props: any) {
             .catch(error => {
                 openNotification('error', error.message);
             })
+            
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth',
+            });
     }, [])
 
     function updateMechanism() {
         console.log(groupUids);
         editData.mechanism_groups = groupUids
-        ApiService.put(ApiUrls.mechanism(displayDetails['uid']), editData)
+        ApiService.put(ApiUrls.mechanism(accountId, productId, displayDetails['uid']), editData)
             .then(data => {
                 if (!data.errorSummary) {
                     groupNames.length = 0;
@@ -186,6 +192,7 @@ function Mechanism(props: any) {
     }
 
     function handleCancelClick() {
+        setEditData({ ...displayDetails });
         setIsEdit(false);
     }
 
@@ -247,9 +254,9 @@ function Mechanism(props: any) {
             <div className="content-container rounded-grey-border">
                 <div className="row-containers">
                     <div>
-                        {displayDetails['uid'] === undefined ? <></> :
+                        {/* {displayDetails['uid'] === undefined ? <></> :
                             <div className="content-heading">Edit Mechanism</div>
-                        }
+                        } */}
                     </div>
                     <div style={{ paddingRight: '50px', paddingBottom: '20px' }}>
                         {displayDetails['name'] !== "" ? <Button style={{ float: 'right' }} onClick={handleEditClick}>
@@ -289,9 +296,12 @@ function Mechanism(props: any) {
                                 placeholder="Please select groups"
                                 defaultValue={displayDetails['name'] !== "" ? groupNames : []}
                                 onChange={handleGroups}
-                                // disabled={!isEdit}
                                 style={{ width: '275px' }}
                                 options={groups}
+                                filterOption={(input, option) =>
+                                    //@ts-ignore
+                                    option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                }
                             /> : Object.keys(groupNames).map(name =>
                                 <div style={{ display: 'inline-block', marginRight: '3px', paddingBottom: '3px' }}>
                                     <Button style={{ cursor: 'text' }}>{groupNames[name]}</Button>
@@ -320,7 +330,7 @@ function Mechanism(props: any) {
                         Tapout Action:
                     </div>
                     <div style={{ paddingTop: '20px' }}>
-                        <Radio.Group name="Tapout Action" defaultValue={displayDetails['on_tap_out']}
+                        <Radio.Group name="Tapout Action" value={editData?.on_tap_out}
                             onChange={(e) => {
                                 setEditData({
                                     ...editData,
@@ -420,7 +430,7 @@ function Mechanism(props: any) {
                 </div> : <></>) : <div style={{ paddingTop: '10px', paddingRight: '45px', paddingBottom: '20px' }}>
                     <Button style={{ float: 'right', marginLeft: '10px' }}
                         onClick={setCancelClick}>Cancel</Button>
-                    <Button type='primary' style={{ float: 'right' }}
+                    <Button loading={props.buttonLoading} type='primary' style={{ float: 'right' }}
                         onClick={createMechanism}>Create</Button></div>
             }
         </Skeleton>

@@ -8,6 +8,7 @@ import './Policies.css';
 import ApiService from "../../Api.service";
 import ApiUrls from '../../ApiUtils';
 import { openNotification } from "../Layout/Notification";
+import { policyDisplayNames } from "../../constants";
 
 export const PinPolicy = (props: any) => {
 	const [isEdit, setIsEdit] = useState(false);
@@ -20,11 +21,12 @@ export const PinPolicy = (props: any) => {
 	const [groupsChange, setGroupsChange]: any = useState([]);
 	const [policyRequirements, setPolicyRequirements] = useState({});
 	const history = useHistory();
+	const accountId = localStorage.getItem('accountId');
 
 	useEffect(() => {
 		Promise.all(([
-			ApiService.get(ApiUrls.groups, { type: "USER" }),
-			ApiService.get(ApiUrls.policy(window.location.pathname.split('/')[5]))
+			ApiService.get(ApiUrls.groups(accountId), { type: "USER" }),
+			ApiService.get(ApiUrls.policy(accountId, window.location.pathname.split('/')[5]))
 		]))
 			.then(data => {
 				console.log('GROUPS: ', data[0]);
@@ -79,7 +81,7 @@ export const PinPolicy = (props: any) => {
 
 	function updatePinPolicy() {
 		pinEditData.auth_policy_groups = groupUids;
-		ApiService.put(ApiUrls.policy(pinDisplayData['uid']), pinEditData)
+		ApiService.put(ApiUrls.policy(accountId, pinDisplayData['uid']), pinEditData)
 			.then(data => {
 				if (!data.errorSummary) {
 					groupNames.length = 0;
@@ -107,6 +109,7 @@ export const PinPolicy = (props: any) => {
 	}
 
 	function handleCancelClick() {
+		setPinEditedData({ ...pinDisplayData });
 		setIsEdit(false);
 	}
 
@@ -141,9 +144,9 @@ export const PinPolicy = (props: any) => {
 			<div className={pinDisplayData['uid'] === undefined ? "content-container" : "content-container-policy"}>
 				<div className="row-policy-container">
 					<div>
-						{pinDisplayData['uid'] === undefined ? <></> :
+						{/* {pinDisplayData['uid'] === undefined ? <></> :
 							<div className="content-heading">Edit Pin Policy</div>
-						}
+						} */}
 					</div>
 					<div>
 						{pinDisplayData['default'] === false ? <Button style={{ float: 'right' }} onClick={handleEditClick}>
@@ -196,6 +199,10 @@ export const PinPolicy = (props: any) => {
 								onChange={handleGroups}
 								style={{ width: '275px' }}
 								options={groups}
+								filterOption={(input, option) =>
+									//@ts-ignore
+									option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
+								}
 							/> : Object.keys(groupNames).map(name =>
 								<div style={{ display: 'inline-block', marginRight: '3px', paddingBottom: '3px' }}>
 									<Button style={{ cursor: 'text' }}>{groupNames[name]}</Button>
@@ -208,7 +215,7 @@ export const PinPolicy = (props: any) => {
 						Policy Type:
 					</div>
 					<div>
-						{pinDisplayData['policy_type']}
+						{policyDisplayNames[pinDisplayData['policy_type']]}
 					</div>
 				</div>
 
@@ -221,8 +228,15 @@ export const PinPolicy = (props: any) => {
 					<div>
 						{
 							isEdit ? <InputNumber
-								onChange={(val) => { pinEditData.policy_req.min_length = parseInt(val); }}
-								defaultValue={policyRequirements['min_length'].toString()} /> : policyRequirements['min_length']
+								min={4}
+								onChange={(value) => setPinEditedData((state) => {
+									const { policy_req } = state;
+									return {
+										...pinEditData,
+										policy_req: { ...policy_req, min_length: value }
+									}
+								})}
+								value={pinEditData?.policy_req?.min_length} /> : policyRequirements['min_length']
 						}
 					</div>
 
@@ -230,8 +244,14 @@ export const PinPolicy = (props: any) => {
 					<div>
 						{
 							isEdit ? <InputNumber
-								onChange={(val) => { pinEditData.policy_req.max_length = parseInt(val); }}
-								defaultValue={policyRequirements['max_length'].toString()} /> : policyRequirements['max_length']
+								onChange={(value) => setPinEditedData((state) => {
+									const { policy_req } = state;
+									return {
+										...pinEditData,
+										policy_req: { ...policy_req, max_length: value }
+									}
+								})}
+								value={pinEditData?.policy_req?.max_length} /> : policyRequirements['max_length']
 						}
 					</div>
 				</div>
@@ -243,55 +263,107 @@ export const PinPolicy = (props: any) => {
 					<div className="checkbox-container" style={{ padding: '20px 0 10px 0' }}>
 						<div>
 							<Checkbox
-								onChange={(e) => pinEditData.policy_req.is_lower_case_req = e.target.checked}
-								defaultChecked={!isEdit ? policyRequirements['is_lower_case_req'] : policyRequirements['is_lower_case_req']}
-								disabled={!isEdit}>
+								checked={pinEditData?.policy_req?.is_lower_case_req}
+								disabled={!isEdit}
+								onChange={(e) => setPinEditedData((state) => {
+									const { policy_req } = state;
+									return {
+										...pinEditData,
+										policy_req: { ...policy_req, is_lower_case_req: e.target.checked }
+									}
+								})}
+							>
 								Lower case letter
-							</Checkbox>
-						</div>
-						<div>
-							<Checkbox
-								onChange={(e) => pinEditData.policy_req.is_upper_case_req = e.target.checked}
-								defaultChecked={!isEdit ? policyRequirements['is_upper_case_req'] : pinEditData.policy_req.is_upper_case_req}
-								disabled={!isEdit}>
-								Upper case letter
-							</Checkbox>
-						</div>
-						<div>
-							<Checkbox
-								onChange={(e) => pinEditData.policy_req.is_num_req = e.target.checked}
-								defaultChecked={!isEdit ? policyRequirements['is_num_req'] : pinEditData.policy_req.is_num_req}
-								disabled={!isEdit}>
-								Number (0-9)
-							</Checkbox>
-						</div>
-						<div>
-							<Checkbox
-								onChange={(e) => pinEditData.policy_req.is_special_char_req = e.target.checked}
-								defaultChecked={!isEdit ? policyRequirements['is_special_char_req'] : pinEditData.policy_req.is_special_char_req}
-								disabled={!isEdit}>
-								Special characters (e.g., !@#$%^&*)
-							</Checkbox>
-						</div>
-						<div>
-							<Checkbox
-								onChange={(e) => pinEditData.policy_req.is_pin_history_req = e.target.checked}
-								defaultChecked={!isEdit ? policyRequirements['is_pin_history_req'] : pinEditData.policy_req.is_pin_history_req}
-								disabled={!isEdit}>
-								Enforce PIN history for last&nbsp;
-								{
-									isEdit ? <InputNumber
-										onChange={(val) => { pinEditData.policy_req.pin_history_period = parseInt(val) }}
-										defaultValue={policyRequirements['pin_history_period'].toString()} /> : policyRequirements['pin_history_period']
-								} {policyRequirements['pin_history_period'] > 1 ? "PINS" : "PIN"}
 							</Checkbox>
 						</div>
 
 						<div>
 							<Checkbox
-								onChange={(e) => pinEditData.policy_req.is_non_consecutive_char_req = e.target.checked}
-								defaultChecked={!isEdit ? policyRequirements['is_non_consecutive_char_req'] : pinEditData.policy_req.is_non_consecutive_char_req}
-								disabled={!isEdit}>
+								checked={pinEditData?.policy_req?.is_upper_case_req}
+								disabled={!isEdit}
+								onChange={(e) => setPinEditedData((state) => {
+									const { policy_req } = state;
+									return {
+										...pinEditData,
+										policy_req: { ...policy_req, is_upper_case_req: e.target.checked }
+									}
+								})}
+							>
+								Upper case letter
+							</Checkbox>
+						</div>
+
+						<div>
+							<Checkbox
+								checked={pinEditData?.policy_req?.is_num_req}
+								disabled={!isEdit}
+								onChange={(e) => setPinEditedData((state) => {
+									const { policy_req } = state;
+									return {
+										...pinEditData,
+										policy_req: { ...policy_req, is_num_req: e.target.checked }
+									}
+								})}
+							>
+								Number (0-9)
+							</Checkbox>
+						</div>
+
+						<div>
+							<Checkbox
+								checked={pinEditData?.policy_req?.is_special_char_req}
+								disabled={!isEdit}
+								onChange={(e) => setPinEditedData((state) => {
+									const { policy_req } = state;
+									return {
+										...pinEditData,
+										policy_req: { ...policy_req, is_special_char_req: e.target.checked }
+									}
+								})}
+							>
+								Special characters (e.g., !@#$%^&*)
+							</Checkbox>
+						</div>
+
+						{/* <div>
+							<Checkbox
+								checked={pinEditData?.policy_req?.is_pin_history_req}
+								disabled={!isEdit}
+								onChange={(e) => setPinEditedData((state) => {
+									const { policy_req } = state;
+									return {
+										...pinEditData,
+										policy_req: { ...policy_req, is_pin_history_req: e.target.checked }
+									}
+								})}
+							>
+								Enforce PIN history for last &nbsp;
+								{
+									isEdit ? <InputNumber
+										onChange={(value) => setPinEditedData((state) => {
+											const { policy_req } = state;
+											return {
+												...pinEditData,
+												policy_req: { ...policy_req, pin_history_period: value }
+											}
+										})}
+										value={pinEditData?.policy_req?.pin_history_period} /> : policyRequirements['pin_history_period']
+								} {policyRequirements['pin_history_period'] > 1 ? "PINS" : "PIN"}
+							</Checkbox>
+						</div> */}
+
+						<div>
+							<Checkbox
+								checked={pinEditData?.policy_req?.is_non_consecutive_char_req}
+								disabled={!isEdit}
+								onChange={(e) => setPinEditedData((state) => {
+									const { policy_req } = state;
+									return {
+										...pinEditData,
+										policy_req: { ...policy_req, is_non_consecutive_char_req: e.target.checked }
+									}
+								})}
+							>
 								No consecutive characters or numbers
 							</Checkbox>
 						</div>
@@ -303,9 +375,15 @@ export const PinPolicy = (props: any) => {
 					<div>
 						<div>
 							{
-								isEdit ? <InputNumber
-									onChange={(val) => { pinEditData.policy_req.expires_in_x_days = parseInt(val) }}
-									defaultValue={policyRequirements['expires_in_x_days'].toString()} /> : policyRequirements['expires_in_x_days']
+								isEdit ? <InputNumber min={1}
+									onChange={(value) => setPinEditedData((state) => {
+										const { policy_req } = state;
+										return {
+											...pinEditData,
+											policy_req: { ...policy_req, expires_in_x_days: value }
+										}
+									})}
+									value={pinEditData?.policy_req?.expires_in_x_days} /> : policyRequirements['expires_in_x_days']
 							} {policyRequirements['expires_in_x_days'] > 1 ? "days" : "day"}
 						</div>
 					</div>
@@ -320,7 +398,7 @@ export const PinPolicy = (props: any) => {
 				</div> : <></>) : <div style={{ paddingTop: '10px', paddingRight: '45px', paddingBottom: '20px' }}>
 					<Button style={{ float: 'right', marginLeft: '10px' }}
 						onClick={setCancelClick}>Cancel</Button>
-					<Button type='primary' style={{ float: 'right' }}
+					<Button type='primary' loading={props.buttonLoading} style={{ float: 'right' }}
 						onClick={createPinPolicy}>Create</Button></div>
 			}
 		</Skeleton>

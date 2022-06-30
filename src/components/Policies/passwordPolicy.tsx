@@ -8,12 +8,12 @@ import './Policies.css'
 import ApiService from "../../Api.service";
 import ApiUrls from '../../ApiUtils';
 import { openNotification } from "../Layout/Notification";
+import { policyDisplayNames } from "../../constants";
 
 export const PasswordPolicy = (props: any) => {
     const [isEdit, setIsEdit] = useState(false);
     const [passwordDisplayData, setPasswordDisplayData] = useState({});
     const [passwordEditData, setPasswordEditedData]: any = useState();
-    const [policyRequirements, setPolicyRequirements] = useState({});
     const [loading, setLoading] = useState(true);
     const [graceOptions, setGraceOptions]: any = useState({});
     const [groups, setGroups]: any = useState([]);
@@ -21,19 +21,19 @@ export const PasswordPolicy = (props: any) => {
     const [groupUids, setGroupUids]: any = useState([]);
     const [groupsChange, setGroupsChange]: any = useState([]);
     const history = useHistory();
+    const accountId = localStorage.getItem('accountId');
 
     useEffect(() => {
         Promise.all(([
-            ApiService.get(ApiUrls.policy(window.location.pathname.split('/')[5])),
-            ApiService.get(ApiUrls.groups, { type: "USER" }),
-            ApiService.get(ApiUrls.mechanismPasswordGraceOptions)
+            ApiService.get(ApiUrls.policy(accountId, window.location.pathname.split('/')[5])),
+            ApiService.get(ApiUrls.groups(accountId), { type: "USER" }),
+            ApiService.get(ApiUrls.mechanismPasswordGraceOptions(accountId))
         ]))
             .then((data) => {
                 //@ts-ignore
                 if (!data[0].errorSummary) {
                     setPasswordDisplayData(data[0]);
                     setPasswordEditedData(data[0]);
-                    setPolicyRequirements(data[0]['policy_req']);
 
                     Object.keys(data[0]['auth_policy_groups']).map(index => {
                         groupNames.push(data[0]['auth_policy_groups'][index].name);
@@ -45,7 +45,6 @@ export const PasswordPolicy = (props: any) => {
                 else if (window.location.pathname.split('/').length === 5) {
                     setPasswordDisplayData(props.passwordDetails);
                     setPasswordEditedData(props.passwordDetails);
-                    setPolicyRequirements(props.passwordDetails.policy_req);
                     setIsEdit(true);
                 }
                 else {
@@ -85,6 +84,7 @@ export const PasswordPolicy = (props: any) => {
 
     function handleCancelClick() {
         setIsEdit(false);
+        setPasswordEditedData(passwordDisplayData);
     }
 
     function handleSaveClick() {
@@ -101,7 +101,7 @@ export const PasswordPolicy = (props: any) => {
 
     function updatePasswordPolicy() {
         passwordEditData.auth_policy_groups = groupUids;
-        ApiService.put(ApiUrls.policy(passwordDisplayData['uid']), passwordEditData)
+        ApiService.put(ApiUrls.policy(accountId, passwordDisplayData['uid']), passwordEditData)
             .then(data => {
                 if (!data.errorSummary) {
                     groupNames.length = 0;
@@ -141,9 +141,9 @@ export const PasswordPolicy = (props: any) => {
         <div className={passwordDisplayData['uid'] === undefined ? "content-container" : "content-container-policy"}>
             <div className="row-policy-container">
                 <div>
-                    {passwordDisplayData['uid'] === undefined ? <></> :
+                    {/* {passwordDisplayData['uid'] === undefined ? <></> :
                         <div className="content-heading">Edit Password Policy</div>
-                    }
+                    } */}
                 </div>
                 <div>
                     {passwordDisplayData['default'] === false ? <Button style={{ float: 'right' }} onClick={handleEditClick}>
@@ -197,6 +197,10 @@ export const PasswordPolicy = (props: any) => {
                             onChange={handleGroups}
                             style={{ width: '275px' }}
                             options={groups}
+                            filterOption={(input, option) =>
+                                //@ts-ignore
+                                option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                            }
                         /> : Object.keys(groupNames).map(name =>
                             <div style={{ display: 'inline-block', marginRight: '3px', paddingBottom: '3px' }}>
                                 <Button style={{ cursor: 'text' }}>{groupNames[name]}</Button>
@@ -209,7 +213,7 @@ export const PasswordPolicy = (props: any) => {
                     Policy Type:
                 </div>
                 <div>
-                    {passwordDisplayData['policy_type']}
+                    {policyDisplayNames[passwordDisplayData['policy_type']]}
                 </div>
             </div>
 
@@ -220,9 +224,15 @@ export const PasswordPolicy = (props: any) => {
                     Grace Period:
                 </div>
                 <div style={{ padding: '12px 0 10px 0' }}>
-                    <Radio.Group defaultValue={policyRequirements['grace_period']}
+                    <Radio.Group value={passwordEditData?.policy_req?.grace_period}
                         disabled={!isEdit}
-                        onChange={(e) => passwordEditData.policy_req.grace_period = e.target.value}
+                        onChange={(e) => setPasswordEditedData((state) => {
+                            const { policy_req } = state;
+                            return {
+                                ...passwordEditData,
+                                policy_req: { ...policy_req, grace_period: e.target.value }
+                            }
+                        })}
                     >
                         {
                             Object.keys(graceOptions).map(factor => {
@@ -250,17 +260,18 @@ export const PasswordPolicy = (props: any) => {
             </div>
         </div>
 
-        {passwordDisplayData['uid'] !== undefined ?
-            (isEdit ? <div style={{ paddingTop: '10px', paddingRight: '45px' }}>
-                <Button style={{ float: 'right', marginLeft: '10px' }}
-                    onClick={handleCancelClick}>Cancel</Button>
-                <Button type='primary' style={{ float: 'right' }}
-                    onClick={handleSaveClick}>Save</Button>
-            </div> : <></>) : <div style={{ paddingTop: '10px', paddingRight: '45px', paddingBottom: '20px' }}>
-                <Button style={{ float: 'right', marginLeft: '10px' }}
-                    onClick={setCancelClick}>Cancel</Button>
-                <Button type='primary' style={{ float: 'right' }}
-                    onClick={createPasswordPolicy}>Create</Button></div>
+        {
+            passwordDisplayData['uid'] !== undefined ?
+                (isEdit ? <div style={{ paddingTop: '10px', paddingRight: '45px' }}>
+                    <Button style={{ float: 'right', marginLeft: '10px' }}
+                        onClick={handleCancelClick}>Cancel</Button>
+                    <Button type='primary' style={{ float: 'right' }}
+                        onClick={handleSaveClick}>Save</Button>
+                </div> : <></>) : <div style={{ paddingTop: '10px', paddingRight: '45px', paddingBottom: '20px' }}>
+                    <Button style={{ float: 'right', marginLeft: '10px' }}
+                        onClick={setCancelClick}>Cancel</Button>
+                    <Button type='primary' loading={props.buttonLoading} style={{ float: 'right' }}
+                        onClick={createPasswordPolicy}>Create</Button></div>
         }
-    </Skeleton>
+    </Skeleton >
 }
