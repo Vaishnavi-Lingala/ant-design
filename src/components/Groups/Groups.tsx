@@ -51,6 +51,11 @@ export default function Groups() {
         }
     ];
 
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+    });
+
     var type: any = [];
     type.push(window.location.pathname.split('/').length === 2 ? "USER" : window.location.pathname.split('/')[2].toUpperCase()); 
 

@@ -14,7 +14,7 @@ import { CARD_ENROLL, KIOSK, PASSWORD, PIN, policyDisplayNames } from "../../con
 
 function TableList({ handleGetPolicies, policy_type, policy_description, activateColumns, activePolicies, draggableContainer, draggableBodyRow, deActivateColumns, inActivePolicies }) {
     const [isModal, setIsModal] = useState(false);
-    const { productId } = useParams();
+    const { productId } = useParams<any>();
     const [buttonLoading, setButtonLoading] = useState(false);
 
     const pinData = {
@@ -24,7 +24,7 @@ function TableList({ handleGetPolicies, policy_type, policy_description, activat
         policy_type: PIN,
         auth_policy_groups: [],
         policy_req: {
-            expires_in_x_days: 1,
+            expires_in_x_days: 365,
             is_special_char_req: false,
             pin_history_period: 0,
             min_length: 4,

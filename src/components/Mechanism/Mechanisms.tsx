@@ -20,7 +20,7 @@ export default function Mechanisms() {
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const history = useHistory();
     const [buttonLoading, setButtonLoading] = useState(false);
-	const { productId } = useParams();
+	const { productId } = useParams<any>();
 	const accountId = localStorage.getItem('accountId');
 
 	const inactiveColumns = [
@@ -261,6 +261,11 @@ export default function Mechanisms() {
 			{...props}
 		/>
 	);
+
+	window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+    });
 
 	const DraggableBodyRow = ({ className, style, ...restProps }) => {
 		const index = activeMechanisms.findIndex(x => x.index === restProps['data-row-key']);

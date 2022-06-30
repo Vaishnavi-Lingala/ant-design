@@ -33,7 +33,7 @@ export default function Policies() {
 	const [inActiveCardEnrollmentPolicies, setInActiveCardEnrollmentPolicies] = useState([]);
 	const path = window.location.pathname.split('/').length;
 	const [maxEnroll, setMaxEnroll] = useState(null);
-	const { productId } = useParams();
+	const { productId } = useParams<any>();
 	const { TabPane } = Tabs;
 	const accountId = localStorage.getItem('accountId');
 
@@ -88,6 +88,11 @@ export default function Policies() {
 			)
 		}
 	];
+
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+    });
 
 	const deActivateColumns = [
 		{

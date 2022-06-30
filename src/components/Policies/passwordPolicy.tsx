@@ -13,7 +13,6 @@ export const PasswordPolicy = (props: any) => {
     const [isEdit, setIsEdit] = useState(false);
     const [passwordDisplayData, setPasswordDisplayData] = useState({});
     const [passwordEditData, setPasswordEditedData]: any = useState();
-    const [policyRequirements, setPolicyRequirements] = useState({});
     const [loading, setLoading] = useState(true);
     const [graceOptions, setGraceOptions]: any = useState({});
     const [groups, setGroups]: any = useState([]);
@@ -34,7 +33,6 @@ export const PasswordPolicy = (props: any) => {
                 if (!data[0].errorSummary) {
                     setPasswordDisplayData(data[0]);
                     setPasswordEditedData(data[0]);
-                    setPolicyRequirements(data[0]['policy_req']);
 
                     Object.keys(data[0]['auth_policy_groups']).map(index => {
                         groupNames.push(data[0]['auth_policy_groups'][index].name);
@@ -46,7 +44,6 @@ export const PasswordPolicy = (props: any) => {
                 else if (window.location.pathname.split('/').length === 5) {
                     setPasswordDisplayData(props.passwordDetails);
                     setPasswordEditedData(props.passwordDetails);
-                    setPolicyRequirements(props.passwordDetails.policy_req);
                     setIsEdit(true);
                 }
                 else {
@@ -86,6 +83,7 @@ export const PasswordPolicy = (props: any) => {
 
     function handleCancelClick() {
         setIsEdit(false);
+        setPasswordEditedData(passwordDisplayData);
     }
 
     function handleSaveClick() {
@@ -225,9 +223,15 @@ export const PasswordPolicy = (props: any) => {
                     Grace Period:
                 </div>
                 <div style={{ padding: '12px 0 10px 0' }}>
-                    <Radio.Group defaultValue={policyRequirements['grace_period']}
+                    <Radio.Group value={passwordEditData?.policy_req?.grace_period}
                         disabled={!isEdit}
-                        onChange={(e) => passwordEditData.policy_req.grace_period = e.target.value}
+                        onChange={(e) => setPasswordEditedData((state) => {
+                            const { policy_req } = state;
+                            return {
+                                ...passwordEditData,
+                                policy_req: { ...policy_req, grace_period: e.target.value }
+                            }
+                        })}
                     >
                         {
                             Object.keys(graceOptions).map(factor => {
@@ -255,17 +259,18 @@ export const PasswordPolicy = (props: any) => {
             </div>
         </div>
 
-        {passwordDisplayData['uid'] !== undefined ?
-            (isEdit ? <div style={{ paddingTop: '10px', paddingRight: '45px' }}>
-                <Button style={{ float: 'right', marginLeft: '10px' }}
-                    onClick={handleCancelClick}>Cancel</Button>
-                <Button type='primary' style={{ float: 'right' }}
-                    onClick={handleSaveClick}>Save</Button>
-            </div> : <></>) : <div style={{ paddingTop: '10px', paddingRight: '45px', paddingBottom: '20px' }}>
-                <Button style={{ float: 'right', marginLeft: '10px' }}
-                    onClick={setCancelClick}>Cancel</Button>
-                <Button type='primary' loading={props.buttonLoading} style={{ float: 'right' }}
-                    onClick={createPasswordPolicy}>Create</Button></div>
+        {
+            passwordDisplayData['uid'] !== undefined ?
+                (isEdit ? <div style={{ paddingTop: '10px', paddingRight: '45px' }}>
+                    <Button style={{ float: 'right', marginLeft: '10px' }}
+                        onClick={handleCancelClick}>Cancel</Button>
+                    <Button type='primary' style={{ float: 'right' }}
+                        onClick={handleSaveClick}>Save</Button>
+                </div> : <></>) : <div style={{ paddingTop: '10px', paddingRight: '45px', paddingBottom: '20px' }}>
+                    <Button style={{ float: 'right', marginLeft: '10px' }}
+                        onClick={setCancelClick}>Cancel</Button>
+                    <Button type='primary' loading={props.buttonLoading} style={{ float: 'right' }}
+                        onClick={createPasswordPolicy}>Create</Button></div>
         }
-    </Skeleton>
+    </Skeleton >
 }

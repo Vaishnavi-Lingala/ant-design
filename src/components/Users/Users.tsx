@@ -171,6 +171,11 @@ export default function Users() {
 		setTotalItems(data.total_items);
 	}
 
+	window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+    });
+
 	const getUsersList = async (object: {}, params = {}) => {
 		setLoadingDetails(true);
 		let data = await ApiService.post(ApiUrls.userFilter(accountId), object, params).catch(error => {

@@ -98,9 +98,10 @@ export default function ActivityLogs() {
     const [logResponse, setLogResponse] = useState<any>({});
     const [loading, setLoading] = useState(true);
     const [tableLoading, setTableLoading] = useState(false);
-    const { productId } = useParams();
+    const { productId } = useParams<any>();
     const accountId = localStorage.getItem('accountId');
 
+    
     const initialDateTimeFilters = {
         start: {
             date: moment().startOf("day").subtract(7, "days").format(date_format),
@@ -174,6 +175,11 @@ export default function ActivityLogs() {
             setLoading(false);
             setTableLoading(false);
         })();
+
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
     }, [datetimeFilters, advancedFilters]);
 
     async function showMoreClick() {

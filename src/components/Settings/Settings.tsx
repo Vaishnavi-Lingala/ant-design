@@ -31,6 +31,10 @@ function Settings() {
             })
     }
 
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+    });
 
     const DisplayField = ({ displayName, value }) => {
         return (
