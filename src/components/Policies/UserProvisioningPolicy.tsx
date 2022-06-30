@@ -22,13 +22,14 @@ function UserProvisioningPolicy(props: any) {
     const [userTypeOptions, setUserTypeOptions] = useState({});
     const [userFormatOptions, setUserFormatOptions] = useState({});
     const history = useHistory();
+	const accountId = localStorage.getItem('accountId');
 
     useEffect(() => {
         Promise.all(([
-            ApiService.get(ApiUrls.groups, { type: "USER" }),
-            ApiService.get(ApiUrls.profileUserFormatOptions),
-            ApiService.get(ApiUrls.profileUserTypesOptions),
-            ApiService.get(ApiUrls.policy(window.location.pathname.split('/')[5]))
+            ApiService.get(ApiUrls.groups(accountId), { type: "USER" }),
+            ApiService.get(ApiUrls.profileUserFormatOptions(accountId)),
+            ApiService.get(ApiUrls.profileUserTypesOptions(accountId)),
+            ApiService.get(ApiUrls.policy(accountId, window.location.pathname.split('/')[5]))
         ]))
             .then(data => {
                 console.log('GROUPS: ', data[0]);
@@ -110,7 +111,7 @@ function UserProvisioningPolicy(props: any) {
 
     function updateUserProvisioningPolicy() {
         userProvisioningEditData.auth_policy_groups = groupUids;
-        ApiService.put(ApiUrls.policy(userProvisioningDisplayData['uid']), userProvisioningEditData)
+        ApiService.put(ApiUrls.policy(accountId, userProvisioningDisplayData['uid']), userProvisioningEditData)
             .then(data => {
                 if (!data.errorSummary) {
                     groupNames.length = 0;
