@@ -29,13 +29,14 @@ export const KioskPolicy = (props: any) => {
     const [password, setPassword] = useState("");
     const history = useHistory();
     const [policyRequirements, setPolicyRequirements] = useState({});
+    const accountId = localStorage.getItem('accountId');
 
     useEffect(() => {
         Promise.all(([
-            ApiService.get(ApiUrls.groups, { type: "USER" }),
-            ApiService.get(ApiUrls.groups, { type: "KIOSK" }),
-            ApiService.get(ApiUrls.loginTypeOptions),
-            ApiService.get(ApiUrls.policy(window.location.pathname.split('/')[5]))
+            ApiService.get(ApiUrls.groups(accountId), { type: "USER" }),
+            ApiService.get(ApiUrls.groups(accountId), { type: "KIOSK" }),
+            ApiService.get(ApiUrls.loginTypeOptions(accountId)),
+            ApiService.get(ApiUrls.policy(accountId, window.location.pathname.split('/')[5]))
         ]))
             .then(data => {
                 console.log(data[0]);
@@ -122,7 +123,7 @@ export const KioskPolicy = (props: any) => {
         kioskEditData.auth_policy_groups = groupUids;
         kioskEditData.kiosk_machine_groups = kioskGroupUids;
         kioskEditData.policy_req.confirm_assay = confirmPassword;
-        ApiService.put(ApiUrls.policy(kioskDisplayData['uid']), kioskEditData)
+        ApiService.put(ApiUrls.policy(accountId, kioskDisplayData['uid']), kioskEditData)
             .then(data => {
                 console.log(data);
                 if (!data.errorSummary) {

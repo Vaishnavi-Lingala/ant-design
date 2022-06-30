@@ -1,8 +1,10 @@
 import { useOktaAuth } from "@okta/okta-react";
 import { Redirect, Route, useHistory } from "react-router-dom";
 import { SecureRoute } from "@okta/okta-react";
+import Layout from "./Layout/Layout";
 
 export default function ProtectedRoute({
+    subRoute = false,
     component: Component,
     ...restOfProps
 }) {
@@ -24,11 +26,19 @@ export default function ProtectedRoute({
 
     if (oktaStorage !== null && oktaStorage !== "" && oktaStorage !== "{}" &&
         JSON.parse(oktaStorage).idToken && JSON.parse(oktaStorage).accessToken) {
-            console.log(oktaStorage);
+        console.log(oktaStorage);
     }
     else {
         removeItems();
     }
+
+    const SecureComponent = (props) => <SecureRoute>
+        <Component
+            authStatus={authState}
+            oktaAuth={oktaAuth}
+            {...props}
+        />
+    </SecureRoute>;
 
     return (
         <Route
@@ -36,13 +46,10 @@ export default function ProtectedRoute({
             render={(props) =>
                 !authState ? <Redirect to={location.pathname} /> : authState && authState.isAuthenticated ?
                     (
-                        <SecureRoute>
-                            <Component
-                                authStatus={authState}
-                                oktaAuth={oktaAuth}
-                                {...props}
-                            />
-                        </SecureRoute>
+                        subRoute ?
+                            <SecureComponent {...props} /> : <Layout>
+                                <SecureComponent {...props} />
+                            </Layout>
                     ) : (
                         <Redirect to={"/"} />
                     )

@@ -33,7 +33,7 @@ export default function KioskGroups() {
 
     function getGroups() {
         setLoadingDetails(true);
-        ApiService.get(ApiUrls.groups, { type: 'KIOSK' })
+        ApiService.get(ApiUrls.groups(localStorage.getItem('accountId')), { type: 'KIOSK' })
             .then(data => {
                 console.log('Groups: ', data);
                 // let userGroupsList: Group[] = [];

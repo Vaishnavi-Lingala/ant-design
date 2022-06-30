@@ -35,6 +35,7 @@ export default function Policies() {
 	const [maxEnroll, setMaxEnroll] = useState(null);
 	const { productId } = useParams<any>();
 	const { TabPane } = Tabs;
+	const accountId = localStorage.getItem('accountId');
 
 	const activateColumns = [
 		{
@@ -260,7 +261,7 @@ export default function Policies() {
 		console.log(path);
 		if (path === 5) {
 			setLoadingDetails(true)
-			ApiService.get(ApiUrls.policies(productId))
+			ApiService.get(ApiUrls.policies(accountId, productId))
 				.then(data => {
 					console.log(data);
 					var pinCounter = 0;
@@ -407,17 +408,19 @@ export default function Policies() {
 
 	useEffect(() => {
 		if (['password', 'kiosk', 'card-enrollment'].includes(window.location.pathname.split("/")[4]) === false && window.location.pathname.split("/").length !== 6) {
-			history.push(`/product/${productId}/policies/pin`);
+			if (window.location.pathname.split("/")[4] !== 'pin') {
+				history.push(`/product/${productId}/policies/pin`);
+			}
 		}
 		
 		getPolicies();
-	}, [path]);
+	}, []);
 
 	useEffect(() => {
 		(async function () {
 			if (seletedProduct === TecTANGO) {
 				try {
-					let licenses = await ApiService.get(ApiUrls.licences);
+					let licenses = await ApiService.get(ApiUrls.licences(accountId));
 					console.log(licenses);
 					licenses.forEach(license => {
 						if (license.product.sku === TecTANGO && license.max_enroll_allowed) {
@@ -435,7 +438,7 @@ export default function Policies() {
 
 	function activatePolicy(uid: string) {
 		console.log(uid);
-		ApiService.get(ApiUrls.activatePolicy(uid, productId))
+		ApiService.get(ApiUrls.activatePolicy(accountId, productId, uid))
 			.then(data => {
 				if (!data.errorSummary) {
 					openNotification('success', 'Successfully activated Policy');
@@ -453,7 +456,7 @@ export default function Policies() {
 
 	function deActivatePolicy(uid: string) {
 		console.log(uid);
-		ApiService.get(ApiUrls.deActivatePolicy(uid, productId))
+		ApiService.get(ApiUrls.deActivatePolicy(accountId, productId, uid))
 			.then(data => {
 				if (!data.errorSummary) {
 					openNotification('success', 'Successfully de-activated Policy');
@@ -475,7 +478,7 @@ export default function Policies() {
 			auth_policy_uid: uid,
 			policy_type: policyType
 		}
-		ApiService.post(ApiUrls.reOrderPolicies(productId), data)
+		ApiService.post(ApiUrls.reOrderPolicies(accountId, productId), data)
 			.then(data => {
 				if (!data.errorSummary) {
 					console.log(data)
@@ -511,7 +514,7 @@ export default function Policies() {
 				>
 					<TabPane tab="Pin" key="pin">
 						{window.location.pathname.split('/').length === 6 ?
-							<ProtectedRoute path={`/product/${productId}/policies/pin/:id`} component={PinPolicy} /> :
+							<ProtectedRoute path={`/product/${productId}/policies/pin/:id`} component={PinPolicy} subRoute/> :
 							<TableList policy_type={PIN} policy_description={PinPolicyDescription}
 								activateColumns={activateColumns} deActivateColumns={deActivateColumns} draggableBodyRow={pinDraggableBodyRow}
 								draggableContainer={pinDraggableContainer} inActivePolicies={inActivePinPolicies} activePolicies={activePinPolicies}
@@ -521,7 +524,7 @@ export default function Policies() {
 					</TabPane>
 					<TabPane tab="Password" key="password">
 						{window.location.pathname.split('/').length === 6 ?
-							<ProtectedRoute path={`/product/${productId}/policies/password/:id`} component={PasswordPolicy} /> :
+							<ProtectedRoute path={`/product/${productId}/policies/password/:id`} component={PasswordPolicy} subRoute/> :
 							<TableList policy_type={PASSWORD} policy_description={PasswordPolicyDescription} activateColumns={activateColumns} deActivateColumns={deActivateColumns}
 								draggableBodyRow={passwordDraggableBodyRow} draggableContainer={passwordDraggableContainer}
 								inActivePolicies={inActivepasswordPolicies} activePolicies={activePasswordPolicies} handleGetPolicies={handleGetPolicies}
@@ -530,7 +533,7 @@ export default function Policies() {
 					</TabPane>
 					<TabPane tab="Kiosk" key="kiosk">
 						{window.location.pathname.split('/').length === 6 ?
-							<ProtectedRoute path={`/product/${productId}/policies/kiosk/:id`} component={KioskPolicy} /> :
+							<ProtectedRoute path={`/product/${productId}/policies/kiosk/:id`} component={KioskPolicy} subRoute/> :
 							<TableList policy_type={KIOSK} policy_description={KioskPolicyDescription} activateColumns={activateColumns} deActivateColumns={deActivateColumns}
 								draggableBodyRow={kioskDraggableBodyRow} draggableContainer={kioskDraggableContainer}
 								inActivePolicies={inActiveKioskPolicies} activePolicies={activeKioskPolicies} handleGetPolicies={handleGetPolicies}
@@ -540,7 +543,7 @@ export default function Policies() {
 					{seletedProduct === TecTANGO && maxEnroll ?
 						<TabPane tab="Card Enrollment" key="card-enrollment">
 							{window.location.pathname.split('/').length === 6 ?
-								<ProtectedRoute path={`/product/${productId}/policies/card-enrollment/:id`} component={CardEnrollmentPolicy} /> :
+								<ProtectedRoute path={`/product/${productId}/policies/card-enrollment/:id`} component={CardEnrollmentPolicy} subRoute/> :
 								<TableList policy_type={CARD_ENROLL} policy_description={CardEnrollmentPolicyDescription} activateColumns={activateColumns} deActivateColumns={deActivateColumns}
 									draggableBodyRow={CardEnrollmentDraggableBodyRow} draggableContainer={CardEnrollmentDraggableContainer}
 									inActivePolicies={inActiveCardEnrollmentPolicies} activePolicies={activeCardEnrollmentPolicies} handleGetPolicies={handleGetPolicies}

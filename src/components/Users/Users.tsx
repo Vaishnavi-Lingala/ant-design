@@ -23,6 +23,7 @@ export default function Users() {
 	const [lifeCycleTypes, setLifeCycleTypes]: any = useState(undefined);
 	const history = useHistory();
 	const [object, setObject] = useState({});
+	const accountId = localStorage.getItem('accountId');
 
 	const columns = [
 		{
@@ -142,7 +143,7 @@ export default function Users() {
 
 	const getLifeCycleOptions = async () => {
 		if (lifeCycleTypes === undefined) {
-			let userStatusTypes = await ApiService.get(ApiUrls.lifeCycleOptions).catch(error => {
+			let userStatusTypes = await ApiService.get(ApiUrls.lifeCycleOptions(accountId)).catch(error => {
 				console.error('Error: ', error);
 				openNotification('error', 'An Error has occured with getting Life Cycle Types');
 			});
@@ -154,7 +155,7 @@ export default function Users() {
 		setTableLoading(true);
 		setObject(objectData);
 		console.log(objectData)
-		let data = await ApiService.post(ApiUrls.userFilter, objectData, params).catch(error => {
+		let data = await ApiService.post(ApiUrls.userFilter(accountId), objectData, params).catch(error => {
 			console.error('Error: ', error);
 			openNotification('error', 'An Error has occured with getting User Lists by Page');
 		}).finally(() => {
@@ -177,7 +178,7 @@ export default function Users() {
 
 	const getUsersList = async (object: {}, params = {}) => {
 		setLoadingDetails(true);
-		let data = await ApiService.post(ApiUrls.userFilter, object, params).catch(error => {
+		let data = await ApiService.post(ApiUrls.userFilter(accountId), object, params).catch(error => {
 			console.error('Error: ', error);
 			openNotification('error', 'An Error has occured with getting User Lists by Page');
 		}).finally(() => {
@@ -214,7 +215,7 @@ export default function Users() {
 		let statusObj = {
 			status: status
 		}
-		let result = await ApiService.post(ApiUrls.changeUserStatus(userId), statusObj)
+		let result = await ApiService.post(ApiUrls.changeUserStatus(accountId, userId), statusObj)
 			.then(data => {
 				openNotification('success', `Status for ${user_name.split('@')[0]} has been updated successfully with ${status.toLowerCase()}.`);
 			})

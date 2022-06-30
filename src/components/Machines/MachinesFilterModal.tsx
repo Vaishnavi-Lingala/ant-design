@@ -15,7 +15,7 @@ export default function MachinesFiltersModal({ getMachinesByFilter, onFilterAppl
 
     useEffect(() => {
         (async function () {
-            var response = await ApiService.get(ApiUtils.machineFilterableFields);
+            var response = await ApiService.get(ApiUtils.machineFilterableFields(localStorage.getItem('accountId')));
             setFilterableFields([...response]);
         })();
     }, []);

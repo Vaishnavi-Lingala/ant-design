@@ -21,6 +21,7 @@ export default function Mechanisms() {
 	const history = useHistory();
     const [buttonLoading, setButtonLoading] = useState(false);
 	const { productId } = useParams<any>();
+	const accountId = localStorage.getItem('accountId');
 
 	const inactiveColumns = [
 		{
@@ -104,7 +105,7 @@ export default function Mechanisms() {
 
 	function getMechanisms() {
 		setLoading(true);
-		ApiService.get(ApiUrls.mechanisms(productId))
+		ApiService.get(ApiUrls.mechanisms(accountId, productId))
 			.then(data => {
 				console.log(data);
 				var activeCounter = 0;
@@ -153,7 +154,7 @@ export default function Mechanisms() {
 
 	const handleOk = (object: object) => {
 		setButtonLoading(true);
-		ApiService.post(ApiUrls.addMechanism(productId), object)
+		ApiService.post(ApiUrls.addMechanism(accountId, productId), object)
 			.then(data => {
 				if (!data.errorSummary) {
 					console.log(data);
@@ -178,7 +179,7 @@ export default function Mechanisms() {
 	}
 
 	function activateMechanism(uid: string) {
-		ApiService.get(ApiUrls.activateMechanism(uid, productId))
+		ApiService.get(ApiUrls.activateMechanism(accountId, productId, uid))
 			.then(data => {
 				if (!data.errorSummary) {
 					openNotification('success', 'Successfully activated Mechanism');
@@ -195,7 +196,7 @@ export default function Mechanisms() {
 	}
 
 	function deActivateMechanism(uid: string) {
-		ApiService.get(ApiUrls.deActivateMechanism(uid, productId))
+		ApiService.get(ApiUrls.deActivateMechanism(accountId, productId, uid))
 			.then(data => {
 				if (!data.errorSummary) {
 					openNotification('success', 'Successfully de-activated Mechanism');
@@ -216,7 +217,7 @@ export default function Mechanisms() {
 			mechanism_id: uid,
 			order: order
 		}
-		ApiService.post(ApiUrls.reOrderMechanisms(productId), data)
+		ApiService.post(ApiUrls.reOrderMechanisms(accountId, productId), data)
 			.then(data => {
 				if (!data.errorSummary) {
 					console.log(data)

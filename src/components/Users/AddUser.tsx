@@ -24,7 +24,7 @@ export function AddUser(props) {
     const [advancedFilters, setAdvancedFilters] = useState({});
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [domains, setDomains]: any = useState([]);
-    
+    const accountId = localStorage.getItem('accountId');
 
     const showModal = () => {
         setNewUser({
@@ -45,7 +45,7 @@ export function AddUser(props) {
 
     const getDomains = async () => {
         setLoading(true);
-        let data = await ApiService.get(ApiUrls.domains).catch(error => {
+        let data = await ApiService.get(ApiUrls.domains(accountId)).catch(error => {
             openNotification(`error`, `Error in getting domains: ${JSON.stringify(error)}`);
         }).finally(() => {
             setLoading(false);
@@ -69,7 +69,7 @@ export function AddUser(props) {
             setLoading(false);
             openNotification(`error`, errorMsg);
         } else {
-            ApiService.post(ApiUrls.users, newUser).then(data => {
+            ApiService.post(ApiUrls.users(accountId), newUser).then(data => {
                 if (!data.errorSummary) {
                     console.log('Post user response: ', JSON.stringify(data));
                     props.onUserCreate();

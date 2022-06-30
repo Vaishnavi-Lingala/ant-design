@@ -22,6 +22,7 @@ export default function Groups() {
     const [standardMachineGroups, setStandardMachineGroups] = useState<Group[]>([]);
     const [loadingDetails, setLoadingDetails] = useState(false);
     const [tableLoading, setTableLoading] = useState(false);
+    const accountId = localStorage.getItem('accountId');
     const { TabPane } = Tabs;
     const columns = [
         {
@@ -72,7 +73,7 @@ export default function Groups() {
 
     function getGroupsByFilter(object = {}, param = {}){
         setTableLoading(true);
-        ApiService.post(ApiUrls.groupFilter, object, param)
+        ApiService.post(ApiUrls.groupFilter(accountId), object, param)
             .then(data => {
                 setPage(data.page);
                 setPageSize(data.items_per_page);
@@ -106,7 +107,7 @@ export default function Groups() {
 
     function getGroups(object = {}, param = {}) {
         setLoadingDetails(true);
-        ApiService.post(ApiUrls.groupFilter, object, param)
+        ApiService.post(ApiUrls.groupFilter(accountId), object, param)
             .then(data => {
                 setPage(data.page);
                 setPageSize(data.items_per_page);
@@ -164,7 +165,7 @@ export default function Groups() {
                 <TabPane tab="User" key="user">
                     <Skeleton loading={loadingDetails}>
                         {window.location.pathname.split('/').length === 4 ?
-                            <ProtectedRoute path={`/groups/user/:id`} component={GroupDetails} /> :
+                            <ProtectedRoute path={`/groups/user/:id`} component={GroupDetails} subRoute/> :
                             <TableList tableLoading={tableLoading} getGroupsByFilter={getGroupsByFilter} getPage={page} getPageSize={pageSize} getTotalItems={totalItems} groupType={'USER'} getGroups={getGroups} columns={columns} standardMachineGroups={userGroups} />
                         }
                     </Skeleton>
@@ -172,7 +173,7 @@ export default function Groups() {
                 <TabPane tab="Kiosk Machine" key="kiosk">
                     <Skeleton loading={loadingDetails}>
                         {window.location.pathname.split('/').length === 4 ?
-                            <ProtectedRoute path={`/groups/kiosk/:id`} component={MachineGroupDetails} /> :
+                            <ProtectedRoute path={`/groups/kiosk/:id`} component={MachineGroupDetails} subRoute/> :
                             <TableList tableLoading={tableLoading} getGroupsByFilter={getGroupsByFilter} getPage={page} getPageSize={pageSize} getTotalItems={totalItems} groupType={'KIOSK'} getGroups={getGroups} columns={columns} standardMachineGroups={kioskMachineGroups} />
                         }
                     </Skeleton>
@@ -180,7 +181,7 @@ export default function Groups() {
                 <TabPane tab="Standard Machine" key="standard">
                     <Skeleton loading={loadingDetails}>
                         {window.location.pathname.split('/').length === 4 ?
-                            <ProtectedRoute path={`/groups/standard/:id`} component={MachineGroupDetails} /> :
+                            <ProtectedRoute path={`/groups/standard/:id`} component={MachineGroupDetails} subRoute/> :
                             <TableList tableLoading={tableLoading} getGroupsByFilter={getGroupsByFilter} getPage={page} getPageSize={pageSize} getTotalItems={totalItems} groupType={'STANDARD'} getGroups={getGroups} columns={columns} standardMachineGroups={standardMachineGroups} />
                         }
                     </Skeleton>

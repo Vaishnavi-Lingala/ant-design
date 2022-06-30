@@ -8,11 +8,12 @@ import { userFieldNames } from "../../constants";
 export function UserInfo() {
     const [loadingDetails, setLoadingDetails] = useState(true);
     const [userDetails, setUserDetails]: any = useState({});
+    const accountId = localStorage.getItem('accountId');
 
     useEffect(() => {
         const uid = window.location.pathname.split('/')[2];
         console.log(uid);
-        ApiService.get(ApiUrls.userInfo(window.location.pathname.split('/')[2])).then((userInfo: any) => {
+        ApiService.get(ApiUrls.userInfo(accountId, window.location.pathname.split('/')[2])).then((userInfo: any) => {
             console.log(userInfo);
             setUserDetails(userInfo);
             setLoadingDetails(false);
