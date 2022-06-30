@@ -31,6 +31,8 @@ function Mechanism(props: any) {
     const [selectedHeader] = useContext(Store);
     const history = useHistory();
     const { productId } = useParams<any>();
+    const accountId = localStorage.getItem('accountId');
+    
 
     const mechanism = {
         challenge_factors: [
@@ -58,7 +60,7 @@ function Mechanism(props: any) {
     }
 
     useEffect(() => {
-        ApiService.get(ApiUrls.mechanism(window.location.pathname.split('/')[4], productId))
+        ApiService.get(ApiUrls.mechanism(accountId, productId, window.location.pathname.split('/')[4]))
             .then((data: MechanismType) => {
                 //@ts-ignore
                 if (!data.errorSummary) {
@@ -121,9 +123,9 @@ function Mechanism(props: any) {
 
     useEffect(() => {
         Promise.all(([
-            ApiService.get(ApiUrls.groups, { type: "USER" }),
-            ApiService.get(ApiUrls.mechanismOptions),
-            ApiService.get(ApiUrls.mechanismChallengeFactors(productId)),
+            ApiService.get(ApiUrls.groups(accountId), { type: "USER" }),
+            ApiService.get(ApiUrls.mechanismOptions(accountId)),
+            ApiService.get(ApiUrls.mechanismChallengeFactors(accountId, productId)),
         ]))
             .then(data => {
                 for (var i = 0; i < data[0].length; i++) {
@@ -163,7 +165,7 @@ function Mechanism(props: any) {
     function updateMechanism() {
         console.log(groupUids);
         editData.mechanism_groups = groupUids
-        ApiService.put(ApiUrls.mechanism(displayDetails['uid'], productId), editData)
+        ApiService.put(ApiUrls.mechanism(accountId, productId, displayDetails['uid']), editData)
             .then(data => {
                 if (!data.errorSummary) {
                     groupNames.length = 0;

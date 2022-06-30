@@ -12,14 +12,15 @@ function Domains() {
     const [domains, setDomains] = useState([]);
     const [displayDomains, setDisplayDomains] = useState([]);
     const [isEdit, setIsEdit] = useState(false);
-
+    const accountId = localStorage.getItem('accountId');
+ 
     useEffect(() => {
         getDomains();
     }, []);
 
     function getDomains() {
         setLoading(true)
-        ApiService.get(ApiUrls.domains)
+        ApiService.get(ApiUrls.domains(accountId))
             .then((data) => {
                 console.log(data);
                 setDomains(data);
@@ -56,7 +57,7 @@ function Domains() {
             "domains": list
         }
 
-        ApiService.put(ApiUrls.domains, object)
+        ApiService.put(ApiUrls.domains(accountId), object)
             .then(data => {
                 if (!data.errorSummary) {
                     setIsEdit(false);

@@ -31,7 +31,7 @@ export default function AddGroup(props: any) {
     const handleOk = () => {
         setLoading(true);
         console.log('New group: ', newGroup);
-        ApiService.post(ApiUrls.groups, newGroup).then(data => {
+        ApiService.post(ApiUrls.groups(localStorage.getItem('accountId')), newGroup).then(data => {
             if (!data.errorSummary) {
                 console.log('Post group response: ', data);
                 setLoading(false);

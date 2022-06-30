@@ -72,7 +72,7 @@ export default function MachinesSelection(props: any) {
 
     function getMachinesNotInGroup(groupId, params = {}) {
         setLoadingDetails(true);
-        ApiService.get(ApiUrls.machinesNotInGroup(groupId), params).then(data => {
+        ApiService.get(ApiUrls.machinesNotInGroup(localStorage.getItem('accountId'), groupId), params).then(data => {
             data.results.forEach(machine => {
                 machine.key = machine.uid;
             })

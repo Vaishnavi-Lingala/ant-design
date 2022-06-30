@@ -40,6 +40,7 @@ export default function Policies() {
 	const [maxEnroll, setMaxEnroll] = useState(null);
 	const { productId } = useParams<any>();
 	const { TabPane } = Tabs;
+	const accountId = localStorage.getItem('accountId');
 
 	const activateColumns = [
 		{
@@ -289,7 +290,7 @@ export default function Policies() {
 		console.log(path);
 		if (path === 5) {
 			setLoadingDetails(true)
-			ApiService.get(ApiUrls.policies(productId))
+			ApiService.get(ApiUrls.policies(accountId, productId))
 				.then(data => {
 					console.log(data);
 					var pinCounter = 0;
@@ -478,15 +479,15 @@ export default function Policies() {
 		}
 
 		getPolicies();
-	}, [path]);
+	}, []);
 
 	useEffect(() => {
 		(async function () {
 			setLoading(true);
 			if (seletedProduct === TecTANGO) {
 				try {
-					let licenses = await ApiService.get(ApiUrls.licences);
-					let accountDetails = await ApiService.get(ApiUrls.info);
+					let licenses = await ApiService.get(ApiUrls.licences(accountId));
+					let accountDetails = await ApiService.get(ApiUrls.info(accountId));
 					setIsLocalProvisioning(accountDetails.enable_local_provisioning);
 					console.log(licenses);
 					licenses.forEach(license => {
@@ -506,7 +507,7 @@ export default function Policies() {
 
 	function activatePolicy(uid: string) {
 		console.log(uid);
-		ApiService.get(ApiUrls.activatePolicy(uid, productId))
+		ApiService.get(ApiUrls.activatePolicy(accountId, productId, uid))
 			.then(data => {
 				if (!data.errorSummary) {
 					openNotification('success', 'Successfully activated Policy');
@@ -524,7 +525,7 @@ export default function Policies() {
 
 	function deActivatePolicy(uid: string) {
 		console.log(uid);
-		ApiService.get(ApiUrls.deActivatePolicy(uid, productId))
+		ApiService.get(ApiUrls.deActivatePolicy(accountId, productId, uid))
 			.then(data => {
 				if (!data.errorSummary) {
 					openNotification('success', 'Successfully de-activated Policy');
@@ -546,7 +547,7 @@ export default function Policies() {
 			auth_policy_uid: uid,
 			policy_type: policyType
 		}
-		ApiService.post(ApiUrls.reOrderPolicies(productId), data)
+		ApiService.post(ApiUrls.reOrderPolicies(accountId, productId), data)
 			.then(data => {
 				if (!data.errorSummary) {
 					console.log(data)
@@ -582,7 +583,7 @@ export default function Policies() {
 				>
 					<TabPane tab={policyDisplayNames[PIN]} key="pin">
 						{window.location.pathname.split('/').length === 6 ?
-							<ProtectedRoute path={`/product/${productId}/policies/pin/:id`} component={PinPolicy} /> :
+							<ProtectedRoute path={`/product/${productId}/policies/pin/:id`} component={PinPolicy} subRoute/> :
 							<TableList policy_type={PIN} policy_description={PinPolicyDescription}
 								activateColumns={activateColumns} deActivateColumns={deActivateColumns} draggableBodyRow={pinDraggableBodyRow}
 								draggableContainer={pinDraggableContainer} inActivePolicies={inActivePinPolicies} activePolicies={activePinPolicies}
@@ -592,7 +593,7 @@ export default function Policies() {
 					</TabPane>
 					<TabPane tab={policyDisplayNames[PASSWORD]} key="password">
 						{window.location.pathname.split('/').length === 6 ?
-							<ProtectedRoute path={`/product/${productId}/policies/password/:id`} component={PasswordPolicy} /> :
+							<ProtectedRoute path={`/product/${productId}/policies/password/:id`} component={PasswordPolicy} subRoute/> :
 							<TableList policy_type={PASSWORD} policy_description={PasswordPolicyDescription} activateColumns={activateColumns} deActivateColumns={deActivateColumns}
 								draggableBodyRow={passwordDraggableBodyRow} draggableContainer={passwordDraggableContainer}
 								inActivePolicies={inActivepasswordPolicies} activePolicies={activePasswordPolicies} handleGetPolicies={handleGetPolicies}
@@ -601,7 +602,7 @@ export default function Policies() {
 					</TabPane>
 					<TabPane tab={policyDisplayNames[KIOSK]} key="kiosk">
 						{window.location.pathname.split('/').length === 6 ?
-							<ProtectedRoute path={`/product/${productId}/policies/kiosk/:id`} component={KioskPolicy} /> :
+							<ProtectedRoute path={`/product/${productId}/policies/kiosk/:id`} component={KioskPolicy} subRoute/> :
 							<TableList policy_type={KIOSK} policy_description={KioskPolicyDescription} activateColumns={activateColumns} deActivateColumns={deActivateColumns}
 								draggableBodyRow={kioskDraggableBodyRow} draggableContainer={kioskDraggableContainer}
 								inActivePolicies={inActiveKioskPolicies} activePolicies={activeKioskPolicies} handleGetPolicies={handleGetPolicies}

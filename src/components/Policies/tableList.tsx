@@ -89,7 +89,7 @@ function TableList({ handleGetPolicies, policy_type, policy_description, activat
 
     const handleOk = (policyType: string, object: object) => {
         setButtonLoading(true);
-        ApiService.post(ApiUrls.addPolicy(productId), object)
+        ApiService.post(ApiUrls.addPolicy(localStorage.getItem('accountId'), productId), object)
             .then(data => {
                 if (!data.errorSummary) {
                     console.log(data);

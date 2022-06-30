@@ -15,7 +15,7 @@ export default function FiltersModal({ onFilterApply, onResetClick }) {
 
     useEffect(() => {
         (async function () {
-            var response = await ApiService.get(ApiUtils.filterableFields);
+            var response = await ApiService.get(ApiUtils.filterableFields(localStorage.getItem('accountId')));
             setFilterableFields([...response]);
         })();
     }, []);

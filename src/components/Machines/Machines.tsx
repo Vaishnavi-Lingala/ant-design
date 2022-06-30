@@ -18,6 +18,7 @@ export default function Machines() {
     const [advancedFilters, setAdvancedFilters] = useState({});
     const [object, setObject] = useState({});
     const history = useHistory();
+    const accountId = localStorage.getItem('accountId');
 
     const columns = [
         {
@@ -73,7 +74,7 @@ export default function Machines() {
     function getMachinesByFilter(objectData = {}, params = {}) {
         setTableLoading(true);
         setObject(objectData);
-        ApiService.post(ApiUrls.machineFilter, objectData, params).then(data => {
+        ApiService.post(ApiUrls.machineFilter(accountId), objectData, params).then(data => {
             console.log('Machines: ', data);
             data.results.forEach(machine => {
                 machine.key = machine.uid;
@@ -92,7 +93,7 @@ export default function Machines() {
 
     function getMachines(object = {}, params = {}) {
         setLoadingDetails(true);
-        ApiService.post(ApiUrls.machineFilter, object, params).then(data => {
+        ApiService.post(ApiUrls.machineFilter(accountId), object, params).then(data => {
             console.log('Machines: ', data);
             data.results.forEach(machine => {
                 machine.key = machine.uid;

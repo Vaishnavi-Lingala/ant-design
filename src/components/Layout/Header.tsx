@@ -24,7 +24,7 @@ function AppHeader() {
     const { authState, oktaAuth } = useOktaAuth();
     const [products, setProducts] = useState(emptyObj);
     
-    let selectedHeaderKeys: any = [];
+    let selectedHeaderKeys: any = [selectedMenuOption];
     if (Object.keys(productNames).includes(selectedMenuOption)) {
         selectedHeaderKeys = [Products].concat([selectedMenuOption]);
     }
@@ -52,8 +52,12 @@ function AppHeader() {
     const [headerItems, setHeaderItems] = useState(headerItemsInitialValue);
 
     useEffect(() => {
-        getProducts();
-    }, [])
+        ApiService.get(ApiUrls.account_info, { domain: localStorage.getItem('domain')})
+            .then(data => {
+                getProducts(data.uid);
+                localStorage.setItem('accountId', data.uid);
+            })
+    }, []);
 
     useEffect(() => {
         if (products !== emptyObj) {
@@ -105,8 +109,8 @@ function AppHeader() {
 
     }, [products]);
 
-    function getProducts() {
-        ApiService.get(ApiUrls.products)
+    function getProducts(accountId) {
+        ApiService.get(ApiUrls.products(accountId))
             .then(data => {
                 if (!data.errorSummary) {
                     var object = emptyObj;

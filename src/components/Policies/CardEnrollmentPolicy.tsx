@@ -24,11 +24,12 @@ const CardEnrollmentPolicy = (props) => {
     const [maxEnroll, setMaxEnroll] = useState(1);
     const [isLimitReached, setIsLimitReached] = useState(false);
     const history = useHistory();
+    const accountId = localStorage.getItem('accountId');
 
     useEffect(() => {
         Promise.all(([
-            ApiService.get(ApiUrls.groups, { type: "USER" }),
-            ApiService.get(ApiUrls.policy(window.location.pathname.split('/')[5]))
+            ApiService.get(ApiUrls.groups(accountId), { type: "USER" }),
+            ApiService.get(ApiUrls.policy(accountId, window.location.pathname.split('/')[5]))
         ]))
             .then(data => {
                 console.log('GROUPS: ', data[0]);
@@ -81,7 +82,7 @@ const CardEnrollmentPolicy = (props) => {
     useEffect(() => {
         (async function () {
             try {
-                let licenses = await ApiService.get(ApiUrls.licences);
+                let licenses = await ApiService.get(ApiUrls.licences(accountId));
                 licenses.forEach(license => {
                     if (license.product.sku === TecTANGO && license.max_enroll_allowed) {
                         setMaxEnroll(license.max_enroll_allowed);
@@ -97,7 +98,7 @@ const CardEnrollmentPolicy = (props) => {
 
     function updateCardEnrollPolicy() {
         cardEnrollEditData['auth_policy_groups'] = groupUids;
-        ApiService.put(ApiUrls.policy(cardEnrollDisplayData['uid']), cardEnrollEditData)
+        ApiService.put(ApiUrls.policy(accountId, cardEnrollDisplayData['uid']), cardEnrollEditData)
             .then(data => {
                 if (!data.errorSummary) {
                     groupNames.length = 0;

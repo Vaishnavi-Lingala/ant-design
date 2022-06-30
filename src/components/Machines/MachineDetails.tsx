@@ -56,7 +56,7 @@ export function MachineDetails(props: any) {
     useEffect(() => {
         setLoadingDetails(true);
         let machineId = window.location.pathname.split('/')[2];
-        ApiService.get(ApiUrls.machineDetails(machineId)).then((data: any) => {
+        ApiService.get(ApiUrls.machineDetails(localStorage.getItem('accountId'), machineId)).then((data: any) => {
             console.log('Machine details:', data);
             let machineProducts: MachineProducts[] = [];
             Object.keys(data.products).map((product) => {
