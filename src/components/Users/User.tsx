@@ -30,9 +30,9 @@ export function User() {
                     history.push('/users');
                 }}>Back</Button>
             </div>
-            <div style={{ fontSize: 'medium', fontWeight: 600, paddingLeft: '5px' }}>
-                Email: {sessionStorage.getItem("email")} <br />
-                Username: {sessionStorage.getItem("user_name")}
+            <div style={{ fontSize: 'medium', paddingLeft: '5px' }}>
+                <b>Email:</b> {sessionStorage.getItem("email")} <br />
+                <b>Username:</b> {sessionStorage.getItem("user_name")}
             </div>
 
             <br />

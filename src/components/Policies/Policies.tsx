@@ -615,7 +615,7 @@ export default function Policies() {
 						seletedProduct === TecTANGO && maxEnroll ?
 							<TabPane tab={policyDisplayNames[CARD_ENROLL]} key="card-enrollment">
 								{window.location.pathname.split('/').length === 6 ?
-									<ProtectedRoute path={`/product/${productId}/policies/card-enrollment/:id`} component={CardEnrollmentPolicy} /> :
+									<ProtectedRoute path={`/product/${productId}/policies/card-enrollment/:id`} component={CardEnrollmentPolicy} subRoute/> :
 									<TableList policy_type={CARD_ENROLL} policy_description={CardEnrollmentPolicyDescription} activateColumns={activateColumns} deActivateColumns={deActivateColumns}
 										draggableBodyRow={CardEnrollmentDraggableBodyRow} draggableContainer={CardEnrollmentDraggableContainer}
 										inActivePolicies={inActiveCardEnrollmentPolicies} activePolicies={activeCardEnrollmentPolicies} handleGetPolicies={handleGetPolicies}
@@ -627,7 +627,7 @@ export default function Policies() {
 						isLocalProvisioning ?
 							<TabPane tab={policyDisplayNames[LOCAL_USER_PROVISIONING]} key="local-user-provisioning">
 								{window.location.pathname.split('/').length === 6 ?
-									<ProtectedRoute path={`/product/${productId}/policies/local-user-provisioning/:id`} component={UserProvisioningPolicy} /> :
+									<ProtectedRoute path={`/product/${productId}/policies/local-user-provisioning/:id`} component={UserProvisioningPolicy} subRoute/> :
 									<TableList policy_type={LOCAL_USER_PROVISIONING} policy_description={LocalUserProvisioningPolicyDescription} activateColumns={activateColumns} deActivateColumns={deActivateColumns}
 										draggableBodyRow={UserProvisioningDraggableBodyRow} draggableContainer={UserProvisioningDraggableContainer}
 										inActivePolicies={inActiveUserProvisioningPolicies} activePolicies={activeUserProvisioningPolicies} handleGetPolicies={handleGetPolicies}
