@@ -475,7 +475,9 @@ export default function Policies() {
 
 	useEffect(() => {
 		if (['password', 'kiosk', 'card-enrollment', 'local-user-provisioning'].includes(window.location.pathname.split("/")[4]) === false && window.location.pathname.split("/").length !== 6) {
-			history.push(`/product/${productId}/policies/pin`);
+			if (window.location.pathname.split("/")[4] !== 'pin') {
+				history.push(`/product/${productId}/policies/pin`);
+			}
 		}
 
 		getPolicies();
