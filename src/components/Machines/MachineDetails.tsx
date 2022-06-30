@@ -93,6 +93,9 @@ export function MachineDetails(props: any) {
             <Skeleton loading={loadingDetails}>
                 <div className="content-container rounded-grey-border">
                     <div style={{ fontWeight: '600', fontSize: '30px'}}>{machineDetails['machine_name']}</div>
+
+                    <Divider style={{ borderTop: '1px solid #d7d7dc' }} />
+                    
                     {
                         Object.keys(machineDetails).map((machineField) => (
                             machineField !== 'products' && machineDetails[machineField] !== 'object' ?

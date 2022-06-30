@@ -191,7 +191,7 @@ function UserProvisioningPolicy(props: any) {
                 </div>
 
                 <div className="content-policy-key-header">
-                    Assigned to groups:
+                    Assigned to user groups:
                 </div>
                 <div>
                     {isEdit ?
