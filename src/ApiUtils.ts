@@ -18,7 +18,7 @@ export function getCredentiTokenHeaders() {
 const Urls = {
     client_info: `client/info`,
     products: `account/${accountId}/product`,
-    stats:`account/${accountId}/stats`,
+    stats: `account/${accountId}/stats`,
     domains: `account/${accountId}/domains`,
     info: `account/${accountId}/info`,
 
@@ -32,7 +32,7 @@ const Urls = {
 
     //Machine Urls
     machines: `account/${accountId}/machines`,
-    machineDetails: (uid) =>  `account/${accountId}/machines/${uid}`,
+    machineDetails: (uid) => `account/${accountId}/machines/${uid}`,
     machineFilterableFields: `account/${accountId}/machines/filterable-fields`,
     machineFilter: `account/${accountId}/machines/filter`,
 
@@ -40,20 +40,20 @@ const Urls = {
     userGroups: (uid: string) => `account/${accountId}/users/${uid}/groups`,
     users: `account/${accountId}/users`,
     userInfo: (uid) => `account/${accountId}/users/${uid}`,
-    changeUserStatus: (uid) =>  `account/${accountId}/users/${uid}/lifecycle`,
+    changeUserStatus: (uid) => `account/${accountId}/users/${uid}/lifecycle`,
     lifeCycleOptions: `account/${accountId}/users/lifecycle/options`,
     enrollments: (uid) => `account/${accountId}/users/${uid}/enrollments`,
     userFilterableFields: `account/${accountId}/users/filterable-fields`,
     userFilter: `account/${accountId}/users/filter`,
-    changeEnrollmentStatus: (uid, enrollmentId) =>  `account/${accountId}/users/${uid}/enrollments/${enrollmentId}`,
+    changeEnrollmentStatus: (uid, enrollmentId) => `account/${accountId}/users/${uid}/enrollments/${enrollmentId}`,
     getEnrollmentStatusOptions: `account/${accountId}/users/card-status-options`,
 
     // Groups Urls
     group: (uid: string) => `account/${accountId}/groups/${uid}`,
     groups: `account/${accountId}/groups`,
-    groupUsers: (uid) => `account/${accountId}/groups/${uid}/users` ,
+    groupUsers: (uid) => `account/${accountId}/groups/${uid}/users`,
     usersNotInGroup: (uid) => `account/${accountId}/groups/${uid}/users-not-in-group`,
-    groupMachines: (uid) => `account/${accountId}/group/${uid}/machines` ,
+    groupMachines: (uid) => `account/${accountId}/group/${uid}/machines`,
     machinesNotInGroup: (uid) => `account/${accountId}/group/${uid}/machines-not-in-group`,
     groupFilterableFields: `account/${accountId}/groups/filterable-fields`,
     groupFilter: `account/${accountId}/groups/filter`,
@@ -66,6 +66,8 @@ const Urls = {
     deActivatePolicy: (uid, productId) => `account/${accountId}/product/${productId}/auth-policy/${uid}/inactivate`,
     reOrderPolicies: (productId) => `account/${accountId}/product/${productId}/auth-policy/reorder`,
     loginTypeOptions: `account/${accountId}/auth-policy/login-type`,
+    profileUserTypesOptions: `account/${accountId}/auth-policy/local-profile-user-types`,
+    profileUserFormatOptions: `account/${accountId}/auth-policy/local-profile-format-types`,
 
     // Mechanism Urls
     mechanisms: (productId) => `account/${accountId}/product/${productId}/mechanism`,
@@ -88,7 +90,7 @@ const Urls = {
     // app templates
     templateById: (id: number) => `app-template?id=${id}`,
     controlNameByTemplateId: (template_id: number) => `app-control-names?template_id=${template_id}`,
-    appConfigById: (config_id: number) =>  `app-configuration?id=${config_id}`,
+    appConfigById: (config_id: number) => `app-configuration?id=${config_id}`,
     xrefByAccount: (account_id: number) => `app-xref?account_id=${account_id}`,
     allAccountConfigs: (account_id: number) => `combo-account?id=${account_id}`,
     templatesByConfigId: (config_id: number) => `combo-config?id=${config_id}`

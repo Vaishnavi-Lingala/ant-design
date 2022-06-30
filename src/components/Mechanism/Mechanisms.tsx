@@ -19,7 +19,7 @@ export default function Mechanisms() {
 	const [inactiveMechanisms, setInactiveMechanisms]: any = useState([]);
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const history = useHistory();
-    const [buttonLoading, setButtonLoading] = useState(false);
+	const [buttonLoading, setButtonLoading] = useState(false);
 	const { productId } = useParams<any>();
 
 	const inactiveColumns = [
@@ -145,6 +145,11 @@ export default function Mechanisms() {
 				console.error('Error: ', error);
 				openNotification('error', 'An Error has occured with getting Mechanisms');
 			})
+			
+		window.scrollTo({
+			top: 0,
+			behavior: 'smooth',
+		});
 	}
 
 	useEffect(() => {
@@ -260,11 +265,6 @@ export default function Mechanisms() {
 			{...props}
 		/>
 	);
-
-	window.scrollTo({
-        top: 0,
-        behavior: 'smooth',
-    });
 
 	const DraggableBodyRow = ({ className, style, ...restProps }) => {
 		const index = activeMechanisms.findIndex(x => x.index === restProps['data-row-key']);

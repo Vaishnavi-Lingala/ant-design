@@ -8,6 +8,7 @@ import './Policies.css';
 import ApiService from "../../Api.service";
 import ApiUrls from '../../ApiUtils';
 import { openNotification } from "../Layout/Notification";
+import { policyDisplayNames } from "../../constants";
 
 export const KioskPolicy = (props: any) => {
 
@@ -214,9 +215,9 @@ export const KioskPolicy = (props: any) => {
             <div className={kioskDisplayData['uid'] === undefined ? "content-container" : "content-container-policy"}>
                 <div className="row-policy-container">
                     <div>
-                        {kioskDisplayData['uid'] === undefined ? <></> :
+                        {/* {kioskDisplayData['uid'] === undefined ? <></> :
                             <div className="content-heading">Edit kiosk Policy</div>
-                        }
+                        } */}
                     </div>
                     <div>
                         {kioskDisplayData['default'] === false ? <Button style={{ float: 'right' }} onClick={handleEditClick}>
@@ -309,7 +310,7 @@ export const KioskPolicy = (props: any) => {
                         Policy Type:
                     </div>
                     <div>
-                        {kioskDisplayData['policy_type']}
+                        {policyDisplayNames[kioskDisplayData['policy_type']]}
                     </div>
                 </div>
 
