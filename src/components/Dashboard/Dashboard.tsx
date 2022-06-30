@@ -18,19 +18,20 @@ export default function Dashboard() {
     }
 
     useEffect(() => {
-        ApiService.get(ApiUrls.stats)
-            .then(data => {
-                console.log('Stats data: ', data);
-                setStatsData(data);
-                setLoadingDetails(false);
-            }, error => {
-                console.error('Error: ', error);
-                openNotification('error', 'An error has occured with getting Dashboard details');
-                setLoadingDetails(false);
-            })
-        
         ApiService.get(ApiUrls.account_info, { domain: localStorage.getItem('domain')})
-            .then(data => console.log(data));
+            .then(data => {
+                ApiService.get(ApiUrls.stats(data.uid))
+                    .then(data => {
+                        console.log('Stats data: ', data);
+                        setStatsData(data);
+                        setLoadingDetails(false);
+                    }, error => {
+                        console.error('Error: ', error);
+                        openNotification('error', 'An error has occured with getting Dashboard details');
+                        setLoadingDetails(false);
+                    })
+            });
+
     }, [])
 
     const dateAndTime = new Date().toLocaleString('en-US', {

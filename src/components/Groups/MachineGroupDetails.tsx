@@ -18,6 +18,7 @@ export default function MachineGroupDetails(props: any) {
     const [pageSize, setPageSize]: any = useState(10);
     const [totalItems, setTotalItems]: any = useState(0);
     const history = useHistory();
+    const accountId = localStorage.getItem('accountId');
 
     const columns = [
         {
@@ -46,8 +47,8 @@ export default function MachineGroupDetails(props: any) {
     useEffect(() => {
         setLoadingDetails(true);
         Promise.all(([
-            ApiService.get(ApiUrls.groupMachines(window.location.pathname.split('/')[3])),
-            ApiService.get(ApiUrls.group(window.location.pathname.split('/')[3]))
+            ApiService.get(ApiUrls.groupMachines(accountId, window.location.pathname.split('/')[3])),
+            ApiService.get(ApiUrls.group(accountId, window.location.pathname.split('/')[3]))
         ]))
             .then(data => {
                 console.log('Group machines data: ', data[0]);
@@ -76,7 +77,7 @@ export default function MachineGroupDetails(props: any) {
 
     const onMachinesPageChange = async (page, pageSize) => {
         setLoadingDetails(true);
-        ApiService.get(ApiUrls.groupMachines(groupDetails['uid']), { start: page, limit: pageSize }).then(data => {
+        ApiService.get(ApiUrls.groupMachines(accountId, groupDetails['uid']), { start: page, limit: pageSize }).then(data => {
             data.results.forEach(machine => {
                 machine.key = machine.uid;
             })
@@ -93,7 +94,7 @@ export default function MachineGroupDetails(props: any) {
     const handleOk = (selectedUsers, action) => {
         console.log('Action: ', action);
         setLoadingDetails(true);
-        ApiService.post(ApiUrls.groupMachines(groupDetails['uid']), selectedUsers).then(data => {
+        ApiService.post(ApiUrls.groupMachines(accountId, groupDetails['uid']), selectedUsers).then(data => {
             if (!data.errorSummary) {
                 if (data.results !== undefined) {
                     data.results.forEach(machine => {

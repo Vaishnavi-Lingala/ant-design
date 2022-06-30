@@ -15,6 +15,7 @@ export default function UsersSelection(props: any) {
     const [totalItems, setTotalItems]: any = useState(0);
     const { Title } = Typography;
     const { Search } = Input;
+    const accountId = localStorage.getItem('accountId');
 
     const columns = [
         {
@@ -54,7 +55,7 @@ export default function UsersSelection(props: any) {
     };
 
     function getGroupMembers(groupId, params = {}) {
-        ApiService.get(ApiUrls.groupUsers(groupId), params).then(data => {
+        ApiService.get(ApiUrls.groupUsers(accountId, groupId), params).then(data => {
             console.log('Remove users search data: ', data);
             data.results.forEach(user => {
                 user.key = user.uid;
@@ -70,7 +71,7 @@ export default function UsersSelection(props: any) {
     }
 
     function getGroupNotMembers(groupId, params = {}) {
-        ApiService.get(ApiUrls.usersNotInGroup(groupId), params).then(data => {
+        ApiService.get(ApiUrls.usersNotInGroup(accountId, groupId), params).then(data => {
             console.log('Add users search data: ', data)
             data.results.forEach(user => {
                 user.key = user.uid;

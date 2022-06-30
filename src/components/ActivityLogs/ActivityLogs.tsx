@@ -99,6 +99,7 @@ export default function ActivityLogs() {
     const [loading, setLoading] = useState(true);
     const [tableLoading, setTableLoading] = useState(false);
     const { productId } = useParams();
+    const accountId = localStorage.getItem('accountId');
 
     const initialDateTimeFilters = {
         start: {
@@ -161,7 +162,7 @@ export default function ActivityLogs() {
             setTableLoading(true);
             try {
                 const data = await ApiService.post(
-                    ApiUrls.activityLog(productId),
+                    ApiUrls.activityLog(accountId, productId),
                     generateFilterPayload()
                 );
                     console.log(data);
@@ -181,7 +182,7 @@ export default function ActivityLogs() {
             setTableLoading(true);
             try {
                 var response = await ApiService.post(
-                    `${ApiUrls.activityLog(productId)}${url.search}`,
+                    `${ApiUrls.activityLog(accountId, productId)}${url.search}`,
                     generateFilterPayload()
                 );
                 setTableLoading(false);

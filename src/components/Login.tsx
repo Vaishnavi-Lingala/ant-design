@@ -36,8 +36,6 @@ function Login() {
                     config.oidc.clientId = data.idp_portal_oidc_client_id;
                     config.oidc.issuer = data.issuer_url;
                     localStorage.setItem("domain", domain);
-                    localStorage.setItem("accountId", data.uid);
-                    console.log("Account Id: ", localStorage.getItem("accountId"));
                     localStorage.setItem("clientId", data.idp_portal_oidc_client_id);
                     localStorage.setItem("issuer", data.issuer_url);
                     if (data.issuer_url !== "" && data.idp_portal_oidc_client_id !== "") {

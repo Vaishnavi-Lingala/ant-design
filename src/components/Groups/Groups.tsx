@@ -22,6 +22,7 @@ export default function Groups() {
     const [standardMachineGroups, setStandardMachineGroups] = useState<Group[]>([]);
     const [loadingDetails, setLoadingDetails] = useState(false);
     const [tableLoading, setTableLoading] = useState(false);
+    const accountId = localStorage.getItem('accountId');
     const { TabPane } = Tabs;
     const columns = [
         {
@@ -67,7 +68,7 @@ export default function Groups() {
 
     function getGroupsByFilter(object = {}, param = {}){
         setTableLoading(true);
-        ApiService.post(ApiUrls.groupFilter, object, param)
+        ApiService.post(ApiUrls.groupFilter(accountId), object, param)
             .then(data => {
                 setPage(data.page);
                 setPageSize(data.items_per_page);
@@ -101,7 +102,7 @@ export default function Groups() {
 
     function getGroups(object = {}, param = {}) {
         setLoadingDetails(true);
-        ApiService.post(ApiUrls.groupFilter, object, param)
+        ApiService.post(ApiUrls.groupFilter(accountId), object, param)
             .then(data => {
                 setPage(data.page);
                 setPageSize(data.items_per_page);

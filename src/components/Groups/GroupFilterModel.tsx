@@ -15,7 +15,7 @@ export default function GroupFiltersModal({ type, getGroups, onFilterApply, onRe
 
     useEffect(() => {
         (async function () {
-            var response = await ApiService.get(ApiUtils.groupFilterableFields);
+            var response = await ApiService.get(ApiUtils.groupFilterableFields(localStorage.getItem('accountId')));
             setFilterableFields([...response]);
         })();
     }, []);

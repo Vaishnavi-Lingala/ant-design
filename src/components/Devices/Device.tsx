@@ -17,6 +17,7 @@ function Device(props: any) {
     const [editData, setEditData]: any = useState();
     const [deviceTypeOptions, setDeviceTypeOptions] = useState({});
     const [vendorOptions, setVendorOptions] = useState({});
+    const accountId = localStorage.getItem('accountId');
 
     function createDevice() {
         props.handleOk(editData);
@@ -25,8 +26,8 @@ function Device(props: any) {
     useEffect(() => {
         setLoading(true);
         Promise.all(([
-            ApiService.get(ApiUrls.deviceOptions),
-            ApiService.get(ApiUrls.device(window.location.pathname.split('/')[2]))
+            ApiService.get(ApiUrls.deviceOptions(accountId)),
+            ApiService.get(ApiUrls.device(accountId, window.location.pathname.split('/')[2]))
         ]))
             .then(data => {
                 console.log(data[0]);
@@ -56,7 +57,7 @@ function Device(props: any) {
 
     function updateDevice() {
         console.log(editData);
-        ApiService.put(ApiUrls.device(displayDetails['uid']), editData)
+        ApiService.put(ApiUrls.device(accountId, displayDetails['uid']), editData)
             .then(data => {
                 if (!data.errorSummary) {
                     console.log(data);

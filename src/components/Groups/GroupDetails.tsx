@@ -19,6 +19,7 @@ export default function GroupDetails(props: any) {
     const [pageSize, setPageSize]: any = useState(10);
     const [totalItems, setTotalItems]: any = useState(0);
     const history = useHistory();
+    const accountId = localStorage.getItem('accountId');
 
     const columns = [
         {
@@ -47,7 +48,7 @@ export default function GroupDetails(props: any) {
         console.log('Action: ', action);
         setLoadingDetails(true);
         if (action === 'Add') {
-            ApiService.post(ApiUrls.groupUsers(groupDetails['uid']), selectedUsers).then(data => {
+            ApiService.post(ApiUrls.groupUsers(accountId, groupDetails['uid']), selectedUsers).then(data => {
                 if (!data.errorSummary) {
                     data.results.forEach(user => {
                         user.key = user.uid;
@@ -67,7 +68,7 @@ export default function GroupDetails(props: any) {
                 setLoadingDetails(false);
             })
         } else if (action === 'Remove') {
-            ApiService.delete(ApiUrls.groupUsers(groupDetails['uid']), selectedUsers).then(data => {
+            ApiService.delete(ApiUrls.groupUsers(accountId, groupDetails['uid']), selectedUsers).then(data => {
                 if (!data.errorSummary) {
                     data.results.forEach(user => {
                         user.key = user.uid;
@@ -98,8 +99,8 @@ export default function GroupDetails(props: any) {
     useEffect(() => {
         setLoadingDetails(true);
         Promise.all(([
-            ApiService.get(ApiUrls.groupUsers(window.location.pathname.split('/')[3]), { start: page, limit: pageSize }),
-            ApiService.get(ApiUrls.group(window.location.pathname.split('/')[3]))
+            ApiService.get(ApiUrls.groupUsers(accountId, window.location.pathname.split('/')[3]), { start: page, limit: pageSize }),
+            ApiService.get(ApiUrls.group(accountId, window.location.pathname.split('/')[3]))
         ]))
             .then(data => {
                 data[0].results.forEach(user => {
@@ -128,7 +129,7 @@ export default function GroupDetails(props: any) {
 
     const onUsersPageChange = async (page, pageSize) => {
         setLoadingDetails(true);
-        ApiService.get(ApiUrls.groupUsers(groupDetails['uid']), { start: page, limit: pageSize }).then(data => {
+        ApiService.get(ApiUrls.groupUsers(accountId, groupDetails['uid']), { start: page, limit: pageSize }).then(data => {
             data.results.forEach(user => {
                 user.key = user.uid;
             })

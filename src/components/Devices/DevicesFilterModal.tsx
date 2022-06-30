@@ -15,7 +15,7 @@ export default function DeviceFiltersModal({ getDevicesByFilter, onFilterApply, 
 
     useEffect(() => {
         (async function () {
-            var response = await ApiService.get(ApiUtils.deviceFilterableFields);
+            var response = await ApiService.get(ApiUtils.deviceFilterableFields(localStorage.getItem('accountId')));
             setFilterableFields([...response]);
         })();
     }, []);

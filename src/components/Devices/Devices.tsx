@@ -21,6 +21,7 @@ function Devices() {
     const [advancedFilters, setAdvancedFilters] = useState({});
     const [buttonLoading, setButtonLoading] = useState(false);
     const [object, setObject] = useState({});
+    const accountId = localStorage.getItem('accountId');
 
     const device = {
         "device_name": "",
@@ -76,7 +77,7 @@ function Devices() {
     function getDevicesByFilter(objectData = {}, param = {}) {
         setTableLoading(true);
         setObject(objectData);
-        ApiService.post(ApiUrls.deviceFilter, objectData, param)
+        ApiService.post(ApiUrls.deviceFilter(accountId), objectData, param)
             .then((data) => {
                 console.log(data);
                 setPage(data.page);
@@ -103,7 +104,7 @@ function Devices() {
 
     function getDevices(object = {}, param = {}) {
         setLoading(true);
-        ApiService.post(ApiUrls.deviceFilter, object, param)
+        ApiService.post(ApiUrls.deviceFilter(accountId), object, param)
             .then((data) => {
                 console.log(data);
                 setPage(data.page);
@@ -134,7 +135,7 @@ function Devices() {
 
     const handleOk = (object: object) => {
         setButtonLoading(true);
-        ApiService.post(ApiUrls.addDevice, object)
+        ApiService.post(ApiUrls.addDevice(accountId), object)
             .then(data => {
                 if (!data.errorSummary) {
                     console.log(data);

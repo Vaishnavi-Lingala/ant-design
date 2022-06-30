@@ -19,7 +19,7 @@ function Settings() {
 
     function getSettings() {
         setLoading(true)
-        ApiService.get(ApiUrls.info)
+        ApiService.get(ApiUrls.info(localStorage.getItem('accountId')))
             .then((data) => {
                 console.log(data);
                 setSettings(data);

@@ -30,7 +30,7 @@ export default function UserGroups() {
 
     function getGroups() {
         // setLoadingDetails(true);
-        ApiService.get(ApiUrls.groups, { type: 'USER' })
+        ApiService.get(ApiUrls.groups(localStorage.getItem('accountId')), { type: 'USER' })
             .then(data => {
                 console.log('Groups: ', data);
                 // let userGroupsList: Group[] = [];

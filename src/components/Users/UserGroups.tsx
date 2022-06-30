@@ -15,7 +15,7 @@ export function UserGroups() {
 
     useEffect(() => {
         setLoadingDetails(true);
-        ApiService.get(ApiUrls.userGroups(window.location.pathname.split('/')[2])).then((groupsResponse: any) => {
+        ApiService.get(ApiUrls.userGroups(localStorage.getItem('accountId'), window.location.pathname.split('/')[2])).then((groupsResponse: any) => {
             let userGroups = appendKeyToGivenList(groupsResponse);
             console.log(userGroups);
             setGroups(userGroups);

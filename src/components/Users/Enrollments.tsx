@@ -17,6 +17,9 @@ export function Enrollments() {
     const [pageSize, setPageSize]: any = useState(10);
     const [definedStatusList, setDefinedStatusList]: any = useState([]);
     const [statusList, setStatusList]: any = useState([]);
+
+    const accountId = localStorage.getItem('accountId');
+
     const columns: any = [
         { title: "Instrument Id", dataIndex: "instrument_id", width: "25%" },
         {
@@ -102,7 +105,7 @@ export function Enrollments() {
 
     const getEnrollmentStatusOptions = async () => {
         if (statusList === undefined || statusList.length <= 0) {
-            let enrollmentStatusTypes = await ApiService.get(ApiUrls.getEnrollmentStatusOptions).catch(error => {
+            let enrollmentStatusTypes = await ApiService.get(ApiUrls.getEnrollmentStatusOptions(accountId)).catch(error => {
                 console.error('Error: ', error);
                 openNotification('error', 'An Error has occured with getting enrollment status list');
             });
@@ -113,7 +116,7 @@ export function Enrollments() {
 
     const getEnrollments = () => {
         setLoadingDetails(true);
-        ApiService.get(ApiUrls.enrollments(window.location.pathname.split('/')[2])).then(result => {
+        ApiService.get(ApiUrls.enrollments(accountId, window.location.pathname.split('/')[2])).then(result => {
             let modifiedEnrollments = JSON.parse(JSON.stringify(result));
             let productsWithStatus = updateEnrollmentListWithStatus(result.products);
             modifiedEnrollments.products = productsWithStatus;
@@ -151,7 +154,7 @@ export function Enrollments() {
         let statusObj = {
             status: status
         }
-        let result = ApiService.put(ApiUrls.changeEnrollmentStatus(userId, enrollmentId), statusObj)
+        let result = ApiService.put(ApiUrls.changeEnrollmentStatus(accountId, userId, enrollmentId), statusObj)
             .then(data => {
                 if (!data.errorSummary) {
                     openNotification('success', `Status  has been updated successfully with ${status.toLowerCase()}.`);
