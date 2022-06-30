@@ -115,9 +115,9 @@ function Device(props: any) {
             <div className="content-container rounded-grey-border">
                 <div className="row-containers">
                     <div>
-                        {displayDetails['uid'] === undefined ? <></> :
+                        {/* {displayDetails['uid'] === undefined ? <></> :
                             <div className="device-content-heading" style={{ marginTop: '-10px' }}>Edit Device</div>
-                        }
+                        } */}
                     </div>
                     <div style={{ paddingRight: '50px', paddingBottom: '20px' }}>
                         {displayDetails['device_name'] !== "" ? <Button style={{ float: 'right' }} onClick={handleEditClick}>

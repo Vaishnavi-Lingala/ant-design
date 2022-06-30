@@ -254,9 +254,9 @@ function Mechanism(props: any) {
             <div className="content-container rounded-grey-border">
                 <div className="row-containers">
                     <div>
-                        {displayDetails['uid'] === undefined ? <></> :
+                        {/* {displayDetails['uid'] === undefined ? <></> :
                             <div className="content-heading">Edit Mechanism</div>
-                        }
+                        } */}
                     </div>
                     <div style={{ paddingRight: '50px', paddingBottom: '20px' }}>
                         {displayDetails['name'] !== "" ? <Button style={{ float: 'right' }} onClick={handleEditClick}>

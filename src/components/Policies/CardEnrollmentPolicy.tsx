@@ -7,7 +7,7 @@ import './Policies.css';
 
 import ApiService from "../../Api.service";
 import ApiUrls from '../../ApiUtils';
-import { CARD_ENROLL, TecTANGO } from "../../constants";
+import { CARD_ENROLL, policyDisplayNames, TecTANGO } from "../../constants";
 import { openNotification } from "../Layout/Notification";
 import Hint from "../Controls/Hint";
 
@@ -162,13 +162,13 @@ const CardEnrollmentPolicy = (props) => {
                     <div>
                         {cardEnrollDisplayData['uid'] === undefined ? <></> :
                             <div>
-                                <div style={{display: 'inline-block', marginRight: '3px'}} className="content-heading">
+                                {/* <div style={{display: 'inline-block', marginRight: '3px'}} className="content-heading">
                                     {isEdit ? 'Edit' : null} Card Enrollment Policy 
                                 </div>
                                 <div style={{display: 'inline-block', marginRight: '3px'}}>
                                     <Hint text={"This policy allows you to control how many cards can be enrolled per user"} />
-                                </div>
-                            </div>
+                                </div> */}
+                            </div>  
                         }
                     </div>
                     <div>
@@ -229,6 +229,13 @@ const CardEnrollmentPolicy = (props) => {
                             /> : Object.keys(groupNames).map(name =>
                                 <><Button style={{ cursor: 'text' }}>{groupNames[name]}</Button>&nbsp;</>)
                         }
+                    </div>
+
+                    <div className="content-policy-key-header">
+                        Policy Type:
+                    </div>
+                    <div>
+                        {policyDisplayNames[cardEnrollDisplayData['policy_type']]}
                     </div>
 
                     <div className="content-policy-key-header" style={{ paddingTop: '20px' }}>

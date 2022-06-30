@@ -8,6 +8,7 @@ import './Policies.css'
 import ApiService from "../../Api.service";
 import ApiUrls from '../../ApiUtils';
 import { openNotification } from "../Layout/Notification";
+import { policyDisplayNames } from "../../constants";
 
 export const PasswordPolicy = (props: any) => {
     const [isEdit, setIsEdit] = useState(false);
@@ -140,9 +141,9 @@ export const PasswordPolicy = (props: any) => {
         <div className={passwordDisplayData['uid'] === undefined ? "content-container" : "content-container-policy"}>
             <div className="row-policy-container">
                 <div>
-                    {passwordDisplayData['uid'] === undefined ? <></> :
+                    {/* {passwordDisplayData['uid'] === undefined ? <></> :
                         <div className="content-heading">Edit Password Policy</div>
-                    }
+                    } */}
                 </div>
                 <div>
                     {passwordDisplayData['default'] === false ? <Button style={{ float: 'right' }} onClick={handleEditClick}>
@@ -212,7 +213,7 @@ export const PasswordPolicy = (props: any) => {
                     Policy Type:
                 </div>
                 <div>
-                    {passwordDisplayData['policy_type']}
+                    {policyDisplayNames[passwordDisplayData['policy_type']]}
                 </div>
             </div>
 

@@ -34,11 +34,6 @@ export function MachineDetails(props: any) {
         }
     ]
 
-    window.scrollTo({
-        top: 0,
-        behavior: 'smooth',
-    });
-
     const DisplayField = ({ displayName, value }) => {
         return (
             <>
@@ -80,6 +75,11 @@ export function MachineDetails(props: any) {
         }).finally(() => {
             setLoadingDetails(false);
         });
+
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
     }, []);
 
     return (
@@ -92,7 +92,7 @@ export function MachineDetails(props: any) {
             </div>
             <Skeleton loading={loadingDetails}>
                 <div className="content-container rounded-grey-border">
-                    <div style={{ fontWeight: '600', fontSize: '30px'}}>Details</div>
+                    <div style={{ fontWeight: '600', fontSize: '30px'}}>{machineDetails['machine_name']}</div>
                     {
                         Object.keys(machineDetails).map((machineField) => (
                             machineField !== 'products' && machineDetails[machineField] !== 'object' ?

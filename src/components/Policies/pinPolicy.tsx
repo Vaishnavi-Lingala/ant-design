@@ -8,6 +8,7 @@ import './Policies.css';
 import ApiService from "../../Api.service";
 import ApiUrls from '../../ApiUtils';
 import { openNotification } from "../Layout/Notification";
+import { policyDisplayNames } from "../../constants";
 
 export const PinPolicy = (props: any) => {
 	const [isEdit, setIsEdit] = useState(false);
@@ -143,9 +144,9 @@ export const PinPolicy = (props: any) => {
 			<div className={pinDisplayData['uid'] === undefined ? "content-container" : "content-container-policy"}>
 				<div className="row-policy-container">
 					<div>
-						{pinDisplayData['uid'] === undefined ? <></> :
+						{/* {pinDisplayData['uid'] === undefined ? <></> :
 							<div className="content-heading">Edit Pin Policy</div>
-						}
+						} */}
 					</div>
 					<div>
 						{pinDisplayData['default'] === false ? <Button style={{ float: 'right' }} onClick={handleEditClick}>
@@ -214,7 +215,7 @@ export const PinPolicy = (props: any) => {
 						Policy Type:
 					</div>
 					<div>
-						{pinDisplayData['policy_type']}
+						{policyDisplayNames[pinDisplayData['policy_type']]}
 					</div>
 				</div>
 

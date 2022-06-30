@@ -16,13 +16,15 @@ import { openNotification } from '../Layout/Notification';
 import ProtectedRoute from '../ProtectedRoute';
 import ApiUrls from '../../ApiUtils';
 import ApiService from '../../Api.service';
-import { CardEnrollmentPolicyDescription, CARD_ENROLL, KIOSK, KioskPolicyDescription, PASSWORD, PasswordPolicyDescription, PIN, PinPolicyDescription, TecTANGO } from '../../constants';
+import { CardEnrollmentPolicyDescription, CARD_ENROLL, KIOSK, KioskPolicyDescription, LocalUserProvisioningPolicyDescription, LOCAL_USER_PROVISIONING, PASSWORD, PasswordPolicyDescription, PIN, PinPolicyDescription, policyDisplayNames, TecTANGO } from '../../constants';
 import { Store } from '../../Store';
+import UserProvisioningPolicy from './UserProvisioningPolicy';
 
 export default function Policies() {
 	const history = useHistory();
 	const [seletedProduct] = useContext(Store);
 	const [loadingDetails, setLoadingDetails] = useState(false);
+	const [loading, setLoading] = useState(false);
 	const [activePinPolicies, setActivePinPolicies]: any = useState([]);
 	const [inActivePinPolicies, setInActivePinPolicies]: any = useState([]);
 	const [activePasswordPolicies, setActivePasswordPolicies]: any = useState([]);
@@ -31,6 +33,9 @@ export default function Policies() {
 	const [inActiveKioskPolicies, setInActiveKioskPolicies]: any = useState([]);
 	const [activeCardEnrollmentPolicies, setActiveCardEnrollmentPolicies] = useState([]);
 	const [inActiveCardEnrollmentPolicies, setInActiveCardEnrollmentPolicies] = useState([]);
+	const [activeUserProvisioningPolicies, setActiveUserProvisioningPolicies]: any = useState([]);
+	const [inActiveUserProvisioningPolicies, setInActiveUserProvisioningPolicies] = useState([]);
+	const [isLocalProvisioning, setIsLocalProvisioning] = useState(false);
 	const path = window.location.pathname.split('/').length;
 	const [maxEnroll, setMaxEnroll] = useState(null);
 	const { productId } = useParams<any>();
@@ -89,11 +94,6 @@ export default function Policies() {
 		}
 	];
 
-    window.scrollTo({
-        top: 0,
-        behavior: 'smooth',
-    });
-
 	const deActivateColumns = [
 		{
 			title: 'Policy Name',
@@ -137,7 +137,7 @@ export default function Policies() {
 	const SortableBody = SortableContainer(props => <tbody {...props} />);
 
 	const handlePinSortEnd = ({ oldIndex, newIndex }) => {
-		if (oldIndex !== newIndex && newIndex != activePinPolicies.length - 1) {
+		if (oldIndex !== newIndex && newIndex !== activePinPolicies.length - 1) {
 			const newData = arrayMoveImmutable([].concat(activePinPolicies), oldIndex, newIndex).filter(
 				el => !!el,
 			);
@@ -166,7 +166,7 @@ export default function Policies() {
 	};
 
 	const handlePasswordSortEnd = ({ oldIndex, newIndex }) => {
-		if (oldIndex !== newIndex && newIndex != activePasswordPolicies.length - 1) {
+		if (oldIndex !== newIndex && newIndex !== activePasswordPolicies.length - 1) {
 			const newData = arrayMoveImmutable([].concat(activePasswordPolicies), oldIndex, newIndex).filter(
 				el => !!el,
 			);
@@ -195,7 +195,7 @@ export default function Policies() {
 	};
 
 	const handleKioskSortEnd = ({ oldIndex, newIndex }) => {
-		if (oldIndex !== newIndex && newIndex != activeKioskPolicies.length - 1) {
+		if (oldIndex !== newIndex && newIndex !== activeKioskPolicies.length - 1) {
 			const newData = arrayMoveImmutable([].concat(activeKioskPolicies), oldIndex, newIndex).filter(
 				el => !!el,
 			);
@@ -230,7 +230,7 @@ export default function Policies() {
 	};
 
 	const handleCardEnrollmentSortEnd = ({ oldIndex, newIndex }) => {
-		if (oldIndex !== newIndex && newIndex != activeCardEnrollmentPolicies.length - 1) {
+		if (oldIndex !== newIndex && newIndex !== activeCardEnrollmentPolicies.length - 1) {
 			const newData = arrayMoveImmutable([].concat(activeCardEnrollmentPolicies), oldIndex, newIndex).filter(
 				el => !!el,
 			);
@@ -253,6 +253,35 @@ export default function Policies() {
 		/>
 	);
 
+	const handleUserProvisioningSortEnd = ({ oldIndex, newIndex }) => {
+		if (oldIndex !== newIndex && newIndex !== activeUserProvisioningPolicies.length - 1) {
+			const newData = arrayMoveImmutable([].concat(activeUserProvisioningPolicies), oldIndex, newIndex).filter(
+				el => !!el,
+			);
+			console.log('Sorted items: ', newData);
+			setActiveUserProvisioningPolicies(newData);
+			//@ts-ignore
+			console.log(newData[newIndex].policy_id, newData.length - newIndex - 1);
+			//@ts-ignore
+			reOrderPolicies(newData[newIndex].policy_id, newData.length - newIndex - 1, LOCAL_USER_PROVISIONING);
+		}
+	};
+
+	const UserProvisioningDraggableContainer = (props) => (
+		<SortableBody
+			useDragHandle
+			disableAutoscroll
+			helperClass="row-dragging"
+			onSortEnd={handleUserProvisioningSortEnd}
+			{...props}
+		/>
+	);
+
+	const UserProvisioningDraggableBodyRow = ({ className, style, ...restProps }) => {
+		const index = activeUserProvisioningPolicies.findIndex(x => x.index === restProps['data-row-key']);
+		return <SortableItem index={index} {...restProps} />;
+	}
+
 	function handleGetPolicies() {
 		getPolicies();
 	}
@@ -268,6 +297,7 @@ export default function Policies() {
 					var passwordCounter = 0;
 					var kioskCounter = 0;
 					var cardEnrollCounter = 0;
+					var userProvisioningCounter = 0;
 					var pinActive: any = [];
 					var pinInActive: any = [];
 					var passwordActive: any = [];
@@ -276,6 +306,8 @@ export default function Policies() {
 					var kioskInActive: any = [];
 					var cardEnrollActive: any = [];
 					var cardEnrollInActive: any = [];
+					var userProvisioningActive: any = [];
+					var userProvisioningInActive: any = [];
 					for (var i = 0; i < data.length; i++) {
 						var object;
 						if (data[i].policy_type === PIN) {
@@ -389,6 +421,34 @@ export default function Policies() {
 								cardEnrollInActive.push(object);
 							}
 						}
+
+						if (data[i].policy_type === LOCAL_USER_PROVISIONING) {
+							if (data[i].active === true) {
+								object = {
+									key: userProvisioningCounter + 1,
+									policy_name: data[i].name,
+									policy_id: data[i].uid,
+									policy_description: data[i].description,
+									order: data[i].order,
+									default: data[i].default,
+									index: userProvisioningCounter + 1
+								}
+								userProvisioningCounter = userProvisioningCounter + 1;
+								userProvisioningActive.push(object);
+							}
+							else {
+								object = {
+									key: userProvisioningCounter + 1,
+									policy_name: data[i].name,
+									policy_id: data[i].uid,
+									policy_description: data[i].description,
+									default: data[i].default,
+									index: cardEnrollCounter + 1
+								}
+								userProvisioningCounter = userProvisioningCounter + 1;
+								userProvisioningInActive.push(object);
+							}
+						}
 					}
 					setActivePinPolicies(pinActive);
 					setInActivePinPolicies(pinInActive);
@@ -398,39 +458,50 @@ export default function Policies() {
 					setInActiveKioskPolicies(kioskInActive);
 					setActiveCardEnrollmentPolicies(cardEnrollActive);
 					setInActiveCardEnrollmentPolicies(cardEnrollInActive);
+					setActiveUserProvisioningPolicies(userProvisioningActive);
+					setInActiveUserProvisioningPolicies(userProvisioningInActive);
 					setLoadingDetails(false);
 				}, error => {
 					console.log(error)
 					openNotification('error', 'An Error has occured with getting Policies');
 				})
 		}
+
+		window.scrollTo({
+			top: 0,
+			behavior: 'smooth',
+		});
 	}
 
 	useEffect(() => {
-		if (['password', 'kiosk', 'card-enrollment'].includes(window.location.pathname.split("/")[4]) === false && window.location.pathname.split("/").length !== 6) {
+		if (['password', 'kiosk', 'card-enrollment', 'local-user-provisioning'].includes(window.location.pathname.split("/")[4]) === false && window.location.pathname.split("/").length !== 6) {
 			if (window.location.pathname.split("/")[4] !== 'pin') {
 				history.push(`/product/${productId}/policies/pin`);
 			}
 		}
-		
+
 		getPolicies();
 	}, []);
 
 	useEffect(() => {
 		(async function () {
+			setLoading(true);
 			if (seletedProduct === TecTANGO) {
 				try {
 					let licenses = await ApiService.get(ApiUrls.licences(accountId));
+					let accountDetails = await ApiService.get(ApiUrls.info(accountId));
+					setIsLocalProvisioning(accountDetails.enable_local_provisioning);
 					console.log(licenses);
 					licenses.forEach(license => {
 						if (license.product.sku === TecTANGO && license.max_enroll_allowed) {
 							setMaxEnroll(license.max_enroll_allowed);
 						}
 					})
+					setLoading(false);
 				}
 				catch (err) {
 					console.log(err);
-					openNotification("error", "Error has occured while getting licences");
+					openNotification("error", "Error has occured while getting details");
 				}
 			}
 		})();
@@ -504,7 +575,7 @@ export default function Policies() {
 				</Button> : <></>}
 			</div>
 
-			<Skeleton loading={loadingDetails}>
+			<Skeleton loading={loadingDetails || loading}>
 				<Tabs activeKey={window.location.pathname.split("/")[4]}
 					type="card" size={"middle"} animated={false}
 					tabBarStyle={{ marginBottom: '0px' }}
@@ -512,7 +583,7 @@ export default function Policies() {
 						history.push(`/product/${productId}/policies/` + key);
 					}}
 				>
-					<TabPane tab="Pin" key="pin">
+					<TabPane tab={policyDisplayNames[PIN]} key="pin">
 						{window.location.pathname.split('/').length === 6 ?
 							<ProtectedRoute path={`/product/${productId}/policies/pin/:id`} component={PinPolicy} subRoute/> :
 							<TableList policy_type={PIN} policy_description={PinPolicyDescription}
@@ -522,7 +593,7 @@ export default function Policies() {
 							/>
 						}
 					</TabPane>
-					<TabPane tab="Password" key="password">
+					<TabPane tab={policyDisplayNames[PASSWORD]} key="password">
 						{window.location.pathname.split('/').length === 6 ?
 							<ProtectedRoute path={`/product/${productId}/policies/password/:id`} component={PasswordPolicy} subRoute/> :
 							<TableList policy_type={PASSWORD} policy_description={PasswordPolicyDescription} activateColumns={activateColumns} deActivateColumns={deActivateColumns}
@@ -531,7 +602,7 @@ export default function Policies() {
 							/>
 						}
 					</TabPane>
-					<TabPane tab="Kiosk" key="kiosk">
+					<TabPane tab={policyDisplayNames[KIOSK]} key="kiosk">
 						{window.location.pathname.split('/').length === 6 ?
 							<ProtectedRoute path={`/product/${productId}/policies/kiosk/:id`} component={KioskPolicy} subRoute/> :
 							<TableList policy_type={KIOSK} policy_description={KioskPolicyDescription} activateColumns={activateColumns} deActivateColumns={deActivateColumns}
@@ -540,16 +611,30 @@ export default function Policies() {
 							/>
 						}
 					</TabPane>
-					{seletedProduct === TecTANGO && maxEnroll ?
-						<TabPane tab="Card Enrollment" key="card-enrollment">
-							{window.location.pathname.split('/').length === 6 ?
-								<ProtectedRoute path={`/product/${productId}/policies/card-enrollment/:id`} component={CardEnrollmentPolicy} subRoute/> :
-								<TableList policy_type={CARD_ENROLL} policy_description={CardEnrollmentPolicyDescription} activateColumns={activateColumns} deActivateColumns={deActivateColumns}
-									draggableBodyRow={CardEnrollmentDraggableBodyRow} draggableContainer={CardEnrollmentDraggableContainer}
-									inActivePolicies={inActiveCardEnrollmentPolicies} activePolicies={activeCardEnrollmentPolicies} handleGetPolicies={handleGetPolicies}
-								/>
-							}
-						</TabPane> : null}
+					{
+						seletedProduct === TecTANGO && maxEnroll ?
+							<TabPane tab={policyDisplayNames[CARD_ENROLL]} key="card-enrollment">
+								{window.location.pathname.split('/').length === 6 ?
+									<ProtectedRoute path={`/product/${productId}/policies/card-enrollment/:id`} component={CardEnrollmentPolicy} /> :
+									<TableList policy_type={CARD_ENROLL} policy_description={CardEnrollmentPolicyDescription} activateColumns={activateColumns} deActivateColumns={deActivateColumns}
+										draggableBodyRow={CardEnrollmentDraggableBodyRow} draggableContainer={CardEnrollmentDraggableContainer}
+										inActivePolicies={inActiveCardEnrollmentPolicies} activePolicies={activeCardEnrollmentPolicies} handleGetPolicies={handleGetPolicies}
+									/>
+								}
+							</TabPane> : null
+					}
+					{
+						isLocalProvisioning ?
+							<TabPane tab={policyDisplayNames[LOCAL_USER_PROVISIONING]} key="local-user-provisioning">
+								{window.location.pathname.split('/').length === 6 ?
+									<ProtectedRoute path={`/product/${productId}/policies/local-user-provisioning/:id`} component={UserProvisioningPolicy} /> :
+									<TableList policy_type={LOCAL_USER_PROVISIONING} policy_description={LocalUserProvisioningPolicyDescription} activateColumns={activateColumns} deActivateColumns={deActivateColumns}
+										draggableBodyRow={UserProvisioningDraggableBodyRow} draggableContainer={UserProvisioningDraggableContainer}
+										inActivePolicies={inActiveUserProvisioningPolicies} activePolicies={activeUserProvisioningPolicies} handleGetPolicies={handleGetPolicies}
+									/>
+								}
+							</TabPane> : null
+					}
 				</Tabs>
 			</Skeleton>
 		</>
