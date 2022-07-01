@@ -297,7 +297,7 @@ function VDIPolicy(props: any) {
                 </div>
 
                 <div className="content-policy-key-header" style={{ padding: '10px 0 10px 0' }}>
-                    App Template<span className="mandatory">*</span>:
+                    App Template:
                 </div>
                 <div style={{ padding: '12px 0 10px 0' }}>
                     {isEdit ? <TextArea className="form-control"
