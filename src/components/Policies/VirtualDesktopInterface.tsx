@@ -8,38 +8,41 @@ import ApiService from "../../Api.service";
 import ApiUrls from "../../ApiUtils";
 import { openNotification } from "../Layout/Notification";
 import TextArea from "antd/lib/input/TextArea";
-import { LOCAL_USER_PROVISIONING, policyDisplayNames } from "../../constants";
+import { policyDisplayNames, VIRTUAL_DESKTOP_INTERFACE } from "../../constants";
 
-function UserProvisioningPolicy(props: any) {
+function VDIPolicy(props: any) {
     const [loading, setLoading] = useState(true);
-    const [userProvisioningDisplayData, setUserProvisioningDisplayData] = useState({});
-    const [userProvisioningEditData, setUserProvisioningEditedData]: any = useState();
+    const [vdiDisplayData, setVDIDisplayData] = useState({});
+    const [vdiEditData, setVDIEditedData]: any = useState();
     const [groups, setGroups]: any = useState([]);
+    const [fullGroups, setFullGroups]: any = useState([]);
     const [isEdit, setIsEdit] = useState(false);
     const [groupNames, setGroupNames]: any = useState([]);
     const [groupUids, setGroupUids]: any = useState([]);
     const [groupsChange, setGroupsChange]: any = useState([]);
-    const [userTypeOptions, setUserTypeOptions] = useState({});
-    const [userFormatOptions, setUserFormatOptions] = useState({});
+    const [vdiTypeOptions, setVDITypeOptions] = useState([]);
     const history = useHistory();
-	const accountId = localStorage.getItem('accountId');
+    const accountId = localStorage.getItem('accountId');
+    const [groupType, setGroupType] = useState("");
+    const [clearItems, setClearItems] = useState(false);
 
     useEffect(() => {
         Promise.all(([
-            ApiService.get(ApiUrls.groups(accountId), { type: "USER" }),
-            ApiService.get(ApiUrls.profileUserFormatOptions(accountId)),
-            ApiService.get(ApiUrls.profileUserTypesOptions(accountId)),
+            ApiService.get(ApiUrls.groups(accountId)),
+            ApiService.get(ApiUrls.vdiTypeOptions(accountId)),
             ApiService.get(ApiUrls.policy(accountId, window.location.pathname.split('/')[5]))
         ]))
             .then(data => {
-                console.log('GROUPS: ', data[0]);
                 for (var i = 0; i < data[0].length; i++) {
                     groups.push({
                         label: data[0][i].name,
-                        value: data[0][i].uid
+                        value: data[0][i].uid,
+                        type: data[0][i].type
                     })
                 }
+                console.log(groups);
                 setGroups(groups);
+                setFullGroups(groups);
                 var object = {};
                 for (var i = 0; i < data[0].length; i++) {
                     object[data[0][i].name] = data[0][i].uid
@@ -47,20 +50,17 @@ function UserProvisioningPolicy(props: any) {
                 groupsChange.push(object);
                 setGroupsChange(groupsChange);
 
-                console.log(data[1]);
-                setUserFormatOptions(data[1]);
+                setVDITypeOptions(data[1]);
 
                 console.log(data[2]);
-                setUserTypeOptions(data[2])
-
-                console.log(data[3]);
-                if (!data[3].errorSummary) {
-                    setUserProvisioningEditedData(data[3]);
-                    setUserProvisioningDisplayData(data[3]);
-                    if (data[3].uid !== undefined) {
-                        Object.keys(data[3].auth_policy_groups).map(index => {
-                            groupNames.push(data[3].auth_policy_groups[index].name);
-                            groupUids.push(data[3].auth_policy_groups[index].uid)
+                if (!data[2].errorSummary) {
+                    setVDIEditedData(data[2]);
+                    setVDIDisplayData(data[2]);
+                    if (data[2].uid !== undefined) {
+                        Object.keys(data[2].kiosk_machine_groups).map(index => {
+                            groupNames.push(data[2].kiosk_machine_groups[index].name);
+                            groupUids.push(data[2].kiosk_machine_groups[index].uid);
+                            setGroupType(data[2].kiosk_machine_groups[index].type);
                             setGroupUids(groupUids);
                             setGroupNames(groupNames)
                             console.log(groupUids);
@@ -70,14 +70,14 @@ function UserProvisioningPolicy(props: any) {
                     setLoading(false);
                 }
                 else if (window.location.pathname.split('/').length === 5) {
-                    setUserProvisioningDisplayData(props.policyDetails);
-                    setUserProvisioningEditedData(props.policyDetails);
+                    setVDIDisplayData(props.policyDetails);
+                    setVDIEditedData(props.policyDetails);
                     setIsEdit(true);
                     setLoading(false);
                 }
                 else {
-                    console.log('else: ', data[3]);
-                    openNotification('error', data[3].errorCauses.length !== 0 ? data[3].errorCauses[3].errorSummary : data[3].errorSummary);
+                    console.log('else: ', data[2]);
+                    openNotification('error', data[2].errorCauses.length !== 0 ? data[2].errorCauses[1].errorSummary : data[2].errorSummary);
                     history.push(`/product/${localStorage.getItem("productId")}/policies/local-user-provisioning`);
                 }
             }, error => {
@@ -89,36 +89,37 @@ function UserProvisioningPolicy(props: any) {
 
     function handleEditClick() {
         setIsEdit(!isEdit);
-        setUserProvisioningEditedData({ ...userProvisioningDisplayData });
+        setVDIEditedData({ ...vdiDisplayData });
     }
 
     function handleCancelClick() {
-        setUserProvisioningEditedData({ ...userProvisioningDisplayData });
+        setVDIEditedData({ ...vdiDisplayData });
         setIsEdit(false);
     }
 
     function handleSaveClick() {
+        console.log(vdiEditData);
         updateUserProvisioningPolicy();
     }
 
     function createUserProvisioningPolicy() {
-        props.handleOk("LOCAL_USER_PROVISIONING", userProvisioningEditData);
+        props.handleOk(VIRTUAL_DESKTOP_INTERFACE, vdiEditData);
     }
 
     function setCancelClick() {
-        props.handleCancel("LOCAL_USER_PROVISIONING");
+        props.handleCancel(VIRTUAL_DESKTOP_INTERFACE);
     }
 
     function updateUserProvisioningPolicy() {
-        userProvisioningEditData.auth_policy_groups = groupUids;
-        ApiService.put(ApiUrls.policy(accountId, userProvisioningDisplayData['uid']), userProvisioningEditData)
+        vdiEditData.kiosk_machine_groups = groupUids;
+        ApiService.put(ApiUrls.policy(accountId, vdiDisplayData['uid']), vdiEditData)
             .then(data => {
                 if (!data.errorSummary) {
                     groupNames.length = 0;
-                    setUserProvisioningDisplayData({ ...userProvisioningEditData });
-                    openNotification('success', 'Successfully updated Local User Provisioning Policy');
-                    Object.keys(data.auth_policy_groups).map(index => {
-                        groupNames.push(data.auth_policy_groups[index].name);
+                    setVDIDisplayData({ ...vdiEditData });
+                    openNotification('success', 'Successfully updated VDI Policy');
+                    Object.keys(data.kiosk_machine_groups).map(index => {
+                        groupNames.push(data.kiosk_machine_groups[index].name);
                     });
                     setGroupNames(groupNames);
                     setIsEdit(false);
@@ -129,7 +130,7 @@ function UserProvisioningPolicy(props: any) {
             })
             .catch(error => {
                 console.error('Error: ', error);
-                openNotification('error', 'An Error has occured with updating Local User Provisioning Policy');
+                openNotification('error', 'An Error has occured with updating VDI Policy');
             })
     }
 
@@ -143,34 +144,34 @@ function UserProvisioningPolicy(props: any) {
         })
         groupUids.length = 0;
         setGroupUids(value);
-        userProvisioningEditData.auth_policy_groups = value;
-        console.log(userProvisioningEditData.auth_policy_groups);
+        vdiEditData.kiosk_machine_groups = value;
+        console.log(vdiEditData.kiosk_machine_groups);
     }
 
     return <Skeleton loading={loading}>
-        <div className={userProvisioningDisplayData['uid'] === undefined ? "content-container" : "content-container-policy"}>
+        <div className={vdiDisplayData['uid'] === undefined ? "content-container" : "content-container-policy"}>
             <div className="row-policy-container">
                 <div>
                 </div>
                 <div>
-                    {userProvisioningDisplayData['default'] === false ? <Button style={{ float: 'right' }} onClick={handleEditClick}>
+                    {vdiDisplayData['default'] === false ? <Button style={{ float: 'right' }} onClick={handleEditClick}>
                         {!isEdit ? 'Edit' : 'Cancel'}
                     </Button> : <></>
                     }
                 </div>
                 <div className="content-policy-key-header" style={{ paddingTop: '20px' }}>
-                    <p>Policy Name<span className="mandatory">*</span> :</p>
+                    Policy Name<span className="mandatory">*</span>:
                 </div>
                 <div style={{ paddingTop: '20px' }}>
                     {isEdit ? <Input className="form-control"
                         style={{ width: "275px" }}
-                        onChange={(e) => setUserProvisioningEditedData({
-                            ...userProvisioningEditData,
+                        onChange={(e) => setVDIEditedData({
+                            ...vdiEditData,
                             name: e.target.value
                         })}
-                        defaultValue={userProvisioningDisplayData['name']}
+                        defaultValue={vdiDisplayData['name']}
                         placeholder='Enter a new policy name'
-                    /> : userProvisioningDisplayData['name']
+                    /> : vdiDisplayData['name']
                     }
                 </div>
 
@@ -180,31 +181,69 @@ function UserProvisioningPolicy(props: any) {
                 <div>
                     {isEdit ? <TextArea className="form-control"
                         style={{ width: "275px" }}
-                        onChange={(e) => setUserProvisioningEditedData({
-                            ...userProvisioningEditData,
+                        onChange={(e) => setVDIEditedData({
+                            ...vdiEditData,
                             description: e.target.value
                         })}
-                        defaultValue={userProvisioningDisplayData['description']}
+                        defaultValue={vdiDisplayData['description']}
                         placeholder='Enter policy description'
-                    /> : userProvisioningDisplayData['description']
+                    /> : vdiDisplayData['description']
                     }
                 </div>
 
                 <div className="content-policy-key-header">
-                    <p>Assigned to user groups<span className="mandatory">*</span> :</p>
+                    Machine group type <span className="mandatory">*</span>:
+                </div>
+                <div>
+                    <Radio.Group
+                        defaultValue={groupType}
+                        disabled={!isEdit}
+                        onChange={(e) => {
+                            // setGroupNames([
+                            //     ...groupNames,
+                            //     groupNames.length = 0
+                            // ]);
+                            setGroupType(e.target.value)
+                            var groupTypegroups: any = [];
+                            Object.keys(fullGroups).map(index => {
+                                console.log(index)
+                                if (fullGroups[index]["type"] === e.target.value) {
+                                    groupTypegroups.push(fullGroups[index])
+                                }
+                            })
+                            setGroups(groupTypegroups);
+                        }}
+                        >
+                        <Radio value={"STANDARD"}>
+                            Standard
+                        </Radio>
+                        <br />
+                        <Radio value={"KIOSK"}>
+                            Kiosk
+                        </Radio>
+                        <br />
+                        <Radio value={"THIN"}>
+                            Thin
+                        </Radio>
+                    </Radio.Group>
+                </div>
+
+                <div className="content-policy-key-header">
+                    Assigned to machine groups<span className="mandatory">*</span>:
                 </div>
                 <div>
                     {isEdit ?
                         <Select
-                            mode="multiple"
+                        id={"select"}
+                        mode="multiple"
                             size={"large"}
                             placeholder={<div>Please select groups</div>}
-                            defaultValue={userProvisioningDisplayData['name'] !== "" ? groupNames : []}
+                            defaultValue={vdiDisplayData['name'] !== "" ? groupNames : []}
                             onChange={handleGroups}
                             style={{ width: '275px' }}
                             options={groups}
                             filterOption={(input, option) =>
-                                //@ts-ignore
+                                // @ts-ignore
                                 option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
                             }
                         /> : Object.keys(groupNames).map(name =>
@@ -219,7 +258,7 @@ function UserProvisioningPolicy(props: any) {
                     Policy Type:
                 </div>
                 <div>
-                    {policyDisplayNames[userProvisioningDisplayData['policy_type']]}
+                    {policyDisplayNames[vdiDisplayData['policy_type']]}
                 </div>
             </div>
 
@@ -227,56 +266,28 @@ function UserProvisioningPolicy(props: any) {
 
             <div className="row-policy-container">
                 <div className="content-policy-key-header" style={{ padding: '10px 0 10px 0' }}>
-                    <p>Local Profile Format<span className="mandatory">*</span> :</p>
+                    VDI Type<span className="mandatory">*</span>:
                 </div>
                 <div style={{ padding: '12px 0 10px 0' }}>
-                    {isEdit ?
-                        <Select
-                            size={"large"}
-                            placeholder="Please select user profile format"
-                            defaultValue={userFormatOptions[userProvisioningEditData?.policy_req?.local_profile_format]}
-                            onChange={(value) => setUserProvisioningEditedData((state) => {
-                                const { policy_req } = state;
-                                return {
-                                    ...userProvisioningEditData,
-                                    policy_req: {
-                                        ...policy_req,
-                                        local_profile_format: value
-                                    }
-                                }
-                            })}
-                            style={{ width: '275px' }}
-                        >
-                            {
-                                Object.keys(userFormatOptions).map(profileFormat => {
-                                    return <Select.Option key={profileFormat} value={profileFormat}>
-                                        {userFormatOptions[profileFormat]}
-                                    </Select.Option>
-                                })
-                            }
-                        </Select> : userFormatOptions[userProvisioningDisplayData['policy_req']?.local_profile_format]
-                    }
-                </div>
-
-                <div className="content-policy-key-header" style={{ padding: '10px 0 10px 0' }}>
-                    <p>Local Profile User Type<span className="mandatory">*</span> :</p>
-                </div>
-                <div style={{ padding: '12px 0 10px 0' }}>
-                    <Radio.Group value={userProvisioningEditData?.policy_req?.local_profile_user_type}
+                    <Radio.Group
+                        value={vdiEditData?.policy_req?.vdi_type}
                         disabled={!isEdit}
-                        onChange={(e) => setUserProvisioningEditedData((state) => {
+                        onChange={(e) => setVDIEditedData((state) => {
                             const { policy_req } = state;
                             return {
-                                ...userProvisioningEditData,
-                                policy_req: { ...policy_req, local_profile_user_type: e.target.value }
+                                ...vdiEditData,
+                                policy_req: {
+                                    ...policy_req,
+                                    vdi_type: e.target.value
+                                }
                             }
                         })}
                     >
                         {
-                            Object.keys(userTypeOptions).map(type => {
+                            Object.keys(vdiTypeOptions).map(type => {
                                 return <div key={type}>
                                     <Radio value={type}>
-                                        {userTypeOptions[type]}
+                                        {vdiTypeOptions[type]}
                                     </Radio>
                                     <br />
                                 </div>
@@ -284,11 +295,33 @@ function UserProvisioningPolicy(props: any) {
                         }
                     </Radio.Group>
                 </div>
+
+                <div className="content-policy-key-header" style={{ padding: '10px 0 10px 0' }}>
+                    App Template:
+                </div>
+                <div style={{ padding: '12px 0 10px 0' }}>
+                    {isEdit ? <TextArea className="form-control"
+                        style={{ width: "275px" }}
+                        onChange={(e) => setVDIEditedData((state) => {
+                            const { policy_req } = state;
+                            return {
+                                ...vdiEditData,
+                                policy_req: {
+                                    ...policy_req,
+                                    app_template: e.target.value
+                                }
+                            }
+                        })}
+                        defaultValue={vdiDisplayData['policy_req']?.app_template}
+                        placeholder='Enter app template'
+                    /> : vdiDisplayData['policy_req']?.app_template
+                    }
+                </div>
             </div>
         </div>
 
         {
-            userProvisioningDisplayData['uid'] !== undefined ?
+            vdiDisplayData['uid'] !== undefined ?
                 (isEdit ? <div style={{ paddingTop: '10px', paddingRight: '45px' }}>
                     <Button style={{ float: 'right', marginLeft: '10px' }}
                         onClick={handleCancelClick}>Cancel</Button>
@@ -303,4 +336,4 @@ function UserProvisioningPolicy(props: any) {
     </Skeleton >
 }
 
-export default UserProvisioningPolicy;
+export default VDIPolicy;

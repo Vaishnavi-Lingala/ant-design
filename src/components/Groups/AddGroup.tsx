@@ -90,7 +90,7 @@ export default function AddGroup(props: any) {
             >
                 <Row gutter={16}>
                     <Col span={6}>
-                        <p style={{ fontWeight: 600, fontSize: 'medium', marginTop: '-5px' }}>Name:</p>
+                        <p style={{ fontWeight: 600, fontSize: 'medium', marginTop: '-5px' }}>Name<span className="mandatory">*</span> :</p>
                     </Col>
                     <Col span={18}>
                         <span style={{ paddingRight: '20px' }}>

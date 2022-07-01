@@ -126,6 +126,7 @@ const CardEnrollmentPolicy = (props) => {
     }
 
     function handleCancelClick() {
+        setCardEnrollEditedData({ ...cardEnrollDisplayData });
         setIsEdit(false);
     }
 
@@ -178,7 +179,7 @@ const CardEnrollmentPolicy = (props) => {
                         }
                     </div>
                     <div className="content-policy-key-header" style={{ paddingTop: '20px' }}>
-                        Policy Name:
+                        <p>Policy Name<span className="mandatory">*</span> :</p>
                     </div>
                     <div style={{ paddingTop: '20px' }}>
                         {isEdit ? <Input className="form-control"
@@ -210,7 +211,7 @@ const CardEnrollmentPolicy = (props) => {
                     </div>
 
                     <div className="content-policy-key-header">
-                        Assigned to groups:
+                        <p>Assigned to groups<span className="mandatory">*</span> :</p>
                     </div>
                     <div>
                         {isEdit ?

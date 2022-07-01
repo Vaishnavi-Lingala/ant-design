@@ -10,8 +10,9 @@ import { PinPolicy } from "./pinPolicy";
 import { openNotification } from "../Layout/Notification";
 import ApiUrls from "../../ApiUtils";
 import ApiService from "../../Api.service";
-import { CARD_ENROLL, KIOSK, LOCAL_USER_PROVISIONING, PASSWORD, PIN, policyDisplayNames } from "../../constants";
+import { CARD_ENROLL, KIOSK, LOCAL_USER_PROVISIONING, PASSWORD, PIN, policyDisplayNames, VIRTUAL_DESKTOP_INTERFACE } from "../../constants";
 import UserProvisioningPolicy from "./UserProvisioningPolicy";
+import VDIPolicy from "./VirtualDesktopInterface";
 
 function TableList({ handleGetPolicies, policy_type, policy_description, activateColumns, activePolicies, draggableContainer, draggableBodyRow, deActivateColumns, inActivePolicies }) {
     const [isModal, setIsModal] = useState(false);
@@ -73,6 +74,18 @@ function TableList({ handleGetPolicies, policy_type, policy_description, activat
         kiosk_machine_groups: [],
         policy_type: CARD_ENROLL,
         auth_policy_groups: [],
+    }
+
+    const vdiData = {
+        name: "",
+        description: "",
+        auth_policy_groups: [],
+        policy_type: VIRTUAL_DESKTOP_INTERFACE,
+        kiosk_machine_groups: [],
+        policy_req: {
+            vdi_type: "",
+            app_template: ""
+        }
     }
 
     const userProvisioningData = {
@@ -189,7 +202,9 @@ function TableList({ handleGetPolicies, policy_type, policy_description, activat
                             <KioskPolicy kioskDetails={kioskData} buttonLoading={buttonLoading} handleOk={handleOk} handleCancel={handleCancel} /> :
                             policy_type === CARD_ENROLL ?
                                 <CardEnrollmentPolicy policyDetails={cardEnrollData} buttonLoading={buttonLoading} handleOk={handleOk} handleCancel={handleCancel} /> :
-                                <UserProvisioningPolicy policyDetails={userProvisioningData} buttonLoading={buttonLoading} handleOk={handleOk} handleCancel={handleCancel} />
+                                policy_type === LOCAL_USER_PROVISIONING ?
+                                    <UserProvisioningPolicy policyDetails={userProvisioningData} buttonLoading={buttonLoading} handleOk={handleOk} handleCancel={handleCancel} /> :
+                                    <VDIPolicy policyDetails={vdiData} buttonLoading={buttonLoading} handleOk={handleOk} handleCancel={handleCancel} />
                 }
             </Modal>
         </>
