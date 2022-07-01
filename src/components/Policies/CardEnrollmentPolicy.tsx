@@ -126,6 +126,7 @@ const CardEnrollmentPolicy = (props) => {
     }
 
     function handleCancelClick() {
+        setCardEnrollEditedData({ ...cardEnrollDisplayData });
         setIsEdit(false);
     }
 

@@ -79,7 +79,7 @@ export const PasswordPolicy = (props: any) => {
 
     function handleEditClick() {
         setIsEdit(!isEdit);
-        setPasswordDisplayData({ ...passwordDisplayData });
+        setPasswordEditedData({ ...passwordDisplayData });
     }
 
     function handleCancelClick() {

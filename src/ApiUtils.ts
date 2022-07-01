@@ -67,6 +67,7 @@ const Urls = {
     loginTypeOptions: (accountId) => `account/${accountId}/auth-policy/login-type`,
     profileUserTypesOptions: (accountId) => `account/${accountId}/auth-policy/local-profile-user-types`,
     profileUserFormatOptions: (accountId) => `account/${accountId}/auth-policy/local-profile-format-types`,
+    vdiTypeOptions: (accountId) => `account/${accountId}/auth-policy/vdi-types`,
 
     // Mechanism Urls
     mechanisms: (accountId, productId) => `account/${accountId}/product/${productId}/mechanism`,
