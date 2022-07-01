@@ -153,7 +153,7 @@ export const PasswordPolicy = (props: any) => {
                 </div>
 
                 <div className="content-policy-key-header" style={{ paddingTop: '20px' }}>
-                    Policy Name:
+                    <p>Policy Name<span className="mandatory">*</span> :</p>
                 </div>
                 <div style={{ paddingTop: '20px' }}>
                     {isEdit ? <Input className="form-control"
@@ -185,7 +185,7 @@ export const PasswordPolicy = (props: any) => {
                 </div>
 
                 <div className="content-policy-key-header">
-                    Assigned to groups:
+                    <p>Assigned to groups<span className="mandatory">*</span> :</p>
                 </div>
                 <div>
                     {isEdit ?
@@ -221,7 +221,7 @@ export const PasswordPolicy = (props: any) => {
 
             <div className="row-policy-container">
                 <div className="content-policy-key-header" style={{ padding: '10px 0 10px 0' }}>
-                    Grace Period:
+                    <p>Grace Period<span className="mandatory">*</span> :</p>
                 </div>
                 <div style={{ padding: '12px 0 10px 0' }}>
                     <Radio.Group value={passwordEditData?.policy_req?.grace_period}

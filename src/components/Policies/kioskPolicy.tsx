@@ -227,7 +227,7 @@ export const KioskPolicy = (props: any) => {
                         }
                     </div>
                     <div className="content-policy-key-header" style={{ paddingTop: '20px' }}>
-                        Policy Name:
+                        <p>Policy Name<span className="mandatory">*</span> :</p>
                     </div>
                     <div style={{ paddingTop: '20px' }}>
                         {isEdit ? <Input className="form-control"
@@ -259,7 +259,7 @@ export const KioskPolicy = (props: any) => {
                     </div>
 
                     <div className="content-policy-key-header">
-                        Assigned to user groups:
+                        <p>Assigned to user groups<span className="mandatory">*</span> :</p>
                     </div>
                     <div>
                         {isEdit ? <Select
@@ -283,7 +283,7 @@ export const KioskPolicy = (props: any) => {
                     </div>
 
                     <div className="content-policy-key-header">
-                        Assigned to kiosk machine:
+                        <p>Assigned to kiosk machine<span className="mandatory">*</span> :</p>
                     </div>
                     <div>
                         {isEdit ? <Select
@@ -321,7 +321,7 @@ export const KioskPolicy = (props: any) => {
 
                 <div className="row-policy-container">
                     <div>
-                        User Type
+                        <p>User Type<span className="mandatory">*</span></p>
                     </div>
                     <div>
                         <Radio.Group value={kioskEditData?.policy_req?.login_type}
@@ -347,7 +347,7 @@ export const KioskPolicy = (props: any) => {
                         </Radio.Group>
                     </div>
                     <div>
-                        Username
+                        Username <span className="mandatory">*</span>
                         &nbsp;<Checkbox
                             onChange={(e) => {
                                 setKioskEditedData((state) => {
@@ -396,7 +396,7 @@ export const KioskPolicy = (props: any) => {
                         }
                     </div>
                     <div>
-                        Password
+                        Password <span className="mandatory">*</span>
                     </div>
                     <div>
                         {
@@ -418,7 +418,7 @@ export const KioskPolicy = (props: any) => {
                         isEdit ?
                             <>
                                 <div>
-                                    Confirm password
+                                    Confirm password <span className="mandatory">*</span>
                                 </div>
                                 <div>
                                     {

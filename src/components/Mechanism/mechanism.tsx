@@ -266,7 +266,7 @@ function Mechanism(props: any) {
                     </div>
 
                     <div className="content-mechanism-key-header">
-                        Mechanism name:
+                        <p>Mechanism name<span className="mandatory">*</span> :</p>
                     </div>
                     <div>
                         {displayDetails['default'] === false && isEdit ?
@@ -286,7 +286,7 @@ function Mechanism(props: any) {
                     </div>
 
                     <div className="content-mechanism-key-header">
-                        Assigned to groups:
+                        <p>Assigned to groups<span className="mandatory">*</span> :</p>
                     </div>
                     <div>
                         {displayDetails['default'] === false && isEdit ?
@@ -355,7 +355,7 @@ function Mechanism(props: any) {
                         <>
                             <div>
                                 <div className="card-header" style={{ width: '90%' }}>
-                                    Challenge 1
+                                    <p>Challenge 1 <span className="mandatory">*</span></p>
                                 </div>
                                 <div className="card" style={{ width: '90%' }}>
                                     <Radio.Group value={disabledFactors !== disabledFactors1 ? challengeFactors[0]['factor'] : ""}

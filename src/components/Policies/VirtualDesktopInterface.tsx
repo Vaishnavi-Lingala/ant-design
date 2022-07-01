@@ -160,7 +160,7 @@ function VDIPolicy(props: any) {
                     }
                 </div>
                 <div className="content-policy-key-header" style={{ paddingTop: '20px' }}>
-                    Policy Name:
+                    Policy Name<span className="mandatory">*</span>:
                 </div>
                 <div style={{ paddingTop: '20px' }}>
                     {isEdit ? <Input className="form-control"
@@ -192,7 +192,7 @@ function VDIPolicy(props: any) {
                 </div>
 
                 <div className="content-policy-key-header">
-                    Machine group type:
+                    Machine group type <span className="mandatory">*</span>:
                 </div>
                 <div>
                     <Radio.Group
@@ -229,7 +229,7 @@ function VDIPolicy(props: any) {
                 </div>
 
                 <div className="content-policy-key-header">
-                    Assigned to machine groups:
+                    Assigned to machine groups<span className="mandatory">*</span>:
                 </div>
                 <div>
                     {isEdit ?
@@ -266,7 +266,7 @@ function VDIPolicy(props: any) {
 
             <div className="row-policy-container">
                 <div className="content-policy-key-header" style={{ padding: '10px 0 10px 0' }}>
-                    VDI Type:
+                    VDI Type<span className="mandatory">*</span>:
                 </div>
                 <div style={{ padding: '12px 0 10px 0' }}>
                     <Radio.Group
@@ -297,7 +297,7 @@ function VDIPolicy(props: any) {
                 </div>
 
                 <div className="content-policy-key-header" style={{ padding: '10px 0 10px 0' }}>
-                    App Template:
+                    App Template<span className="mandatory">*</span>:
                 </div>
                 <div style={{ padding: '12px 0 10px 0' }}>
                     {isEdit ? <TextArea className="form-control"

@@ -127,7 +127,7 @@ function Device(props: any) {
                     </div>
 
                     <div className="content-device-key-header">
-                        Device Name:
+                        <p>Device Name<span className="mandatory">*</span> :</p>
                     </div>
                     <div>
                         {isEdit ?
@@ -147,7 +147,7 @@ function Device(props: any) {
                     </div>
 
                     <div className="content-device-key-header">
-                        Device Type:
+                        <p>Device Type<span className="mandatory">*</span> :</p>
                     </div>
                     <div>
                         {isEdit ?
@@ -173,7 +173,7 @@ function Device(props: any) {
                         }
                     </div>
                     <div className="content-device-key-header">
-                        Vendor:
+                        <p>Vendor<span className="mandatory">*</span> :</p>
                     </div>
                     <div>
                         {isEdit ?

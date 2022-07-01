@@ -159,7 +159,7 @@ function UserProvisioningPolicy(props: any) {
                     }
                 </div>
                 <div className="content-policy-key-header" style={{ paddingTop: '20px' }}>
-                    Policy Name:
+                    <p>Policy Name<span className="mandatory">*</span> :</p>
                 </div>
                 <div style={{ paddingTop: '20px' }}>
                     {isEdit ? <Input className="form-control"
@@ -191,7 +191,7 @@ function UserProvisioningPolicy(props: any) {
                 </div>
 
                 <div className="content-policy-key-header">
-                    Assigned to user groups:
+                    <p>Assigned to user groups<span className="mandatory">*</span> :</p>
                 </div>
                 <div>
                     {isEdit ?
@@ -227,7 +227,7 @@ function UserProvisioningPolicy(props: any) {
 
             <div className="row-policy-container">
                 <div className="content-policy-key-header" style={{ padding: '10px 0 10px 0' }}>
-                    Local Profile Format:
+                    <p>Local Profile Format<span className="mandatory">*</span> :</p>
                 </div>
                 <div style={{ padding: '12px 0 10px 0' }}>
                     {isEdit ?
@@ -259,7 +259,7 @@ function UserProvisioningPolicy(props: any) {
                 </div>
 
                 <div className="content-policy-key-header" style={{ padding: '10px 0 10px 0' }}>
-                    Local Profile User Type:
+                    <p>Local Profile User Type<span className="mandatory">*</span> :</p>
                 </div>
                 <div style={{ padding: '12px 0 10px 0' }}>
                     <Radio.Group value={userProvisioningEditData?.policy_req?.local_profile_user_type}
