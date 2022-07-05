@@ -53,7 +53,7 @@ export const userFieldNames = {
     "display_name": "Display name",
     "user_name": "User name",
     "email": "Email",
-    "sam": "samAccount Name",
+    "sam": "sAMAccount Name",
     "upn": "UPN",
     "idp_user_id": "IDP user ID",
     "account_id": "Account ID",
@@ -63,7 +63,7 @@ export const userFieldNames = {
 
 // Field in activity logs are displayed in this order with the below names
 export const logFieldNames = {
-    uid: "Uid",
+    uid: "UID",
     machine: {
         "uid": "Machine ID",
         "machine_id": "Machine ID",
@@ -99,7 +99,8 @@ export const logFieldNames = {
         "created_ts": "Created timestamp",
         "updated_ts": "Updated timestamp",
         "failure_reason": "Failure reason",
-        "instrument_id": "Instrument ID"
+        "instrument_id": "Instrument ID",
+        "instrument_type": "Instrument type"
     },
     user: {
         "uid": "User ID",
@@ -153,8 +154,8 @@ export const machineFieldNames = {
     account_id: "Account ID",
     os: "OS",
     local_ip: "Last known IP",
-    mac_address: "Mac address",
-    uid: "Uid",
+    mac_address: "MAC",
+    uid: "UID",
     group_type: "Group type",
     domain: "Domain",
     reader_type: "Reader type",
@@ -191,6 +192,12 @@ export const settingsIdpFields = {
     tenant_type: "Tenant type",
     idp_portal_oidc_client_id: "Portal OIDC Client ID",
     idp_app_oidc_client_id: "App OIDC Client ID"
+}
+
+export const tapOutFields = {
+    LOCK: "Lock",
+    SIGN_OUT: "Sign-out",
+    SIGN_OUT_ALL: "Sign-out all users",
 }
 
 
@@ -325,7 +332,15 @@ export const PasswordPolicyDescription = 'Password policies enable admins to con
 export const KioskPolicyDescription = 'KIOSK policies applies to machines where TecTANGO will auto-login with the generic machine user to enable fast user swicthing on a shared or kiosk machines used by multiple users. This policy is applied only when Option 3 is selected in the TecTANGO Installer';
 export const CardEnrollmentPolicyDescription = 'Card enrollment policies enable admins to configure max number of cards allowed per user group during enrollment';
 export const LocalUserProvisioningPolicyDescription = 'Local user provisioning policies enable admins to automatically create local user profile on the machines. This is applicable only for Standard and Kiosk machines.';
-export const VDI_Description = 'VDI Description';
+export const VDI_Description = 'VDI policies enable admins to configure the VDI Template for Citrix, VMware, or Microsoft which TecTANGO will use to connect to remote desktops.';
+
+//Mechanism Descriptions
+export const TECTANGO_LOCK_DESCRIPTION = 'Lock the machine or sign-out from the apps launched by TecTANGO.';
+export const TECTANGO_SIGN_OUT_DESCRIPTION = 'Sign-out the current user from the machine.';
+export const TECTANGO_SIGN_OUT_ALL_DESCRIPTION = 'Sign-out all the users on the machine. Select this option to allow only 1 active session on the machine. This helps to  avoid issues arising due to limited  resource availability such as RAM & CPU by logging off the other sessions before initiating a new session.';
+export const TECBIO_LOCK_DESCRIPTION = 'Lock the machine or sign-out from the apps launched by TecBIO.';
+export const TECBIO_SIGN_OUT_DESCRIPTION = 'Sign-out the current user from the machine.';
+export const TECBIO_SIGN_OUT_ALL_DESCRIPTION = 'Sign-out all the users on the machine. Select this option to allow only 1 active session on the machine. This helps to  avoid issues arising due to limited  resource availability such as RAM & CPU by logging off the other sessions before initiating a new session.';
 
 export const userRequiredFields = ['first_name', 'last_name', 'user_name', 'email', 'sam', 'upn'];
 export const userDataModel = {

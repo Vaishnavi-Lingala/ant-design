@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import { Button, Input, Radio, Select, Skeleton } from "antd";
+import { Button, Checkbox, Divider, Input, InputNumber, Radio, Select, Skeleton } from "antd";
 
 import './Mechanism.css'
 
@@ -9,11 +9,14 @@ import ApiUrls from '../../ApiUtils';
 import ApiService from "../../Api.service";
 import { MechanismType } from "../../models/Data.models";
 import { Store } from "../../Store";
+import Hint from "../Controls/Hint";
+import { tapOutFields, TECBIO_LOCK_DESCRIPTION, TECBIO_SIGN_OUT_ALL_DESCRIPTION, TECBIO_SIGN_OUT_DESCRIPTION, TECTANGO_LOCK_DESCRIPTION, TECTANGO_SIGN_OUT_ALL_DESCRIPTION, TECTANGO_SIGN_OUT_DESCRIPTION } from "../../constants";
 
 
 function Mechanism(props: any) {
     const [loading, setLoading] = useState(true);
     const [loadingDetails, setLoadingDetails] = useState(true);
+    const [visible, setVisible] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
     const [displayDetails, setDisplayDetails] = useState({});
     const [editData, setEditData]: any = useState();
@@ -21,6 +24,7 @@ function Mechanism(props: any) {
     const [challengeFactors, setChallengeFactors] = useState([]);
     const [tapOutOptions, setTapOutOption]: any = useState({});
     const [factorOptions, setFactorOptions]: any = useState({});
+    const [idleTimeoutOptions, setIdleTimeoutOptions]: any = useState({});
     const [render, setRender] = useState(false);
     const [groupNames, setGroupNames]: any = useState([]);
     const [groupUids, setGroupUids]: any = useState([]);
@@ -32,7 +36,6 @@ function Mechanism(props: any) {
     const history = useHistory();
     const { productId } = useParams<any>();
     const accountId = localStorage.getItem('accountId');
-    
 
     const mechanism = {
         challenge_factors: [
@@ -50,6 +53,7 @@ function Mechanism(props: any) {
             }
         ],
         product_id: "oprc735871d0",
+        idle_timeout: "FIFTEEN_MINUTES",
         name: "",
         on_tap_out: null,
         mechanism_groups: [],
@@ -126,6 +130,7 @@ function Mechanism(props: any) {
             ApiService.get(ApiUrls.groups(accountId), { type: "USER" }),
             ApiService.get(ApiUrls.mechanismOptions(accountId)),
             ApiService.get(ApiUrls.mechanismChallengeFactors(accountId, productId)),
+            ApiService.get(ApiUrls.idleTimeoutOptions(accountId))
         ]))
             .then(data => {
                 for (var i = 0; i < data[0].length; i++) {
@@ -149,17 +154,20 @@ function Mechanism(props: any) {
                 console.log(data[2]);
                 setFactorOptions(data[2]);
 
+                console.log(data[3]);
+                setIdleTimeoutOptions(data[3]);
+
                 console.log(displayDetails);
                 setLoadingDetails(false);
             })
             .catch(error => {
                 openNotification('error', error.message);
             })
-            
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth',
-            });
+
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
     }, [])
 
     function updateMechanism() {
@@ -325,39 +333,31 @@ function Mechanism(props: any) {
                                 : <></>
                         }
                     </div>
+                </div>
 
-                    <div className="content-mechanism-key-header" style={{ paddingTop: '20px' }}>
-                        Tapout Action:
-                    </div>
-                    <div style={{ paddingTop: '20px' }}>
-                        <Radio.Group name="Tapout Action" value={editData?.on_tap_out}
-                            onChange={(e) => {
-                                setEditData({
-                                    ...editData,
-                                    on_tap_out: e.target.value
-                                })
-                            }} disabled={!isEdit}
-                        >
-                            {
-                                Object.keys(tapOutOptions).map(factor => {
-                                    return <div key={factor}>
-                                        <Radio value={factor}>
-                                            {tapOutOptions[factor]}
-                                        </Radio>
-                                        <br />
-                                    </div>
-                                })
-                            }
-                        </Radio.Group>
-                    </div>
+                <Divider style={{ borderTop: '1px solid #d7d7dc' }} />
 
-                    {challengeFactors.length === 2 ?
-                        <>
-                            <div>
-                                <div className="card-header" style={{ width: '90%' }}>
-                                    <p>Challenge 1 <span className="mandatory">*</span></p>
+                {
+                    productId === "opr5776ffc7d" ?
+                        <div style={{ padding: '0 0 20px 0' }}>
+                            <b>WHEN</b> user <b>TAPS</b> the proximity card/badge on the card reader
+                        </div> :
+                        <div style={{ padding: '0 0 20px 0' }}>
+                            <b>WHEN</b> user <b>SCANS</b> their finger on the biometric scanner
+                        </div>
+                }
+
+                <div className="row-containers">
+                    {
+                        challengeFactors.length === 2 ?
+                            <>
+                                <div>
+                                    <b>THEN</b> first challenge is one of the following
                                 </div>
-                                <div className="card" style={{ width: '90%' }}>
+                                <div>
+                                    <b>AND</b> second challenge is one  of the following
+                                </div>
+                                <div>
                                     <Radio.Group value={disabledFactors !== disabledFactors1 ? challengeFactors[0]['factor'] : ""}
                                         disabled={!isEdit}
                                         onChange={(e) => {
@@ -384,13 +384,8 @@ function Mechanism(props: any) {
                                         }
                                     </Radio.Group>
                                 </div>
-                            </div>
 
-                            <div>
-                                <div className="card-header" style={{ width: '90%' }}>
-                                    Challenge 2
-                                </div>
-                                <div className="card" style={{ width: '90%' }}>
+                                <div>
                                     <div>
                                         <Radio.Group value={displayDetails["name"] !== "" ? challengeFactors[0]['factor'] === "NONE" ? value : challengeFactors[1]['factor'] : value}
                                             disabled={challengeFactors[0]['factor'] === "NONE" || !isEdit}
@@ -415,10 +410,84 @@ function Mechanism(props: any) {
                                         </Radio.Group>
                                     </div>
                                 </div>
-                            </div>
-                        </>
-                        : <></>}
+                            </>
+                            : <></>
+                    }
                 </div>
+
+                <Divider style={{ borderTop: '1px solid #d7d7dc' }} />
+
+                {
+                    productId === "opr5776ffc7d" ?
+                        <div style={{ padding: '0 0 20px 0' }}>
+                            <b>WHEN</b> user <b>TAPS</b> the proximity card/badge on the card reader the second time over an active session
+                        </div> :
+                        <div style={{ padding: '0 0 20px 0' }}>
+                            <b>WHEN</b> user <b>SCANS</b> their finger on the biometric scanner the second time
+                        </div>
+                }
+
+                <div style={{ padding: '0 0 20px 0' }}>
+                    <b>THEN</b> perform one of the the following action on the machine
+                </div>
+
+                <div className="row-containers">
+                    <div>
+                        <Radio.Group name="Tapout Action" value={editData?.on_tap_out}
+                            onChange={(e) => {
+                                setEditData({
+                                    ...editData,
+                                    on_tap_out: e.target.value
+                                })
+                            }} disabled={!isEdit}
+                        >
+                            {
+                                Object.keys(tapOutOptions).map(factor => {
+                                    return <div key={factor}>
+                                        <Radio value={factor}>
+                                            {tapOutFields[factor]}
+                                            <Hint text={factor === "LOCK" ?
+                                                productId === "opr5776ffc7d" ? TECTANGO_LOCK_DESCRIPTION : TECBIO_LOCK_DESCRIPTION :
+                                                factor === "SIGN_OUT" ?
+                                                    productId === "opr5776ffc7d" ? TECTANGO_SIGN_OUT_DESCRIPTION : TECBIO_SIGN_OUT_DESCRIPTION :
+                                                    productId === "opr5776ffc7d" ? TECTANGO_SIGN_OUT_ALL_DESCRIPTION : TECBIO_SIGN_OUT_ALL_DESCRIPTION}
+                                            />
+                                        </Radio>
+                                        <br />
+                                    </div>
+                                })
+                            }
+                        </Radio.Group>
+                    </div>
+
+                </div>
+
+                <Divider style={{ borderTop: '1px solid #d7d7dc' }} />
+
+                <div style={{ padding: '0 0 20px 0' }}>
+                    <b>AND IF</b> user idle timeout (period of inactivity) is enabled {<Checkbox disabled={!isEdit} onChange={(e) => setVisible(e.target.checked)} />}
+                </div>
+                <b>THEN</b> after {
+                    visible && isEdit ?
+                        <Select
+                            size={"large"}
+                            placeholder={"Please select minutes"}
+                            defaultValue={idleTimeoutOptions[displayDetails['idle_timeout']]}
+                            onChange={(value) => setEditData({
+                                ...editData,
+                                idle_timeout: value
+                            })}
+                            style={{ width: '275px', maxWidth: '130px' }}
+                        >
+                            {
+                                Object.keys(idleTimeoutOptions).map(key => {
+                                    return <Select.Option key={key} value={key}>
+                                        {idleTimeoutOptions[key]}
+                                    </Select.Option>
+                                })
+                            }
+                        </Select> : idleTimeoutOptions[editData?.idle_timeout]
+                } user will be locked/signed-out.
             </div>
 
             {displayDetails['uid'] !== undefined ?
