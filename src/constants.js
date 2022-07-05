@@ -63,7 +63,7 @@ export const userFieldNames = {
 
 // Field in activity logs are displayed in this order with the below names
 export const logFieldNames = {
-    uid: "Uid",
+    uid: "UID",
     machine: {
         "uid": "Machine ID",
         "machine_id": "Machine ID",
@@ -99,7 +99,8 @@ export const logFieldNames = {
         "created_ts": "Created timestamp",
         "updated_ts": "Updated timestamp",
         "failure_reason": "Failure reason",
-        "instrument_id": "Instrument ID"
+        "instrument_id": "Instrument ID",
+        "instrument_type": "Instrument type"
     },
     user: {
         "uid": "User ID",
@@ -153,8 +154,8 @@ export const machineFieldNames = {
     account_id: "Account ID",
     os: "OS",
     local_ip: "Last known IP",
-    mac_address: "Mac address",
-    uid: "Uid",
+    mac_address: "MAC",
+    uid: "UID",
     group_type: "Group type",
     domain: "Domain",
     reader_type: "Reader type",
