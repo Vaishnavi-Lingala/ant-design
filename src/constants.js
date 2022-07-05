@@ -193,6 +193,12 @@ export const settingsIdpFields = {
     idp_app_oidc_client_id: "App OIDC Client ID"
 }
 
+export const tapOutFields = {
+    LOCK: "Lock",
+    SIGN_OUT: "Sign-out",
+    SIGN_OUT_ALL: "Sign-out all users",
+}
+
 
 export const accountBillingContact = {
     billing_contact_name: 'Name',

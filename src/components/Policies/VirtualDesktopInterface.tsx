@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Button, Divider, Input, Radio, Select, Skeleton } from "antd";
 
@@ -24,7 +24,7 @@ function VDIPolicy(props: any) {
     const history = useHistory();
     const accountId = localStorage.getItem('accountId');
     const [groupType, setGroupType] = useState("");
-    const [clearItems, setClearItems] = useState(false);
+    // const clearItems = useRef(null);
 
     useEffect(() => {
         Promise.all(([
@@ -211,6 +211,9 @@ function VDIPolicy(props: any) {
                         onChange={(e) => {
                             groupNames.length = 0
                             setGroupNames([]);
+                            //@ts-ignore
+                            // clearItems.current.clearValue();
+                            // clearItems.value = [];
                             groupUids.length = 0;
                             setGroupType(e.target.value)
                             var groupTypegroups: any = [];
@@ -245,6 +248,7 @@ function VDIPolicy(props: any) {
                             id={"select"}
                             mode="multiple"
                             size={"large"}
+                            // ref={clearItems}
                             placeholder={<div>Please select groups</div>}
                             defaultValue={vdiDisplayData['name'] !== "" ? groupNames : []}
                             onChange={handleGroups}

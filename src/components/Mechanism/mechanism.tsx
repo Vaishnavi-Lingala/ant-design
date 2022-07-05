@@ -10,12 +10,13 @@ import ApiService from "../../Api.service";
 import { MechanismType } from "../../models/Data.models";
 import { Store } from "../../Store";
 import Hint from "../Controls/Hint";
-import { TECBIO_LOCK_DESCRIPTION, TECBIO_SIGN_OUT_ALL_DESCRIPTION, TECBIO_SIGN_OUT_DESCRIPTION, TECTANGO_LOCK_DESCRIPTION, TECTANGO_SIGN_OUT_ALL_DESCRIPTION, TECTANGO_SIGN_OUT_DESCRIPTION } from "../../constants";
+import { tapOutFields, TECBIO_LOCK_DESCRIPTION, TECBIO_SIGN_OUT_ALL_DESCRIPTION, TECBIO_SIGN_OUT_DESCRIPTION, TECTANGO_LOCK_DESCRIPTION, TECTANGO_SIGN_OUT_ALL_DESCRIPTION, TECTANGO_SIGN_OUT_DESCRIPTION } from "../../constants";
 
 
 function Mechanism(props: any) {
     const [loading, setLoading] = useState(true);
     const [loadingDetails, setLoadingDetails] = useState(true);
+    const [visible, setVisible] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
     const [displayDetails, setDisplayDetails] = useState({});
     const [editData, setEditData]: any = useState();
@@ -351,33 +352,54 @@ function Mechanism(props: any) {
                         challengeFactors.length === 2 ?
                             <>
                                 <div>
-                                    <b>THEN</b> 1st challenge is one of the following
+                                    <b>THEN</b> first challenge is one of the following
                                 </div>
                                 <div>
-                                    <b>AND</b> 2nd Challenge is one  of the following
+                                    <b>AND</b> second challenge is one  of the following
                                 </div>
                                 <div>
-                                    <div className="card-header" style={{ width: '90%' }}>
-                                        Challenge 1 <span className="mandatory">*</span>
-                                    </div>
-                                    <div className="card" style={{ width: '90%' }}>
-                                        <Radio.Group value={disabledFactors !== disabledFactors1 ? challengeFactors[0]['factor'] : ""}
-                                            disabled={!isEdit}
+                                    <Radio.Group value={disabledFactors !== disabledFactors1 ? challengeFactors[0]['factor'] : ""}
+                                        disabled={!isEdit}
+                                        onChange={(e) => {
+                                            editData.challenge_factors[0]["factor"] = e.target.value
+                                            showDisabled(e, disabledFactors1)
+                                            if (editData.challenge_factors[0]["factor"] === "NONE") {
+                                                disabledFactors.pop();
+                                                editData.challenge_factors[1]["factor"] = "NONE"
+                                                setValue("NONE")
+                                            }
+                                        }}
+                                    >
+                                        {
+                                            Object.keys(factorOptions).map(factor => {
+                                                return <div key={factor}>
+                                                    <Radio value={factor}
+                                                        disabled={disabledFactors.includes(factor)}
+                                                    >
+                                                        {factorOptions[factor]}
+                                                    </Radio>
+                                                    <br />
+                                                </div>
+                                            })
+                                        }
+                                    </Radio.Group>
+                                </div>
+
+                                <div>
+                                    <div>
+                                        <Radio.Group value={displayDetails["name"] !== "" ? challengeFactors[0]['factor'] === "NONE" ? value : challengeFactors[1]['factor'] : value}
+                                            disabled={challengeFactors[0]['factor'] === "NONE" || !isEdit}
                                             onChange={(e) => {
-                                                editData.challenge_factors[0]["factor"] = e.target.value
-                                                showDisabled(e, disabledFactors1)
-                                                if (editData.challenge_factors[0]["factor"] === "NONE") {
-                                                    disabledFactors.pop();
-                                                    editData.challenge_factors[1]["factor"] = "NONE"
-                                                    setValue("NONE")
-                                                }
+                                                setValue(e.target.value)
+                                                editData.challenge_factors[1].factor = e.target.value
+                                                showDisabled(e, disabledFactors)
                                             }}
                                         >
                                             {
                                                 Object.keys(factorOptions).map(factor => {
                                                     return <div key={factor}>
                                                         <Radio value={factor}
-                                                            disabled={disabledFactors.includes(factor)}
+                                                            disabled={disabledFactors1.includes(factor)}
                                                         >
                                                             {factorOptions[factor]}
                                                         </Radio>
@@ -386,37 +408,6 @@ function Mechanism(props: any) {
                                                 })
                                             }
                                         </Radio.Group>
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <div className="card-header" style={{ width: '90%' }}>
-                                        Challenge 2
-                                    </div>
-                                    <div className="card" style={{ width: '90%' }}>
-                                        <div>
-                                            <Radio.Group value={displayDetails["name"] !== "" ? challengeFactors[0]['factor'] === "NONE" ? value : challengeFactors[1]['factor'] : value}
-                                                disabled={challengeFactors[0]['factor'] === "NONE" || !isEdit}
-                                                onChange={(e) => {
-                                                    setValue(e.target.value)
-                                                    editData.challenge_factors[1].factor = e.target.value
-                                                    showDisabled(e, disabledFactors)
-                                                }}
-                                            >
-                                                {
-                                                    Object.keys(factorOptions).map(factor => {
-                                                        return <div key={factor}>
-                                                            <Radio value={factor}
-                                                                disabled={disabledFactors1.includes(factor)}
-                                                            >
-                                                                {factorOptions[factor]}
-                                                            </Radio>
-                                                            <br />
-                                                        </div>
-                                                    })
-                                                }
-                                            </Radio.Group>
-                                        </div>
                                     </div>
                                 </div>
                             </>
@@ -441,9 +432,6 @@ function Mechanism(props: any) {
                 </div>
 
                 <div className="row-containers">
-                    <div className="content-mechanism-key-header">
-                        Tapout Action:
-                    </div>
                     <div>
                         <Radio.Group name="Tapout Action" value={editData?.on_tap_out}
                             onChange={(e) => {
@@ -457,7 +445,7 @@ function Mechanism(props: any) {
                                 Object.keys(tapOutOptions).map(factor => {
                                     return <div key={factor}>
                                         <Radio value={factor}>
-                                            {tapOutOptions[factor]}
+                                            {tapOutFields[factor]}
                                             <Hint text={factor === "LOCK" ?
                                                 productId === "opr5776ffc7d" ? TECTANGO_LOCK_DESCRIPTION : TECBIO_LOCK_DESCRIPTION :
                                                 factor === "SIGN_OUT" ?
@@ -471,33 +459,35 @@ function Mechanism(props: any) {
                             }
                         </Radio.Group>
                     </div>
+
                 </div>
 
                 <Divider style={{ borderTop: '1px solid #d7d7dc' }} />
 
                 <div style={{ padding: '0 0 20px 0' }}>
-                    <b>AND IF</b> the user is <b>IDLE</b> on the machine for more than {
-                        isEdit ?
-                            <Select
-                                size={"large"}
-                                defaultValue={idleTimeoutOptions[displayDetails['idle_timeout']]}
-                                onChange={(value) => setEditData({
-                                    ...editData,
-                                    idle_timeout: value
-                                })}
-                                style={{ width: '275px' }}
-                            >
-                                {
-                                    Object.keys(idleTimeoutOptions).map(key => {
-                                        return <Select.Option key={key} value={key}>
-                                            {idleTimeoutOptions[key]}
-                                        </Select.Option>
-                                    })
-                                }
-                            </Select> : idleTimeoutOptions[editData?.idle_timeout]
-                    }
+                    <b>AND IF</b> user idle timeout (period of inactivity) is enabled {<Checkbox disabled={!isEdit} onChange={(e) => setVisible(e.target.checked)} />}
                 </div>
-                <b>THEN</b> {<Checkbox disabled={!isEdit} />} Enable auto locking/sign-out after a period of inactivity based on above selection
+                <b>THEN</b> after {
+                    visible && isEdit ?
+                        <Select
+                            size={"large"}
+                            placeholder={"Please select minutes"}
+                            defaultValue={idleTimeoutOptions[displayDetails['idle_timeout']]}
+                            onChange={(value) => setEditData({
+                                ...editData,
+                                idle_timeout: value
+                            })}
+                            style={{ width: '275px', maxWidth: '130px' }}
+                        >
+                            {
+                                Object.keys(idleTimeoutOptions).map(key => {
+                                    return <Select.Option key={key} value={key}>
+                                        {idleTimeoutOptions[key]}
+                                    </Select.Option>
+                                })
+                            }
+                        </Select> : idleTimeoutOptions[editData?.idle_timeout]
+                } user will be locked/signed-out.
             </div>
 
             {displayDetails['uid'] !== undefined ?
