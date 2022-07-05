@@ -355,7 +355,7 @@ function Mechanism(props: any) {
                         <>
                             <div>
                                 <div className="card-header" style={{ width: '90%' }}>
-                                    <p>Challenge 1 <span className="mandatory">*</span></p>
+                                    Challenge 1 <span className="mandatory">*</span>
                                 </div>
                                 <div className="card" style={{ width: '90%' }}>
                                     <Radio.Group value={disabledFactors !== disabledFactors1 ? challengeFactors[0]['factor'] : ""}
