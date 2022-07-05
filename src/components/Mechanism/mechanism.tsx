@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import { Button, Input, Radio, Select, Skeleton } from "antd";
+import { Button, Checkbox, Divider, Input, InputNumber, Radio, Select, Skeleton } from "antd";
 
 import './Mechanism.css'
 
@@ -9,6 +9,8 @@ import ApiUrls from '../../ApiUtils';
 import ApiService from "../../Api.service";
 import { MechanismType } from "../../models/Data.models";
 import { Store } from "../../Store";
+import Hint from "../Controls/Hint";
+import { TECBIO_LOCK_DESCRIPTION, TECBIO_SIGN_OUT_ALL_DESCRIPTION, TECBIO_SIGN_OUT_DESCRIPTION, TECTANGO_LOCK_DESCRIPTION, TECTANGO_SIGN_OUT_ALL_DESCRIPTION, TECTANGO_SIGN_OUT_DESCRIPTION } from "../../constants";
 
 
 function Mechanism(props: any) {
@@ -21,6 +23,7 @@ function Mechanism(props: any) {
     const [challengeFactors, setChallengeFactors] = useState([]);
     const [tapOutOptions, setTapOutOption]: any = useState({});
     const [factorOptions, setFactorOptions]: any = useState({});
+    const [idleTimeoutOptions, setIdleTimeoutOptions]: any = useState({});
     const [render, setRender] = useState(false);
     const [groupNames, setGroupNames]: any = useState([]);
     const [groupUids, setGroupUids]: any = useState([]);
@@ -32,7 +35,6 @@ function Mechanism(props: any) {
     const history = useHistory();
     const { productId } = useParams<any>();
     const accountId = localStorage.getItem('accountId');
-    
 
     const mechanism = {
         challenge_factors: [
@@ -50,6 +52,7 @@ function Mechanism(props: any) {
             }
         ],
         product_id: "oprc735871d0",
+        idle_timeout: "FIFTEEN_MINUTES",
         name: "",
         on_tap_out: null,
         mechanism_groups: [],
@@ -126,6 +129,7 @@ function Mechanism(props: any) {
             ApiService.get(ApiUrls.groups(accountId), { type: "USER" }),
             ApiService.get(ApiUrls.mechanismOptions(accountId)),
             ApiService.get(ApiUrls.mechanismChallengeFactors(accountId, productId)),
+            ApiService.get(ApiUrls.idleTimeoutOptions(accountId))
         ]))
             .then(data => {
                 for (var i = 0; i < data[0].length; i++) {
@@ -149,17 +153,20 @@ function Mechanism(props: any) {
                 console.log(data[2]);
                 setFactorOptions(data[2]);
 
+                console.log(data[3]);
+                setIdleTimeoutOptions(data[3]);
+
                 console.log(displayDetails);
                 setLoadingDetails(false);
             })
             .catch(error => {
                 openNotification('error', error.message);
             })
-            
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth',
-            });
+
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
     }, [])
 
     function updateMechanism() {
@@ -325,11 +332,119 @@ function Mechanism(props: any) {
                                 : <></>
                         }
                     </div>
+                </div>
 
-                    <div className="content-mechanism-key-header" style={{ paddingTop: '20px' }}>
+                <Divider style={{ borderTop: '1px solid #d7d7dc' }} />
+
+                {
+                    productId === "opr5776ffc7d" ?
+                        <div style={{ padding: '0 0 20px 0' }}>
+                            <b>WHEN</b> user <b>TAPS</b> the proximity card/badge on the card reader
+                        </div> :
+                        <div style={{ padding: '0 0 20px 0' }}>
+                            <b>WHEN</b> user <b>SCANS</b> their finger on the biometric scanner
+                        </div>
+                }
+
+                <div className="row-containers">
+                    {
+                        challengeFactors.length === 2 ?
+                            <>
+                                <div>
+                                    <b>THEN</b> 1st challenge is one of the following
+                                </div>
+                                <div>
+                                    <b>AND</b> 2nd Challenge is one  of the following
+                                </div>
+                                <div>
+                                    <div className="card-header" style={{ width: '90%' }}>
+                                        Challenge 1 <span className="mandatory">*</span>
+                                    </div>
+                                    <div className="card" style={{ width: '90%' }}>
+                                        <Radio.Group value={disabledFactors !== disabledFactors1 ? challengeFactors[0]['factor'] : ""}
+                                            disabled={!isEdit}
+                                            onChange={(e) => {
+                                                editData.challenge_factors[0]["factor"] = e.target.value
+                                                showDisabled(e, disabledFactors1)
+                                                if (editData.challenge_factors[0]["factor"] === "NONE") {
+                                                    disabledFactors.pop();
+                                                    editData.challenge_factors[1]["factor"] = "NONE"
+                                                    setValue("NONE")
+                                                }
+                                            }}
+                                        >
+                                            {
+                                                Object.keys(factorOptions).map(factor => {
+                                                    return <div key={factor}>
+                                                        <Radio value={factor}
+                                                            disabled={disabledFactors.includes(factor)}
+                                                        >
+                                                            {factorOptions[factor]}
+                                                        </Radio>
+                                                        <br />
+                                                    </div>
+                                                })
+                                            }
+                                        </Radio.Group>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div className="card-header" style={{ width: '90%' }}>
+                                        Challenge 2
+                                    </div>
+                                    <div className="card" style={{ width: '90%' }}>
+                                        <div>
+                                            <Radio.Group value={displayDetails["name"] !== "" ? challengeFactors[0]['factor'] === "NONE" ? value : challengeFactors[1]['factor'] : value}
+                                                disabled={challengeFactors[0]['factor'] === "NONE" || !isEdit}
+                                                onChange={(e) => {
+                                                    setValue(e.target.value)
+                                                    editData.challenge_factors[1].factor = e.target.value
+                                                    showDisabled(e, disabledFactors)
+                                                }}
+                                            >
+                                                {
+                                                    Object.keys(factorOptions).map(factor => {
+                                                        return <div key={factor}>
+                                                            <Radio value={factor}
+                                                                disabled={disabledFactors1.includes(factor)}
+                                                            >
+                                                                {factorOptions[factor]}
+                                                            </Radio>
+                                                            <br />
+                                                        </div>
+                                                    })
+                                                }
+                                            </Radio.Group>
+                                        </div>
+                                    </div>
+                                </div>
+                            </>
+                            : <></>
+                    }
+                </div>
+
+                <Divider style={{ borderTop: '1px solid #d7d7dc' }} />
+
+                {
+                    productId === "opr5776ffc7d" ?
+                        <div style={{ padding: '0 0 20px 0' }}>
+                            <b>WHEN</b> user <b>TAPS</b> the proximity card/badge on the card reader the second time over an active session
+                        </div> :
+                        <div style={{ padding: '0 0 20px 0' }}>
+                            <b>WHEN</b> user <b>SCANS</b> their finger on the biometric scanner the second time
+                        </div>
+                }
+
+                <div style={{ padding: '0 0 20px 0' }}>
+                    <b>THEN</b> perform one of the the following action on the machine
+                </div>
+
+                <div className="row-containers">
+                    <div className="content-mechanism-key-header">
                         Tapout Action:
                     </div>
-                    <div style={{ paddingTop: '20px' }}>
+                    <div>
                         <Radio.Group name="Tapout Action" value={editData?.on_tap_out}
                             onChange={(e) => {
                                 setEditData({
@@ -343,6 +458,12 @@ function Mechanism(props: any) {
                                     return <div key={factor}>
                                         <Radio value={factor}>
                                             {tapOutOptions[factor]}
+                                            <Hint text={factor === "LOCK" ?
+                                                productId === "opr5776ffc7d" ? TECTANGO_LOCK_DESCRIPTION : TECBIO_LOCK_DESCRIPTION :
+                                                factor === "SIGN_OUT" ?
+                                                    productId === "opr5776ffc7d" ? TECTANGO_SIGN_OUT_DESCRIPTION : TECBIO_SIGN_OUT_DESCRIPTION :
+                                                    productId === "opr5776ffc7d" ? TECTANGO_SIGN_OUT_ALL_DESCRIPTION : TECBIO_SIGN_OUT_ALL_DESCRIPTION}
+                                            />
                                         </Radio>
                                         <br />
                                     </div>
@@ -350,75 +471,33 @@ function Mechanism(props: any) {
                             }
                         </Radio.Group>
                     </div>
-
-                    {challengeFactors.length === 2 ?
-                        <>
-                            <div>
-                                <div className="card-header" style={{ width: '90%' }}>
-                                    Challenge 1 <span className="mandatory">*</span>
-                                </div>
-                                <div className="card" style={{ width: '90%' }}>
-                                    <Radio.Group value={disabledFactors !== disabledFactors1 ? challengeFactors[0]['factor'] : ""}
-                                        disabled={!isEdit}
-                                        onChange={(e) => {
-                                            editData.challenge_factors[0]["factor"] = e.target.value
-                                            showDisabled(e, disabledFactors1)
-                                            if (editData.challenge_factors[0]["factor"] === "NONE") {
-                                                disabledFactors.pop();
-                                                editData.challenge_factors[1]["factor"] = "NONE"
-                                                setValue("NONE")
-                                            }
-                                        }}
-                                    >
-                                        {
-                                            Object.keys(factorOptions).map(factor => {
-                                                return <div key={factor}>
-                                                    <Radio value={factor}
-                                                        disabled={disabledFactors.includes(factor)}
-                                                    >
-                                                        {factorOptions[factor]}
-                                                    </Radio>
-                                                    <br />
-                                                </div>
-                                            })
-                                        }
-                                    </Radio.Group>
-                                </div>
-                            </div>
-
-                            <div>
-                                <div className="card-header" style={{ width: '90%' }}>
-                                    Challenge 2
-                                </div>
-                                <div className="card" style={{ width: '90%' }}>
-                                    <div>
-                                        <Radio.Group value={displayDetails["name"] !== "" ? challengeFactors[0]['factor'] === "NONE" ? value : challengeFactors[1]['factor'] : value}
-                                            disabled={challengeFactors[0]['factor'] === "NONE" || !isEdit}
-                                            onChange={(e) => {
-                                                setValue(e.target.value)
-                                                editData.challenge_factors[1].factor = e.target.value
-                                                showDisabled(e, disabledFactors)
-                                            }}
-                                        >
-                                            {
-                                                Object.keys(factorOptions).map(factor => {
-                                                    return <div key={factor}>
-                                                        <Radio value={factor}
-                                                            disabled={disabledFactors1.includes(factor)}
-                                                        >
-                                                            {factorOptions[factor]}
-                                                        </Radio>
-                                                        <br />
-                                                    </div>
-                                                })
-                                            }
-                                        </Radio.Group>
-                                    </div>
-                                </div>
-                            </div>
-                        </>
-                        : <></>}
                 </div>
+
+                <Divider style={{ borderTop: '1px solid #d7d7dc' }} />
+
+                <div style={{ padding: '0 0 20px 0' }}>
+                    <b>AND IF</b> the user is <b>IDLE</b> on the machine for more than {
+                        isEdit ?
+                            <Select
+                                size={"large"}
+                                defaultValue={idleTimeoutOptions[displayDetails['idle_timeout']]}
+                                onChange={(value) => setEditData({
+                                    ...editData,
+                                    idle_timeout: value
+                                })}
+                                style={{ width: '275px' }}
+                            >
+                                {
+                                    Object.keys(idleTimeoutOptions).map(key => {
+                                        return <Select.Option key={key} value={key}>
+                                            {idleTimeoutOptions[key]}
+                                        </Select.Option>
+                                    })
+                                }
+                            </Select> : idleTimeoutOptions[editData?.idle_timeout]
+                    }
+                </div>
+                <b>THEN</b> {<Checkbox disabled={!isEdit} />} Enable auto locking/sign-out after a period of inactivity based on above selection
             </div>
 
             {displayDetails['uid'] !== undefined ?

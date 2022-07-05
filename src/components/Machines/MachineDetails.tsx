@@ -13,6 +13,8 @@ export function MachineDetails(props: any) {
     const [loadingDetails, setLoadingDetails] = useState(false);
     const [machineDetails, setMachineDetails] = useState({});
     const [products, setProducts]: any = useState([]);
+    const [readerType, setReaderType]= useState({});
+    const accountId = localStorage.getItem('accountId');
     const history = useHistory();
 
     const columns = [
@@ -29,7 +31,7 @@ export function MachineDetails(props: any) {
         {
             title: "Installed Time",
             render: (text, record) => <>
-               {moment.utc(record.created_ts).local().format(`${date_display_format} ${time_format}`)}
+                {moment.utc(record.created_ts).local().format(`${date_display_format} ${time_format}`)}
             </>
         }
     ]
@@ -49,18 +51,25 @@ export function MachineDetails(props: any) {
     };
 
     function calculateExpiryDays(expirydate) {
-        const inputFormat = `DD-MM-YYYY ${time_format}` ;
+        const inputFormat = `DD-MM-YYYY ${time_format}`;
         return moment(expirydate, inputFormat).diff(moment(moment().format(inputFormat), inputFormat), 'days');
     }
 
     useEffect(() => {
         setLoadingDetails(true);
         let machineId = window.location.pathname.split('/')[2];
-        ApiService.get(ApiUrls.machineDetails(localStorage.getItem('accountId'), machineId)).then((data: any) => {
-            console.log('Machine details:', data);
+        Promise.all([
+            ApiService.get(ApiUrls.mechanismOptions(localStorage.getItem('accountId'))),
+            ApiService.get(ApiUrls.machineDetails(localStorage.getItem('accountId'), machineId))
+        ])
+        .then((data: any) => {
+            console.log(data[0]);
+            setReaderType(data[0]['readers'])
+            
+            console.log('Machine details:', data[1]);
             let machineProducts: MachineProducts[] = [];
-            Object.keys(data.products).map((product) => {
-                let activeVersion = data.products[product].find(record => record.active === true)
+            Object.keys(data[1].products).map((product) => {
+                let activeVersion = data[1].products[product].find(record => record.active === true)
                 if (activeVersion) {
                     activeVersion.key = activeVersion.product_version
                     machineProducts.push(activeVersion)
@@ -68,7 +77,7 @@ export function MachineDetails(props: any) {
                 // activeVersion ? machineProducts.push(activeVersion) : console.log('No active version for product ', product);
             })
             setProducts(machineProducts)
-            setMachineDetails(data);
+            setMachineDetails(data[1]);
         }).catch(error => {
             console.error('Error: ', error);
             openNotification('error', 'An Error has occured with getting machine details');
@@ -92,16 +101,16 @@ export function MachineDetails(props: any) {
             </div>
             <Skeleton loading={loadingDetails}>
                 <div className="content-container rounded-grey-border">
-                    <div style={{ fontWeight: '600', fontSize: '30px'}}>{machineDetails['machine_name']}</div>
+                    <div style={{ fontWeight: '600', fontSize: '30px' }}>{machineDetails['machine_name']}</div>
 
                     <Divider style={{ borderTop: '1px solid #d7d7dc' }} />
-                    
+
                     {
                         Object.keys(machineDetails).map((machineField) => (
                             machineField !== 'products' && machineDetails[machineField] !== 'object' ?
                                 <DisplayField
                                     displayName={machineFieldNames[machineField]}
-                                    value={machineDetails[machineField]}
+                                    value={machineField !== 'reader_type' ? machineDetails[machineField] : readerType[machineDetails[machineField]]}
                                     key={machineField}
                                 /> : <></>
                         ))
@@ -131,7 +140,7 @@ export function MachineDetails(props: any) {
                     <Divider style={{ borderTop: '1px solid #d7d7dc' }} />
 
                     <div className="content-policy-key-header">Installed Products</div>
-                    
+
                     <div style={{ marginTop: "10px" }}>
                         <Table
                             style={{ border: '1px solid #D7D7DC' }}
@@ -141,7 +150,7 @@ export function MachineDetails(props: any) {
                             pagination={{ position: [] }}
                         />
                     </div>
-                   
+
 
                 </div>
             </Skeleton>
