@@ -267,7 +267,7 @@ function Mechanism(props: any) {
                         } */}
                     </div>
                     <div style={{ paddingRight: '50px', paddingBottom: '20px' }}>
-                        {displayDetails['name'] !== "" ? <Button style={{ float: 'right' }} onClick={handleEditClick}>
+                        {displayDetails['name'] !== "" ? <Button disabled={displayDetails['default'] === true} style={{ float: 'right' }} onClick={handleEditClick}>
                             {!isEdit ? 'Edit' : 'Cancel'}
                         </Button> : <></>
                         }
@@ -317,7 +317,7 @@ function Mechanism(props: any) {
                             )}
                     </div>
 
-                    <div className="content-mechanism-key-header">
+                    {/* <div className="content-mechanism-key-header">
                         Primary Challenge:
                     </div>
                     <div>
@@ -332,7 +332,7 @@ function Mechanism(props: any) {
                                 </Radio.Group>
                                 : <></>
                         }
-                    </div>
+                    </div> */}
                 </div>
 
                 <Divider style={{ borderTop: '1px solid #d7d7dc' }} />
