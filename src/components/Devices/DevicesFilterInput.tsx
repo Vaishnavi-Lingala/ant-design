@@ -62,8 +62,8 @@ const DeviceFilterInput: FunctionComponent<FilterInputProps> = (props: FilterInp
                                     }}
                                 />
                                 : <Select style={{ width: '210px' }}
-                                    showSearch
-                                    showArrow={false}
+                                    // showSearch
+                                    // showArrow={false}
                                     value={filterInput.value}
                                     onChange={(value) => {
                                         onFilterValueChange(value)
@@ -77,8 +77,8 @@ const DeviceFilterInput: FunctionComponent<FilterInputProps> = (props: FilterInp
                                     </Select.Option>
                                 </Select>
                             : <Select style={{ width: '210px' }}
-                                showSearch
-                                showArrow={false}
+                                // showSearch
+                                // showArrow={false}
                                 value={filterInput.value}
                                 onChange={(value) => {
                                     onFilterValueChange(value)
@@ -93,8 +93,8 @@ const DeviceFilterInput: FunctionComponent<FilterInputProps> = (props: FilterInp
                                 }
                             </Select>
                         : <Select style={{ width: '210px' }}
-                            showSearch
-                            showArrow={false}
+                            // showSearch
+                            // showArrow={false}
                             value={filterInput.value}
                             onChange={(value) => {
                                 onFilterValueChange(value)

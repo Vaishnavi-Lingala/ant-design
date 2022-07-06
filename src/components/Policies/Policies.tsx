@@ -548,8 +548,8 @@ export default function Policies() {
 
 	useEffect(() => {
 		(async function () {
-			setLoading(true);
 			if (seletedProduct === TecTANGO) {
+				setLoading(true);
 				try {
 					let licenses = await ApiService.get(ApiUrls.licences(accountId));
 					let accountDetails = await ApiService.get(ApiUrls.info(accountId));

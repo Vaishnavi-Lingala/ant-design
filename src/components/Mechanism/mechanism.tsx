@@ -16,7 +16,6 @@ import { tapOutFields, TECBIO_LOCK_DESCRIPTION, TECBIO_SIGN_OUT_ALL_DESCRIPTION,
 function Mechanism(props: any) {
     const [loading, setLoading] = useState(true);
     const [loadingDetails, setLoadingDetails] = useState(true);
-    const [visible, setVisible] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
     const [displayDetails, setDisplayDetails] = useState({});
     const [editData, setEditData]: any = useState();
@@ -41,7 +40,7 @@ function Mechanism(props: any) {
         challenge_factors: [
             {
                 order: 0,
-                factor: "PASSWORD",
+                factor: productId === "opr4ef32b81f" ? "NONE" : "PASSWORD",
                 name: "Challenge_1",
             },
             {
@@ -53,7 +52,8 @@ function Mechanism(props: any) {
         product_id: "oprc735871d0",
         idle_timeout: "FIFTEEN_MINUTES",
         name: "",
-        on_tap_out: null,
+        on_tap_out: productId === "opr4ef32b81f" ? "SIGN_OUT" : null,
+        idle_timeout_flag: false,
         mechanism_groups: [],
         default: false,
         order: null,
@@ -70,6 +70,8 @@ function Mechanism(props: any) {
                     setDisplayDetails(data);
                     //@ts-ignore
                     setEditData(data);
+                    //@ts-ignore
+                    console.log(data.idle_timeout_flag);
                     if (data.challenge_factors.length !== 2) {
                         //@ts-ignore
                         data.challenge_factors = mechanism.challenge_factors
@@ -464,34 +466,39 @@ function Mechanism(props: any) {
                 <Divider style={{ borderTop: '1px solid #d7d7dc' }} />
 
                 <div style={{ padding: '0 0 20px 0' }}>
-                    <b>AND IF</b> user idle timeout (period of inactivity) is {<Checkbox disabled={!isEdit} onChange={(e) => setVisible(e.target.checked)} />} enabled
+                    <b>AND IF</b> user idle timeout (period of inactivity) is {<Checkbox disabled={!isEdit} checked={editData?.idle_timeout_flag} onChange={(e) => {
+                        setEditData({
+                            ...editData,
+                            idle_timeout_flag: e.target.checked
+                        })
+                    }} />} enabled
                 </div>
-                {
-                    visible ?
-                        <>
-                            <b>THEN</b> after {
-                                isEdit ?
-                                    <Select
-                                        size={"large"}
-                                        placeholder={"Please select minutes"}
-                                        defaultValue={idleTimeoutOptions[displayDetails['idle_timeout']]}
-                                        onChange={(value) => setEditData({
-                                            ...editData,
-                                            idle_timeout: value
-                                        })}
-                                        style={{ width: '275px', maxWidth: '130px' }}
-                                    >
-                                        {
-                                            Object.keys(idleTimeoutOptions).map(key => {
-                                                return <Select.Option key={key} value={key}>
-                                                    {idleTimeoutOptions[key]}
-                                                </Select.Option>
-                                            })
-                                        }
-                                    </Select> : idleTimeoutOptions[editData?.idle_timeout]
-                            } user will be locked/signed-out.
-                        </> : <></>
-                }
+
+                <b>THEN</b> after {
+                    isEdit ?
+                        editData?.idle_timeout_flag ? <Select
+                            size={"large"}
+                            placeholder={"Please select minutes"}
+                            defaultValue={idleTimeoutOptions[displayDetails['idle_timeout']]}
+                            onChange={(value) => setEditData({
+                                ...editData,
+                                idle_timeout: value
+                            })}
+                            style={{ width: '275px', maxWidth: '130px' }}
+                        >
+                            {
+                                Object.keys(idleTimeoutOptions).map(key => {
+                                    return <Select.Option key={key} value={key}>
+                                        {idleTimeoutOptions[key]}
+                                    </Select.Option>
+                                })
+                            }
+                        </Select>
+                            : <>(x) minutes</>
+                        : editData?.idle_timeout_flag ? idleTimeoutOptions[editData?.idle_timeout] : <>(x) minutes</>
+                } user will be locked/signed-out.
+
+
             </div>
 
             {
