@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { Button, Divider, Input, Radio, Select, Skeleton } from "antd";
+import { Button, Checkbox, Divider, Input, Radio, Select, Skeleton } from "antd";
 
 import './Policies.css';
 
@@ -8,7 +8,7 @@ import ApiService from "../../Api.service";
 import ApiUrls from "../../ApiUtils";
 import { openNotification } from "../Layout/Notification";
 import TextArea from "antd/lib/input/TextArea";
-import { LOCAL_USER_PROVISIONING, policyDisplayNames } from "../../constants";
+import { policyDisplayNames } from "../../constants";
 
 function UserProvisioningPolicy(props: any) {
     const [loading, setLoading] = useState(true);
@@ -22,7 +22,7 @@ function UserProvisioningPolicy(props: any) {
     const [userTypeOptions, setUserTypeOptions] = useState({});
     const [userFormatOptions, setUserFormatOptions] = useState({});
     const history = useHistory();
-	const accountId = localStorage.getItem('accountId');
+    const accountId = localStorage.getItem('accountId');
 
     useEffect(() => {
         Promise.all(([
@@ -283,6 +283,25 @@ function UserProvisioningPolicy(props: any) {
                             })
                         }
                     </Radio.Group>
+                </div>
+
+                <div className="content-policy-key-header" style={{ padding: '10px 0 10px 0' }}>
+                    Password Sync:
+                </div>
+                <div style={{ padding: '10px 0 10px 0' }}>
+                    <Checkbox
+                        checked={userProvisioningEditData?.policy_req?.password_sync}
+                        disabled={!isEdit}
+                        onChange={(e) => setUserProvisioningEditedData((state) => {
+                            const { policy_req } = state;
+                            return {
+                                ...userProvisioningEditData,
+                                policy_req: { ...policy_req, password_sync: e.target.checked }
+                            }
+                        })}
+                    >
+                        {/* Password Sync */}
+                    </Checkbox>
                 </div>
             </div>
         </div>

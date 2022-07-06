@@ -12,10 +12,13 @@ export default function MachinesFiltersModal({ getMachinesByFilter, onFilterAppl
     const [filterableFields, setFilterableFields] = useState([""]);
     const [filterInputs, setFilterInputs] = useState([initialFilterInput]);
     const [appliedFilterCount, setAppliedFilterCount] = useState(0);
+    const [machineTypeOptions, setMachineTypeOptions] = useState({});
 
     useEffect(() => {
         (async function () {
             var response = await ApiService.get(ApiUtils.machineFilterableFields(localStorage.getItem('accountId')));
+            var machineTypeOptions = await ApiService.get(ApiUtils.machineTypeOptions(localStorage.getItem('accountId')));
+            setMachineTypeOptions(machineTypeOptions);
             setFilterableFields([...response]);
         })();
     }, []);
@@ -117,6 +120,7 @@ export default function MachinesFiltersModal({ getMachinesByFilter, onFilterAppl
                         filterableFields={filterableFields}
                         filterInput={filterInput}
                         index={index}
+                        machineTypeOptions={machineTypeOptions}
                         onFilterFieldChange={(value) => onFilterOptionChange(value, index)}
                         onFilterValueChange={(value) => onFilterValueChange(value, index)}
                         onCloseClick={() => {

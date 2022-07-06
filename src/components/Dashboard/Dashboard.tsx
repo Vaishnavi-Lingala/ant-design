@@ -6,6 +6,7 @@ import './Dashboard.css'
 import { openNotification } from "../Layout/Notification";
 import ApiUrls from '../../ApiUtils';
 import ApiService from "../../Api.service";
+import DisplayDateTimeFormat from "../Controls/DateTimeHelper";
 
 export default function Dashboard() {
     const [loadingDetails, setLoadingDetails] = useState(true);
@@ -62,14 +63,14 @@ export default function Dashboard() {
                             <div className="overview-stat-container">
                                 {Object.keys(statsData[type].stats).map(key => {
                                     return <div key={key}>
-                                        <div>{key.slice(0, 1) + key.slice(1).toLowerCase()}&nbsp;&nbsp;&nbsp;</div>
+                                        <div>{type === "enrollment" ? key : key.slice(0, 1) + key.slice(1).toLowerCase()}&nbsp;&nbsp;&nbsp;</div>
                                         <div>{statsData[type].stats[key]}</div>
                                     </div>
                                 })}
                             </div>
 
                             <div style={{ textAlign: 'right' }}>
-                                Updated at {dateAndTime.slice(0, 15) + dateAndTime.slice(18)}
+                                Updated at {DisplayDateTimeFormat(dateAndTime)}
                             </div>
                         </Card>
                         <br />
