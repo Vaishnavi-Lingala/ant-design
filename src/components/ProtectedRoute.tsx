@@ -24,11 +24,9 @@ export default function ProtectedRoute({
         history.push('/');
     }
 
-    if (oktaStorage !== null && oktaStorage !== "" && oktaStorage !== "{}" &&
-        JSON.parse(oktaStorage).idToken && JSON.parse(oktaStorage).accessToken) {
-    }
-    else {
-        removeItems();
+    if (oktaStorage === null || oktaStorage === "" || oktaStorage === "{}" ||
+        !JSON.parse(oktaStorage).idToken || !JSON.parse(oktaStorage).accessToken) {
+            removeItems();
     }
 
     const SecureComponent = (props) => <SecureRoute>

@@ -190,6 +190,7 @@ export const settingsFieldNames = {
 export const settingsIdpFields = {
     idp_type: "IDP",
     tenant_type: "Tenant type",
+    issuer_url: "Tenant URL",
     idp_portal_oidc_client_id: "Portal OIDC Client ID",
     idp_app_oidc_client_id: "App OIDC Client ID"
 }
@@ -233,6 +234,19 @@ export const DeviceFilterFieldNames = {
     device_type: "Device Type",
     serial_number: "Serial Number",
     blocked: "Blocked"
+}
+
+export const vendorOptions = {
+    "HID": "Hid",
+    "RFIDEAS": "Rfideas",
+    "RFIDINC": "Rfidinc"
+}
+
+export const deviceTypeOptions = {
+    "BIOMETRIC": "Biometric",
+    "RFIDEAS": "Rfideas",
+    "RFIDPCSC": "RFID Reader (pc/sc)",
+    "YUBIKEY": "Yubikey"
 }
 
 export const groupFilterFieldNames = {

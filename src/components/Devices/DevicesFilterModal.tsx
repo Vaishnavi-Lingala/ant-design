@@ -12,10 +12,16 @@ export default function DeviceFiltersModal({ getDevicesByFilter, onFilterApply, 
     const [filterableFields, setFilterableFields] = useState([""]);
     const [filterInputs, setFilterInputs] = useState([initialFilterInput]);
     const [appliedFilterCount, setAppliedFilterCount] = useState(0);
+    const [deviceTypeOptions, setDeviceTypeOptions] = useState({});
+    const [vendorTypeOptions, setvendorTypeOptions] = useState({});
 
     useEffect(() => {
         (async function () {
             var response = await ApiService.get(ApiUtils.deviceFilterableFields(localStorage.getItem('accountId')));
+            var deviceOptions = await ApiService.get(ApiUtils.deviceOptions(localStorage.getItem('accountId')));
+            console.log(response);
+            setDeviceTypeOptions(deviceOptions['device_type']);
+            setvendorTypeOptions(deviceOptions['device_vendor']);
             setFilterableFields([...response]);
         })();
     }, []);
@@ -117,6 +123,8 @@ export default function DeviceFiltersModal({ getDevicesByFilter, onFilterApply, 
                         filterableFields={filterableFields}
                         filterInput={filterInput}
                         index={index}
+                        deviceTypeOptions={deviceTypeOptions}
+                        vendorTypeOptions={vendorTypeOptions}
                         onFilterFieldChange={(value) => onFilterOptionChange(value, index)}
                         onFilterValueChange={(value) => onFilterValueChange(value, index)}
                         onCloseClick={() => {
