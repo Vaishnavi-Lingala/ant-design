@@ -12,10 +12,13 @@ export default function UsersFiltersModal({ getUsersByFilter, onFilterApply, onR
     const [filterableFields, setFilterableFields] = useState([""]);
     const [filterInputs, setFilterInputs] = useState([initialFilterInput]);
     const [appliedFilterCount, setAppliedFilterCount] = useState(0);
+    const [lifeCycleOptions, setLifeCycleOptions] = useState({});
 
     useEffect(() => {
         (async function () {
             var response = await ApiService.get(ApiUtils.userFilterableFields(localStorage.getItem('accountId')));
+            var options = await ApiService.get(ApiUtils.lifeCycleOptions(localStorage.getItem('accountId')));
+            setLifeCycleOptions(options);
             setFilterableFields([...response]);
         })();
     }, []);
@@ -130,6 +133,7 @@ export default function UsersFiltersModal({ getUsersByFilter, onFilterApply, onR
                                 return values;
                             });
                         }}
+                        options={lifeCycleOptions}
                     />
                 ))}
 
