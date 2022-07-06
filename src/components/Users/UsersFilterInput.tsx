@@ -59,7 +59,10 @@ const UsersFilterInput: FunctionComponent<FilterInputProps> = (props: FilterInpu
                                             event.target.value
                                         );
                                     }}
-                                /> : <Select style={{ width: '210px' }}
+                                />
+                                : <Select style={{ width: '210px' }}
+                                    showSearch
+                                    showArrow={false}
                                     value={filterInput.value}
                                     onChange={(value) => {
                                         onFilterValueChange(value)
@@ -75,6 +78,8 @@ const UsersFilterInput: FunctionComponent<FilterInputProps> = (props: FilterInpu
                                 </Select>
                             : <Select style={{ width: '210px' }}
                                 value={filterInput.value}
+                                showSearch
+                                showArrow={false}
                                 onChange={(value) => {
                                     onFilterValueChange(value)
                                 }}
@@ -88,6 +93,8 @@ const UsersFilterInput: FunctionComponent<FilterInputProps> = (props: FilterInpu
                             </Select> :
                         <Select style={{ width: '210px' }}
                             value={filterInput.value}
+                            showSearch
+                            showArrow={false}
                             onChange={(value) => {
                                 onFilterValueChange(value)
                             }}

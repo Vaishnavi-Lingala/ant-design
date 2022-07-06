@@ -41,15 +41,13 @@ function Mechanism(props: any) {
         challenge_factors: [
             {
                 order: 0,
-                factor: "",
+                factor: "PASSWORD",
                 name: "Challenge_1",
-                password_grace_period: "TWO_HOURS"
             },
             {
                 order: 1,
-                factor: "",
+                factor: "NONE",
                 name: "Challenge_2",
-                password_grace_period: null
             }
         ],
         product_id: "oprc735871d0",
@@ -114,6 +112,7 @@ function Mechanism(props: any) {
                     setIsEdit(true);
                     //@ts-ignore
                     setChallengeFactors(mechanism.challenge_factors)
+                    setValue("NONE");
                     setLoading(false);
                 }
                 else {
@@ -465,42 +464,48 @@ function Mechanism(props: any) {
                 <Divider style={{ borderTop: '1px solid #d7d7dc' }} />
 
                 <div style={{ padding: '0 0 20px 0' }}>
-                    <b>AND IF</b> user idle timeout (period of inactivity) is enabled {<Checkbox disabled={!isEdit} onChange={(e) => setVisible(e.target.checked)} />}
+                    <b>AND IF</b> user idle timeout (period of inactivity) is {<Checkbox disabled={!isEdit} onChange={(e) => setVisible(e.target.checked)} />} enabled
                 </div>
-                <b>THEN</b> after {
-                    visible && isEdit ?
-                        <Select
-                            size={"large"}
-                            placeholder={"Please select minutes"}
-                            defaultValue={idleTimeoutOptions[displayDetails['idle_timeout']]}
-                            onChange={(value) => setEditData({
-                                ...editData,
-                                idle_timeout: value
-                            })}
-                            style={{ width: '275px', maxWidth: '130px' }}
-                        >
-                            {
-                                Object.keys(idleTimeoutOptions).map(key => {
-                                    return <Select.Option key={key} value={key}>
-                                        {idleTimeoutOptions[key]}
-                                    </Select.Option>
-                                })
-                            }
-                        </Select> : idleTimeoutOptions[editData?.idle_timeout]
-                } user will be locked/signed-out.
+                {
+                    visible ?
+                        <>
+                            <b>THEN</b> after {
+                                isEdit ?
+                                    <Select
+                                        size={"large"}
+                                        placeholder={"Please select minutes"}
+                                        defaultValue={idleTimeoutOptions[displayDetails['idle_timeout']]}
+                                        onChange={(value) => setEditData({
+                                            ...editData,
+                                            idle_timeout: value
+                                        })}
+                                        style={{ width: '275px', maxWidth: '130px' }}
+                                    >
+                                        {
+                                            Object.keys(idleTimeoutOptions).map(key => {
+                                                return <Select.Option key={key} value={key}>
+                                                    {idleTimeoutOptions[key]}
+                                                </Select.Option>
+                                            })
+                                        }
+                                    </Select> : idleTimeoutOptions[editData?.idle_timeout]
+                            } user will be locked/signed-out.
+                        </> : <></>
+                }
             </div>
 
-            {displayDetails['uid'] !== undefined ?
-                (isEdit ? <div style={{ paddingTop: '10px', paddingRight: '45px' }}>
-                    <Button style={{ float: 'right', marginLeft: '10px' }}
-                        onClick={handleCancelClick}>Cancel</Button>
-                    <Button type='primary' style={{ float: 'right' }}
-                        onClick={handleSaveClick}>Save</Button>
-                </div> : <></>) : <div style={{ paddingTop: '10px', paddingRight: '45px', paddingBottom: '20px' }}>
-                    <Button style={{ float: 'right', marginLeft: '10px' }}
-                        onClick={setCancelClick}>Cancel</Button>
-                    <Button loading={props.buttonLoading} type='primary' style={{ float: 'right' }}
-                        onClick={createMechanism}>Create</Button></div>
+            {
+                displayDetails['uid'] !== undefined ?
+                    (isEdit ? <div style={{ paddingTop: '10px', paddingRight: '45px' }}>
+                        <Button style={{ float: 'right', marginLeft: '10px' }}
+                            onClick={handleCancelClick}>Cancel</Button>
+                        <Button type='primary' style={{ float: 'right' }}
+                            onClick={handleSaveClick}>Save</Button>
+                    </div> : <></>) : <div style={{ paddingTop: '10px', paddingRight: '45px', paddingBottom: '20px' }}>
+                        <Button style={{ float: 'right', marginLeft: '10px' }}
+                            onClick={setCancelClick}>Cancel</Button>
+                        <Button loading={props.buttonLoading} type='primary' style={{ float: 'right' }}
+                            onClick={createMechanism}>Create</Button></div>
             }
         </Skeleton>
     </>

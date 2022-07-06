@@ -235,6 +235,19 @@ export const DeviceFilterFieldNames = {
     blocked: "Blocked"
 }
 
+export const vendorOptions = {
+    "HID": "Hid",
+    "RFIDEAS": "Rfideas",
+    "RFIDINC": "Rfidinc"
+}
+
+export const deviceTypeOptions = {
+    "BIOMETRIC": "Biometric",
+    "RFIDEAS": "Rfideas",
+    "RFIDPCSC": "RFID Reader (pc/sc)",
+    "YUBIKEY": "Yubikey"
+}
+
 export const groupFilterFieldNames = {
     name: "Name"
 }
