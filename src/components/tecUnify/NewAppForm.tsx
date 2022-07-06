@@ -1,22 +1,34 @@
-import { Modal, Button, Radio, Input, Form, Select } from 'antd';
-import { CloseOutlined } from "@ant-design/icons"
+import { useState } from 'react';
+import { Modal, Radio, Input, InputNumber, Form } from 'antd';
+import { CloseOutlined, LoadingOutlined } from '@ant-design/icons';
+import { formArgs } from './citrixformargs';
 
-interface NFProps {
+interface AppFormProps {
   showModal: boolean;
   toggleModal: () => void;
 }
 
-function NewAppForm({ showModal, toggleModal }: NFProps) {
+function NewAppForm({ showModal, toggleModal }: AppFormProps) {
+  const [isValidating, toggleValidating] = useState(false);
   const [form] = Form.useForm();
 
-  function onFinish() {
-
-    toggleModal();
-  }
-
+  // NOTE: Receives a onClick Event when pressing 'Ok' in the modal
   function onOk() {
     // NOTE: Async function, will wait to close modal until post req has sucessfully sent
-    toggleModal();
+    toggleValidating(true);
+    form
+      .validateFields()
+      .then(values => {
+        console.log("onOk", values)
+        form.resetFields()
+        toggleValidating(false);
+        toggleModal();
+      })
+      .catch(err => {
+        toggleValidating(false);
+        console.error('Validate Failed:', err);
+      }
+      );
   }
 
   function onCancel() {
@@ -28,13 +40,21 @@ function NewAppForm({ showModal, toggleModal }: NFProps) {
     switch (value) {
       case 'pub':
         return (
-          <Form.Item label='Published Resource Name:'>
+          <Form.Item
+            label={<span className='Modal-FormLabel'>Published App Name*</span>}
+            name='published_app_name'
+            rules={[{ required: true }]}
+          >
             <Input />
           </Form.Item>
         )
       case 'desk':
         return (
-          <Form.Item label='App Name:'>
+          <Form.Item
+            label={<span className='Modal-FormLabel'>App Name*</span>}
+            name='app_name'
+            rules={[{ required: true }]}
+          >
             <Input />
           </Form.Item>
         )
@@ -45,60 +65,42 @@ function NewAppForm({ showModal, toggleModal }: NFProps) {
 
   return (
     <Modal
-      title={<span className='Modal-Header'>Configure new App</span>}
-      closeIcon={<Button><CloseOutlined /></Button>}
+      title={<span className='Modal-Header'>Configure Citrix VDI App</span>}
+      closeIcon={<CloseOutlined />}
       maskClosable={false}
       centered
       visible={showModal}
       onOk={onOk}
       onCancel={onCancel}
+      okText={isValidating ? <LoadingOutlined /> : 'Add'}
     >
       <Form
         name='NewApp'
         labelCol={{ span: 9 }}
         labelAlign='left'
-        onFinish={onFinish}
         autoComplete='off'
         size='small'
         form={form}
+        validateMessages={formArgs.validationMessages}
+        requiredMark={false}
       >
-        <Form.Item label='Application Type'>
-          <Input.Group compact>
 
-            <Form.Item noStyle name='app_type'>
-              <Input style={{ width: '75%' }} />
+        {
+          formArgs.input.map((args) =>
+            <Form.Item
+              label={
+                <span className='Modal-FormLabel'>
+                  {`${args.label} ${args.rules?.at(0)?.required ? '*' : ''}`}
+                </span>
+              }
+              name={args.name}
+              key={args.name}
+              rules={args.rules}
+            >
+              <Input disabled={args.disabled} placeholder={args.placeholder} />
             </Form.Item>
-
-            <Form.Item noStyle>
-              <Select defaultValue='VDI' style={{ width: '25%'}}>
-                <Select.Option value='VDI'>VDI</Select.Option>
-              </Select>
-            </Form.Item>
-
-          </Input.Group>
-        </Form.Item>
-
-        <Form.Item label='Citrix Storefront URL:' name='url'>
-          <Input />
-        </Form.Item>
-
-        <Form.Item label='Citrix PNA Store URL:' name=''>
-          <Input disabled placeholder='Determine where to place in database.' />
-        </Form.Item>
-
-        <Form.Item label='Citrix Gatewayt URL' name=''>
-        </Form.Item>
-
-        <Form.Item label='Window Title:' name='window_title'>
-          <Input />
-        </Form.Item>
-
-        <Form.Item label='Resource Type' name='resource_type'>
-          <Radio.Group>
-            <Radio value='pub'>Published App</Radio>
-            <Radio value='desk'>Desktop App</Radio>
-          </Radio.Group>
-        </Form.Item>
+          )
+        }
 
         <Form.Item
           noStyle
@@ -107,13 +109,33 @@ function NewAppForm({ showModal, toggleModal }: NFProps) {
           {({ getFieldValue }) => FieldSwitch(getFieldValue('resource_type'))}
         </Form.Item>
 
-        <Form.Item label='Timeout:' name='wait_time'>
-          <Input />
+        <Form.Item
+          label={<span className='Modal-FormLabel'>Resource Type</span>}
+          name='resource_type'
+        >
+          <Radio.Group>
+            <Radio value='pub'>Published App</Radio>
+            <Radio value='desk'>Desktop App</Radio>
+          </Radio.Group>
         </Form.Item>
 
-        <Form.Item label='Domain:' name='domain'>
-          <Input />
-        </Form.Item>
+        {
+          formArgs.number.map((args) =>
+            <Form.Item
+              label={<span className='Modal-FormLabel'>{args.label}</span>}
+              name={args.name}
+              key={args.name}
+              initialValue={args.initialValue}
+            >
+              <InputNumber
+                formatter={args.formatter}
+                parser={args.parser}
+                step={100}
+              />
+            </Form.Item>
+          )
+        }
+
       </Form >
     </Modal >
   );

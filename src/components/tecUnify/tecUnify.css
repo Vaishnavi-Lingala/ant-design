@@ -112,11 +112,11 @@
     list-style: none;
 }
 
-.AppList-Item, .AppList-Card, AppList-Banner {
+.AppList-Item, .AppList-Card, .AppList-Banner {
     display: flex;
     padding: 3px;
     border: 1px solid #d7d7dc;
-    box-shadow: 0 2px 4px 0 rgb(0 0 0 / 20%);
+    box-shadow: 0 3px 6px rgb(33 33 38 / 25%);
     border-radius: 2px;
 }
 
@@ -153,19 +153,17 @@
     transform: scale(1.01);
 }
 
-.AppList-Item > a {
+.AppList-Banner > a {
     margin: 0 auto 0 0;
-    text-decoration-line: underline;
-    text-decoration-color: transparent;
+    color: black;
+    transition: all .3s linear;
+}
+
+.AppList-Banner > a:hover {
     color: var(--ant-primary-color);
-    transition: .3s ease-out;
 }
 
-.AppList-Item > a:hover {
-    text-decoration-color: var(--ant-primary-color);
-}
-
-.AppList-Item > img:hover {
+.AppList-Banner > img:hover {
     cursor: pointer;
 }
 
@@ -196,4 +194,9 @@
 
 .Modal-Header {
     font-size: x-large;
+}
+
+.Modal-FormLabel {
+    font-weight: 600;
+    font-size: medium;
 }
