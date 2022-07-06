@@ -22,6 +22,7 @@ import {
     logFieldNames,
     date_display_format
 } from '../../constants';
+import DisplayDateTimeFormat from "../Controls/DateTimeHelper";
 
 const { Panel } = Collapse;
 
@@ -131,7 +132,7 @@ export default function ActivityLogs() {
     const columns = [
         {
             title: "Time",
-            render: (text, record) => <>{moment.utc(record.activity?.created_ts).local().format(`${date_display_format} ${time_format}`)}</>
+            render: (text, record) => <>{DisplayDateTimeFormat(record.activity?.created_ts)}</>
         },
         {
             title: "Actor",
