@@ -34,6 +34,7 @@ const Urls = {
     machineDetails: (accountId, machineId) =>  `account/${accountId}/machines/${machineId}`,
     machineFilterableFields: (accountId) => `account/${accountId}/machines/filterable-fields`,
     machineFilter: (accountId) => `account/${accountId}/machines/filter`,
+    machineTypeOptions:(accountId) => `account/${accountId}/machine/machine-group-options`,
 
     // Users Urls
     userGroups: (accountId, userId) => `account/${accountId}/users/${userId}/groups`,

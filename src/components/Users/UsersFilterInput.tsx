@@ -8,13 +8,14 @@ interface FilterInputProps {
     filterInput: { field: string, value: string },
     index: number,
     filterableFields: Array<string>,
+    options: object,
     onFilterFieldChange: (value) => void,
     onFilterValueChange: (value) => void,
     onCloseClick: () => void
 }
 
 const UsersFilterInput: FunctionComponent<FilterInputProps> = (props: FilterInputProps) => {
-    const { index, filterInput, filterableFields, onFilterFieldChange, onFilterValueChange, onCloseClick } = props;
+    const { index, filterInput, filterableFields, options, onFilterFieldChange, onFilterValueChange, onCloseClick } = props;
     const [fieldName, setFieldName] = useState("");
 
     return (<Input.Group key={index}>
@@ -28,12 +29,7 @@ const UsersFilterInput: FunctionComponent<FilterInputProps> = (props: FilterInpu
                     showArrow={false}
                     filterOption={true}
                     onChange={(value) => {
-                        if (value === "inactivity_in_days" || value === "is_enrolled") {
-                            setFieldName(value)
-                        }
-                        else {
-                            setFieldName("")
-                        }
+                        setFieldName(value)
                         onFilterFieldChange(value);
                     }}
                     notFoundContent={null}
@@ -55,15 +51,35 @@ const UsersFilterInput: FunctionComponent<FilterInputProps> = (props: FilterInpu
                 {
                     fieldName !== "inactivity_in_days" ?
                         fieldName !== "is_enrolled" ?
-                            <Input
+                            fieldName !== "status" ?
+                                <Input
+                                    value={filterInput.value}
+                                    onChange={(event) => {
+                                        onFilterValueChange(
+                                            event.target.value
+                                        );
+                                    }}
+                                />
+                                : <Select style={{ width: '210px' }}
+                                    // showSearch
+                                    // showArrow={false}
+                                    value={filterInput.value}
+                                    onChange={(value) => {
+                                        onFilterValueChange(value)
+                                    }}
+                                >
+                                    {
+                                        Object.keys(options).map(key => {
+                                            return <Select.Option key={key} value={key} >
+                                                {options[key]}
+                                            </Select.Option>
+                                        })
+                                    }
+                                </Select>
+                            : <Select style={{ width: '210px' }}
                                 value={filterInput.value}
-                                onChange={(event) => {
-                                    onFilterValueChange(
-                                        event.target.value
-                                    );
-                                }}
-                            /> : <Select style={{ width: '210px' }}
-                                value={filterInput.value}
+                                // showSearch
+                                // showArrow={false}
                                 onChange={(value) => {
                                     onFilterValueChange(value)
                                 }}
@@ -77,6 +93,8 @@ const UsersFilterInput: FunctionComponent<FilterInputProps> = (props: FilterInpu
                             </Select> :
                         <Select style={{ width: '210px' }}
                             value={filterInput.value}
+                            // showSearch
+                            // showArrow={false}
                             onChange={(value) => {
                                 onFilterValueChange(value)
                             }}
