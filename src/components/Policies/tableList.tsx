@@ -96,8 +96,8 @@ function TableList({ handleGetPolicies, policy_type, policy_description, activat
         kiosk_machine_groups: [],
         policy_type: LOCAL_USER_PROVISIONING,
         policy_req: {
-            local_profile_format: "",
-            local_profile_user_type: ""
+            local_profile_format: "EMAIL_PREFIX",
+            local_profile_user_type: "STANDARD"
         }
     }
 

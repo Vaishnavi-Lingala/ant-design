@@ -8,7 +8,7 @@ import ApiService from "../../Api.service";
 import ApiUrls from "../../ApiUtils";
 import { openNotification } from "../Layout/Notification";
 import TextArea from "antd/lib/input/TextArea";
-import { policyDisplayNames } from "../../constants";
+import { policyDisplayNames, userProfileDisplayNames } from "../../constants";
 
 function UserProvisioningPolicy(props: any) {
     const [loading, setLoading] = useState(true);
@@ -191,10 +191,22 @@ function UserProvisioningPolicy(props: any) {
                 </div>
 
                 <div className="content-policy-key-header">
-                    <p>Assigned to user groups<span className="mandatory">*</span> :</p>
+                    Policy Type:
                 </div>
                 <div>
-                    {isEdit ?
+                    {policyDisplayNames[userProvisioningDisplayData['policy_type']]}
+                </div>
+            </div>
+
+            <Divider style={{ borderTop: '1px solid #d7d7dc' }} />
+
+            <div style={{ padding: '0 0 20px 0' }}>
+                <b>IF</b> windows local user profile provisioning is {<Checkbox checked disabled />} enabled
+            </div>
+
+            <div style={{ padding: '0 0 20px 0' }}>
+                <b>AND</b> User's group membership includes {
+                    isEdit ?
                         <Select
                             mode="multiple"
                             size={"large"}
@@ -212,25 +224,50 @@ function UserProvisioningPolicy(props: any) {
                                 <Button style={{ cursor: 'text' }}>{groupNames[name]}</Button>
                             </div>
                         )
-                    }
-                </div>
+                }
+            </div>
 
-                <div className="content-policy-key-header">
-                    Policy Type:
-                </div>
-                <div>
-                    {policyDisplayNames[userProvisioningDisplayData['policy_type']]}
-                </div>
+            <div style={{ padding: '0 0 20px 0' }}>
+                <b>AND</b> machine type is <b>STANDARD</b>
+            </div>
+
+            <div>
+                <b>THEN</b> based on the the following selection
+            </div>
+
+            <div style={{ padding: '12px 0 10px 0' }}>
+                <Radio.Group value={userProvisioningEditData?.policy_req?.local_profile_user_type}
+                    disabled={!isEdit}
+                    onChange={(e) => setUserProvisioningEditedData((state) => {
+                        const { policy_req } = state;
+                        return {
+                            ...userProvisioningEditData,
+                            policy_req: { ...policy_req, local_profile_user_type: e.target.value }
+                        }
+                    })}
+                >
+                    {
+                        Object.keys(userTypeOptions).map(type => {
+                            return <div key={type}>
+                                <Radio value={type}>
+                                    {userProfileDisplayNames[type]}
+                                </Radio>
+                                <br />
+                            </div>
+                        })
+                    }
+                </Radio.Group>
             </div>
 
             <Divider style={{ borderTop: '1px solid #d7d7dc' }} />
 
-            <div className="row-policy-container">
-                <div className="content-policy-key-header" style={{ padding: '10px 0 10px 0' }}>
-                    <p>Local Profile Format<span className="mandatory">*</span> :</p>
-                </div>
-                <div style={{ padding: '12px 0 10px 0' }}>
-                    {isEdit ?
+            <div>
+                A profile with the following format will be created the first time that a user logs on to a computer
+                and the password will the mastered by the IDP
+            </div>
+            <div style={{ padding: '12px 0 10px 0' }}>
+                {
+                    isEdit ?
                         <Select
                             size={"large"}
                             placeholder="Please select user profile format"
@@ -255,36 +292,12 @@ function UserProvisioningPolicy(props: any) {
                                 })
                             }
                         </Select> : userFormatOptions[userProvisioningDisplayData['policy_req']?.local_profile_format]
-                    }
-                </div>
+                }
+            </div>
 
-                <div className="content-policy-key-header" style={{ padding: '10px 0 10px 0' }}>
-                    <p>Local Profile User Type<span className="mandatory">*</span> :</p>
-                </div>
-                <div style={{ padding: '12px 0 10px 0' }}>
-                    <Radio.Group value={userProvisioningEditData?.policy_req?.local_profile_user_type}
-                        disabled={!isEdit}
-                        onChange={(e) => setUserProvisioningEditedData((state) => {
-                            const { policy_req } = state;
-                            return {
-                                ...userProvisioningEditData,
-                                policy_req: { ...policy_req, local_profile_user_type: e.target.value }
-                            }
-                        })}
-                    >
-                        {
-                            Object.keys(userTypeOptions).map(type => {
-                                return <div key={type}>
-                                    <Radio value={type}>
-                                        {userTypeOptions[type]}
-                                    </Radio>
-                                    <br />
-                                </div>
-                            })
-                        }
-                    </Radio.Group>
-                </div>
+            <Divider style={{ borderTop: '1px solid #d7d7dc' }} />
 
+            <div className="row-policy-container">
                 <div className="content-policy-key-header" style={{ padding: '10px 0 10px 0' }}>
                     Password Sync:
                 </div>
