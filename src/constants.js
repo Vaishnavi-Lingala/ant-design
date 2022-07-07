@@ -315,6 +315,12 @@ export const CARD_ENROLL = "CARD_ENROLL";
 export const LOCAL_USER_PROVISIONING = "LOCAL_USER_PROVISIONING";
 export const VIRTUAL_DESKTOP_INTERFACE = "VDI"
 
+//Local User Provisioning Policy
+export const userProfileDisplayNames = {
+    "STANDARD": "Provision Local User",
+    "ADMINISTRATOR": "Provision Local Administrator"
+}
+
 // Header Options
 export const Directory = "Directory";
 export const Products = "Products";
