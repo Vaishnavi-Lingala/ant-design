@@ -42,7 +42,7 @@ export default function Users() {
 		// },
 		{
 			title: 'Username',
-			dataIndex: 'user_name',
+			dataIndex: 'idp_user_name',
 			width: '10%'
 		},
 		{
