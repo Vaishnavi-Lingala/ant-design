@@ -362,8 +362,9 @@ export const TECBIO_LOCK_DESCRIPTION = 'Lock the machine or sign-out from the ap
 export const TECBIO_SIGN_OUT_DESCRIPTION = 'Sign-out the current user from the machine.';
 export const TECBIO_SIGN_OUT_ALL_DESCRIPTION = 'Sign-out all the users on the machine. Select this option to allow only 1 active session on the machine. This helps to  avoid issues arising due to limited  resource availability such as RAM & CPU by logging off the other sessions before initiating a new session.';
 
-export const userRequiredFields = ['first_name', 'last_name', 'user_name', 'email', 'sam', 'upn'];
+export const userRequiredFields = ['login_domain', 'first_name', 'last_name', 'user_name', 'email', 'sam', 'upn'];
 export const userDataModel = {
+    login_domain: 'Login Domain',
     first_name: 'First Name',
     last_name: 'Last Name',
     user_name: 'Username',

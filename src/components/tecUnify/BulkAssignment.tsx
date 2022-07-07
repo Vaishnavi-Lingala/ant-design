@@ -3,7 +3,7 @@ import { Button, Checkbox, List, Input, Skeleton } from 'antd';
 import { CaretDownOutlined } from '@ant-design/icons';
 
 
-import useFetchUsers from './useFetchUsers';
+import { useFetchUsers } from './hooks/useFetch';
 import { App, Page, User } from './types';
 import { CheckboxValueType } from 'antd/lib/checkbox/Group';
 
@@ -20,6 +20,7 @@ const { Search } = Input;
 
 function PascalCase(s: string) { return s.charAt(0).toUpperCase() + s.substring(1).toLowerCase(); }
 
+// TODO: list styling better
 function BulkAssignment({ activeList }: BAProps) {
   const [userPage, setUserPage] = useState(initialPState);
   const [appPage, setAppPage] = useState(initialPState);
