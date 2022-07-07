@@ -3,7 +3,7 @@ import { Button, Checkbox, List, Input, Skeleton } from 'antd';
 import { CaretDownOutlined } from '@ant-design/icons';
 
 
-import useFetchUsers from './useFetchUsers';
+import { useFetchUsers } from './hooks/useFetch';
 import { App, Page, User } from './types';
 import { CheckboxValueType } from 'antd/lib/checkbox/Group';
 

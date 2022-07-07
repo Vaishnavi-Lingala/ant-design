@@ -1,6 +1,8 @@
 import { useState } from 'react';
-import { Modal, Radio, Input, InputNumber, Form } from 'antd';
+import { Modal, Radio, Input, Form, Select } from 'antd';
 import { CloseOutlined, LoadingOutlined } from '@ant-design/icons';
+
+import { useFetchDomains, useFetchTimeout } from '../hooks/useFetch';
 import { formArgs } from './citrixformargs';
 
 interface AppFormProps {
@@ -8,9 +10,11 @@ interface AppFormProps {
   toggleModal: () => void;
 }
 
-function NewAppForm({ showModal, toggleModal }: AppFormProps) {
+function CitrixForm({ showModal, toggleModal }: AppFormProps) {
   const [isValidating, toggleValidating] = useState(false);
   const [form] = Form.useForm();
+  const { domains, isFetching: fetchingDomains } = useFetchDomains();
+  const { timeoutOptions, isFetching: fetchingOptions } = useFetchTimeout();
 
   // NOTE: Receives a onClick Event when pressing 'Ok' in the modal
   function onOk() {
@@ -27,8 +31,7 @@ function NewAppForm({ showModal, toggleModal }: AppFormProps) {
       .catch(err => {
         toggleValidating(false);
         console.error('Validate Failed:', err);
-      }
-      );
+      });
   }
 
   function onCancel() {
@@ -103,13 +106,6 @@ function NewAppForm({ showModal, toggleModal }: AppFormProps) {
         }
 
         <Form.Item
-          noStyle
-          shouldUpdate={(prev, curr) => prev !== curr}
-        >
-          {({ getFieldValue }) => FieldSwitch(getFieldValue('resource_type'))}
-        </Form.Item>
-
-        <Form.Item
           label={<span className='Modal-FormLabel'>Resource Type</span>}
           name='resource_type'
         >
@@ -119,26 +115,62 @@ function NewAppForm({ showModal, toggleModal }: AppFormProps) {
           </Radio.Group>
         </Form.Item>
 
-        {
-          formArgs.number.map((args) =>
-            <Form.Item
-              label={<span className='Modal-FormLabel'>{args.label}</span>}
-              name={args.name}
-              key={args.name}
-              initialValue={args.initialValue}
-            >
-              <InputNumber
-                formatter={args.formatter}
-                parser={args.parser}
-                step={100}
-              />
-            </Form.Item>
-          )
-        }
+        <Form.Item
+          noStyle
+          shouldUpdate={(prev, curr) => prev !== curr}
+        >
+          {({ getFieldValue }) => FieldSwitch(getFieldValue('resource_type'))}
+        </Form.Item>
+
+        <Form.Item
+          label={<span className='Modal-FormLabel'>Domain</span>}
+          name='domain'
+        >
+          <Select
+            loading={fetchingDomains}
+            options={
+              domains.map(
+                (domain) => {
+                  return {
+                    label: domain,
+                    value: domain
+                  }
+                })}
+          />
+        </Form.Item>
+
+        <Form.Item
+          label={<span className='Modal-FormLabel'>Timeout</span>}
+          name='wait_time'
+        >
+          <Select
+            loading={fetchingOptions}
+            options={
+              Object.keys(timeoutOptions)
+                .map((key) => {
+                  return {
+                    label: timeoutOptions[key],
+
+                    // Convert minutes into seconds, comforms to database schema
+                    value: parseInt(timeoutOptions[key], 10) * 60 * 60
+                  }
+                })}
+          />
+        </Form.Item>
+
 
       </Form >
     </Modal >
   );
 }
+// {
+//   label: 'Domain',
+//   name: 'domain',
+//   rules: [
+//     {
+//       required: true
+//     }
+//   ]
+// }
 
-export default NewAppForm;
+export default CitrixForm;

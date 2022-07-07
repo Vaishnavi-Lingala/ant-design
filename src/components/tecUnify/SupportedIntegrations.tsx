@@ -6,7 +6,7 @@
 
 import { Card, Input } from 'antd';
 
-import useFilter from './useFilter';
+import useFilter from './hooks/useFilter';
 
 import type { Template } from './types';
 

@@ -7,10 +7,10 @@ import './tecUnify.css';
 import SupportedIntegrations from './SupportedIntegrations';
 import AccountIntegrations from './AccountIntegrations';
 import BulkAssignment from './BulkAssignment';
-import AppSettings from './AppSettings';
-import { useFetch } from './useUnifyFetch';
+// import AppSettings from './AppSettings';
+import { useFetch } from './hooks/useUnifyFetch';
 import { AppList } from './types';
-import NewAppForm from './NewAppForm';
+import NewAppForm from './newappforms/CitrixForm';
 
 interface PageType {
   name: string;
@@ -63,8 +63,8 @@ function Applications() {
       // return <SupportedIntegrations templateList={}/>;
       case 'assignment':
         return <BulkAssignment activeList={data.active} />;
-      case 'settings':
-        return <AppSettings />;
+      // case 'settings':
+      //   return <AppSettings />;
       default:
         return null;
     }

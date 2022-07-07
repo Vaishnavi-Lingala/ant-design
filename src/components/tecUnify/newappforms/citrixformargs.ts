@@ -38,24 +38,10 @@ export const formArgs = {
       name: 'gateway_url',
       disabled: true,
       placeholder: 'Determine where to place in database.',
-      rules: [
-        {
-          required: true
-        }
-      ]
     },
     {
       label: 'Window Title',
       name: 'window_title'
-    },
-    {
-      label: 'Domain',
-      name: 'domain',
-      rules: [
-        {
-          required: true
-        }
-      ]
     }
   ],
   number: [
