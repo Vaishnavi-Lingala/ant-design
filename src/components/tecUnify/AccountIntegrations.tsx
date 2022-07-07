@@ -1,7 +1,7 @@
 import { Menu, Dropdown, Input } from 'antd';
 import { BarsOutlined, UserAddOutlined, UsergroupAddOutlined, PoweroffOutlined } from '@ant-design/icons';
 
-import useFilter from './useFilter';
+import useFilter from './hooks/useFilter';
 import AppListItem from './AppBanner';
 
 import type { App, AppList } from './types';
@@ -50,6 +50,7 @@ function AccountIntegrations({appList} : AIProps): JSX.Element {
           <Menu.Item key='inactive'>Inactive - ({filteredAppList.inactive.length})</Menu.Item>
         </Menu>
       </div>
+
       <ul className='AppList _FlexColumn'>
         { 
           filteredAppList[filter.activity]

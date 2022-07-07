@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 
-import type { App, AppList, FilterType } from './types';
+import type { App, AppList, FilterType } from '../types';
 
-interface FProps {
+interface FilterHookProps {
   appList: AppList;
 }
 
@@ -12,7 +12,7 @@ const defaultFilterState: FilterType = {
   updated: false
 }
 
-function useFilter({ appList }: FProps) {
+function useFilter({ appList }: FilterHookProps) {
   const [filteredAppList, setFilteredAppList] = useState<AppList>(appList);
   const [filter, setFilter] = useState<FilterType>(defaultFilterState);
 
@@ -34,18 +34,16 @@ function useFilter({ appList }: FProps) {
     }
 
     if (filter.updated) {
-      console.log("Updating Filters")
-      const filteredApps: App[] = appList[filter.activity]
-        .filter(
-          (app: App): boolean =>
-            app.display_name.toLowerCase().includes(filter.search));
-
-      setFilteredAppList({
-        ...appList,
-        [filter.activity]: filteredApps
+      setFilteredAppList((curr) => {
+        return {
+          ...curr,
+          [filter.activity]: curr[filter.activity].filter(
+            (app: App): boolean =>
+              app.display_name.toLowerCase().includes(filter.search))
+        }
       });
     }
-  }
+  };
 
   function updateFilter(event: any) {
     setFilter((curr) => {

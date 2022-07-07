@@ -161,7 +161,7 @@ export default function Users() {
 			setTableLoading(false);
 		});
 		data.results.map((value) => {
-			value['is_user_enrolled'] === true ? value['is_user_enrolled'] = 'true' : value['is_user_enrolled'] = 'false'
+			value['is_user_enrolled'] === true ? value['is_user_enrolled'] = 'True' : value['is_user_enrolled'] = 'False'
 		})
 		const updatedUsers = updateUsersListWithStatusAndKey(data.results);
 
@@ -184,7 +184,7 @@ export default function Users() {
 			setLoadingDetails(false);
 		});
 		data.results.map((value) => {
-			value['is_user_enrolled'] === true ? value['is_user_enrolled'] = 'true' : value['is_user_enrolled'] = 'false'
+			value['is_user_enrolled'] === true ? value['is_user_enrolled'] = 'True' : value['is_user_enrolled'] = 'False'
 		})
 		const updatedUsers = updateUsersListWithStatusAndKey(data.results);
 		console.log(updatedUsers);

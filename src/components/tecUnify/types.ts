@@ -1,8 +1,25 @@
 export type App = Config & Template;
+export type Domains = string[];
 
 export interface AppList {
   active: App[];
   inactive: App[];
+}
+
+export interface ApiResError {
+  errorCauses: string[];
+  errorCode: string;
+  errorSummary: string;
+}
+
+export interface TimeoutOptions {
+  FIFTEEN_MINUTES: string;
+  FIVE_MINUTES: string;
+  NINETY_MINUTES: string;
+  ONE_TWENTY_MINUTES: string;
+  SIXTY_MINUTES: string;
+  TEN_MINUTES: string;
+  THIRTY_MINUTES: string;
 }
 
 export interface FilterType {

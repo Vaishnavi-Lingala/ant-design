@@ -1,16 +1,16 @@
 import { useState } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
-import { Button, Skeleton, Modal } from 'antd';
+import { useParams } from 'react-router-dom';
+import { Button, Skeleton } from 'antd';
 
 import './tecUnify.css';
 
 import SupportedIntegrations from './SupportedIntegrations';
 import AccountIntegrations from './AccountIntegrations';
 import BulkAssignment from './BulkAssignment';
-import AppSettings from './AppSettings';
-import { useFetch } from './useUnifyFetch';
+// import AppSettings from './AppSettings';
+import { useFetch } from './hooks/useUnifyFetch';
 import { AppList } from './types';
-import NewAppForm from './NewAppForm';
+import NewAppForm from './newappforms/CitrixForm';
 
 interface PageType {
   name: string;
@@ -41,8 +41,6 @@ function Applications() {
   const isBulkAssignmentPage = (currPage.name === 'assignment');
   const isConfiguredPage = (currPage.name === 'configured');
 
-  let history = useHistory();
-
   function handleClick(e: any) {
     const currentPage = {
       name: e.target.parentNode.id,
@@ -65,8 +63,8 @@ function Applications() {
       // return <SupportedIntegrations templateList={}/>;
       case 'assignment':
         return <BulkAssignment activeList={data.active} />;
-      case 'settings':
-        return <AppSettings />;
+      // case 'settings':
+      //   return <AppSettings />;
       default:
         return null;
     }
@@ -93,17 +91,19 @@ function Applications() {
       >
         <div className='Content-HeaderContainer'>
           <Button id='supported' size='large' type='primary' onClick={handleClick}>
-            Browse Supported apps
+            Browse Supported Apps
           </Button>
 
           <Button id='assignment' size='large' type='primary' onClick={handleClick}>
-            Bulk assign apps
+            Bulk Assign Apps
           </Button>
 
           {
             isConfiguredPage &&
             <Button id='new' size='large' type='primary' onClick={() => toggleModal(curr => !curr)}>
-              Configure new App
+              {/* NOTE: Temparary until we get supported app page displaying integrations */}
+              {/* Configure new App */}
+              Configure New Citrix VDI
             </Button>
           }
         </div>
