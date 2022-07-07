@@ -6,6 +6,7 @@ import './Dashboard.css'
 import { openNotification } from "../Layout/Notification";
 import ApiUrls from '../../ApiUtils';
 import ApiService from "../../Api.service";
+import DisplayDateTimeFormat from "../Controls/DateTimeHelper";
 
 export default function Dashboard() {
     const [loadingDetails, setLoadingDetails] = useState(true);
@@ -69,7 +70,7 @@ export default function Dashboard() {
                             </div>
 
                             <div style={{ textAlign: 'right' }}>
-                                Updated at {dateAndTime.slice(0, 15) + dateAndTime.slice(18)}
+                                Updated at {DisplayDateTimeFormat(dateAndTime)}
                             </div>
                         </Card>
                         <br />

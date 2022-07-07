@@ -3,12 +3,11 @@ import { useEffect, useState } from "react";
 import ApiUrls from "../../ApiUtils";
 import ApiService from "../../Api.service";
 import { openNotification } from "../Layout/Notification";
-import { date_display_format, time_format } from "../../constants";
-import moment from "moment";
 import './Users.css';
 import { MoreOutlined } from "@ant-design/icons"
 import { ColumnType } from "antd/lib/table";
 import { stat } from "fs/promises";
+import DisplayDateTimeFormat from "../Controls/DateTimeHelper";
 
 export function Enrollments() {
     const [enrollments, setEnrollments]: any = useState(undefined);
@@ -24,12 +23,12 @@ export function Enrollments() {
         { title: "Instrument Id", dataIndex: "instrument_id", width: "25%" },
         {
             title: "Enrollment Time",
-            render: (text, record) => <>{moment.utc(record.enrollment_time).local().format(`${date_display_format} ${time_format}`)}</>,
+            render: (text, record) => <>{DisplayDateTimeFormat(record.enrollment_time)}</>,
             width: "20%"
         },
         {
             title: "Last Login Time",
-            render: (text, record) => <>{moment.utc(record.last_login_ts).local().format(`${date_display_format} ${time_format}`)}</>,
+            render: (text, record) => <>{DisplayDateTimeFormat(record.last_login_ts)}</>,
             width: "20%"
         },
         { title: "Product Version", dataIndex: "product_version", width: "15%" },
