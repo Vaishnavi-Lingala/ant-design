@@ -18,12 +18,17 @@ export function AddUser(props) {
         'email': '',
         'login_domain': '',
         'sam': '',
-        'upn': ''
+        'upn': '',
+        'assignedGroups': null
     });
     const [loading, setLoading] = useState(false);
     const [advancedFilters, setAdvancedFilters] = useState({});
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [domains, setDomains]: any = useState([]);
+    const [groups, setGroups]: any = useState([]);
+    const [selectedGroups, setSelectedGroups]: any = useState([]);
+    const [samRequired, setSamRequired]: any = useState(true);
+    const [upnRequired, setUpnRequired]: any = useState(true);
     const accountId = localStorage.getItem('accountId');
 
     const showModal = () => {
@@ -34,32 +39,37 @@ export function AddUser(props) {
             'email': '',
             'login_domain': '',
             'sam': '',
-            'upn': ''
+            'upn': '',
+            'assignedGroups': null
         })
         setIsModalVisible(true);
     };
 
     useEffect(() => {
-        getDomains();
+        Promise.all([ApiService.get(ApiUrls.domains(accountId)),
+            ApiService.get(ApiUrls.groups(accountId))]).then(result => {
+                if (!result[0].errorSummary) {
+                    console.log('Domains list ', JSON.stringify(result[0]));
+                    setIsModalVisible(false);
+                    setDomains(result[0]);
+                } else {
+                    console.log(result[0]);
+                    openNotification('error', result[0].errorCauses.length !== 0 ? result[0].errorCauses[0].errorSummary : result[0].errorSummary);
+                }
+                if (!result[1].errorSummary) {
+                    setIsModalVisible(false);
+                    setGroups(result[1]);
+                } else {
+                    console.log(result[1]);
+                    openNotification('error', result[1].errorCauses.length !== 0 ? result[1].errorCauses[0].errorSummary : result[1].errorSummary);
+                } 
+            }).catch(error => {
+                console.error(`Error in getting initial data: ${JSON.stringify(error)}`)
+                openNotification(`error`, `Error in getting initial data: ${JSON.stringify(error)}`);
+            }).finally(() => {
+                setLoading(false);
+            })
     }, []);
-
-    const getDomains = async () => {
-        setLoading(true);
-        let data = await ApiService.get(ApiUrls.domains(accountId)).catch(error => {
-            openNotification(`error`, `Error in getting domains: ${JSON.stringify(error)}`);
-        }).finally(() => {
-            setLoading(false);
-        });
-        if (!data.errorSummary) {
-            console.log('Domains list ', JSON.stringify(data));
-            setIsModalVisible(false);
-        }
-        else {
-            console.log(data);
-            openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
-        }
-        setDomains(data);
-    }
 
     const handleOk = () => {
         setLoading(true);
@@ -92,7 +102,19 @@ export function AddUser(props) {
         let requiredFields:any = [];
         let errorMsg = ``;
         let fields = '';
-        userRequiredFields.forEach(eachField => {
+        let updatedRequiredFields:any = [];
+        let reqFields = JSON.parse(JSON.stringify(userRequiredFields));
+        if (newUser.login_domain.toLowerCase() === 'workgroup') {
+            const samIndex = reqFields.findIndex(eachField => eachField === 'sam');
+            reqFields.splice(samIndex, 1);
+            const upnIndex = reqFields.findIndex(eachField => eachField === 'upn');
+            reqFields.splice(upnIndex, 1);
+            updatedRequiredFields.push(...reqFields);
+        } else {
+            updatedRequiredFields.push(...userRequiredFields); 
+        }
+        console.log(JSON.stringify(updatedRequiredFields));
+        updatedRequiredFields.forEach(eachField => {
             if (newUser[eachField] === null || newUser[eachField] === '') {
                 requiredFields.push(userDataModel[eachField]);
             }
@@ -121,7 +143,29 @@ export function AddUser(props) {
 
     const handleCancel = () => {
         setIsModalVisible(false);
+        setNewUser({
+            ...newUser,
+           login_domain: ''
+        })
+        setSelectedGroups([]);
     };
+
+    const onDomainChange = (value) => {
+        console.log(`Selected value: ${value}`);
+        setNewUser({
+            ...newUser,
+            login_domain: value
+        })
+        if (value.toLowerCase() === "workgroup") {
+            setSamRequired(false);
+            setUpnRequired(false);
+        } else {
+            setSamRequired(true);
+            setUpnRequired(true);
+        }
+        console.log(samRequired);
+        console.log(upnRequired);
+    }
 
     return <>
         <div style={{ display: "flex", width: '100%', border: '1px solid #D7D7DC', borderBottom: 'none', padding: '10px 10px 10px 25px', backgroundColor: '#f5f5f6' }}>
@@ -148,6 +192,27 @@ export function AddUser(props) {
             ]}
         >
             <Row gutter={16}>
+                <Col span={6}>
+                    <p style={{ fontWeight: 600, fontSize: 'medium'}}>Login Domain<span className="mandatory">*</span>:</p>
+                </Col>
+                <Col span={18}>
+                    <span style={{ paddingRight: '20px' }}>
+
+                        <Select style={{
+                            width: "100%",
+                        }} onChange={
+                            onDomainChange
+                        } value={newUser.login_domain}>
+                            {
+                                domains.map(eachDomain => {
+                                    return <Select.Option value={eachDomain} key={eachDomain}> {eachDomain} </Select.Option>
+                                })
+                            }
+
+                        </Select>
+
+                    </span>
+                </Col>
                 <Col span={6}>
                     <p style={{ fontWeight: 600, fontSize: 'medium' }}>First Name<span className="mandatory">*</span> :</p>
                 </Col>
@@ -226,7 +291,7 @@ export function AddUser(props) {
                     </span>
                 </Col>
                 <Col span={6}>
-                    <p style={{ fontWeight: 600, fontSize: 'medium' }}>SAM<span className="mandatory">*</span> :</p>
+                    <p style={{ fontWeight: 600, fontSize: 'medium' }}>SAM{samRequired?<span className="mandatory">*</span>: <></>} :</p>
                 </Col>
                 <Col span={18}>
                     <span style={{ paddingRight: '20px' }}>
@@ -245,7 +310,7 @@ export function AddUser(props) {
                     </span>
                 </Col>
                 <Col span={6}>
-                    <p style={{ fontWeight: 600, fontSize: 'medium' }}>UPN<span className="mandatory">*</span> :</p>
+                    <p style={{ fontWeight: 600, fontSize: 'medium' }}>UPN{upnRequired?<span className="mandatory">*</span>:<></>} :</p>
                 </Col>
                 <Col span={18}>
                     <span style={{ paddingRight: '20px' }}>
@@ -264,28 +329,33 @@ export function AddUser(props) {
                     </span>
                 </Col>
                 <Col span={6}>
-                    <p style={{ fontWeight: 600, fontSize: 'medium' }}>Login Domain:</p>
+                    <p style={{ fontWeight: 600, fontSize: 'medium' }}>Select Group:</p>
                 </Col>
                 <Col span={18}>
-                    <span style={{ paddingRight: '20px' }}>
-
-                        <Select style={{
-                            width: 120,
-                        }} onChange={(value) => {
-                            console.log(`Selected value: ${value}`);
-                            setNewUser({
-                                ...newUser,
-                                login_domain: value
-                            })
-                        }}>
+                    <span style={{ paddingRight: '40px' }}>
+                    <Select
+                            mode="multiple"
+                            placeholder={<div>Please select group</div>}
+                            onChange={(value) => {
+                                console.log(`Selected value: ${value}`);
+                                setNewUser({
+                                    ...newUser,
+                                    assignedGroups: value
+                                })
+                                setSelectedGroups(value)
+                            }}
+                            style={{ width: '100%' }}
+                            value={selectedGroups}
+                        >
                             {
-                                domains.map(eachDomain => {
-                                    return <Select.Option value={eachDomain} key={eachDomain}> {eachDomain} </Select.Option>
+                                groups.map(eachGroup => {
+                                    return <Select.Option value= {eachGroup.uid} key={eachGroup.uid}>
+                                        {eachGroup.name}
+                                    </Select.Option>
                                 })
                             }
-
-                        </Select>
-
+                            </Select>
+                        
                     </span>
                 </Col>
             </Row>
