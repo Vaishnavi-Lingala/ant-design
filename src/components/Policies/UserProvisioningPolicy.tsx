@@ -291,7 +291,11 @@ function UserProvisioningPolicy(props: any) {
                                     </Select.Option>
                                 })
                             }
-                        </Select> : userFormatOptions[userProvisioningDisplayData['policy_req']?.local_profile_format]
+                        </Select> :
+                        <div style={{ display: 'inline-block', marginRight: '3px', paddingBottom: '3px' }}>
+                            <Button style={{ cursor: 'text' }}>{userFormatOptions[userProvisioningDisplayData['policy_req']?.local_profile_format]}</Button>
+                        </div>
+                        
                 }
             </div>
 
