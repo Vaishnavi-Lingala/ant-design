@@ -4,10 +4,11 @@ import { CaretDownOutlined } from '@ant-design/icons';
 
 
 import { useFetchUsers } from './hooks/useFetch';
+import useFilter from './hooks/useFilter';
 import { App, Page, User } from './types';
 import { CheckboxValueType } from 'antd/lib/checkbox/Group';
 
-interface BAProps {
+interface BulkAssignmentProps {
   activeList: App[];
 }
 
@@ -21,22 +22,25 @@ const { Search } = Input;
 function PascalCase(s: string) { return s.charAt(0).toUpperCase() + s.substring(1).toLowerCase(); }
 
 // TODO: list styling better
-function BulkAssignment({ activeList }: BAProps) {
+function BulkAssignment({ activeList }: BulkAssignmentProps) {
   const [userPage, setUserPage] = useState(initialPState);
   const [appPage, setAppPage] = useState(initialPState);
   const [appSelection, setAppSelection] = useState<CheckboxValueType[]>([]);
   const [userSelection, setUserSelection] = useState<CheckboxValueType[]>([]);
-  const [filteredApps, setFilteredApps] = useState(activeList);
 
   const { userList, resetFilter, isFetching } = useFetchUsers(userPage);
 
-  function filterFields(searchVal: string) {
-    console.log(searchVal)
-  }
+  const {
+    filteredData: filteredApps,
+    updateFilter: updateAppFilter
+  } = useFilter<App[]>({
+    list: activeList,
+    filterOn: 'display_name'
+  });
 
   function handleCheckBox(id: CheckboxValueType[], isUser: boolean) {
     console.log(id);
-    // isUser ? setUserSelection(id) : setAppSelection(id);
+    isUser ? setUserSelection(id) : setAppSelection(id);
   }
 
   function sortFields(e: any) {
@@ -56,17 +60,20 @@ function BulkAssignment({ activeList }: BAProps) {
         </div>
         <ListSubHeader leftText="Users" rightText="Status" />
 
-        <Checkbox.Group onChange={(event) => handleCheckBox(event, true)}>
+        <Checkbox.Group
+          name='user'
+          value={userSelection}
+          onChange={(event) => handleCheckBox(event, true)}
+        >
           <List
-            itemLayout='vertical'
             pagination={{
-              onChange: pageNum => setUserPage(currPage => { return { ...currPage, current: pageNum } }),
+              onChange: (pageNum) => setUserPage(currPage => { return { ...currPage, current: pageNum } }),
               pageSize: userPage.limit,
               total: userList.total_items,
               size: 'small'
             }}
             dataSource={userList.results}
-            renderItem={(user): React.ReactNode => ListItem(user)}
+            renderItem={(user) => ListItem(user)}
           />
         </Checkbox.Group>
       </div>
@@ -81,9 +88,13 @@ function BulkAssignment({ activeList }: BAProps) {
           {ResetButton}
         </div>
         <ListSubHeader leftText="Applications" />
-        <Checkbox.Group onChange={(event) => handleCheckBox(event, false)} >
+
+        <Checkbox.Group
+          name='app'
+          value={appSelection}
+          onChange={(event) => handleCheckBox(event, false)}
+        >
           <List
-            itemLayout='vertical'
             pagination={{
               onChange: pageNum => setAppPage(currPage => { return { ...currPage, current: pageNum } }),
               pageSize: appPage.limit,
@@ -99,7 +110,7 @@ function BulkAssignment({ activeList }: BAProps) {
   }
 
   function ListItem(item: App | User) {
-    const isUser = "user_name" in item;
+    const isUser = 'idp_user_id' in item;
     return (
       <List.Item
         className='BulkAssignment-ListItems'
@@ -111,7 +122,12 @@ function BulkAssignment({ activeList }: BAProps) {
         />
 
         <h4 style={{ alignSelf: 'center', marginBottom: '0px', marginRight: 'auto' }}>
-          {isUser ? item.user_name : item.display_name}
+          {
+            isUser ?
+              item.first_name + ' ' + item.last_name
+              :
+              item.display_name
+          }
         </h4>
 
         {
@@ -130,7 +146,7 @@ function BulkAssignment({ activeList }: BAProps) {
     return (
       <>
         <Search
-          onSearch={val => console.log(val)}
+          onSearch={updateAppFilter}
           style={{ padding: '7px' }}
           size='small'
           width='fill'

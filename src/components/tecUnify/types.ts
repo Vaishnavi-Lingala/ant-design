@@ -23,7 +23,7 @@ export interface TimeoutOptions {
 }
 
 export interface FilterType {
-  activity: string;
+  activity?: string;
   search: string;
   updated: boolean;
 }
@@ -138,27 +138,30 @@ export interface PaginationApiRes {
 
 export interface User {
   account_id: string;
-  display_name: string;
-  email: string;
-  eula_accepted_date: string;
-  first_name: string;
-  idp_user_id: string;
-  is_billing_contact: boolean;
-  is_portal_admin: boolean;
-  is_shipping_contact: boolean;
-  is_techincal_contact: boolean;
-  last_invite_accepted: string;
-  last_invite_sent: string;
-  last_name: string;
-  last_portal_login: string;
-  login_domain: string;
-  login_user_name: string;
-  sam: string;
-  sourced_by: string;
-  status: string;
   uid: string;
+  eula_accepted_date: string;
+  idp_user_name: string;
+  is_billing_contact: boolean;
+  first_name: string;
+  last_portal_login: string;
+  status: string;
+  user_dn: string;
+  last_invite_accepted: string;
+  is_portal_admin: boolean;
+  last_invite_sent: string;
   upn: string;
-  user_name: string;
+  sourced_by: string;
+  login_domain: string;
+  last_login_ts: string;
+  is_technical_contact: boolean;
+  last_name: string;
+  email: string;
+  idp_user_id: string;
+  is_shipping_contact: boolean;
+  display_name: string;
+  last_enroll_ts: string;
+  sam: string;
+  is_user_enrolled: boolean;
 }
 
 export interface Page {

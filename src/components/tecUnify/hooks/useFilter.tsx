@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
+import type { FilterType } from '../types';
 
-import type { App, AppList, FilterType } from '../types';
-
-interface FilterHookProps {
-  appList: AppList;
+interface FilterHookProps<T> {
+  list: T;
+  filterOn: string;
 }
 
 const defaultFilterState: FilterType = {
@@ -12,34 +12,55 @@ const defaultFilterState: FilterType = {
   updated: false
 }
 
-function useFilter({ appList }: FilterHookProps) {
-  const [filteredAppList, setFilteredAppList] = useState<AppList>(appList);
+// Typeguard to verify that the object passed in is actaully as array
+// of type 'T'
+function isArray<T>(list: any | any[]): list is T[] {
+  return Array.isArray(list);
+};
+
+// Generic filter function, .filter() was giving issues when using on the list passed into the hook
+function genFilter<T>(list: T[], filterFunc: (item: T) => boolean): T[] {
+  const result = new Array<T>();
+  list.forEach(
+    (item) => filterFunc(item) && result.push(item)
+  )
+  return result;
+}
+
+// Takes the list passed in and the filterOn value, running the filter
+// every time updateFilter func is ran from outside this hook. Will be kept in-sync
+// via useEffect
+function useFilter<T>({ list, filterOn }: FilterHookProps<T>) {
+  const [filteredData, setFilteredData] = useState<T>(list);
   const [filter, setFilter] = useState<FilterType>(defaultFilterState);
 
-  useEffect(() => {
-    filterList();
-
-    setFilter((curr) => {
-      return {
-        ...curr,
-        updated: false
-      }
-    });
-  }, [filter.activity, filter.search]);
+  function listIncludes(item: T): boolean {
+    return item[filterOn].toLowerCase().includes(filter.search);
+  }
 
   function filterList() {
     if (filter.search === '') {
-      setFilteredAppList(appList);
+      setFilteredData(list);
       return
     }
 
-    if (filter.updated) {
-      setFilteredAppList((curr) => {
+    if (filter.updated && isArray<T>(list)) {
+      const test = genFilter<T>(list, listIncludes);
+      setFilteredData((test as unknown) as T);
+    }
+  }
+
+  function filterActivityList() {
+    if (filter.search === '') {
+      setFilteredData(list);
+      return
+    }
+
+    if (filter.updated && ('activity' in filter) ) {
+      setFilteredData((curr) => {
         return {
           ...curr,
-          [filter.activity]: curr[filter.activity].filter(
-            (app: App): boolean =>
-              app.display_name.toLowerCase().includes(filter.search))
+          [filter.activity!]: genFilter<T>(curr[filter.activity!], listIncludes)
         }
       });
     }
@@ -49,7 +70,7 @@ function useFilter({ appList }: FilterHookProps) {
     setFilter((curr) => {
       if (event.key) {
         return {
-          search: '',
+          ...curr,
           activity: event.key,
           updated: true
         }
@@ -63,7 +84,22 @@ function useFilter({ appList }: FilterHookProps) {
     });
   }
 
-  return { filter, filteredAppList, updateFilter };
+  useEffect(() => {
+    if ('active' in list)
+      filterActivityList();
+
+    if (isArray<T>(list) && 'template_type' in list[0])
+      filterList();
+
+    setFilter((curr) => {
+      return {
+        ...curr,
+        updated: false
+      }
+    });
+  }, [filter.activity, filter.search]);
+
+  return { filter, filteredData, updateFilter };
 }
 
 export default useFilter;

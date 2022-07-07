@@ -13,7 +13,14 @@ interface AIProps {
 }
 
 function AccountIntegrations({appList} : AIProps): JSX.Element {
-  const {filter, filteredAppList, updateFilter} = useFilter({appList});
+  const {
+    filter,
+    filteredData,
+    updateFilter
+  } = useFilter<AppList>({
+    list: appList,
+    filterOn: 'display_name'
+  });
 
   const options = (
     <Menu
@@ -46,14 +53,14 @@ function AccountIntegrations({appList} : AIProps): JSX.Element {
       <div className='Sidebar'>
         <Search onSearch={updateFilter}/>
         <Menu className='_NoBorder' onClick={updateFilter}>
-          <Menu.Item key='active'>Active - ({filteredAppList.active.length})</Menu.Item>
-          <Menu.Item key='inactive'>Inactive - ({filteredAppList.inactive.length})</Menu.Item>
+          <Menu.Item key='active'>Active - ({filteredData.active.length})</Menu.Item>
+          <Menu.Item key='inactive'>Inactive - ({filteredData.inactive.length})</Menu.Item>
         </Menu>
       </div>
 
       <ul className='AppList _FlexColumn'>
         { 
-          filteredAppList[filter.activity]
+          filteredData[filter.activity!]
             .map((app: App) => 
               <AppListItem
                 key={app.config_id} 
