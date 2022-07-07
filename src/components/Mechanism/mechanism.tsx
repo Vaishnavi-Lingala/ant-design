@@ -426,10 +426,10 @@ function Mechanism(props: any) {
                 {
                     selectedHeader === TecTANGO ?
                         <div style={{ padding: '0 0 20px 0' }}>
-                            <b>WHEN</b> user <b>TAPS</b> the proximity card/badge on the card reader the second time over an active session
+                            <b>WHEN</b> user <b>TAPS</b> the proximity card/badge on the card reader over an active session
                         </div> :
                         <div style={{ padding: '0 0 20px 0' }}>
-                            <b>WHEN</b> user <b>SCANS</b> their finger on the biometric scanner the second time
+                            <b>WHEN</b> user <b>SCANS</b> their finger on the biometric scanner over an active session
                         </div>
                 }
 
