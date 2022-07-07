@@ -13,7 +13,7 @@ function Domains() {
     const [displayDomains, setDisplayDomains] = useState([]);
     const [isEdit, setIsEdit] = useState(false);
     const accountId = localStorage.getItem('accountId');
- 
+
     useEffect(() => {
         getDomains();
     }, []);
@@ -41,7 +41,7 @@ function Domains() {
         console.log(displayDomains);
         setDomains([...displayDomains]);
         setIsEdit(false);
-    }       
+    }
 
     function handleSave() {
         const list: any = [];
@@ -101,21 +101,24 @@ function Domains() {
                                 }) : domains.map((value, index) => {
                                     return <div key={value} style={{ padding: '5px' }}>
                                         <Input className="form-control"
+                                        readOnly={value === "WORKGROUP"}
                                             defaultValue={value} onChange={(e) => {
                                                 //@ts-ignore
                                                 domains[index] = e.target.value
                                                 setDomains(domains);
                                             }} style={{ width: '200px' }}
                                         /> &nbsp;
-                                        <Button
-                                            icon={<DeleteOutlined />}
-                                            onClick={() => {
-                                                const list = [...domains];
-                                                list.splice(index, 1);
-                                                console.log(list);
-                                                setDomains([...list]);
-                                            }}
-                                        />
+                                        {
+                                            value !== "WORKGROUP" ? <Button
+                                                icon={<DeleteOutlined />}
+                                                onClick={() => {
+                                                    const list = [...domains];
+                                                    list.splice(index, 1);
+                                                    console.log(list);
+                                                    setDomains([...list]);
+                                                }}
+                                            /> : <></>
+                                        }
                                     </div>
                                 })
                             }

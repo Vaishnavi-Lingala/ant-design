@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react";
+import { FunctionComponent, useState } from "react";
 import { Input, Row, Col, Select, Button } from "antd";
 import { DeleteOutlined } from '@ant-design/icons';
 
@@ -8,13 +8,16 @@ interface FilterInputProps {
     filterInput: { field: string, value: string },
     index: number,
     filterableFields: Array<string>,
+    deviceTypeOptions: object,
+    vendorTypeOptions: object,
     onFilterFieldChange: (value) => void,
     onFilterValueChange: (value) => void,
     onCloseClick: () => void
 }
 
 const DeviceFilterInput: FunctionComponent<FilterInputProps> = (props: FilterInputProps) => {
-    const { index, filterInput, filterableFields, onFilterFieldChange, onFilterValueChange, onCloseClick } = props;
+    const { index, filterInput, deviceTypeOptions, vendorTypeOptions, filterableFields, onFilterFieldChange, onFilterValueChange, onCloseClick } = props;
+    const [fieldName, setFieldName] = useState("");
 
     return (<Input.Group key={index}>
         <Row style={{ marginTop: "10px" }} gutter={10}>
@@ -27,6 +30,7 @@ const DeviceFilterInput: FunctionComponent<FilterInputProps> = (props: FilterInp
                     showArrow={false}
                     filterOption={true}
                     onChange={(value) => {
+                        setFieldName(value);
                         onFilterFieldChange(value);
                     }}
                     notFoundContent={null}
@@ -45,14 +49,66 @@ const DeviceFilterInput: FunctionComponent<FilterInputProps> = (props: FilterInp
                 ></Select>
             </Col>
             <Col span={8}>
-                <Input
-                    value={filterInput.value}
-                    onChange={(event) => {
-                        onFilterValueChange(
-                            event.target.value
-                        );
-                    }}
-                />
+                {
+                    fieldName !== "device_type" ?
+                        fieldName !== "vendor" ?
+                            fieldName !== "blocked" ?
+                                <Input
+                                    value={filterInput.value}
+                                    onChange={(event) => {
+                                        onFilterValueChange(
+                                            event.target.value
+                                        );
+                                    }}
+                                />
+                                : <Select style={{ width: '210px' }}
+                                    // showSearch
+                                    // showArrow={false}
+                                    value={filterInput.value}
+                                    onChange={(value) => {
+                                        onFilterValueChange(value)
+                                    }}
+                                >
+                                    <Select.Option key={1} value={true}>
+                                        True
+                                    </Select.Option>
+                                    <Select.Option key={2} value={false}>
+                                        False
+                                    </Select.Option>
+                                </Select>
+                            : <Select style={{ width: '210px' }}
+                                // showSearch
+                                // showArrow={false}
+                                value={filterInput.value}
+                                onChange={(value) => {
+                                    onFilterValueChange(value)
+                                }}
+                            >
+                                {
+                                    Object.keys(vendorTypeOptions).map(key => {
+                                        return <Select.Option key={key} value={key} >
+                                            {vendorTypeOptions[key]}
+                                        </Select.Option>
+                                    })
+                                }
+                            </Select>
+                        : <Select style={{ width: '210px' }}
+                            // showSearch
+                            // showArrow={false}
+                            value={filterInput.value}
+                            onChange={(value) => {
+                                onFilterValueChange(value)
+                            }}
+                        >
+                            {
+                                Object.keys(deviceTypeOptions).map(key => {
+                                    return <Select.Option key={key} value={key} >
+                                        {deviceTypeOptions[key]}
+                                    </Select.Option>
+                                })
+                            }
+                        </Select>
+                }
             </Col>
             <Col span={2}>
                 <Button icon={<DeleteOutlined />}

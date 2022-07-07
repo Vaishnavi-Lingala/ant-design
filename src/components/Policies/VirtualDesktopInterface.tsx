@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Button, Divider, Input, Radio, Select, Skeleton } from "antd";
 
@@ -24,7 +24,7 @@ function VDIPolicy(props: any) {
     const history = useHistory();
     const accountId = localStorage.getItem('accountId');
     const [groupType, setGroupType] = useState("");
-    const [clearItems, setClearItems] = useState(false);
+    // const clearItems = useRef(null);
 
     useEffect(() => {
         Promise.all(([
@@ -40,9 +40,19 @@ function VDIPolicy(props: any) {
                         type: data[0][i].type
                     })
                 }
-                console.log(groups);
-                setGroups(groups);
                 setFullGroups(groups);
+                var groupTypegroups: any = [];
+                if (window.location.pathname.split('/').length !== 5) {
+                    console.log(data[2].kiosk_machine_groups[0].type);
+                    setGroupType(data[2].kiosk_machine_groups[0].type);
+                    Object.keys(groups).map(index => {
+                        if (groups[index]["type"] === data[2].kiosk_machine_groups[0].type) {
+                            groupTypegroups.push(groups[index]);
+                        }
+                    })
+                    console.log(groupTypegroups);
+                    setGroups(groupTypegroups);
+                }
                 var object = {};
                 for (var i = 0; i < data[0].length; i++) {
                     object[data[0][i].name] = data[0][i].uid
@@ -199,21 +209,22 @@ function VDIPolicy(props: any) {
                         defaultValue={groupType}
                         disabled={!isEdit}
                         onChange={(e) => {
-                            // setGroupNames([
-                            //     ...groupNames,
-                            //     groupNames.length = 0
-                            // ]);
+                            groupNames.length = 0
+                            setGroupNames([]);
+                            //@ts-ignore
+                            // clearItems.current.clearValue();
+                            // clearItems.value = [];
+                            groupUids.length = 0;
                             setGroupType(e.target.value)
                             var groupTypegroups: any = [];
                             Object.keys(fullGroups).map(index => {
-                                console.log(index)
                                 if (fullGroups[index]["type"] === e.target.value) {
                                     groupTypegroups.push(fullGroups[index])
                                 }
                             })
                             setGroups(groupTypegroups);
                         }}
-                        >
+                    >
                         <Radio value={"STANDARD"}>
                             Standard
                         </Radio>
@@ -234,9 +245,10 @@ function VDIPolicy(props: any) {
                 <div>
                     {isEdit ?
                         <Select
-                        id={"select"}
-                        mode="multiple"
+                            id={"select"}
+                            mode="multiple"
                             size={"large"}
+                            // ref={clearItems}
                             placeholder={<div>Please select groups</div>}
                             defaultValue={vdiDisplayData['name'] !== "" ? groupNames : []}
                             onChange={handleGroups}
@@ -302,19 +314,19 @@ function VDIPolicy(props: any) {
                 <div style={{ padding: '12px 0 10px 0' }}>
                     {isEdit ? <TextArea className="form-control"
                         style={{ width: "275px" }}
-                        onChange={(e) => setVDIEditedData((state) => {
-                            const { policy_req } = state;
-                            return {
-                                ...vdiEditData,
-                                policy_req: {
-                                    ...policy_req,
-                                    app_template: e.target.value
-                                }
-                            }
-                        })}
-                        defaultValue={vdiDisplayData['policy_req']?.app_template}
+                        // onChange={(e) => setVDIEditedData((state) => {
+                        //     const { policy_req } = state;
+                        //     return {
+                        //         ...vdiEditData,
+                        //         policy_req: {
+                        //             ...policy_req,
+                        //             app_template: e.target.value
+                        //         }
+                        //     }
+                        // })}
+                        defaultValue={vdiDisplayData['policy_req']?.app_template?.name}
                         placeholder='Enter app template'
-                    /> : vdiDisplayData['policy_req']?.app_template
+                    /> : vdiDisplayData['policy_req']?.app_template?.name
                     }
                 </div>
             </div>

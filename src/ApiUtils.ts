@@ -34,6 +34,7 @@ const Urls = {
     machineDetails: (accountId, machineId) =>  `account/${accountId}/machines/${machineId}`,
     machineFilterableFields: (accountId) => `account/${accountId}/machines/filterable-fields`,
     machineFilter: (accountId) => `account/${accountId}/machines/filter`,
+    machineTypeOptions:(accountId) => `account/${accountId}/machine/machine-group-options`,
 
     // Users Urls
     userGroups: (accountId, userId) => `account/${accountId}/users/${userId}/groups`,
@@ -79,6 +80,7 @@ const Urls = {
     activateMechanism: (accountId, productId, mechanismId) => `account/${accountId}/product/${productId}/mechanism/${mechanismId}/activate`,
     deActivateMechanism: (accountId, productId, mechanismId) => `account/${accountId}/product/${productId}/mechanism/${mechanismId}/inactivate`,
     reOrderMechanisms: (accountId, productId) => `account/${accountId}/product/${productId}/mechanism/reorder`,
+    idleTimeoutOptions: (accountId) => `account/${accountId}/mechanism/idle-timeout-options`,
 
     // Activity Log Urls
     activityLog: (accountId, productId) => `account/${accountId}/product/${productId}/activitylog`,
