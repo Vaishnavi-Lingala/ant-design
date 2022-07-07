@@ -8,6 +8,7 @@ import ApiUrls from "../../ApiUtils"
 import ApiService from "../../Api.service"
 import { date_display_format, machineFieldNames, time_format } from "../../constants";
 import { MachineProducts } from "../../models/Data.models";
+import DisplayDateTimeFormat from "../Controls/DateTimeHelper";
 
 export function MachineDetails(props: any) {
     const [loadingDetails, setLoadingDetails] = useState(false);
@@ -31,7 +32,7 @@ export function MachineDetails(props: any) {
         {
             title: "Installed Time",
             render: (text, record) => <>
-                {moment.utc(record.created_ts).local().format(`${date_display_format} ${time_format}`)}
+                {DisplayDateTimeFormat(record.created_ts)}
             </>
         }
     ]

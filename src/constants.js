@@ -190,6 +190,7 @@ export const settingsFieldNames = {
 export const settingsIdpFields = {
     idp_type: "IDP",
     tenant_type: "Tenant type",
+    issuer_url: "Tenant URL",
     idp_portal_oidc_client_id: "Portal OIDC Client ID",
     idp_app_oidc_client_id: "App OIDC Client ID"
 }
@@ -233,6 +234,19 @@ export const DeviceFilterFieldNames = {
     device_type: "Device Type",
     serial_number: "Serial Number",
     blocked: "Blocked"
+}
+
+export const vendorOptions = {
+    "HID": "Hid",
+    "RFIDEAS": "Rfideas",
+    "RFIDINC": "Rfidinc"
+}
+
+export const deviceTypeOptions = {
+    "BIOMETRIC": "Biometric",
+    "RFIDEAS": "Rfideas",
+    "RFIDPCSC": "RFID Reader (pc/sc)",
+    "YUBIKEY": "Yubikey"
 }
 
 export const groupFilterFieldNames = {
@@ -332,7 +346,7 @@ export const PasswordPolicyDescription = 'Password policies enable admins to con
 export const KioskPolicyDescription = 'KIOSK policies applies to machines where TecTANGO will auto-login with the generic machine user to enable fast user swicthing on a shared or kiosk machines used by multiple users. This policy is applied only when Option 3 is selected in the TecTANGO Installer';
 export const CardEnrollmentPolicyDescription = 'Card enrollment policies enable admins to configure max number of cards allowed per user group during enrollment';
 export const LocalUserProvisioningPolicyDescription = 'Local user provisioning policies enable admins to automatically create local user profile on the machines. This is applicable only for Standard and Kiosk machines.';
-export const VDI_Description = 'VDI policies enable admins to configure the VDI Template for Citrix, VMware, or Microsoft which TecTANGO will use to connect to remote desktops.';
+export const VDI_Description = 'VDI policies enable admins to configure the VDI Template for Citrix, VMware, or Microsoft which TecTANGO will use to connect to remote desktops hosted on a virtual machine server.';
 
 //Mechanism Descriptions
 export const TECTANGO_LOCK_DESCRIPTION = 'Lock the machine or sign-out from the apps launched by TecTANGO.';
@@ -342,8 +356,9 @@ export const TECBIO_LOCK_DESCRIPTION = 'Lock the machine or sign-out from the ap
 export const TECBIO_SIGN_OUT_DESCRIPTION = 'Sign-out the current user from the machine.';
 export const TECBIO_SIGN_OUT_ALL_DESCRIPTION = 'Sign-out all the users on the machine. Select this option to allow only 1 active session on the machine. This helps to  avoid issues arising due to limited  resource availability such as RAM & CPU by logging off the other sessions before initiating a new session.';
 
-export const userRequiredFields = ['first_name', 'last_name', 'user_name', 'email', 'sam', 'upn'];
+export const userRequiredFields = ['login_domain', 'first_name', 'last_name', 'user_name', 'email', 'sam', 'upn'];
 export const userDataModel = {
+    login_domain: 'Login Domain',
     first_name: 'First Name',
     last_name: 'Last Name',
     user_name: 'Username',

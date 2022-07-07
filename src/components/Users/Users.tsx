@@ -8,8 +8,7 @@ import { openNotification } from "../Layout/Notification";
 import ApiUrls from '../../ApiUtils';
 import ApiService from "../../Api.service";
 import { useHistory } from "react-router-dom";
-import moment from "moment";
-import { date_display_format, time_format } from "../../constants";
+import DisplayDateTimeFormat from "../Controls/DateTimeHelper";
 
 export default function Users() {
 	const [userDetails, setUserDetails]: any = useState(undefined);
@@ -36,11 +35,11 @@ export default function Users() {
 			dataIndex: 'last_name',
 			width: '10%'
 		},
-		{
-			title: 'Email',
-			dataIndex: 'email',
-			width: '15%'
-		},
+		// {
+		// 	title: 'Email',
+		// 	dataIndex: 'email',
+		// 	width: '15%'
+		// },
 		{
 			title: 'Username',
 			dataIndex: 'user_name',
@@ -59,7 +58,7 @@ export default function Users() {
 		{
 			title: 'Last Login Time',
 			width: '20%',
-			render: (text, record) => <>{record.last_login_ts !== null ? moment.utc((record.last_login_ts)).local().format(`${date_display_format} ${time_format}`) : null}</>
+			render: (text, record) => <>{record.last_login_ts !== null ? DisplayDateTimeFormat(record.last_login_ts) : null}</>
 		},
 		{
 			title: 'Actions',

@@ -28,18 +28,23 @@ export default function Groups() {
         {
             title: 'Name',
             dataIndex: 'name',
-            width: '30%'
+            width: '25%'
         },
         {
             title: 'Count',
             dataIndex: 'count',
-            width: '30%',
+            width: '25%',
             sorter: (a: { count: number; }, b: { count: number; }) => a.count - b.count,
+        },
+        {
+            title: 'Sourced by',
+            dataIndex: 'sourced_by',
+            width: '25%'
         },
         {
             title: 'Actions',
             dataIndex: 'actions',
-            width: '40%',
+            width: '25%',
             render: (text: any, record: { uid: any; }) => (
                 <Tooltip title="View">
                     <Button icon={<BarsOutlined />} onClick={() =>
