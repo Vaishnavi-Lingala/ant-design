@@ -18,12 +18,15 @@ export function AddUser(props) {
         'email': '',
         'login_domain': '',
         'sam': '',
-        'upn': ''
+        'upn': '',
+        'assignedGroups': null
     });
     const [loading, setLoading] = useState(false);
     const [advancedFilters, setAdvancedFilters] = useState({});
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [domains, setDomains]: any = useState([]);
+    const [groups, setGroups]: any = useState([]);
+    const [selectedGroups, setSelectedGroups]: any = useState([]);
     const accountId = localStorage.getItem('accountId');
 
     const showModal = () => {
@@ -34,13 +37,36 @@ export function AddUser(props) {
             'email': '',
             'login_domain': '',
             'sam': '',
-            'upn': ''
+            'upn': '',
+            'assignedGroups': null
         })
         setIsModalVisible(true);
     };
 
     useEffect(() => {
-        getDomains();
+        Promise.all([ApiService.get(ApiUrls.domains(accountId)),
+            ApiService.get(ApiUrls.groups(accountId))]).then(result => {
+                if (!result[0].errorSummary) {
+                    console.log('Domains list ', JSON.stringify(result[0]));
+                    setIsModalVisible(false);
+                    setDomains(result[0]);
+                } else {
+                    console.log(result[0]);
+                    openNotification('error', result[0].errorCauses.length !== 0 ? result[0].errorCauses[0].errorSummary : result[0].errorSummary);
+                }
+                if (!result[1].errorSummary) {
+                    setIsModalVisible(false);
+                    setGroups(result[1]);
+                } else {
+                    console.log(result[1]);
+                    openNotification('error', result[1].errorCauses.length !== 0 ? result[1].errorCauses[0].errorSummary : result[1].errorSummary);
+                } 
+            }).catch(error => {
+                console.error(`Error in getting initial data: ${JSON.stringify(error)}`)
+                openNotification(`error`, `Error in getting initial data: ${JSON.stringify(error)}`);
+            }).finally(() => {
+                setLoading(false);
+            })
     }, []);
 
     const getDomains = async () => {
@@ -121,6 +147,11 @@ export function AddUser(props) {
 
     const handleCancel = () => {
         setIsModalVisible(false);
+        setNewUser({
+            ...newUser,
+           login_domain: ''
+        })
+        setSelectedGroups([]);
     };
 
     return <>
@@ -148,6 +179,31 @@ export function AddUser(props) {
             ]}
         >
             <Row gutter={16}>
+                <Col span={6}>
+                    <p style={{ fontWeight: 600, fontSize: 'medium'}}>Login Domain:</p>
+                </Col>
+                <Col span={18}>
+                    <span style={{ paddingRight: '20px' }}>
+
+                        <Select style={{
+                            width: "100%",
+                        }} onChange={(value) => {
+                            console.log(`Selected value: ${value}`);
+                            setNewUser({
+                                ...newUser,
+                                login_domain: value
+                            })
+                        }} value={newUser.login_domain}>
+                            {
+                                domains.map(eachDomain => {
+                                    return <Select.Option value={eachDomain} key={eachDomain}> {eachDomain} </Select.Option>
+                                })
+                            }
+
+                        </Select>
+
+                    </span>
+                </Col>
                 <Col span={6}>
                     <p style={{ fontWeight: 600, fontSize: 'medium' }}>First Name<span className="mandatory">*</span> :</p>
                 </Col>
@@ -264,28 +320,33 @@ export function AddUser(props) {
                     </span>
                 </Col>
                 <Col span={6}>
-                    <p style={{ fontWeight: 600, fontSize: 'medium' }}>Login Domain:</p>
+                    <p style={{ fontWeight: 600, fontSize: 'medium' }}>Select Group:</p>
                 </Col>
                 <Col span={18}>
-                    <span style={{ paddingRight: '20px' }}>
-
-                        <Select style={{
-                            width: 120,
-                        }} onChange={(value) => {
-                            console.log(`Selected value: ${value}`);
-                            setNewUser({
-                                ...newUser,
-                                login_domain: value
-                            })
-                        }}>
+                    <span style={{ paddingRight: '40px' }}>
+                    <Select
+                            mode="multiple"
+                            placeholder={<div>Please select group</div>}
+                            onChange={(value) => {
+                                console.log(`Selected value: ${value}`);
+                                setNewUser({
+                                    ...newUser,
+                                    assignedGroups: value
+                                })
+                                setSelectedGroups(value)
+                            }}
+                            style={{ width: '100%' }}
+                            value={selectedGroups}
+                        >
                             {
-                                domains.map(eachDomain => {
-                                    return <Select.Option value={eachDomain} key={eachDomain}> {eachDomain} </Select.Option>
+                                groups.map(eachGroup => {
+                                    return <Select.Option value= {eachGroup.uid} key={eachGroup.uid}>
+                                        {eachGroup.name}
+                                    </Select.Option>
                                 })
                             }
-
-                        </Select>
-
+                            </Select>
+                        
                     </span>
                 </Col>
             </Row>
