@@ -217,6 +217,7 @@ export const userFilterFieldNames = {
     last_name: "Last Name",
     email: "Email",
     user_name: "User Name",
+    idp_user_name: "Username",
     status: "Status",
     is_enrolled: "Enrolled",
     inactivity_in_days: "Inactivity in Days"
