@@ -1,8 +1,6 @@
 import {  useHistory } from 'react-router-dom';
 import { Button, Tabs } from 'antd';
 
-import { mockType } from './mockApiCall';
-
 const { TabPane } = Tabs;
 
 function AppSettings(props: any): JSX.Element {
@@ -11,7 +9,7 @@ function AppSettings(props: any): JSX.Element {
     app_name,
     logo,
     active 
-  }: mockType = props.location.state;
+  }: any = props.location.state;
 
   function GeneralSetttings() {
 

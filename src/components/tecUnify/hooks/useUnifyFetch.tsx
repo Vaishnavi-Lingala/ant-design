@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 
-import { openNotification } from "../Layout/Notification";
-import ApiService from '../../Api.service';
-import ApiUrls from '../../ApiUtils';
+import { openNotification } from "../../Layout/Notification";
+import ApiService from '../../../Api.service';
+import ApiUrls from '../../../ApiUtils';
 
-import type { App, AppList, Config, Template } from './types';
+import type { App, AppList, Config, Template } from '../types';
 
 interface HookResponseType {
   data: AppList;
@@ -55,8 +55,8 @@ async function fetchApps(account_id: number): Promise<AppList> {
   });
 
   return {
-    active: apps.filter((app): boolean => app.active),
-    inactive: apps.filter((app): boolean => !app.active)
+    active: apps.filter((app) => app.active),
+    inactive: apps.filter((app) => !app.active)
   };
 }
 
