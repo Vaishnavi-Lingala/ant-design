@@ -25,8 +25,6 @@ export const formArgs = {
     {
       label: 'Citrix PNA Store URL',
       name: 'path',
-      disabled: true,
-      placeholder: 'Determine where to place in database.',
       rules: [
         {
           required: true
@@ -36,21 +34,10 @@ export const formArgs = {
     {
       label: 'Citrix Gateway URL',
       name: 'gateway_url',
-      disabled: true,
-      placeholder: 'Determine where to place in database.',
     },
     {
       label: 'Window Title',
       name: 'window_title'
     }
-  ],
-  number: [
-    {
-      label: 'Timeout',
-      name: 'wait_time',
-      initialValue: 3000,
-      formatter: value => `${value}ms`,
-      parser: value => value.replace('ms', '')
-    },
   ]
 };

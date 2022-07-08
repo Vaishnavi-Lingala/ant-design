@@ -1,4 +1,4 @@
-import { Menu, Dropdown, Input } from 'antd';
+import { Button, Menu, Dropdown, Input } from 'antd';
 import { BarsOutlined, UserAddOutlined, UsergroupAddOutlined, PoweroffOutlined } from '@ant-design/icons';
 
 import useFilter from './hooks/useFilter';
@@ -44,7 +44,7 @@ function AccountIntegrations({appList} : AIProps): JSX.Element {
 
   const OptionsMenu = (
     <Dropdown placement='bottomRight' overlay={options} trigger={['click']}>
-      <BarsOutlined className='_Pointer'/>
+      <Button icon={<BarsOutlined />}/>
     </Dropdown>
   );
 

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Modal, Radio, Input, Form, Select } from 'antd';
 import { CloseOutlined, LoadingOutlined } from '@ant-design/icons';
 
-import { useFetchDomains, useFetchTimeout } from '../hooks/useFetch';
+import { useFetchDomains } from '../hooks/useFetch';
 import { formArgs } from './citrixformargs';
 
 interface AppFormProps {
@@ -14,7 +14,6 @@ function CitrixForm({ showModal, toggleModal }: AppFormProps) {
   const [isValidating, toggleValidating] = useState(false);
   const [form] = Form.useForm();
   const { domains, isFetching: fetchingDomains } = useFetchDomains();
-  const { timeoutOptions, isFetching: fetchingOptions } = useFetchTimeout();
 
   // NOTE: Receives a onClick Event when pressing 'Ok' in the modal
   function onOk() {
@@ -100,7 +99,7 @@ function CitrixForm({ showModal, toggleModal }: AppFormProps) {
               key={args.name}
               rules={args.rules}
             >
-              <Input disabled={args.disabled} placeholder={args.placeholder} />
+              <Input />
             </Form.Item>
           )
         }
@@ -138,39 +137,9 @@ function CitrixForm({ showModal, toggleModal }: AppFormProps) {
                 })}
           />
         </Form.Item>
-
-        <Form.Item
-          label={<span className='Modal-FormLabel'>Timeout</span>}
-          name='wait_time'
-        >
-          <Select
-            loading={fetchingOptions}
-            options={
-              Object.keys(timeoutOptions)
-                .map((key) => {
-                  return {
-                    label: timeoutOptions[key],
-
-                    // Convert minutes into seconds, comforms to database schema
-                    value: parseInt(timeoutOptions[key], 10) * 60 * 60
-                  }
-                })}
-          />
-        </Form.Item>
-
-
       </Form >
     </Modal >
   );
 }
-// {
-//   label: 'Domain',
-//   name: 'domain',
-//   rules: [
-//     {
-//       required: true
-//     }
-//   ]
-// }
 
 export default CitrixForm;

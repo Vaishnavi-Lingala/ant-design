@@ -1,12 +1,11 @@
 import { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useRouteMatch } from 'react-router-dom';
 import { Button, Skeleton } from 'antd';
 
 import './tecUnify.css';
 
 import SupportedIntegrations from './SupportedIntegrations';
 import AccountIntegrations from './AccountIntegrations';
-import BulkAssignment from './BulkAssignment';
 // import AppSettings from './AppSettings';
 import { useFetch } from './hooks/useUnifyFetch';
 import { AppList } from './types';
@@ -34,16 +33,14 @@ function capitalizeFirst(s: string): string {
 function Applications() {
   const [currPage, setCurrPage] = useState(initialComponent);
   const [modalVisible, toggleModal] = useState(false);
-  const { data, isFetching, update } = useFetch(48, initAppList);
+  const { data, isFetching } = useFetch(48, initAppList);
+  const match = useRouteMatch();
 
-  const { productId } = useParams<any>();
-
-  const isBulkAssignmentPage = (currPage.name === 'assignment');
   const isConfiguredPage = (currPage.name === 'configured');
 
   function handleClick(e: any) {
     const currentPage = {
-      name: e.target.parentNode.id,
+      name: e.target.parentNode.value,
       isLoading: false
     };
 
@@ -61,8 +58,6 @@ function Applications() {
       case 'supported':
         return <>Component In Progress</>;
       // return <SupportedIntegrations templateList={}/>;
-      case 'assignment':
-        return <BulkAssignment activeList={data.active} />;
       // case 'settings':
       //   return <AppSettings />;
       default:
@@ -73,10 +68,7 @@ function Applications() {
   return (
     <>
       <div className='content-header'>
-        {
-          !isBulkAssignmentPage ?
-            <>{capitalizeFirst(currPage.name)} Applications</> : <span>Bulk Assignment</span>
-        }
+        {capitalizeFirst(currPage.name)} Applications
 
         {
           !isConfiguredPage &&
@@ -90,18 +82,25 @@ function Applications() {
         className={`${isFetching ? '_Padding' : ''}`}
       >
         <div className='Content-HeaderContainer'>
-          <Button id='supported' size='large' type='primary' onClick={handleClick}>
+          <Button value='supported' size='large' type='primary' onClick={handleClick}>
             Browse Supported Apps
           </Button>
 
-          <Button id='assignment' size='large' type='primary' onClick={handleClick}>
-            Bulk Assign Apps
+          <Button value='bulk' size='large' type='primary'>
+            <Link
+              to={{
+                pathname: `${match.url}/assign`,
+                state: { activeList: data.active },
+              }}
+            >
+              Bulk Assign Apps
+            </Link>
           </Button>
 
           {
             isConfiguredPage &&
-            <Button id='new' size='large' type='primary' onClick={() => toggleModal(curr => !curr)}>
-              {/* NOTE: Temparary until we get supported app page displaying integrations */}
+            <Button size='large' type='primary' onClick={() => toggleModal(curr => !curr)}>
+              {/* NOTE: Temporary until we get supported app page displaying integrations */}
               {/* Configure new App */}
               Configure New Citrix VDI
             </Button>

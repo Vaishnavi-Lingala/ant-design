@@ -1,16 +1,24 @@
 import { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import { Button, Checkbox, List, Input, Skeleton } from 'antd';
 import { CaretDownOutlined } from '@ant-design/icons';
-
+import * as H from 'history';
 
 import { useFetchUsers } from './hooks/useFetch';
 import useFilter from './hooks/useFilter';
 import { App, Page, User } from './types';
 import { CheckboxValueType } from 'antd/lib/checkbox/Group';
+import { RouteComponentProps } from 'react-router-dom';
 
-interface BulkAssignmentProps {
-  activeList: App[];
-}
+interface BulkAssignmentProps extends RouteComponentProps {
+  location: PassedState;
+};
+
+interface PassedState extends H.Location {
+  state: {
+    activeList: App[]
+  };
+};
 
 const initialPState: Page = {
   current: 1,
@@ -22,19 +30,23 @@ const { Search } = Input;
 function PascalCase(s: string) { return s.charAt(0).toUpperCase() + s.substring(1).toLowerCase(); }
 
 // TODO: list styling better
-function BulkAssignment({ activeList }: BulkAssignmentProps) {
+function BulkAssignment(props: BulkAssignmentProps) {
   const [userPage, setUserPage] = useState(initialPState);
   const [appPage, setAppPage] = useState(initialPState);
   const [appSelection, setAppSelection] = useState<CheckboxValueType[]>([]);
   const [userSelection, setUserSelection] = useState<CheckboxValueType[]>([]);
+  const history = useHistory();
 
   const { userList, resetFilter, isFetching } = useFetchUsers(userPage);
+
+  // TODO: Determine a better way of reseting any data filtered by the useFilter hook
+  // should be fairly generic, use across maybe different data types(possibily)
 
   const {
     filteredData: filteredApps,
     updateFilter: updateAppFilter
   } = useFilter<App[]>({
-    list: activeList,
+    list: props.location.state.activeList,
     filterOn: 'display_name'
   });
 
@@ -168,15 +180,33 @@ function BulkAssignment({ activeList }: BulkAssignmentProps) {
 
 
   return (
-    <Skeleton loading={isFetching} className={`${isFetching && "_Padding"}`}>
-      <div className='BulkAssignment'>
-        <Button style={{ alignSelf: 'end', margin: '5px 5px 0px' }} type='primary' size='middle'>Next</Button>
-        <div className='BulkAssignment-ListGroup'>
-          <ApplicationList />
-          <UserList />
-        </div>
+    <>
+      <div className='content-header'>
+        Bulk Assign Applications
+        <Button onClick={() => history.goBack()}>Return</Button>
       </div>
-    </Skeleton>
+
+      <div className='Content-HeaderContainer'>
+      </div>
+
+      <div className='Content-ComponentView'>
+        <Skeleton loading={isFetching} className={`${isFetching && "_Padding"}`}>
+          <div className='BulkAssignment'>
+            <Button
+              className='Content-ContainerButton'
+              type='primary'
+              size='middle'
+            >
+              Next
+            </Button>
+            <div className='BulkAssignment-ListGroup'>
+              <ApplicationList />
+              <UserList />
+            </div>
+          </div>
+        </Skeleton>
+      </div>
+    </>
   );
 }
 

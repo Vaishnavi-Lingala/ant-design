@@ -29,6 +29,7 @@ import { User } from "./components/Users/User";
 import Domains from "./components/Domains/Domains";
 
 import Applications from "./components/tecUnify/Applications";
+import BulkAssignment from "./components/tecUnify/BulkAssignment";
 import AppSettings from "./components/tecUnify/AppSettings";
 
 const oktaAuth = new OktaAuth(config.oidc);
@@ -65,6 +66,7 @@ function App() {
                     <ProtectedRoute path={`/groups`} component={Groups} />
                     <ProtectedRoute path={`/users`} component={Users} />
                     <ProtectedRoute path={`/product/:productId/apps`} exact component={Applications} />
+                    <ProtectedRoute path={`/product/:productId/apps/assign`} component={BulkAssignment} />
                     <ProtectedRoute path={`/product/:productId/apps/:app_id/:app_name`} component={AppSettings} />
                     <ProtectedRoute path={`/machines`} exact component={Machines} />
                     <ProtectedRoute path={`/machines/:id`} component={MachineDetails} />
