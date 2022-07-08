@@ -4,8 +4,6 @@ import { BarsOutlined, UserAddOutlined, UsergroupAddOutlined, PoweroffOutlined }
 import useFilter from './hooks/useFilter';
 import AppListItem from './AppBanner';
 
-import type { App, AppList } from './types';
-
 const { Search } = Input;
  
 interface AIProps {

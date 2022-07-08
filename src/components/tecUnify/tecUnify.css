@@ -22,8 +22,16 @@
     padding: 1vmax !important;
 }
 
-._Fade {
-    background-color: #f5f5f6;
+._SubHeading {
+    font-weight: 600;
+    font-size: large;
+    text-align: center;
+}
+
+.Form-SubItemCard {
+    box-shadow: 0 4px 8px 0 rgba(0 0 0 / 20%);
+    border: 1px solid #d7d7dc;
+    padding: 4px;
 }
 
 .AppSettings {

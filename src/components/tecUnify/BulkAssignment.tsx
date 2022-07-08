@@ -6,9 +6,9 @@ import * as H from 'history';
 
 import { useFetchUsers } from './hooks/useFetch';
 import useFilter from './hooks/useFilter';
-import { App, Page, User } from './types';
 import { CheckboxValueType } from 'antd/lib/checkbox/Group';
 import { RouteComponentProps } from 'react-router-dom';
+import { App, Page, User } from './types';
 
 interface BulkAssignmentProps extends RouteComponentProps {
   location: PassedState;
@@ -85,7 +85,7 @@ function BulkAssignment(props: BulkAssignmentProps) {
               size: 'small'
             }}
             dataSource={userList.results}
-            renderItem={(user) => ListItem(user)}
+            renderItem={(user: User) => ListItem(user)}
           />
         </Checkbox.Group>
       </div>

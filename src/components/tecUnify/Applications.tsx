@@ -8,8 +8,9 @@ import SupportedIntegrations from './SupportedIntegrations';
 import AccountIntegrations from './AccountIntegrations';
 // import AppSettings from './AppSettings';
 import { useFetch } from './hooks/useUnifyFetch';
+import CitrixForm from './newappforms/CitrixForm';
+import BrowserAppForm from './newappforms/BrowserAppForm';
 import { AppList } from './types';
-import NewAppForm from './newappforms/CitrixForm';
 
 interface PageType {
   name: string;
@@ -111,7 +112,7 @@ function Applications() {
           <RenderOptions />
         </div>
       </Skeleton>
-      <NewAppForm showModal={modalVisible} toggleModal={() => toggleModal(curr => !curr)} />
+      <BrowserAppForm showModal={modalVisible} toggleModal={() => toggleModal(curr => !curr)} />
     </>
   );
 }

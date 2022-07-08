@@ -1,3 +1,5 @@
+import { FormItemProps, InputNumberProps, SelectProps } from "antd";
+
 export type App = Config & Template;
 export type Domains = string[];
 
@@ -167,4 +169,25 @@ export interface User {
 export interface Page {
   current: number;
   limit: number;
+}
+
+export interface AppFormProps {
+  showModal: boolean;
+  toggleModal: () => void;
+}
+
+type InputType = 'input' | 'select' | 'checkbox' | 'numeric' | 'heading' | 'radio';
+
+interface FormItemChildren extends AdditionalItemProps {
+  dependant?: string;
+}
+
+interface AdditionalItemProps {
+  type: InputType;
+  children?: FormItemChildren[] | React.ReactNode;
+}
+
+export interface FormArgs {
+  form_title: string;
+  form_items: AdditionalItemProps[]
 }

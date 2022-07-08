@@ -4,8 +4,6 @@ import { openNotification } from "../../Layout/Notification";
 import ApiService from '../../../Api.service';
 import ApiUrls from '../../../ApiUtils';
 
-import type { App, AppList, Config, Template } from '../types';
-
 interface HookResponseType {
   data: AppList;
   isFetching: boolean;

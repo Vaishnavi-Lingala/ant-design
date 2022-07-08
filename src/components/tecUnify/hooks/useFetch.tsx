@@ -3,8 +3,6 @@ import { openNotification } from "../../Layout/Notification";
 import ApiService from "../../../Api.service"
 import ApiUrls from '../../../ApiUtils';
 
-import type { PaginationApiRes, Page, Domains, ApiResError, TimeoutOptions } from '../types';
-
 // TODO: Move into single hook, allow hook user to supply a string referencing which fetch
 // that they would like to use. (Generics!)
 

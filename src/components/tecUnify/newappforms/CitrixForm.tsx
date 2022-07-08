@@ -1,14 +1,10 @@
 import { useState } from 'react';
-import { Modal, Radio, Input, Form, Select } from 'antd';
+import { Modal, Radio, Input, Form, Select, RadioChangeEvent } from 'antd';
 import { CloseOutlined, LoadingOutlined } from '@ant-design/icons';
 
 import { useFetchDomains } from '../hooks/useFetch';
 import { formArgs } from './citrixformargs';
-
-interface AppFormProps {
-  showModal: boolean;
-  toggleModal: () => void;
-}
+import type { AppFormProps } from '../types';
 
 function CitrixForm({ showModal, toggleModal }: AppFormProps) {
   const [isValidating, toggleValidating] = useState(false);
@@ -88,7 +84,7 @@ function CitrixForm({ showModal, toggleModal }: AppFormProps) {
       >
 
         {
-          formArgs.input.map((args) =>
+          formArgs.form_items.map((args) =>
             <Form.Item
               label={
                 <span className='Modal-FormLabel'>

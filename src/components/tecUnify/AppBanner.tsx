@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import type { App } from './types';
 
 interface ABProps {
   app: App;
