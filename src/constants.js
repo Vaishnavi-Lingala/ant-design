@@ -320,7 +320,7 @@ export const VIRTUAL_DESKTOP_INTERFACE = "VDI"
 
 //Local User Provisioning Policy
 export const userProfileDisplayNames = {
-    "STANDARD": "Provision Local User",
+    "STANDARD": "Provision Standard User",
     "ADMINISTRATOR": "Provision Local Administrator"
 }
 
