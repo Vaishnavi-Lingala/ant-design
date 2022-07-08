@@ -40,7 +40,8 @@ export const hiddenFields = {
         'is_portal_admin',
         'idp_login_hint',
         'windows_login_hint',
-        'uid'
+        'uid',
+        'display_name'
 
     ]
 };
@@ -108,7 +109,7 @@ export const logFieldNames = {
         "first_name": "First name",
         "last_name": "Last name",
         "display_name": "Display name",
-        "user_name": "User name",
+        "idp_user_name": "User name",
         "email": "Email",
         "sam": "samAccount Name",
         "upn": "UPN",
