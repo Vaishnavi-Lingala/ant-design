@@ -28,7 +28,7 @@ export default function ProtectedRoute({
         removeItems();
     }
     else {
-        if (JSON.parse(oktaStorage).idToken === undefined || JSON.parse(oktaStorage).accessToken === undefined) {
+        if (!JSON.parse(oktaStorage).idToken || !JSON.parse(oktaStorage).accessToken) {
             removeItems();
         }
     }
