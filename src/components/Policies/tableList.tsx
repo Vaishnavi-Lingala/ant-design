@@ -97,7 +97,8 @@ function TableList({ handleGetPolicies, policy_type, policy_description, activat
         policy_type: LOCAL_USER_PROVISIONING,
         policy_req: {
             local_profile_format: "EMAIL_PREFIX",
-            local_profile_user_type: "STANDARD"
+            local_profile_user_type: "STANDARD",
+            password_sync: true
         }
     }
 

@@ -189,13 +189,6 @@ function UserProvisioningPolicy(props: any) {
                     /> : userProvisioningDisplayData['description']
                     }
                 </div>
-
-                <div className="content-policy-key-header">
-                    Policy Type:
-                </div>
-                <div>
-                    {policyDisplayNames[userProvisioningDisplayData['policy_type']]}
-                </div>
             </div>
 
             <Divider style={{ borderTop: '1px solid #d7d7dc' }} />
@@ -262,8 +255,7 @@ function UserProvisioningPolicy(props: any) {
             <Divider style={{ borderTop: '1px solid #d7d7dc' }} />
 
             <div>
-                A profile with the following format will be created the first time that a user logs on to a computer
-                and the password will the mastered by the IDP
+                A profile with the following format will be created the first time that an IDP user logs on to a computer
             </div>
             <div style={{ padding: '12px 0 10px 0' }}>
                 {
@@ -291,20 +283,19 @@ function UserProvisioningPolicy(props: any) {
                                     </Select.Option>
                                 })
                             }
-                        </Select> : userFormatOptions[userProvisioningDisplayData['policy_req']?.local_profile_format]
+                        </Select> :
+                        <div style={{ display: 'inline-block', marginRight: '3px', paddingBottom: '3px' }}>
+                            <Button style={{ cursor: 'text' }}>{userFormatOptions[userProvisioningDisplayData['policy_req']?.local_profile_format]}</Button>
+                        </div>
+                        
                 }
             </div>
 
-            <Divider style={{ borderTop: '1px solid #d7d7dc' }} />
-
             <div className="row-policy-container">
-                <div className="content-policy-key-header" style={{ padding: '10px 0 10px 0' }}>
-                    Password Sync:
-                </div>
-                <div style={{ padding: '10px 0 10px 0' }}>
-                    <Checkbox
+                <div>
+                    Password Sync is {<Checkbox
                         checked={userProvisioningEditData?.policy_req?.password_sync}
-                        disabled={!isEdit}
+                        disabled={true}
                         onChange={(e) => setUserProvisioningEditedData((state) => {
                             const { policy_req } = state;
                             return {
@@ -314,8 +305,9 @@ function UserProvisioningPolicy(props: any) {
                         })}
                     >
                         {/* Password Sync */}
-                    </Checkbox>
+                    </Checkbox>} enabled
                 </div>
+                    
             </div>
         </div>
 
