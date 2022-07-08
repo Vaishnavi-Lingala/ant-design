@@ -294,6 +294,7 @@ export const ActivityLogs = "Activity Logs";
 export const Devices = "Devices";
 export const Account = "Account";
 export const Domain = "Domains";
+export const GlobalPolicies = "Global Policies";
 export const Applications = "Applications";
 
 // Sidebar item keys
@@ -307,6 +308,7 @@ export const policies = "policies";
 export const activityLogs = "activitylogs";
 export const account = "account";
 export const domain = "domains";
+export const globalPolicies = "global-policies";
 export const applications = "apps";
 
 // Policy types

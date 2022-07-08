@@ -2,8 +2,6 @@ import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Button, Checkbox, Divider, Input, Radio, Select, Skeleton } from "antd";
 
-import './Policies.css';
-
 import ApiService from "../../Api.service";
 import ApiUrls from "../../ApiUtils";
 import { openNotification } from "../Layout/Notification";
@@ -29,7 +27,7 @@ function UserProvisioningPolicy(props: any) {
             ApiService.get(ApiUrls.groups(accountId), { type: "USER" }),
             ApiService.get(ApiUrls.profileUserFormatOptions(accountId)),
             ApiService.get(ApiUrls.profileUserTypesOptions(accountId)),
-            ApiService.get(ApiUrls.policy(accountId, window.location.pathname.split('/')[5]))
+            ApiService.get(ApiUrls.globalPolicy(accountId, window.location.pathname.split('/')[3]))
         ]))
             .then(data => {
                 console.log('GROUPS: ', data[0]);
@@ -69,7 +67,7 @@ function UserProvisioningPolicy(props: any) {
                     }
                     setLoading(false);
                 }
-                else if (window.location.pathname.split('/').length === 5) {
+                else if (window.location.pathname.split('/').length === 3) {
                     setUserProvisioningDisplayData(props.policyDetails);
                     setUserProvisioningEditedData(props.policyDetails);
                     setIsEdit(true);
@@ -78,7 +76,7 @@ function UserProvisioningPolicy(props: any) {
                 else {
                     console.log('else: ', data[3]);
                     openNotification('error', data[3].errorCauses.length !== 0 ? data[3].errorCauses[3].errorSummary : data[3].errorSummary);
-                    history.push(`/product/${localStorage.getItem("productId")}/policies/local-user-provisioning`);
+                    history.push(`/global-policies/local-user-provisioning`);
                 }
             }, error => {
                 console.error('Error: ', error);
@@ -111,7 +109,7 @@ function UserProvisioningPolicy(props: any) {
 
     function updateUserProvisioningPolicy() {
         userProvisioningEditData.auth_policy_groups = groupUids;
-        ApiService.put(ApiUrls.policy(accountId, userProvisioningDisplayData['uid']), userProvisioningEditData)
+        ApiService.put(ApiUrls.globalPolicy(accountId, userProvisioningDisplayData['uid']), userProvisioningEditData)
             .then(data => {
                 if (!data.errorSummary) {
                     groupNames.length = 0;
