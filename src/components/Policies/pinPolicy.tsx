@@ -22,11 +22,13 @@ export const PinPolicy = (props: any) => {
 	const [policyRequirements, setPolicyRequirements] = useState({});
 	const history = useHistory();
 	const accountId = localStorage.getItem('accountId');
+	const productId = window.location.pathname.split('/')[2]
 
 	useEffect(() => {
+		console.log(productId);
 		Promise.all(([
 			ApiService.get(ApiUrls.groups(accountId), { type: "USER" }),
-			ApiService.get(ApiUrls.policy(accountId, window.location.pathname.split('/')[5]))
+			ApiService.get(ApiUrls.policy(accountId, productId, window.location.pathname.split('/')[5]))
 		]))
 			.then(data => {
 				console.log('GROUPS: ', data[0]);
@@ -70,7 +72,7 @@ export const PinPolicy = (props: any) => {
 				else {
 					console.log('else: ', data[1]);
 					openNotification('error', data[1].errorCauses.length !== 0 ? data[1].errorCauses[1].errorSummary : data[1].errorSummary);
-					history.push(`/product/${localStorage.getItem("productId")}/policies/pin`);
+					history.push(`/product/${productId}/policies/pin`);
 				}
 			}, error => {
 				console.error('Error: ', error);
@@ -81,7 +83,7 @@ export const PinPolicy = (props: any) => {
 
 	function updatePinPolicy() {
 		pinEditData.auth_policy_groups = groupUids;
-		ApiService.put(ApiUrls.policy(accountId, pinDisplayData['uid']), pinEditData)
+		ApiService.put(ApiUrls.policy(accountId, productId, pinDisplayData['uid']), pinEditData)
 			.then(data => {
 				if (!data.errorSummary) {
 					groupNames.length = 0;

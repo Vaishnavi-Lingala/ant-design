@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Table, Button, Modal, Typography, Input } from "antd";
+import { CloseOutlined } from "@ant-design/icons";
 
 import { openNotification } from "../Layout/Notification";
 import ApiUrls from '../../ApiUtils';
@@ -20,7 +21,7 @@ export default function UsersSelection(props: any) {
     const columns = [
         {
             title: 'Name',
-            dataIndex: 'user_name',
+            dataIndex: 'idp_user_name',
             width: '30%'
         },
         {
@@ -131,7 +132,8 @@ export default function UsersSelection(props: any) {
 
     return (
         <>
-            <Modal title={<Title level={2}>{props.action} Users</Title>} visible={true} onOk={handleOk} onCancel={handleCancel} width={1000}
+            <Modal title={<Title level={2}>{props.action} Users</Title>} closeIcon={<Button icon={<CloseOutlined />}></Button>}
+                visible={true} onOk={handleOk} onCancel={handleCancel} width={1000}
                 footer={[
                     <Button key="cancel" onClick={handleCancel}>
                         Cancel

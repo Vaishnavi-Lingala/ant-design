@@ -2,8 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Button, Divider, Input, Radio, Select, Skeleton } from "antd";
 
-import './Policies.css';
-
 import ApiService from "../../Api.service";
 import ApiUrls from "../../ApiUtils";
 import { openNotification } from "../Layout/Notification";
@@ -30,7 +28,7 @@ function VDIPolicy(props: any) {
         Promise.all(([
             ApiService.get(ApiUrls.groups(accountId)),
             ApiService.get(ApiUrls.vdiTypeOptions(accountId)),
-            ApiService.get(ApiUrls.policy(accountId, window.location.pathname.split('/')[5]))
+            ApiService.get(ApiUrls.globalPolicy(accountId, window.location.pathname.split('/')[3]))
         ]))
             .then(data => {
                 for (var i = 0; i < data[0].length; i++) {
@@ -42,7 +40,7 @@ function VDIPolicy(props: any) {
                 }
                 setFullGroups(groups);
                 var groupTypegroups: any = [];
-                if (window.location.pathname.split('/').length !== 5) {
+                if (window.location.pathname.split('/').length !== 3) {
                     console.log(data[2].kiosk_machine_groups[0].type);
                     setGroupType(data[2].kiosk_machine_groups[0].type);
                     Object.keys(groups).map(index => {
@@ -79,7 +77,7 @@ function VDIPolicy(props: any) {
                     }
                     setLoading(false);
                 }
-                else if (window.location.pathname.split('/').length === 5) {
+                else if (window.location.pathname.split('/').length === 3) {
                     setVDIDisplayData(props.policyDetails);
                     setVDIEditedData(props.policyDetails);
                     setIsEdit(true);
@@ -88,7 +86,7 @@ function VDIPolicy(props: any) {
                 else {
                     console.log('else: ', data[2]);
                     openNotification('error', data[2].errorCauses.length !== 0 ? data[2].errorCauses[1].errorSummary : data[2].errorSummary);
-                    history.push(`/product/${localStorage.getItem("productId")}/policies/local-user-provisioning`);
+                    history.push(`/global-policies/virtual-desktop-interface`);
                 }
             }, error => {
                 console.error('Error: ', error);
@@ -122,7 +120,7 @@ function VDIPolicy(props: any) {
 
     function updateUserProvisioningPolicy() {
         vdiEditData.kiosk_machine_groups = groupUids;
-        ApiService.put(ApiUrls.policy(accountId, vdiDisplayData['uid']), vdiEditData)
+        ApiService.put(ApiUrls.globalPolicy(accountId, vdiDisplayData['uid']), vdiEditData)
             .then(data => {
                 if (!data.errorSummary) {
                     groupNames.length = 0;
