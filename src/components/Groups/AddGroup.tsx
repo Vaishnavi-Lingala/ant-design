@@ -84,7 +84,7 @@ export default function AddGroup(props: any) {
                         Cancel
                     </Button>,
                     <Button key="submit" type="primary" loading={loading} onClick={handleOk}>
-                        Save
+                        Create
                     </Button>
                 ]}
             >

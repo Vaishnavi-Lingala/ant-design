@@ -16,8 +16,9 @@ import { openNotification } from '../Layout/Notification';
 import ProtectedRoute from '../ProtectedRoute';
 import ApiUrls from '../../ApiUtils';
 import ApiService from '../../Api.service';
-import { CardEnrollmentPolicyDescription, CARD_ENROLL, KIOSK, KioskPolicyDescription, LocalUserProvisioningPolicyDescription, LOCAL_USER_PROVISIONING, PASSWORD, PasswordPolicyDescription, PIN, PinPolicyDescription, policyDisplayNames, TecTANGO, VDI_Description, VIRTUAL_DESKTOP_INTERFACE } from '../../constants';
+import { BIO, BioDescription, CardEnrollmentPolicyDescription, CARD_ENROLL, KIOSK, KioskPolicyDescription, PASSWORD, PasswordPolicyDescription, PIN, PinPolicyDescription, policyDisplayNames, TecBIO, TecTANGO } from '../../constants';
 import { Store } from '../../Store';
+import BioPolicy from './BioPolicy';
 
 export default function Policies() {
 	const history = useHistory();
@@ -32,6 +33,8 @@ export default function Policies() {
 	const [inActiveKioskPolicies, setInActiveKioskPolicies]: any = useState([]);
 	const [activeCardEnrollmentPolicies, setActiveCardEnrollmentPolicies] = useState([]);
 	const [inActiveCardEnrollmentPolicies, setInActiveCardEnrollmentPolicies] = useState([]);
+	const [activeBioPolicies, setActiveBioPolicies]: any = useState([]);
+	const [inActiveBioPolicies, setInActiveBioPolicies]: any = useState([]);
 	const path = window.location.pathname.split('/').length;
 	const [maxEnroll, setMaxEnroll] = useState(null);
 	const { productId } = useParams<any>();
@@ -191,16 +194,16 @@ export default function Policies() {
 	};
 
 	const handleKioskSortEnd = ({ oldIndex, newIndex }) => {
-		if (oldIndex !== newIndex && newIndex != activeKioskPolicies.length - 1) {
+		if (oldIndex !== newIndex) {
 			const newData = arrayMoveImmutable([].concat(activeKioskPolicies), oldIndex, newIndex).filter(
 				el => !!el,
 			);
 			console.log('Sorted items: ', newData);
 			setActiveKioskPolicies(newData);
 			//@ts-ignore
-			console.log(newData[newIndex].policy_id, newData.length - newIndex - 1);
+			console.log(newData[newIndex].policy_id, newData.length - newIndex);
 			//@ts-ignore
-			reOrderPolicies(newData[newIndex].policy_id, newData.length - newIndex - 1, KIOSK);
+			reOrderPolicies(newData[newIndex].policy_id, newData.length - newIndex, KIOSK);
 		}
 	};
 
@@ -249,6 +252,36 @@ export default function Policies() {
 		/>
 	);
 
+	const BioDraggableBodyRow = ({ className, style, ...restProps }) => {
+		//@ts-ignore	
+		const index = activeBioPolicies.findIndex(x => x.index === restProps['data-row-key']);
+		return <SortableItem index={index} {...restProps} />;
+	};
+
+	const handleBioSortEnd = ({ oldIndex, newIndex }) => {
+		if (oldIndex !== newIndex && newIndex !== activeBioPolicies.length - 1) {
+			const newData = arrayMoveImmutable([].concat(activeBioPolicies), oldIndex, newIndex).filter(
+				el => !!el,
+			);
+			console.log('Sorted items: ', newData);
+			setActiveBioPolicies(newData);
+			//@ts-ignore
+			console.log(newData[newIndex].policy_id, newData.length - newIndex - 1);
+			//@ts-ignore
+			reOrderPolicies(newData[newIndex].policy_id, newData.length - newIndex - 1, BIO);
+		}
+	};
+
+	const BioDraggableContainer = (props) => (
+		<SortableBody
+			useDragHandle
+			disableAutoscroll
+			helperClass="row-dragging"
+			onSortEnd={handleBioSortEnd}
+			{...props}
+		/>
+	);
+
 	function handleGetPolicies() {
 		getPolicies();
 	}
@@ -264,6 +297,7 @@ export default function Policies() {
 					var passwordCounter = 0;
 					var kioskCounter = 0;
 					var cardEnrollCounter = 0;
+					var bioCounter = 0;
 					var pinActive: any = [];
 					var pinInActive: any = [];
 					var passwordActive: any = [];
@@ -272,6 +306,8 @@ export default function Policies() {
 					var kioskInActive: any = [];
 					var cardEnrollActive: any = [];
 					var cardEnrollInActive: any = [];
+					var bioActive: any = [];
+					var bioInActive: any = [];
 					for (var i = 0; i < data.length; i++) {
 						var object;
 						if (data[i].policy_type === PIN) {
@@ -385,6 +421,34 @@ export default function Policies() {
 								cardEnrollInActive.push(object);
 							}
 						}
+
+						if (data[i].policy_type === BIO) {
+							if (data[i].active === true) {
+								object = {
+									key: bioCounter + 1,
+									policy_name: data[i].name,
+									policy_id: data[i].uid,
+									policy_description: data[i].description,
+									order: data[i].order,
+									default: data[i].default,
+									index: bioCounter + 1
+								}
+								bioCounter = bioCounter + 1;
+								bioActive.push(object);
+							}
+							else {
+								object = {
+									key: bioCounter + 1,
+									policy_name: data[i].name,
+									policy_id: data[i].uid,
+									policy_description: data[i].description,
+									default: data[i].default,
+									index: bioCounter + 1
+								}
+								bioCounter = bioCounter + 1;
+								bioInActive.push(object);
+							}
+						}
 					}
 					setActivePinPolicies(pinActive);
 					setInActivePinPolicies(pinInActive);
@@ -394,6 +458,8 @@ export default function Policies() {
 					setInActiveKioskPolicies(kioskInActive);
 					setActiveCardEnrollmentPolicies(cardEnrollActive);
 					setInActiveCardEnrollmentPolicies(cardEnrollInActive);
+					setActiveBioPolicies(bioActive);
+					setInActiveBioPolicies(bioInActive);
 					setLoadingDetails(false);
 				}, error => {
 					console.log(error)
@@ -547,13 +613,30 @@ export default function Policies() {
 				{
 					seletedProduct === TecTANGO && maxEnroll ?
 						<TabPane tab={policyDisplayNames[CARD_ENROLL]} key="card-enrollment">
-							{window.location.pathname.split('/').length === 6 ?
-								<ProtectedRoute path={`/product/${productId}/policies/card-enrollment/:id`} component={CardEnrollmentPolicy} subRoute /> :
-								<TableList policy_type={CARD_ENROLL} policy_description={CardEnrollmentPolicyDescription} activateColumns={activateColumns} deActivateColumns={deActivateColumns}
-									draggableBodyRow={CardEnrollmentDraggableBodyRow} draggableContainer={CardEnrollmentDraggableContainer}
-									inActivePolicies={inActiveCardEnrollmentPolicies} activePolicies={activeCardEnrollmentPolicies} handleGetPolicies={handleGetPolicies}
-								/>
-							}
+							<Skeleton loading={loadingDetails}>
+								{window.location.pathname.split('/').length === 6 ?
+									<ProtectedRoute path={`/product/${productId}/policies/card-enrollment/:id`} component={CardEnrollmentPolicy} subRoute /> :
+									<TableList policy_type={CARD_ENROLL} policy_description={CardEnrollmentPolicyDescription} activateColumns={activateColumns} deActivateColumns={deActivateColumns}
+										draggableBodyRow={CardEnrollmentDraggableBodyRow} draggableContainer={CardEnrollmentDraggableContainer}
+										inActivePolicies={inActiveCardEnrollmentPolicies} activePolicies={activeCardEnrollmentPolicies} handleGetPolicies={handleGetPolicies}
+									/>
+								}
+							</Skeleton>
+						</TabPane> : null
+
+				}
+				{
+					seletedProduct === TecBIO ?
+						<TabPane tab={policyDisplayNames[BIO]} key="bio">
+							<Skeleton loading={loadingDetails}>
+								{window.location.pathname.split('/').length === 6 ?
+									<ProtectedRoute path={`/product/${productId}/policies/bio/:id`} component={BioPolicy} subRoute /> :
+									<TableList policy_type={BIO} policy_description={BioDescription} activateColumns={activateColumns} deActivateColumns={deActivateColumns}
+										draggableBodyRow={BioDraggableBodyRow} draggableContainer={BioDraggableContainer}
+										inActivePolicies={inActiveBioPolicies} activePolicies={activeBioPolicies} handleGetPolicies={handleGetPolicies}
+									/>
+								}
+							</Skeleton>
 						</TabPane> : null
 				}
 			</Tabs>
