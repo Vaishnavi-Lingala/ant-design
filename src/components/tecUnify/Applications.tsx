@@ -4,7 +4,6 @@ import { Button, Skeleton } from 'antd';
 
 import './tecUnify.css';
 
-import SupportedIntegrations from './SupportedIntegrations';
 import AccountIntegrations from './AccountIntegrations';
 // import AppSettings from './AppSettings';
 import { useFetch } from './hooks/useUnifyFetch';
@@ -34,6 +33,7 @@ function Applications() {
   const [currPage, setCurrPage] = useState(initialComponent);
   const [modalVisible, toggleModal] = useState(false);
   const { data, isFetching } = useFetch(48, initAppList);
+  console.log('Main:', data);
   const match = useRouteMatch();
 
   const isConfiguredPage = (currPage.name === 'configured');

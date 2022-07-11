@@ -6,7 +6,7 @@ import * as H from 'history';
 
 import { useFetchUsers } from './hooks/useFetch';
 import useFilter from './hooks/useFilter';
-import { App, Page, User } from './types';
+import { App, Page, PaginationApiRes, User } from './types';
 import { CheckboxValueType } from 'antd/lib/checkbox/Group';
 import { RouteComponentProps } from 'react-router-dom';
 
@@ -50,6 +50,14 @@ function BulkAssignment(props: BulkAssignmentProps) {
     filterOn: 'display_name'
   });
 
+  const {
+    filteredData: filteredUsers,
+    updateFilter: updateUserFilter
+  } = useFilter<PaginationApiRes>({
+    list: userList,
+    filterOn: 'first_name'
+  });
+
   function handleCheckBox(id: CheckboxValueType[], isUser: boolean) {
     console.log(id);
     isUser ? setUserSelection(id) : setAppSelection(id);
@@ -70,7 +78,13 @@ function BulkAssignment(props: BulkAssignmentProps) {
           <span>Selected Users - {userSelection.length}</span>
           {ResetButton}
         </div>
-        <ListSubHeader leftText="Users" rightText="Status" />
+
+        <ListSubHeader
+          leftText="Users"
+          rightText="Status"
+          onSearch={updateUserFilter}
+          key='users'
+        />
 
         <Checkbox.Group
           name='user'
@@ -99,7 +113,12 @@ function BulkAssignment(props: BulkAssignmentProps) {
           <span>Selected Applications - {appSelection.length}</span>
           {ResetButton}
         </div>
-        <ListSubHeader leftText="Applications" />
+
+        <ListSubHeader
+          leftText="Applications"
+          onSearch={updateAppFilter}
+          key='application'
+        />
 
         <Checkbox.Group
           name='app'
@@ -154,11 +173,11 @@ function BulkAssignment(props: BulkAssignmentProps) {
 
   const ResetButton = <Button onClick={resetFilter} type='link' size='small'>reset</Button>;
 
-  function ListSubHeader({ leftText = "", rightText = "" }) {
+  function ListSubHeader({ leftText = "", rightText = "", onSearch }) {
     return (
       <>
         <Search
-          onSearch={updateAppFilter}
+          onSearch={onSearch}
           style={{ padding: '7px' }}
           size='small'
           width='fill'

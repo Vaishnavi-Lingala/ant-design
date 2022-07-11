@@ -23,8 +23,8 @@ export interface TimeoutOptions {
 }
 
 export interface FilterType {
-  activity?: string;
-  search: string;
+  activity: string;
+  search?: string;
   updated: boolean;
 }
 
