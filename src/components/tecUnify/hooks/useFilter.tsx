@@ -30,6 +30,7 @@ function genFilter<T>(list: T[], filterFunc: (item: T) => boolean): T[] {
 // every time updateFilter func is ran from outside this hook. Will be kept in-sync
 // via useEffect
 function useFilter<T>({ list, filterOn }: FilterHookProps<T>) {
+  console.log('From useFilter:', list);
   const [filteredData, setFilteredData] = useState<T>(list);
   const [filter, setFilter] = useState<FilterType>(defaultFilterState);
 
@@ -38,7 +39,8 @@ function useFilter<T>({ list, filterOn }: FilterHookProps<T>) {
   }
 
   function filterList() {
-    if (filter.search === '') {
+    // If the filter is empty, reset the current search
+    if (typeof filter.search === 'undefined') {
       setFilteredData(list);
       return
     }
@@ -50,12 +52,12 @@ function useFilter<T>({ list, filterOn }: FilterHookProps<T>) {
   }
 
   function filterActivityList() {
-    if (filter.search === '') {
+    if (typeof filter.search === 'undefined') {
       setFilteredData(list);
       return
     }
 
-    if (filter.updated && ('activity' in filter) ) {
+    if (filter.updated && ('activity' in filter)) {
       setFilteredData((curr) => {
         return {
           ...curr,
@@ -66,6 +68,7 @@ function useFilter<T>({ list, filterOn }: FilterHookProps<T>) {
   };
 
   function updateFilter(event: any) {
+    console.log('filtering args:', event);
     setFilter((curr) => {
       if (event.key) {
         return {

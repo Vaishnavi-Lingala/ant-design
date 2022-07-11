@@ -11,6 +11,8 @@ interface AIProps {
 }
 
 function AccountIntegrations({appList} : AIProps): JSX.Element {
+  console.log('From Fetch', appList);
+
   const {
     filter,
     filteredData,

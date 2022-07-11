@@ -67,7 +67,7 @@ export function useFetch(account_id: number, initObject: AppList): HookResponseT
   useEffect(() => {
     fetchApps(account_id)
       .then((appList) => {
-        console.log("Fetching Account Apps");
+        console.log("Fetching Account Apps", appList);
         toggleFetching(false);
         setData(appList);
       })
@@ -75,7 +75,7 @@ export function useFetch(account_id: number, initObject: AppList): HookResponseT
         console.log("Error: ", err);
         openNotification('error', 'Error fetching your App List.');
       });
-  }, [refresh]);
+  }, [refresh, account_id]);
 
   return { data, isFetching, update: () => toggleRefresh((curr) => !curr)};
 }
