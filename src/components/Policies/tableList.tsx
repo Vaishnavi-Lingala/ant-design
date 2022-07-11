@@ -82,9 +82,9 @@ function TableList({ handleGetPolicies, policy_type, policy_description, activat
         name: "",
         order: 0,
         policy_req: {
-            max_fingerprint_scan: 4,
             min_fingerprint_scan: 2,
-            threshold_score: ""
+            max_fingerprint_scan: 4,
+            threshold_score: "0x7FFFFFFF"
         },
         policy_type: "BIO",
     }

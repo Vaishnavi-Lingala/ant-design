@@ -75,27 +75,32 @@ function BioPolicy(props: any) {
     }, []);
 
     function updateBioPolicy() {
-        bioEditData['auth_policy_groups'] = groupUids;
-        ApiService.put(ApiUrls.policy(accountId, productId, bioDisplayData['uid']), bioEditData)
-            .then(data => {
-                if (!data.errorSummary) {
-                    groupNames.length = 0;
-                    setBioDisplayData({ ...bioEditData });
-                    openNotification('success', 'Successfully updated BIO Policy');
-                    Object.keys(data.auth_policy_groups).map(index => {
-                        groupNames.push(data.auth_policy_groups[index].name);
-                    });
-                    setGroupNames(groupNames);
-                    setIsEdit(false);
-                }
-                else {
-                    openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
-                }
-            })
-            .catch(error => {
-                console.error('Error: ', error);
-                openNotification('error', 'An Error has occured with updating BIO Policy');
-            })
+        if (bioEditData?.policy_req?.min_fingerprint_scan > bioEditData?.policy_req?.max_fingerprint_scan) {
+            openNotification('error', 'Minimum Fingerprint Scan should not greater than Maximum Fingerprint Scan');
+        }
+        else {
+            bioEditData['auth_policy_groups'] = groupUids;
+            ApiService.put(ApiUrls.policy(accountId, productId, bioDisplayData['uid']), bioEditData)
+                .then(data => {
+                    if (!data.errorSummary) {
+                        groupNames.length = 0;
+                        setBioDisplayData({ ...bioEditData });
+                        openNotification('success', 'Successfully updated BIO Policy');
+                        Object.keys(data.auth_policy_groups).map(index => {
+                            groupNames.push(data.auth_policy_groups[index].name);
+                        });
+                        setGroupNames(groupNames);
+                        setIsEdit(false);
+                    }
+                    else {
+                        openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error: ', error);
+                    openNotification('error', 'An Error has occured with updating BIO Policy');
+                })
+        }
     }
 
     function handleEditClick() {
@@ -248,6 +253,7 @@ function BioPolicy(props: any) {
                         {isEdit ? <>
                             <InputNumber className="form-control"
                                 min={4}
+                                max={10}
                                 onChange={(value) => {
                                     setBioEditedData((state) => {
                                         const { policy_req } = state;
