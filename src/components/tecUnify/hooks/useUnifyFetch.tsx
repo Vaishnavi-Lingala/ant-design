@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { openNotification } from "../../Layout/Notification";
 import ApiService from '../../../Api.service';
 import ApiUrls from '../../../ApiUtils';
+import type { AppList, Config, App, Template } from '../types';
 
 interface HookResponseType {
   data: AppList;
@@ -17,7 +18,7 @@ interface HookResponseType {
 async function fetchApps(account_id: number): Promise<AppList> {
   const configs: Config[] = await ApiService
     .get(ApiUrls.allAccountConfigs(account_id), undefined, true);
-  
+
   // The above call should for a fact return an array of configs, even if there is a single config linked
   // to the account, type guard below to break early if no data was properly fetched
   if ((configs[0] as Config)?.config_id === undefined) {
@@ -77,7 +78,7 @@ export function useFetch(account_id: number, initObject: AppList): HookResponseT
       });
   }, [refresh, account_id]);
 
-  return { data, isFetching, update: () => toggleRefresh((curr) => !curr)};
+  return { data, isFetching, update: () => toggleRefresh((curr) => !curr) };
 }
 
 // Need an end point that fetches all non-deleted templates

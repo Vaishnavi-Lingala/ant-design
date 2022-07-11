@@ -3,16 +3,15 @@ import { BarsOutlined, UserAddOutlined, UsergroupAddOutlined, PoweroffOutlined }
 
 import useFilter from './hooks/useFilter';
 import AppListItem from './AppBanner';
+import type { App, AppList } from './types';
 
 const { Search } = Input;
- 
+
 interface AIProps {
   appList: AppList;
 }
 
-function AccountIntegrations({appList} : AIProps): JSX.Element {
-  console.log('From Fetch', appList);
-
+function AccountIntegrations({ appList }: AIProps): JSX.Element {
   const {
     filter,
     filteredData,
@@ -28,30 +27,30 @@ function AccountIntegrations({appList} : AIProps): JSX.Element {
         [
           {
             key: '1',
-            label: <span><UserAddOutlined/> Assign to User</span>,
+            label: <span><UserAddOutlined /> Assign to User</span>,
           },
           {
             key: '2',
-            label: <span><UsergroupAddOutlined/> Assign to Group</span>
+            label: <span><UsergroupAddOutlined /> Assign to Group</span>
           },
           {
             key: '3',
-            label: <span><PoweroffOutlined/> Move to Inactive</span>
+            label: <span><PoweroffOutlined /> Move to Inactive</span>
           },
         ]
-      }/>
+      } />
   );
 
   const OptionsMenu = (
     <Dropdown placement='bottomRight' overlay={options} trigger={['click']}>
-      <Button icon={<BarsOutlined />}/>
+      <Button icon={<BarsOutlined />} />
     </Dropdown>
   );
 
   return (
     <>
       <div className='Sidebar'>
-        <Search onSearch={updateFilter}/>
+        <Search onSearch={updateFilter} />
         <Menu className='_NoBorder' onClick={updateFilter}>
           <Menu.Item key='active'>Active - ({filteredData.active.length})</Menu.Item>
           <Menu.Item key='inactive'>Inactive - ({filteredData.inactive.length})</Menu.Item>
@@ -59,15 +58,17 @@ function AccountIntegrations({appList} : AIProps): JSX.Element {
       </div>
 
       <ul className='AppList _FlexColumn'>
-        { 
-          filteredData[filter.activity!]
-            .map((app: App) => 
-              <AppListItem
-                key={app.config_id} 
-                app={app}
-                optionsMenu={OptionsMenu}
-              />
-            )
+        {
+          filteredData[filter.activity]
+            .map((app: App) => {
+              return (
+                <AppListItem
+                  key={app.config_id}
+                  app={app}
+                  optionsMenu={OptionsMenu}
+                />
+              )
+            })
         }
       </ul>
     </>

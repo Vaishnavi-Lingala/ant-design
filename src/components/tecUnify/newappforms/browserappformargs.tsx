@@ -1,4 +1,4 @@
-import { FormArgs } from "../types";
+import { UserCredentials, SelectTermination } from "./FormComponents";
 
 export const formArgs = {
   form_title: 'Configure Browser App',
@@ -53,12 +53,12 @@ export const formArgs = {
     },
     {
       label: 'Termination Method',
-      name: 'term_method',
+      name: 'termination_method',
       type: 'radio',
       options: [
         {
           label: 'Process Name',
-          value: 'proc_name'
+          value: 'process_name'
         },
         {
           label: 'Window Title',
@@ -67,27 +67,16 @@ export const formArgs = {
       ]
     },
     {
+      type: 'custom',
+      render: <SelectTermination />
+    },
+    {
       label: 'Credentials',
       type: 'heading',
-      children: [
-        {
-          label: 'Different from account',
-          name: 'same_credentials',
-          type: 'checkbox',
-        },
-        {
-          label: 'Username',
-          name: 'username',
-          type: 'input',
-          dependant: 'same_credentials',
-        },
-        {
-          label: 'Password',
-          name: 'password',
-          type: 'input',
-          dependant: 'same_credentials',
-        }
-      ]
+    },
+    {
+      type: 'custom',
+      render: <UserCredentials />
     },
   ]
 };

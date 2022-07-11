@@ -1,17 +1,17 @@
-import React, { useState } from 'react';
-import { Modal, Radio, Input, InputNumber, Form, Select, Checkbox, RadioChangeEvent, FormItemProps } from 'antd';
+import { useState } from 'react';
+import { Modal, Radio, Input, InputNumber, Form, Select, Checkbox, FormItemProps } from 'antd';
 import { CloseOutlined, LoadingOutlined } from '@ant-design/icons';
 
-import { formArgs } from './citrixformargs';
+import { formArgs } from './browserappformargs';
 import { AppFormProps } from '../types';
 
-function BrowserAppForm({ showModal, toggleModal }: AppFormProps) {
+function AppFormRenderer({ showModal, toggleModal }: AppFormProps) {
   const [isValidating, toggleValidating] = useState(false);
   const [form] = Form.useForm();
 
-  // NOTE: Receives a onClick Event when pressing 'Ok' in the modal
   function onOk() {
-    // NOTE: Async function, will wait to close modal until post req has sucessfully sent
+    // Async function, will wait to close modal until validation is complete and
+    // the fields have been sucessfully sent
     toggleValidating(true);
     form
       .validateFields()
@@ -32,8 +32,7 @@ function BrowserAppForm({ showModal, toggleModal }: AppFormProps) {
     toggleModal();
   }
 
-  const handleRadioSelection = (e: RadioChangeEvent) => { }
-
+  // Wraps the child field in a Form.Item component
   function FormItemWrapper({ label, rules, name, initialValue, children }: FormItemProps) {
     return (
       <Form.Item
@@ -51,7 +50,8 @@ function BrowserAppForm({ showModal, toggleModal }: AppFormProps) {
     );
   }
 
-  function InputSelect(args) {
+  // Select different components based on the type of input provided
+  function InputSelect(args: any) {
     switch (args.type) {
 
       case 'input':
@@ -62,13 +62,6 @@ function BrowserAppForm({ showModal, toggleModal }: AppFormProps) {
         )
 
       case 'select':
-        if (React.isValidElement(args.options)) {
-          return (
-            <FormItemWrapper {...args}>
-              {args.options}
-            </FormItemWrapper>
-          );
-        }
 
         return (
           <FormItemWrapper {...args}>
@@ -79,22 +72,13 @@ function BrowserAppForm({ showModal, toggleModal }: AppFormProps) {
         );
 
       case 'radio':
-        const RadioGroup = (
+        return (
           <FormItemWrapper {...args}>
             <Radio.Group
-              onChange={handleRadioSelection}
               options={args.options}
             />
           </FormItemWrapper>
         );
-
-        args.options.forEach((opt) => console.log('render' in opt));
-
-        if ('render' in args) {
-          console.log('HELLO');
-        }
-
-        return (RadioGroup);
 
       case 'numeric':
         return (
@@ -108,7 +92,6 @@ function BrowserAppForm({ showModal, toggleModal }: AppFormProps) {
         );
 
       case 'checkbox':
-        console.log(args);
         return (
           <FormItemWrapper {...args}>
             <Checkbox />
@@ -116,35 +99,10 @@ function BrowserAppForm({ showModal, toggleModal }: AppFormProps) {
         );
 
       case 'heading':
-        return (
-          <>
-            <h4 className='_SubHeading'>{args.label}</h4>
-            <div className='Form-SubItemCard'>
-              {
-                args.children.map((childArgs) => (
-                  <InputSelect {...childArgs} />
-                ))
-              }
-            </div>
-          </>
-        );
+        return <h4 className='_SubHeading'>{args.label}</h4>;
 
-      case 'dynamic':
-        return (
-          <Form.Item
-            noStyle
-            shouldUpdate={(prev, curr) => prev[args.dependant] !== curr[args.dependant]}
-          >
-            {
-              ({ getFieldValue }) => {
-                console.log(getFieldValue(args.dependant))
-                return (
-                  <InputSelect {...args} />
-                );
-              }
-            }
-          </Form.Item>
-        );
+      case 'custom':
+        return (args.render);
 
       default:
         return (
@@ -183,4 +141,4 @@ function BrowserAppForm({ showModal, toggleModal }: AppFormProps) {
   );
 }
 
-export default BrowserAppForm;
+export default AppFormRenderer;

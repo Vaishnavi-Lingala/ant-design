@@ -7,6 +7,7 @@
 import { Card, Input } from 'antd';
 
 import useFilter from './hooks/useFilter';
+import type { Template } from './types';
 
 const { Search } = Input;
 

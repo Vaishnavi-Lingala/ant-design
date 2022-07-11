@@ -61,6 +61,7 @@
     display: flex;
     flex-direction: column;
     width: 100%;
+    margin-bottom: 20px;
 }
 
 .BulkAssignment-ListGroup {
@@ -227,7 +228,7 @@
 
 .Content-ComponentView {
     display: flex;
-    min-height: 65vh;
+    min-height: fit-content;
     border: 1px solid #d7d7dc;
     border-top: 0px;
 }
