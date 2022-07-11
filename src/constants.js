@@ -40,7 +40,8 @@ export const hiddenFields = {
         'is_portal_admin',
         'idp_login_hint',
         'windows_login_hint',
-        'uid'
+        'uid',
+        'display_name'
 
     ]
 };
@@ -108,7 +109,7 @@ export const logFieldNames = {
         "first_name": "First name",
         "last_name": "Last name",
         "display_name": "Display name",
-        "user_name": "User name",
+        "idp_user_name": "User name",
         "email": "Email",
         "sam": "samAccount Name",
         "upn": "UPN",
@@ -293,6 +294,7 @@ export const ActivityLogs = "Activity Logs";
 export const Devices = "Devices";
 export const Account = "Account";
 export const Domain = "Domains";
+export const GlobalPolicies = "Global Policies";
 export const Applications = "Applications";
 
 // Sidebar item keys
@@ -306,6 +308,7 @@ export const policies = "policies";
 export const activityLogs = "activitylogs";
 export const account = "account";
 export const domain = "domains";
+export const globalPolicies = "global-policies";
 export const applications = "apps";
 
 // Policy types
@@ -314,11 +317,12 @@ export const PASSWORD = "PASSWORD";
 export const KIOSK = "KIOSK";
 export const CARD_ENROLL = "CARD_ENROLL";
 export const LOCAL_USER_PROVISIONING = "LOCAL_USER_PROVISIONING";
-export const VIRTUAL_DESKTOP_INTERFACE = "VDI"
+export const VIRTUAL_DESKTOP_INTERFACE = "VDI";
+export const BIO = "BIO";
 
 //Local User Provisioning Policy
 export const userProfileDisplayNames = {
-    "STANDARD": "Provision Local User",
+    "STANDARD": "Provision Standard User",
     "ADMINISTRATOR": "Provision Local Administrator"
 }
 
@@ -341,7 +345,8 @@ export const policyDisplayNames = {
     [KIOSK]: "Kiosk",
     [CARD_ENROLL]: "Card Enrollment",
     [LOCAL_USER_PROVISIONING]: "Local User Provisioning",
-    [VIRTUAL_DESKTOP_INTERFACE]: "VDI"
+    [VIRTUAL_DESKTOP_INTERFACE]: "VDI",
+    [BIO]: "Bio"
 }
 
 // LocalStorage constants
@@ -354,6 +359,7 @@ export const KioskPolicyDescription = 'KIOSK policies applies to machines where 
 export const CardEnrollmentPolicyDescription = 'Card enrollment policies enable admins to configure max number of cards allowed per user group during enrollment';
 export const LocalUserProvisioningPolicyDescription = 'Local user provisioning policies enable admins to automatically create local user profile on the machines. This is applicable only for Standard and Kiosk machines.';
 export const VDI_Description = 'VDI policies enable admins to configure the VDI Template for Citrix, VMware, or Microsoft which TecTANGO will use to connect to remote desktops hosted on a virtual machine server.';
+export const BioDescription = 'Bio Description';
 
 //Mechanism Descriptions
 export const TECTANGO_LOCK_DESCRIPTION = 'Lock the machine or sign-out from the apps launched by TecTANGO.';

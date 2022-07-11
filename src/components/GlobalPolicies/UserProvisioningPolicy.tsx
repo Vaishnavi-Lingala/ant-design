@@ -2,8 +2,6 @@ import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Button, Checkbox, Divider, Input, Radio, Select, Skeleton } from "antd";
 
-import './Policies.css';
-
 import ApiService from "../../Api.service";
 import ApiUrls from "../../ApiUtils";
 import { openNotification } from "../Layout/Notification";
@@ -29,7 +27,7 @@ function UserProvisioningPolicy(props: any) {
             ApiService.get(ApiUrls.groups(accountId), { type: "USER" }),
             ApiService.get(ApiUrls.profileUserFormatOptions(accountId)),
             ApiService.get(ApiUrls.profileUserTypesOptions(accountId)),
-            ApiService.get(ApiUrls.policy(accountId, window.location.pathname.split('/')[5]))
+            ApiService.get(ApiUrls.globalPolicy(accountId, window.location.pathname.split('/')[3]))
         ]))
             .then(data => {
                 console.log('GROUPS: ', data[0]);
@@ -69,7 +67,7 @@ function UserProvisioningPolicy(props: any) {
                     }
                     setLoading(false);
                 }
-                else if (window.location.pathname.split('/').length === 5) {
+                else if (window.location.pathname.split('/').length === 3) {
                     setUserProvisioningDisplayData(props.policyDetails);
                     setUserProvisioningEditedData(props.policyDetails);
                     setIsEdit(true);
@@ -78,7 +76,7 @@ function UserProvisioningPolicy(props: any) {
                 else {
                     console.log('else: ', data[3]);
                     openNotification('error', data[3].errorCauses.length !== 0 ? data[3].errorCauses[3].errorSummary : data[3].errorSummary);
-                    history.push(`/product/${localStorage.getItem("productId")}/policies/local-user-provisioning`);
+                    history.push(`/global-policies/local-user-provisioning`);
                 }
             }, error => {
                 console.error('Error: ', error);
@@ -111,7 +109,7 @@ function UserProvisioningPolicy(props: any) {
 
     function updateUserProvisioningPolicy() {
         userProvisioningEditData.auth_policy_groups = groupUids;
-        ApiService.put(ApiUrls.policy(accountId, userProvisioningDisplayData['uid']), userProvisioningEditData)
+        ApiService.put(ApiUrls.globalPolicy(accountId, userProvisioningDisplayData['uid']), userProvisioningEditData)
             .then(data => {
                 if (!data.errorSummary) {
                     groupNames.length = 0;
@@ -189,13 +187,6 @@ function UserProvisioningPolicy(props: any) {
                     /> : userProvisioningDisplayData['description']
                     }
                 </div>
-
-                <div className="content-policy-key-header">
-                    Policy Type:
-                </div>
-                <div>
-                    {policyDisplayNames[userProvisioningDisplayData['policy_type']]}
-                </div>
             </div>
 
             <Divider style={{ borderTop: '1px solid #d7d7dc' }} />
@@ -262,8 +253,7 @@ function UserProvisioningPolicy(props: any) {
             <Divider style={{ borderTop: '1px solid #d7d7dc' }} />
 
             <div>
-                A profile with the following format will be created the first time that a user logs on to a computer
-                and the password will the mastered by the IDP
+                A profile with the following format will be created the first time that an IDP user logs on to a computer
             </div>
             <div style={{ padding: '12px 0 10px 0' }}>
                 {
@@ -291,20 +281,19 @@ function UserProvisioningPolicy(props: any) {
                                     </Select.Option>
                                 })
                             }
-                        </Select> : userFormatOptions[userProvisioningDisplayData['policy_req']?.local_profile_format]
+                        </Select> :
+                        <div style={{ display: 'inline-block', marginRight: '3px', paddingBottom: '3px' }}>
+                            <Button style={{ cursor: 'text' }}>{userFormatOptions[userProvisioningDisplayData['policy_req']?.local_profile_format]}</Button>
+                        </div>
+                        
                 }
             </div>
 
-            <Divider style={{ borderTop: '1px solid #d7d7dc' }} />
-
             <div className="row-policy-container">
-                <div className="content-policy-key-header" style={{ padding: '10px 0 10px 0' }}>
-                    Password Sync:
-                </div>
-                <div style={{ padding: '10px 0 10px 0' }}>
-                    <Checkbox
+                <div>
+                    Password Sync is {<Checkbox
                         checked={userProvisioningEditData?.policy_req?.password_sync}
-                        disabled={!isEdit}
+                        disabled={true}
                         onChange={(e) => setUserProvisioningEditedData((state) => {
                             const { policy_req } = state;
                             return {
@@ -314,8 +303,9 @@ function UserProvisioningPolicy(props: any) {
                         })}
                     >
                         {/* Password Sync */}
-                    </Checkbox>
+                    </Checkbox>} enabled
                 </div>
+                    
             </div>
         </div>
 

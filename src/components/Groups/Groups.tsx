@@ -20,6 +20,7 @@ export default function Groups() {
     const [totalItems, setTotalItems] = useState(0);
     const [kioskMachineGroups, setKioskMachineGroups] = useState<Group[]>([]);
     const [standardMachineGroups, setStandardMachineGroups] = useState<Group[]>([]);
+    const [thinMachineGroups, setThinMachineGroups] = useState<Group[]>([]);
     const [loadingDetails, setLoadingDetails] = useState(false);
     const [tableLoading, setTableLoading] = useState(false);
     const accountId = localStorage.getItem('accountId');
@@ -62,10 +63,10 @@ export default function Groups() {
     });
 
     var type: any = [];
-    type.push(window.location.pathname.split('/').length === 2 ? "USER" : window.location.pathname.split('/')[2].toUpperCase()); 
+    type.push(window.location.pathname.split('/').length === 2 ? "USER" : window.location.pathname.split('/')[2].toUpperCase());
 
     const params = {
-        group_type: type, 
+        group_type: type,
     }
 
     useEffect(() => {
@@ -76,7 +77,7 @@ export default function Groups() {
         getGroups({}, params);
     }, [])
 
-    function getGroupsByFilter(object = {}, param = {}){
+    function getGroupsByFilter(object = {}, param = {}) {
         setTableLoading(true);
         ApiService.post(ApiUrls.groupFilter(accountId), object, param)
             .then(data => {
@@ -121,6 +122,7 @@ export default function Groups() {
                 let userGroupsList: Group[] = [];
                 let kioskGroupsList: Group[] = [];
                 let standardGroupsList: Group[] = [];
+                let thinGroupsList: Group[] = [];
                 data.forEach((group: Group) => {
                     group.key = group.uid;
                     if (group.type === 'USER') {
@@ -132,10 +134,14 @@ export default function Groups() {
                     if (group.type === 'STANDARD') {
                         standardGroupsList.push(group);
                     }
+                    if (group.type === 'THIN') {
+                        thinGroupsList.push(group);
+                    }
                 })
                 setUserGroups(userGroupsList);
                 setKioskMachineGroups(kioskGroupsList);
                 setStandardMachineGroups(standardGroupsList);
+                setThinMachineGroups(thinGroupsList);
                 setLoadingDetails(false);
             }, error => {
                 console.error('Error: ', error);
@@ -148,7 +154,7 @@ export default function Groups() {
         var type: any = [];
         type.push(key.toUpperCase());
         const param = {
-            group_type: type, 
+            group_type: type,
         }
         getGroups({}, param);
         history.push('/groups/' + key);
@@ -170,7 +176,7 @@ export default function Groups() {
                 <TabPane tab="User" key="user">
                     <Skeleton loading={loadingDetails}>
                         {window.location.pathname.split('/').length === 4 ?
-                            <ProtectedRoute path={`/groups/user/:id`} component={GroupDetails} subRoute/> :
+                            <ProtectedRoute path={`/groups/user/:id`} component={GroupDetails} subRoute /> :
                             <TableList tableLoading={tableLoading} getGroupsByFilter={getGroupsByFilter} getPage={page} getPageSize={pageSize} getTotalItems={totalItems} groupType={'USER'} getGroups={getGroups} columns={columns} standardMachineGroups={userGroups} />
                         }
                     </Skeleton>
@@ -178,7 +184,7 @@ export default function Groups() {
                 <TabPane tab="Kiosk Machine" key="kiosk">
                     <Skeleton loading={loadingDetails}>
                         {window.location.pathname.split('/').length === 4 ?
-                            <ProtectedRoute path={`/groups/kiosk/:id`} component={MachineGroupDetails} subRoute/> :
+                            <ProtectedRoute path={`/groups/kiosk/:id`} component={MachineGroupDetails} subRoute /> :
                             <TableList tableLoading={tableLoading} getGroupsByFilter={getGroupsByFilter} getPage={page} getPageSize={pageSize} getTotalItems={totalItems} groupType={'KIOSK'} getGroups={getGroups} columns={columns} standardMachineGroups={kioskMachineGroups} />
                         }
                     </Skeleton>
@@ -186,8 +192,16 @@ export default function Groups() {
                 <TabPane tab="Standard Machine" key="standard">
                     <Skeleton loading={loadingDetails}>
                         {window.location.pathname.split('/').length === 4 ?
-                            <ProtectedRoute path={`/groups/standard/:id`} component={MachineGroupDetails} subRoute/> :
+                            <ProtectedRoute path={`/groups/standard/:id`} component={MachineGroupDetails} subRoute /> :
                             <TableList tableLoading={tableLoading} getGroupsByFilter={getGroupsByFilter} getPage={page} getPageSize={pageSize} getTotalItems={totalItems} groupType={'STANDARD'} getGroups={getGroups} columns={columns} standardMachineGroups={standardMachineGroups} />
+                        }
+                    </Skeleton>
+                </TabPane>
+                <TabPane tab="Thin OS" key="thin">
+                    <Skeleton loading={loadingDetails}>
+                        {window.location.pathname.split('/').length === 4 ?
+                            <ProtectedRoute path={`/groups/thin/:id`} component={MachineGroupDetails} subRoute /> :
+                            <TableList tableLoading={tableLoading} getGroupsByFilter={getGroupsByFilter} getPage={page} getPageSize={pageSize} getTotalItems={totalItems} groupType={'THIN'} getGroups={getGroups} columns={columns} standardMachineGroups={thinMachineGroups} />
                         }
                     </Skeleton>
                 </TabPane>

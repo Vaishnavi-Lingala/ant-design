@@ -31,7 +31,7 @@ function AppHeader() {
 
     const directoryPaths = ['dashboard', '/users', '/groups', '/machines', '/devices'];
     const commonProductPaths = ['/product', '/mechanism', '/policies', '/activitylogs'];
-    const settingsPaths = ['/account', '/domains'];
+    const settingsPaths = ['/account', '/domains', '/global-policies'];
 
     const headerItemsInitialValue = [
         {

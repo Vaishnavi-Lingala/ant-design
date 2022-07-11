@@ -16,10 +16,9 @@ import { openNotification } from '../Layout/Notification';
 import ProtectedRoute from '../ProtectedRoute';
 import ApiUrls from '../../ApiUtils';
 import ApiService from '../../Api.service';
-import { CardEnrollmentPolicyDescription, CARD_ENROLL, KIOSK, KioskPolicyDescription, LocalUserProvisioningPolicyDescription, LOCAL_USER_PROVISIONING, PASSWORD, PasswordPolicyDescription, PIN, PinPolicyDescription, policyDisplayNames, TecTANGO, VDI_Description, VIRTUAL_DESKTOP_INTERFACE } from '../../constants';
+import { BIO, BioDescription, CardEnrollmentPolicyDescription, CARD_ENROLL, KIOSK, KioskPolicyDescription, PASSWORD, PasswordPolicyDescription, PIN, PinPolicyDescription, policyDisplayNames, TecBIO, TecTANGO } from '../../constants';
 import { Store } from '../../Store';
-import UserProvisioningPolicy from './UserProvisioningPolicy';
-import VDIPolicy from './VirtualDesktopInterface';
+import BioPolicy from './BioPolicy';
 
 export default function Policies() {
 	const history = useHistory();
@@ -34,11 +33,8 @@ export default function Policies() {
 	const [inActiveKioskPolicies, setInActiveKioskPolicies]: any = useState([]);
 	const [activeCardEnrollmentPolicies, setActiveCardEnrollmentPolicies] = useState([]);
 	const [inActiveCardEnrollmentPolicies, setInActiveCardEnrollmentPolicies] = useState([]);
-	const [activeUserProvisioningPolicies, setActiveUserProvisioningPolicies]: any = useState([]);
-	const [inActiveUserProvisioningPolicies, setInActiveUserProvisioningPolicies] = useState([]);
-	const [activeVDIPolicies, setActiveVDIPolicies]: any = useState([]);
-	const [inActiveVDIPolicies, setInActiveVDIPolicies] = useState([]);
-	const [isLocalProvisioning, setIsLocalProvisioning] = useState(false);
+	const [activeBioPolicies, setActiveBioPolicies]: any = useState([]);
+	const [inActiveBioPolicies, setInActiveBioPolicies]: any = useState([]);
 	const path = window.location.pathname.split('/').length;
 	const [maxEnroll, setMaxEnroll] = useState(null);
 	const { productId } = useParams<any>();
@@ -198,16 +194,16 @@ export default function Policies() {
 	};
 
 	const handleKioskSortEnd = ({ oldIndex, newIndex }) => {
-		if (oldIndex !== newIndex && newIndex !== activeKioskPolicies.length - 1) {
+		if (oldIndex !== newIndex) {
 			const newData = arrayMoveImmutable([].concat(activeKioskPolicies), oldIndex, newIndex).filter(
 				el => !!el,
 			);
 			console.log('Sorted items: ', newData);
 			setActiveKioskPolicies(newData);
 			//@ts-ignore
-			console.log(newData[newIndex].policy_id, newData.length - newIndex - 1);
+			console.log(newData[newIndex].policy_id, newData.length - newIndex);
 			//@ts-ignore
-			reOrderPolicies(newData[newIndex].policy_id, newData.length - newIndex - 1, KIOSK);
+			reOrderPolicies(newData[newIndex].policy_id, newData.length - newIndex, KIOSK);
 		}
 	};
 
@@ -256,60 +252,32 @@ export default function Policies() {
 		/>
 	);
 
-	const handleUserProvisioningSortEnd = ({ oldIndex, newIndex }) => {
-		if (oldIndex !== newIndex && newIndex !== activeUserProvisioningPolicies.length - 1) {
-			const newData = arrayMoveImmutable([].concat(activeUserProvisioningPolicies), oldIndex, newIndex).filter(
+	const BioDraggableBodyRow = ({ className, style, ...restProps }) => {
+		//@ts-ignore	
+		const index = activeBioPolicies.findIndex(x => x.index === restProps['data-row-key']);
+		return <SortableItem index={index} {...restProps} />;
+	};
+
+	const handleBioSortEnd = ({ oldIndex, newIndex }) => {
+		if (oldIndex !== newIndex && newIndex !== activeBioPolicies.length - 1) {
+			const newData = arrayMoveImmutable([].concat(activeBioPolicies), oldIndex, newIndex).filter(
 				el => !!el,
 			);
 			console.log('Sorted items: ', newData);
-			setActiveUserProvisioningPolicies(newData);
+			setActiveBioPolicies(newData);
 			//@ts-ignore
 			console.log(newData[newIndex].policy_id, newData.length - newIndex - 1);
 			//@ts-ignore
-			reOrderPolicies(newData[newIndex].policy_id, newData.length - newIndex - 1, LOCAL_USER_PROVISIONING);
+			reOrderPolicies(newData[newIndex].policy_id, newData.length - newIndex - 1, BIO);
 		}
 	};
 
-	const UserProvisioningDraggableContainer = (props) => (
+	const BioDraggableContainer = (props) => (
 		<SortableBody
 			useDragHandle
 			disableAutoscroll
 			helperClass="row-dragging"
-			onSortEnd={handleUserProvisioningSortEnd}
-			{...props}
-		/>
-	);
-
-	const UserProvisioningDraggableBodyRow = ({ className, style, ...restProps }) => {
-		const index = activeUserProvisioningPolicies.findIndex(x => x.index === restProps['data-row-key']);
-		return <SortableItem index={index} {...restProps} />;
-	}
-
-	const handleVDISortEnd = ({ oldIndex, newIndex }) => {
-		if (oldIndex !== newIndex && newIndex !== activeVDIPolicies.length - 1) {
-			const newData = arrayMoveImmutable([].concat(activeVDIPolicies), oldIndex, newIndex).filter(
-				el => !!el,
-			);
-			console.log('Sorted items: ', newData);
-			setActiveVDIPolicies(newData);
-			//@ts-ignore
-			console.log(newData[newIndex].policy_id, newData.length - newIndex - 1);
-			//@ts-ignore
-			reOrderPolicies(newData[newIndex].policy_id, newData.length - newIndex - 1, VIRTUAL_DESKTOP_INTERFACE);
-		}
-	};
-
-	const vdiDraggableBodyRow = ({ className, style, ...restProps }) => {
-		const index = activeVDIPolicies.findIndex(x => x.index === restProps['data-row-key']);
-		return <SortableItem index={index} {...restProps} />;
-	}
-
-	const vdiDraggableContainer = (props) => (
-		<SortableBody
-			useDragHandle
-			disableAutoscroll
-			helperClass="row-dragging"
-			onSortEnd={handleVDISortEnd}
+			onSortEnd={handleBioSortEnd}
 			{...props}
 		/>
 	);
@@ -329,8 +297,7 @@ export default function Policies() {
 					var passwordCounter = 0;
 					var kioskCounter = 0;
 					var cardEnrollCounter = 0;
-					var userProvisioningCounter = 0;
-					var vdiCounter = 0;
+					var bioCounter = 0;
 					var pinActive: any = [];
 					var pinInActive: any = [];
 					var passwordActive: any = [];
@@ -339,10 +306,8 @@ export default function Policies() {
 					var kioskInActive: any = [];
 					var cardEnrollActive: any = [];
 					var cardEnrollInActive: any = [];
-					var userProvisioningActive: any = [];
-					var userProvisioningInActive: any = [];
-					var vdiActive: any = [];
-					var vdiInActive: any = [];
+					var bioActive: any = [];
+					var bioInActive: any = [];
 					for (var i = 0; i < data.length; i++) {
 						var object;
 						if (data[i].policy_type === PIN) {
@@ -457,59 +422,31 @@ export default function Policies() {
 							}
 						}
 
-						if (data[i].policy_type === LOCAL_USER_PROVISIONING) {
+						if (data[i].policy_type === BIO) {
 							if (data[i].active === true) {
 								object = {
-									key: userProvisioningCounter + 1,
+									key: bioCounter + 1,
 									policy_name: data[i].name,
 									policy_id: data[i].uid,
 									policy_description: data[i].description,
 									order: data[i].order,
 									default: data[i].default,
-									index: userProvisioningCounter + 1
+									index: bioCounter + 1
 								}
-								userProvisioningCounter = userProvisioningCounter + 1;
-								userProvisioningActive.push(object);
+								bioCounter = bioCounter + 1;
+								bioActive.push(object);
 							}
 							else {
 								object = {
-									key: userProvisioningCounter + 1,
+									key: bioCounter + 1,
 									policy_name: data[i].name,
 									policy_id: data[i].uid,
 									policy_description: data[i].description,
 									default: data[i].default,
-									index: cardEnrollCounter + 1
+									index: bioCounter + 1
 								}
-								userProvisioningCounter = userProvisioningCounter + 1;
-								userProvisioningInActive.push(object);
-							}
-						}
-
-						if (data[i].policy_type === VIRTUAL_DESKTOP_INTERFACE) {
-							if (data[i].active === true) {
-								object = {
-									key: vdiCounter + 1,
-									policy_name: data[i].name,
-									policy_id: data[i].uid,
-									policy_description: data[i].description,
-									order: data[i].order,
-									default: data[i].default,
-									index: vdiCounter + 1
-								}
-								vdiCounter = vdiCounter + 1;
-								vdiActive.push(object);
-							}
-							else {
-								object = {
-									key: vdiCounter + 1,
-									policy_name: data[i].name,
-									policy_id: data[i].uid,
-									policy_description: data[i].description,
-									default: data[i].default,
-									index: vdiCounter + 1
-								}
-								vdiCounter = vdiCounter + 1;
-								vdiInActive.push(object);
+								bioCounter = bioCounter + 1;
+								bioInActive.push(object);
 							}
 						}
 					}
@@ -521,10 +458,8 @@ export default function Policies() {
 					setInActiveKioskPolicies(kioskInActive);
 					setActiveCardEnrollmentPolicies(cardEnrollActive);
 					setInActiveCardEnrollmentPolicies(cardEnrollInActive);
-					setActiveUserProvisioningPolicies(userProvisioningActive);
-					setInActiveUserProvisioningPolicies(userProvisioningInActive);
-					setActiveVDIPolicies(vdiActive);
-					setInActiveVDIPolicies(vdiInActive);
+					setActiveBioPolicies(bioActive);
+					setInActiveBioPolicies(bioInActive);
 					setLoadingDetails(false);
 				}, error => {
 					console.log(error)
@@ -542,25 +477,21 @@ export default function Policies() {
 		if (window.location.pathname.split("/").length === 4) {
 			history.push(`/product/${localStorage.getItem("productId")}/policies/pin`);
 		}
-		
+
 		getPolicies();
 	}, [path]);
 
 	useEffect(() => {
 		(async function () {
 			if (seletedProduct === TecTANGO) {
-				setLoading(true);
 				try {
 					let licenses = await ApiService.get(ApiUrls.licences(accountId));
-					let accountDetails = await ApiService.get(ApiUrls.info(accountId));
-					setIsLocalProvisioning(accountDetails.enable_local_provisioning);
 					console.log(licenses);
 					licenses.forEach(license => {
 						if (license.product.sku === TecTANGO && license.max_enroll_allowed) {
 							setMaxEnroll(license.max_enroll_allowed);
 						}
 					})
-					setLoading(false);
 				}
 				catch (err) {
 					console.log(err);
@@ -638,89 +569,77 @@ export default function Policies() {
 				</Button> : <></>}
 			</div>
 
-			<Skeleton loading={loading || loadingDetails}>
-				<Tabs activeKey={window.location.pathname.split("/")[4]}
-					type="card" size={"middle"} animated={false}
-					tabBarStyle={{ marginBottom: '0px' }}
-					onChange={(key) => {
-						history.push(`/product/${productId}/policies/` + key);
-					}}
-				>
-					<TabPane tab={policyDisplayNames[PIN]} key="pin">
-						{/* <Skeleton loading={loadingDetails}> */}
-							{window.location.pathname.split('/').length === 6 ?
-								<ProtectedRoute path={`/product/${productId}/policies/pin/:id`} component={PinPolicy} subRoute /> :
-								<TableList policy_type={PIN} policy_description={PinPolicyDescription}
-									activateColumns={activateColumns} deActivateColumns={deActivateColumns} draggableBodyRow={pinDraggableBodyRow}
-									draggableContainer={pinDraggableContainer} inActivePolicies={inActivePinPolicies} activePolicies={activePinPolicies}
-									handleGetPolicies={handleGetPolicies}
-								/>
-							}
-						{/* </Skeleton> */}
-					</TabPane>
-					<TabPane tab={policyDisplayNames[PASSWORD]} key="password">
-						{/* <Skeleton loading={loadingDetails}> */}
-							{window.location.pathname.split('/').length === 6 ?
-								<ProtectedRoute path={`/product/${productId}/policies/password/:id`} component={PasswordPolicy} subRoute /> :
-								<TableList policy_type={PASSWORD} policy_description={PasswordPolicyDescription} activateColumns={activateColumns} deActivateColumns={deActivateColumns}
-									draggableBodyRow={passwordDraggableBodyRow} draggableContainer={passwordDraggableContainer}
-									inActivePolicies={inActivepasswordPolicies} activePolicies={activePasswordPolicies} handleGetPolicies={handleGetPolicies}
-								/>
-							}
-						{/* </Skeleton> */}
-					</TabPane>
-					<TabPane tab={policyDisplayNames[KIOSK]} key="kiosk">
-						{/* <Skeleton loading={loadingDetails}> */}
-							{window.location.pathname.split('/').length === 6 ?
-								<ProtectedRoute path={`/product/${productId}/policies/kiosk/:id`} component={KioskPolicy} subRoute /> :
-								<TableList policy_type={KIOSK} policy_description={KioskPolicyDescription} activateColumns={activateColumns} deActivateColumns={deActivateColumns}
-									draggableBodyRow={kioskDraggableBodyRow} draggableContainer={kioskDraggableContainer}
-									inActivePolicies={inActiveKioskPolicies} activePolicies={activeKioskPolicies} handleGetPolicies={handleGetPolicies}
-								/>
-							}
-						{/* </Skeleton> */}
-					</TabPane>
-					{
-						seletedProduct === TecTANGO && maxEnroll ?
-							<TabPane tab={policyDisplayNames[CARD_ENROLL]} key="card-enrollment">
-								{/* <Skeleton loading={loadingDetails}> */}
-									{window.location.pathname.split('/').length === 6 ?
-										<ProtectedRoute path={`/product/${productId}/policies/card-enrollment/:id`} component={CardEnrollmentPolicy} subRoute/> :
-										<TableList policy_type={CARD_ENROLL} policy_description={CardEnrollmentPolicyDescription} activateColumns={activateColumns} deActivateColumns={deActivateColumns}
-											draggableBodyRow={CardEnrollmentDraggableBodyRow} draggableContainer={CardEnrollmentDraggableContainer}
-											inActivePolicies={inActiveCardEnrollmentPolicies} activePolicies={activeCardEnrollmentPolicies} handleGetPolicies={handleGetPolicies}
-										/>
-									}
-								{/* </Skeleton> */}
-							</TabPane> : null
-					}
-					{
-						isLocalProvisioning ?
-							<TabPane tab={policyDisplayNames[LOCAL_USER_PROVISIONING]} key="local-user-provisioning">
-								{/* <Skeleton loading={loadingDetails}> */}
-									{window.location.pathname.split('/').length === 6 ?
-										<ProtectedRoute path={`/product/${productId}/policies/local-user-provisioning/:id`} component={UserProvisioningPolicy} subRoute/> :
-										<TableList policy_type={LOCAL_USER_PROVISIONING} policy_description={LocalUserProvisioningPolicyDescription} activateColumns={activateColumns} deActivateColumns={deActivateColumns}
-											draggableBodyRow={UserProvisioningDraggableBodyRow} draggableContainer={UserProvisioningDraggableContainer}
-											inActivePolicies={inActiveUserProvisioningPolicies} activePolicies={activeUserProvisioningPolicies} handleGetPolicies={handleGetPolicies}
-										/>
-									}
-								{/* </Skeleton> */}
-							</TabPane> : null
-					}
-					<TabPane tab={policyDisplayNames[VIRTUAL_DESKTOP_INTERFACE]} key="virtual-desktop-interface">
-						{/* <Skeleton loading={loadingDetails}> */}
-							{window.location.pathname.split('/').length === 6 ?
-								<ProtectedRoute path={`/product/${productId}/policies/virtual-desktop-interface/:id`} component={VDIPolicy} subRoute /> :
-								<TableList policy_type={VIRTUAL_DESKTOP_INTERFACE} policy_description={VDI_Description} activateColumns={activateColumns} deActivateColumns={deActivateColumns}
-									draggableBodyRow={vdiDraggableBodyRow} draggableContainer={vdiDraggableContainer}
-									inActivePolicies={inActiveVDIPolicies} activePolicies={activeVDIPolicies} handleGetPolicies={handleGetPolicies}
-								/>
-							}
-						{/* </Skeleton> */}
-					</TabPane>
-				</Tabs>
-			</Skeleton>
+			<Tabs activeKey={window.location.pathname.split("/")[4]}
+				type="card" size={"middle"} animated={false}
+				tabBarStyle={{ marginBottom: '0px' }}
+				onChange={(key) => {
+					history.push(`/product/${productId}/policies/` + key);
+				}}
+			>
+				<TabPane tab={policyDisplayNames[PIN]} key="pin">
+					<Skeleton loading={loadingDetails}>
+						{window.location.pathname.split('/').length === 6 ?
+							<ProtectedRoute path={`/product/${productId}/policies/pin/:id`} component={PinPolicy} subRoute /> :
+							<TableList policy_type={PIN} policy_description={PinPolicyDescription}
+								activateColumns={activateColumns} deActivateColumns={deActivateColumns} draggableBodyRow={pinDraggableBodyRow}
+								draggableContainer={pinDraggableContainer} inActivePolicies={inActivePinPolicies} activePolicies={activePinPolicies}
+								handleGetPolicies={handleGetPolicies}
+							/>
+						}
+					</Skeleton>
+				</TabPane>
+				<TabPane tab={policyDisplayNames[PASSWORD]} key="password">
+					<Skeleton loading={loadingDetails}>
+						{window.location.pathname.split('/').length === 6 ?
+							<ProtectedRoute path={`/product/${productId}/policies/password/:id`} component={PasswordPolicy} subRoute /> :
+							<TableList policy_type={PASSWORD} policy_description={PasswordPolicyDescription} activateColumns={activateColumns} deActivateColumns={deActivateColumns}
+								draggableBodyRow={passwordDraggableBodyRow} draggableContainer={passwordDraggableContainer}
+								inActivePolicies={inActivepasswordPolicies} activePolicies={activePasswordPolicies} handleGetPolicies={handleGetPolicies}
+							/>
+						}
+					</Skeleton>
+				</TabPane>
+				<TabPane tab={policyDisplayNames[KIOSK]} key="kiosk">
+					<Skeleton loading={loadingDetails}>
+						{window.location.pathname.split('/').length === 6 ?
+							<ProtectedRoute path={`/product/${productId}/policies/kiosk/:id`} component={KioskPolicy} subRoute /> :
+							<TableList policy_type={KIOSK} policy_description={KioskPolicyDescription} activateColumns={activateColumns} deActivateColumns={deActivateColumns}
+								draggableBodyRow={kioskDraggableBodyRow} draggableContainer={kioskDraggableContainer}
+								inActivePolicies={inActiveKioskPolicies} activePolicies={activeKioskPolicies} handleGetPolicies={handleGetPolicies}
+							/>
+						}
+					</Skeleton>
+				</TabPane>
+				{
+					seletedProduct === TecTANGO && maxEnroll ?
+						<TabPane tab={policyDisplayNames[CARD_ENROLL]} key="card-enrollment">
+							<Skeleton loading={loadingDetails}>
+								{window.location.pathname.split('/').length === 6 ?
+									<ProtectedRoute path={`/product/${productId}/policies/card-enrollment/:id`} component={CardEnrollmentPolicy} subRoute /> :
+									<TableList policy_type={CARD_ENROLL} policy_description={CardEnrollmentPolicyDescription} activateColumns={activateColumns} deActivateColumns={deActivateColumns}
+										draggableBodyRow={CardEnrollmentDraggableBodyRow} draggableContainer={CardEnrollmentDraggableContainer}
+										inActivePolicies={inActiveCardEnrollmentPolicies} activePolicies={activeCardEnrollmentPolicies} handleGetPolicies={handleGetPolicies}
+									/>
+								}
+							</Skeleton>
+						</TabPane> : null
+
+				}
+				{
+					seletedProduct === TecBIO ?
+						<TabPane tab={policyDisplayNames[BIO]} key="bio">
+							<Skeleton loading={loadingDetails}>
+								{window.location.pathname.split('/').length === 6 ?
+									<ProtectedRoute path={`/product/${productId}/policies/bio/:id`} component={BioPolicy} subRoute /> :
+									<TableList policy_type={BIO} policy_description={BioDescription} activateColumns={activateColumns} deActivateColumns={deActivateColumns}
+										draggableBodyRow={BioDraggableBodyRow} draggableContainer={BioDraggableContainer}
+										inActivePolicies={inActiveBioPolicies} activePolicies={activeBioPolicies} handleGetPolicies={handleGetPolicies}
+									/>
+								}
+							</Skeleton>
+						</TabPane> : null
+				}
+			</Tabs>
 		</>
 	);
 }
