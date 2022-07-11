@@ -60,16 +60,24 @@ const Urls = {
 
     // Policy Urls
     policies: (accountId, productId) => `account/${accountId}/product/${productId}/auth-policies`,
-    policy: (accountId, policyId) => `account/${accountId}/auth-policies/${policyId}`, // For GET and UPDATE APIs
+    policy: (accountId, productId, policyId) => `account/${accountId}/product/${productId}/auth-policies/${policyId}`, // For GET and UPDATE APIs
     addPolicy: (accountId, productId) => `account/${accountId}/product/${productId}/auth-policies`, // For CREATE API
     activatePolicy: (accountId, productId, policyId) => `account/${accountId}/product/${productId}/auth-policy/${policyId}/activate`,
     deActivatePolicy: (accountId, productId, policyId) => `account/${accountId}/product/${productId}/auth-policy/${policyId}/inactivate`,
     reOrderPolicies: (accountId, productId) => `account/${accountId}/product/${productId}/auth-policy/reorder`,
     loginTypeOptions: (accountId) => `account/${accountId}/auth-policy/login-type`,
+    
+    // Global Policy Urls
+    globalPolicies: (accountId) => `account/${accountId}/auth-policies`,
+    globalPolicy: (accountId, policyId) => `account/${accountId}/auth-policies/${policyId}`, // For GET and UPDATE APIs
+    addGlobalPolicy: (accountId) => `account/${accountId}/auth-policies`, // For CREATE API
+    activateGlobalPolicy: (accountId, policyId) => `account/${accountId}/auth-policy/${policyId}/activate`,
+    deActivateGlobalPolicy: (accountId, policyId) => `account/${accountId}/auth-policy/${policyId}/inactivate`,
+    reOrderGlobalPolicies: (accountId) => `account/${accountId}/auth-policy/reorder`,
     profileUserTypesOptions: (accountId) => `account/${accountId}/auth-policy/local-profile-user-types`,
     profileUserFormatOptions: (accountId) => `account/${accountId}/auth-policy/local-profile-format-types`,
     vdiTypeOptions: (accountId) => `account/${accountId}/auth-policy/vdi-types`,
-
+    
     // Mechanism Urls
     mechanisms: (accountId, productId) => `account/${accountId}/product/${productId}/mechanism`,
     addMechanism: (accountId, productId) => `account/${accountId}/product/${productId}/mechanism`,

@@ -10,12 +10,13 @@ import ApiService from "../../Api.service";
 import { MechanismType } from "../../models/Data.models";
 import { Store } from "../../Store";
 import Hint from "../Controls/Hint";
-import { tapOutFields, TECBIO_LOCK_DESCRIPTION, TECBIO_SIGN_OUT_ALL_DESCRIPTION, TECBIO_SIGN_OUT_DESCRIPTION, TECTANGO_LOCK_DESCRIPTION, TECTANGO_SIGN_OUT_ALL_DESCRIPTION, TECTANGO_SIGN_OUT_DESCRIPTION } from "../../constants";
+import { tapOutFields, TecBIO, TECBIO_LOCK_DESCRIPTION, TECBIO_SIGN_OUT_ALL_DESCRIPTION, TECBIO_SIGN_OUT_DESCRIPTION, TecTANGO, TECTANGO_LOCK_DESCRIPTION, TECTANGO_SIGN_OUT_ALL_DESCRIPTION, TECTANGO_SIGN_OUT_DESCRIPTION } from "../../constants";
 
 
 function Mechanism(props: any) {
     const [loading, setLoading] = useState(true);
     const [loadingDetails, setLoadingDetails] = useState(true);
+    const [visible, setVisible] = useState(true);
     const [isEdit, setIsEdit] = useState(false);
     const [displayDetails, setDisplayDetails] = useState({});
     const [editData, setEditData]: any = useState();
@@ -40,7 +41,7 @@ function Mechanism(props: any) {
         challenge_factors: [
             {
                 order: 0,
-                factor: productId === "opr4ef32b81f" ? "NONE" : "PASSWORD",
+                factor: selectedHeader === TecBIO ? "NONE" : "PASSWORD",
                 name: "Challenge_1",
             },
             {
@@ -52,7 +53,7 @@ function Mechanism(props: any) {
         product_id: "oprc735871d0",
         idle_timeout: "FIFTEEN_MINUTES",
         name: "",
-        on_tap_out: productId === "opr4ef32b81f" ? "SIGN_OUT" : null,
+        on_tap_out: selectedHeader === TecBIO ? "SIGN_OUT" : null,
         idle_timeout_flag: false,
         mechanism_groups: [],
         default: false,
@@ -72,6 +73,8 @@ function Mechanism(props: any) {
                     setEditData(data);
                     //@ts-ignore
                     console.log(data.idle_timeout_flag);
+                    //@ts-ignore
+                    setVisible(data.idle_timeout_flag)
                     if (data.challenge_factors.length !== 2) {
                         //@ts-ignore
                         data.challenge_factors = mechanism.challenge_factors
@@ -114,6 +117,7 @@ function Mechanism(props: any) {
                     setIsEdit(true);
                     //@ts-ignore
                     setChallengeFactors(mechanism.challenge_factors)
+                    setVisible(mechanism.idle_timeout_flag)
                     setValue("NONE");
                     setLoading(false);
                 }
@@ -225,6 +229,7 @@ function Mechanism(props: any) {
         if (editData.challenge_factors[0].factor !== "" && editData.challenge_factors[1].factor === "") {
             editData.challenge_factors[1].factor = "NONE";
         }
+
         props.handleOk(editData);
     }
 
@@ -268,7 +273,7 @@ function Mechanism(props: any) {
                         } */}
                     </div>
                     <div style={{ paddingRight: '50px', paddingBottom: '20px' }}>
-                        {displayDetails['name'] !== "" ? <Button disabled={displayDetails['default'] === true} style={{ float: 'right' }} onClick={handleEditClick}>
+                        {displayDetails['name'] !== "" ? <Button style={{ float: 'right' }} onClick={handleEditClick}>
                             {!isEdit ? 'Edit' : 'Cancel'}
                         </Button> : <></>
                         }
@@ -339,7 +344,7 @@ function Mechanism(props: any) {
                 <Divider style={{ borderTop: '1px solid #d7d7dc' }} />
 
                 {
-                    productId === "opr5776ffc7d" ?
+                    selectedHeader === TecTANGO ?
                         <div style={{ padding: '0 0 20px 0' }}>
                             <b>WHEN</b> user <b>TAPS</b> the proximity card/badge on the card reader
                         </div> :
@@ -419,12 +424,12 @@ function Mechanism(props: any) {
                 <Divider style={{ borderTop: '1px solid #d7d7dc' }} />
 
                 {
-                    productId === "opr5776ffc7d" ?
+                    selectedHeader === TecTANGO ?
                         <div style={{ padding: '0 0 20px 0' }}>
-                            <b>WHEN</b> user <b>TAPS</b> the proximity card/badge on the card reader the second time over an active session
+                            <b>WHEN</b> user <b>TAPS</b> the proximity card/badge on the card reader over an active session
                         </div> :
                         <div style={{ padding: '0 0 20px 0' }}>
-                            <b>WHEN</b> user <b>SCANS</b> their finger on the biometric scanner the second time
+                            <b>WHEN</b> user <b>SCANS</b> their finger on the biometric scanner over an active session
                         </div>
                 }
 
@@ -448,10 +453,10 @@ function Mechanism(props: any) {
                                         <Radio value={factor}>
                                             {tapOutFields[factor]}
                                             <Hint text={factor === "LOCK" ?
-                                                productId === "opr5776ffc7d" ? TECTANGO_LOCK_DESCRIPTION : TECBIO_LOCK_DESCRIPTION :
+                                                selectedHeader === TecTANGO ? TECTANGO_LOCK_DESCRIPTION : TECBIO_LOCK_DESCRIPTION :
                                                 factor === "SIGN_OUT" ?
-                                                    productId === "opr5776ffc7d" ? TECTANGO_SIGN_OUT_DESCRIPTION : TECBIO_SIGN_OUT_DESCRIPTION :
-                                                    productId === "opr5776ffc7d" ? TECTANGO_SIGN_OUT_ALL_DESCRIPTION : TECBIO_SIGN_OUT_ALL_DESCRIPTION}
+                                                    selectedHeader === TecTANGO ? TECTANGO_SIGN_OUT_DESCRIPTION : TECBIO_SIGN_OUT_DESCRIPTION :
+                                                    selectedHeader === TecTANGO ? TECTANGO_SIGN_OUT_ALL_DESCRIPTION : TECBIO_SIGN_OUT_ALL_DESCRIPTION}
                                             />
                                         </Radio>
                                         <br />
@@ -467,6 +472,7 @@ function Mechanism(props: any) {
 
                 <div style={{ padding: '0 0 20px 0' }}>
                     <b>AND IF</b> user idle timeout (period of inactivity) is {<Checkbox disabled={!isEdit} checked={editData?.idle_timeout_flag} onChange={(e) => {
+                        setVisible(e.target.checked);
                         setEditData({
                             ...editData,
                             idle_timeout_flag: e.target.checked
@@ -478,24 +484,24 @@ function Mechanism(props: any) {
                     isEdit ?
                         editData?.idle_timeout_flag ? <Select
                             size={"large"}
-                            placeholder={"Please select minutes"}
-                            defaultValue={idleTimeoutOptions[displayDetails['idle_timeout']]}
+                            placeholder="Select mins..."
+                            value={idleTimeoutOptions[editData['idle_timeout']]}
                             onChange={(value) => setEditData({
                                 ...editData,
                                 idle_timeout: value
                             })}
-                            style={{ width: '275px', maxWidth: '130px' }}
+                            style={{ width: '130px' }}
                         >
                             {
-                                Object.keys(idleTimeoutOptions).map(key => {
-                                    return <Select.Option key={key} value={key}>
-                                        {idleTimeoutOptions[key]}
+                                Object.keys(idleTimeoutOptions).map(option => {
+                                    return <Select.Option key={option} value={option}>
+                                        {idleTimeoutOptions[option]}
                                     </Select.Option>
                                 })
                             }
                         </Select>
                             : <>(x) minutes</>
-                        : editData?.idle_timeout_flag ? idleTimeoutOptions[editData?.idle_timeout] : <>(x) minutes</>
+                        : editData?.idle_timeout_flag ? idleTimeoutOptions[editData['idle_timeout']] : <>(x) minutes</>
                 } user will be locked/signed-out.
 
 

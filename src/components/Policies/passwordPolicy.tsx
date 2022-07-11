@@ -22,10 +22,11 @@ export const PasswordPolicy = (props: any) => {
     const [groupsChange, setGroupsChange]: any = useState([]);
     const history = useHistory();
     const accountId = localStorage.getItem('accountId');
+	const productId = window.location.pathname.split('/')[2];
 
     useEffect(() => {
         Promise.all(([
-            ApiService.get(ApiUrls.policy(accountId, window.location.pathname.split('/')[5])),
+            ApiService.get(ApiUrls.policy(accountId, productId, window.location.pathname.split('/')[5])),
             ApiService.get(ApiUrls.groups(accountId), { type: "USER" }),
             ApiService.get(ApiUrls.mechanismPasswordGraceOptions(accountId))
         ]))
@@ -101,7 +102,7 @@ export const PasswordPolicy = (props: any) => {
 
     function updatePasswordPolicy() {
         passwordEditData.auth_policy_groups = groupUids;
-        ApiService.put(ApiUrls.policy(accountId, passwordDisplayData['uid']), passwordEditData)
+        ApiService.put(ApiUrls.policy(accountId, productId, passwordDisplayData['uid']), passwordEditData)
             .then(data => {
                 if (!data.errorSummary) {
                     groupNames.length = 0;

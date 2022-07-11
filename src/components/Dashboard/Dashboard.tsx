@@ -63,7 +63,7 @@ export default function Dashboard() {
                             <div className="overview-stat-container">
                                 {Object.keys(statsData[type].stats).map(key => {
                                     return <div key={key}>
-                                        <div>{type === "enrollment" ? key : key.slice(0, 1) + key.slice(1).toLowerCase()}&nbsp;&nbsp;&nbsp;</div>
+                                        <div>{type === "enrollment" ? key : key.slice(0, 1) + key.slice(1).replace("_", " ").toLowerCase()}&nbsp;&nbsp;&nbsp;</div>
                                         <div>{statsData[type].stats[key]}</div>
                                     </div>
                                 })}

@@ -31,13 +31,14 @@ export const KioskPolicy = (props: any) => {
     const history = useHistory();
     const [policyRequirements, setPolicyRequirements] = useState({});
     const accountId = localStorage.getItem('accountId');
+	const productId = window.location.pathname.split('/')[2];
 
     useEffect(() => {
         Promise.all(([
             ApiService.get(ApiUrls.groups(accountId), { type: "USER" }),
             ApiService.get(ApiUrls.groups(accountId), { type: "KIOSK" }),
             ApiService.get(ApiUrls.loginTypeOptions(accountId)),
-            ApiService.get(ApiUrls.policy(accountId, window.location.pathname.split('/')[5]))
+            ApiService.get(ApiUrls.policy(accountId, productId, window.location.pathname.split('/')[5]))
         ]))
             .then(data => {
                 console.log(data[0]);
@@ -124,7 +125,7 @@ export const KioskPolicy = (props: any) => {
         kioskEditData.auth_policy_groups = groupUids;
         kioskEditData.kiosk_machine_groups = kioskGroupUids;
         kioskEditData.policy_req.confirm_assay = confirmPassword;
-        ApiService.put(ApiUrls.policy(accountId, kioskDisplayData['uid']), kioskEditData)
+        ApiService.put(ApiUrls.policy(accountId, productId, kioskDisplayData['uid']), kioskEditData)
             .then(data => {
                 console.log(data);
                 if (!data.errorSummary) {

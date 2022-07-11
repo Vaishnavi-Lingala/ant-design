@@ -42,7 +42,7 @@ export default function Users() {
 		// },
 		{
 			title: 'Username',
-			dataIndex: 'user_name',
+			dataIndex: 'idp_user_name',
 			width: '10%'
 		},
 		{
@@ -64,7 +64,7 @@ export default function Users() {
 			title: 'Actions',
 			dataIndex: 'actions',
 			width: '25%',
-			render: (text: any, record: { uid: any; user_name: any, first_name: any, last_name: any, email: any, status: string }) => (
+			render: (text: any, record: { uid: any; idp_user_name: any, first_name: any, last_name: any, email: any, status: string }) => (
 				<Row>
 					<Col span={12}>
 						<Tooltip title="View">
@@ -72,7 +72,7 @@ export default function Users() {
 								sessionStorage.setItem("email", record.email);
 								sessionStorage.setItem("first_name", record.first_name);
 								sessionStorage.setItem("last_name", record.last_name);
-								sessionStorage.setItem("user_name", record.user_name);
+								sessionStorage.setItem("user_name", record.idp_user_name);
 								history.push(`/user/${record.uid}/profile`)
 							}}
 							/>
@@ -84,7 +84,7 @@ export default function Users() {
 							<Menu key={"changeStatus"} title={"Change Status"} >
 								{
 									statusList.map(item => {
-										return <Menu.Item key={item.key} disabled={disableStatus(item.key, record.status)} onClick={({ key }) => { changeUserStatus(key, record.uid, record.user_name) }}>
+										return <Menu.Item key={item.key} disabled={disableStatus(item.key, record.status)} onClick={({ key }) => { changeUserStatus(key, record.uid, record.idp_user_name) }}>
 											{item.value}
 										</Menu.Item>
 									})
@@ -161,7 +161,7 @@ export default function Users() {
 			setTableLoading(false);
 		});
 		data.results.map((value) => {
-			value['is_user_enrolled'] === true ? value['is_user_enrolled'] = 'true' : value['is_user_enrolled'] = 'false'
+			value['is_user_enrolled'] === true ? value['is_user_enrolled'] = 'True' : value['is_user_enrolled'] = 'False'
 		})
 		const updatedUsers = updateUsersListWithStatusAndKey(data.results);
 
@@ -184,7 +184,7 @@ export default function Users() {
 			setLoadingDetails(false);
 		});
 		data.results.map((value) => {
-			value['is_user_enrolled'] === true ? value['is_user_enrolled'] = 'true' : value['is_user_enrolled'] = 'false'
+			value['is_user_enrolled'] === true ? value['is_user_enrolled'] = 'True' : value['is_user_enrolled'] = 'False'
 		})
 		const updatedUsers = updateUsersListWithStatusAndKey(data.results);
 		console.log(updatedUsers);
@@ -216,6 +216,7 @@ export default function Users() {
 		}
 		let result = await ApiService.post(ApiUrls.changeUserStatus(accountId, userId), statusObj)
 			.then(data => {
+				console.log(user_name);
 				openNotification('success', `Status for ${user_name.split('@')[0]} has been updated successfully with ${status.toLowerCase()}.`);
 			})
 			.catch(error => {

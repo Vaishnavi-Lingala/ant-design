@@ -9,7 +9,6 @@ import ApiService from "../../Api.service";
 import ApiUrls from '../../ApiUtils';
 import { CARD_ENROLL, policyDisplayNames, TecTANGO } from "../../constants";
 import { openNotification } from "../Layout/Notification";
-import Hint from "../Controls/Hint";
 
 const CardEnrollmentPolicy = (props) => {
     const [isEdit, setIsEdit] = useState(false);
@@ -25,11 +24,12 @@ const CardEnrollmentPolicy = (props) => {
     const [isLimitReached, setIsLimitReached] = useState(false);
     const history = useHistory();
     const accountId = localStorage.getItem('accountId');
+    const productId = window.location.pathname.split('/')[2];
 
     useEffect(() => {
         Promise.all(([
             ApiService.get(ApiUrls.groups(accountId), { type: "USER" }),
-            ApiService.get(ApiUrls.policy(accountId, window.location.pathname.split('/')[5]))
+            ApiService.get(ApiUrls.policy(accountId, productId, window.location.pathname.split('/')[5]))
         ]))
             .then(data => {
                 console.log('GROUPS: ', data[0]);
@@ -98,7 +98,7 @@ const CardEnrollmentPolicy = (props) => {
 
     function updateCardEnrollPolicy() {
         cardEnrollEditData['auth_policy_groups'] = groupUids;
-        ApiService.put(ApiUrls.policy(accountId, cardEnrollDisplayData['uid']), cardEnrollEditData)
+        ApiService.put(ApiUrls.policy(accountId, productId, cardEnrollDisplayData['uid']), cardEnrollEditData)
             .then(data => {
                 if (!data.errorSummary) {
                     groupNames.length = 0;
@@ -169,7 +169,7 @@ const CardEnrollmentPolicy = (props) => {
                                 <div style={{display: 'inline-block', marginRight: '3px'}}>
                                     <Hint text={"This policy allows you to control how many cards can be enrolled per user"} />
                                 </div> */}
-                            </div>  
+                            </div>
                         }
                     </div>
                     <div>
@@ -224,9 +224,9 @@ const CardEnrollmentPolicy = (props) => {
                                 style={{ width: '275px' }}
                                 options={groups}
                                 filterOption={(input, option) =>
-									//@ts-ignore
-									option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
-								}
+                                    //@ts-ignore
+                                    option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                }
                             /> : Object.keys(groupNames).map(name =>
                                 <><Button style={{ cursor: 'text' }}>{groupNames[name]}</Button>&nbsp;</>)
                         }
@@ -257,7 +257,7 @@ const CardEnrollmentPolicy = (props) => {
                                 defaultValue={policyRequirements['max_card_enrollment']}
                             />
                             {isLimitReached ? <div style={{ padding: '5px', color: 'red' }}>
-                            By policy, users will not be allowed to enroll more than the {maxEnroll} cards. If higher limit is required, please contact support team.
+                                By policy, users will not be allowed to enroll more than the {maxEnroll} cards. If higher limit is required, please contact support team.
                                 {/* Max card enrollment limit is {maxEnroll}. Please contact Tecnics to update it. */}
                             </div> : null}
                         </> : policyRequirements['max_card_enrollment']

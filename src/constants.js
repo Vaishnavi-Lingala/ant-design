@@ -40,7 +40,8 @@ export const hiddenFields = {
         'is_portal_admin',
         'idp_login_hint',
         'windows_login_hint',
-        'uid'
+        'uid',
+        'display_name'
 
     ]
 };
@@ -108,7 +109,7 @@ export const logFieldNames = {
         "first_name": "First name",
         "last_name": "Last name",
         "display_name": "Display name",
-        "user_name": "User name",
+        "idp_user_name": "User name",
         "email": "Email",
         "sam": "samAccount Name",
         "upn": "UPN",
@@ -217,6 +218,7 @@ export const userFilterFieldNames = {
     last_name: "Last Name",
     email: "Email",
     user_name: "User Name",
+    idp_user_name: "Username",
     status: "Status",
     is_enrolled: "Enrolled",
     inactivity_in_days: "Inactivity in Days"
@@ -292,6 +294,7 @@ export const ActivityLogs = "Activity Logs";
 export const Devices = "Devices";
 export const Account = "Account";
 export const Domain = "Domains";
+export const GlobalPolicies = "Global Policies";
 export const Applications = "Applications";
 
 // Sidebar item keys
@@ -305,6 +308,7 @@ export const policies = "policies";
 export const activityLogs = "activitylogs";
 export const account = "account";
 export const domain = "domains";
+export const globalPolicies = "global-policies";
 export const applications = "apps";
 
 // Policy types
@@ -314,6 +318,12 @@ export const KIOSK = "KIOSK";
 export const CARD_ENROLL = "CARD_ENROLL";
 export const LOCAL_USER_PROVISIONING = "LOCAL_USER_PROVISIONING";
 export const VIRTUAL_DESKTOP_INTERFACE = "VDI"
+
+//Local User Provisioning Policy
+export const userProfileDisplayNames = {
+    "STANDARD": "Provision Standard User",
+    "ADMINISTRATOR": "Provision Local Administrator"
+}
 
 // Header Options
 export const Directory = "Directory";

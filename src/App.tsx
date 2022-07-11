@@ -12,8 +12,6 @@ import Groups from "./components/Groups/Groups";
 import Login from "./components/Login";
 import Machines from "./components/Machines/Machines";
 import { MachineDetails } from "./components/Machines/MachineDetails";
-
-import Layout from "./components/Layout/Layout";
 import Mechanisms from "./components/Mechanism/Mechanisms";
 import Mechanism from "./components/Mechanism/mechanism";
 import PageNotFound from "./components/PageNotFound";
@@ -31,6 +29,7 @@ import Domains from "./components/Domains/Domains";
 import Applications from "./components/tecUnify/Applications";
 import BulkAssignment from "./components/tecUnify/BulkAssignment";
 import AppSettings from "./components/tecUnify/AppSettings";
+import GlobalPolicies from "./components/GlobalPolicies/GlobalPolicies";
 
 const oktaAuth = new OktaAuth(config.oidc);
 
@@ -57,6 +56,7 @@ function App() {
                     <Route path="/login/callback" component={LoginCallback} />
 
                     <ProtectedRoute path={`/product/:productId/policies`} component={Policies} />
+                    <ProtectedRoute path={`/global-policies`} component={GlobalPolicies} />
                     <ProtectedRoute path={`/product/:productId/activitylogs`} component={ActivityLogs} />
                     <ProtectedRoute path={`/dashboard`} component={Dashboard} />
                     <ProtectedRoute path={`/product/:productId/mechanism`} exact component={Mechanisms} />
