@@ -99,7 +99,7 @@ pipelines:
               - docker push $IMAGE:$TAG
               - export BUILD_NUMBER="${BITBUCKET_BUILD_NUMBER}"
               - export ACCOUNT_NUMBER="${ACCOUNT_NUMBER}"
-              - export NAMESPACE=ct-test
+              - export NAMESPACE=ct-prod
               - envsubst <deployment.yml >credenti-deployment.yaml
               - pipe: atlassian/aws-eks-kubectl-run:2.2.0
                 variables:
