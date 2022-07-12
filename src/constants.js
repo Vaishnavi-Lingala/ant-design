@@ -317,7 +317,8 @@ export const PASSWORD = "PASSWORD";
 export const KIOSK = "KIOSK";
 export const CARD_ENROLL = "CARD_ENROLL";
 export const LOCAL_USER_PROVISIONING = "LOCAL_USER_PROVISIONING";
-export const VIRTUAL_DESKTOP_INTERFACE = "VDI"
+export const VIRTUAL_DESKTOP_INTERFACE = "VDI";
+export const BIO = "BIO";
 
 //Local User Provisioning Policy
 export const userProfileDisplayNames = {
@@ -344,7 +345,8 @@ export const policyDisplayNames = {
     [KIOSK]: "Kiosk",
     [CARD_ENROLL]: "Card Enrollment",
     [LOCAL_USER_PROVISIONING]: "Local User Provisioning",
-    [VIRTUAL_DESKTOP_INTERFACE]: "VDI"
+    [VIRTUAL_DESKTOP_INTERFACE]: "VDI",
+    [BIO]: "Bio"
 }
 
 // LocalStorage constants
@@ -357,6 +359,7 @@ export const KioskPolicyDescription = 'KIOSK policies applies to machines where 
 export const CardEnrollmentPolicyDescription = 'Card enrollment policies enable admins to configure max number of cards allowed per user group during enrollment';
 export const LocalUserProvisioningPolicyDescription = 'Local user provisioning policies enable admins to automatically create local user profile on the machines. This is applicable only for Standard and Kiosk machines.';
 export const VDI_Description = 'VDI policies enable admins to configure the VDI Template for Citrix, VMware, or Microsoft which TecTANGO will use to connect to remote desktops hosted on a virtual machine server.';
+export const BioDescription = 'Bio Description';
 
 //Mechanism Descriptions
 export const TECTANGO_LOCK_DESCRIPTION = 'Lock the machine or sign-out from the apps launched by TecTANGO.';

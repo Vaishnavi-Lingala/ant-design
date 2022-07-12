@@ -183,10 +183,10 @@ function GlobalPolicies() {
     );
 
     function handleGetPolicies() {
-        getPolicies();
+        getGlobalPolicies();
     }
 
-    function getPolicies() {
+    function getGlobalPolicies() {
         console.log(path);
         if (path === 3) {
             setLoadingDetails(true);
@@ -290,8 +290,8 @@ function GlobalPolicies() {
                 setIsVdi(data.enable_vdi);
             })
 
-        getPolicies();
-    }, [window.location.pathname.split("/").length]);
+        getGlobalPolicies();
+    }, []);
 
     function activateGlobalPolicy(uid: string) {
         console.log(uid);
@@ -299,7 +299,7 @@ function GlobalPolicies() {
             .then(data => {
                 if (!data.errorSummary) {
                     openNotification('success', 'Successfully activated Policy');
-                    getPolicies();
+                    getGlobalPolicies();
                 }
                 else {
                     openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
@@ -317,7 +317,7 @@ function GlobalPolicies() {
             .then(data => {
                 if (!data.errorSummary) {
                     openNotification('success', 'Successfully de-activated Policy');
-                    getPolicies();
+                    getGlobalPolicies();
                 }
                 else {
                     openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
@@ -339,7 +339,7 @@ function GlobalPolicies() {
             .then(data => {
                 if (!data.errorSummary) {
                     console.log(data)
-                    getPolicies();
+                    getGlobalPolicies();
                 }
                 else {
                     openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
@@ -368,7 +368,7 @@ function GlobalPolicies() {
                     history.push(`/global-policies/` + key);
                 }}
             >
-                {isLocalProvisioning ? <TabPane tab={policyDisplayNames[LOCAL_USER_PROVISIONING]} key="local-user-provisioning">
+                {isLocalProvisioning ? <TabPane  tab={policyDisplayNames[LOCAL_USER_PROVISIONING]} key="local-user-provisioning">
                     <Skeleton loading={loadingDetails}>
                         {window.location.pathname.split('/').length === 4 ?
                             <ProtectedRoute path={`/global-policies/local-user-provisioning/:id`} component={UserProvisioningPolicy} subRoute /> :

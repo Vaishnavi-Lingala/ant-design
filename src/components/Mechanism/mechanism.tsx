@@ -177,10 +177,16 @@ function Mechanism(props: any) {
 
     function updateMechanism() {
         console.log(groupUids);
-        editData.mechanism_groups = groupUids
+        editData.mechanism_groups = groupUids;
+        console.log(editData);
+        if (editData?.idle_timeout_flag === false) {
+            editData.idle_timeout = "NONE";
+        }
+        console.log(editData);
         ApiService.put(ApiUrls.mechanism(accountId, productId, displayDetails['uid']), editData)
             .then(data => {
                 if (!data.errorSummary) {
+                    setDisplayDetails({ ...editData });
                     groupNames.length = 0;
                     openNotification('success', 'Successfully updated Mechanism');
                     Object.keys(data.mechanism_groups).map(index => {
@@ -200,8 +206,8 @@ function Mechanism(props: any) {
     }
 
     function handleEditClick() {
-        setIsEdit(!isEdit);
         setEditData({ ...displayDetails });
+        setIsEdit(!isEdit);
     }
 
     function handleCancelClick() {
@@ -210,6 +216,7 @@ function Mechanism(props: any) {
     }
 
     function handleSaveClick() {
+        console.log(editData);
         updateMechanism();
     }
 
@@ -471,18 +478,23 @@ function Mechanism(props: any) {
                 <Divider style={{ borderTop: '1px solid #d7d7dc' }} />
 
                 <div style={{ padding: '0 0 20px 0' }}>
-                    <b>AND IF</b> user idle timeout (period of inactivity) is {<Checkbox disabled={!isEdit} checked={editData?.idle_timeout_flag} onChange={(e) => {
-                        setVisible(e.target.checked);
-                        setEditData({
-                            ...editData,
-                            idle_timeout_flag: e.target.checked
-                        })
-                    }} />} enabled
+                    <b>AND IF</b> user idle timeout (period of inactivity) is {
+                        <Checkbox
+                            defaultChecked={editData?.idle_timeout_flag}
+                            disabled={!isEdit}
+                            onChange={(e) => {
+                                setEditData({
+                                    ...editData,
+                                    idle_timeout_flag: e.target.checked
+                                })
+                            }}
+                        />
+                    } enabled
                 </div>
 
                 <b>THEN</b> after {
                     isEdit ?
-                        editData?.idle_timeout_flag ? <Select
+                        editData?.idle_timeout_flag === true ? <Select
                             size={"large"}
                             placeholder="Select mins..."
                             value={idleTimeoutOptions[editData['idle_timeout']]}
@@ -501,7 +513,7 @@ function Mechanism(props: any) {
                             }
                         </Select>
                             : <>(x) minutes</>
-                        : editData?.idle_timeout_flag ? idleTimeoutOptions[editData['idle_timeout']] : <>(x) minutes</>
+                        : editData?.idle_timeout_flag === true ? idleTimeoutOptions[displayDetails['idle_timeout']] : <>(x) minutes</>
                 } user will be locked/signed-out.
 
 
