@@ -257,7 +257,7 @@ const CardEnrollmentPolicy = (props) => {
                                 defaultValue={policyRequirements['max_card_enrollment']}
                             />
                             {isLimitReached ? <div style={{ padding: '5px', color: 'red' }}>
-                                By policy, users will not be allowed to enroll more than the {maxEnroll} cards. If higher limit is required, please contact support team.
+                            By default users may only be allowed to have {maxEnroll} cards enrolled to them. If a high limit is required please contact your support team.
                                 {/* Max card enrollment limit is {maxEnroll}. Please contact Tecnics to update it. */}
                             </div> : null}
                         </> : policyRequirements['max_card_enrollment']
