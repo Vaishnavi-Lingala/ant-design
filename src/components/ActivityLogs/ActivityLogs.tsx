@@ -20,7 +20,8 @@ import {
     end_time,
     hiddenFields,
     logFieldNames,
-    date_display_format
+    date_display_format,
+    readerDisplayNames
 } from '../../constants';
 import DisplayDateTimeFormat from "../Controls/DateTimeHelper";
 
@@ -42,6 +43,7 @@ const ExpandedRows = ({ activity, user, machine, uid }) => {
     const filteredMachine = Object.fromEntries(Object.entries(logFieldNames?.machine ? logFieldNames?.machine : {}).filter(([key]) => !hiddenFields.machine.includes(key)));;
     const filteredUser = Object.fromEntries(Object.entries(logFieldNames?.user ? logFieldNames?.user : {}).filter(([key]) => !hiddenFields.user.includes(key)));;
 
+    console.log(filteredMachine);
     return <>
         <Collapse
             bordered={false}
@@ -69,7 +71,7 @@ const ExpandedRows = ({ activity, user, machine, uid }) => {
                         {Object.keys(filteredMachine).map((recordKey) => (
                             <DisplayField
                                 field={recordKey}
-                                value={machine?.[recordKey]}
+                                value={recordKey !== "reader_type" ? machine?.[recordKey] : readerDisplayNames[machine?.[recordKey]]}
                                 key={recordKey}
                                 logFieldNames={logFieldNames.machine}
                             />
@@ -102,7 +104,7 @@ export default function ActivityLogs() {
     const { productId } = useParams<any>();
     const accountId = localStorage.getItem('accountId');
 
-    
+
     const initialDateTimeFilters = {
         start: {
             date: moment().startOf("day").subtract(7, "days").format(date_format),
@@ -167,7 +169,7 @@ export default function ActivityLogs() {
                     ApiUrls.activityLog(accountId, productId),
                     generateFilterPayload()
                 );
-                    console.log(data);
+                console.log(data);
                 setLogResponse(data);
             } catch (error) {
                 console.error('Error: ', error);

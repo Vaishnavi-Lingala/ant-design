@@ -273,12 +273,12 @@ function BioPolicy(props: any) {
                         }
                     </div>
 
-                    <div className="content-policy-key-header" style={{ paddingTop: '10px' }}>
+                    {/* <div className="content-policy-key-header" style={{ paddingTop: '10px' }}>
                         Threshold Score:
                     </div>
                     <div style={{ paddingTop: '10px' }}>
                         {isEdit ? <>
-                            <Input className="form-control"
+                            <Input className="form-control" readOnly
                                 style={{ width: "275px" }}
                                 onChange={(e) => {
                                     setBioEditedData((state) => {
@@ -290,15 +290,14 @@ function BioPolicy(props: any) {
                                                 threshold_score: e.target.value
                                             }
                                         }
-                                    }
-                                    )
+                                    })
                                 }}
                                 value={bioEditData?.policy_req?.threshold_score}
                                 placeholder='Enter threshold score'
                             />
                         </> : bioDisplayData['policy_req']?.threshold_score
                         }
-                    </div>
+                    </div> */}
                 </div>
             </div>
 
