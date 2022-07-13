@@ -1,4 +1,4 @@
-import { useContext, useMemo } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Menu } from "antd";
 import Sider from "antd/lib/layout/Sider";
@@ -15,6 +15,9 @@ import {
 } from "../../constants";
 
 import { Store } from "../../Store";
+import ApiService from "../../Api.service";
+import ApiUrls from "../../ApiUtils";
+
 
 // Sidebar items
 const directoryItems = [
@@ -93,6 +96,19 @@ function AppSider() {
 	const history = useHistory();
 	const [selectedHeaderOption] = useContext(Store);
 	const selectedProductId = localStorage.getItem("productId");
+	
+	useEffect(() => {
+		ApiService.get(ApiUrls.info(localStorage.getItem('accountId')))
+		.then(data => {
+			console.log(data);
+			if(data.enable_vdi === false && data.enable_local_provisioning === false){
+				sessionStorage.setItem("ShowGlobal", "false");
+			}
+			else{
+				sessionStorage.clear();
+			}
+		})
+	}, [])
 
 	function openScreen(screen: string) {
 		switch (selectedHeaderOption) {
@@ -133,7 +149,7 @@ function AppSider() {
 			case Directory:
 				return directoryItems;
 			case Settings:
-				return settingsItems;
+				return sessionStorage.getItem("ShowGlobal") === "false" ? settingsItems.slice(0, settingsItems.length - 1) : settingsItems;
 			case TecTANGO:
 				return productItemsWithHeader;
 			case TecBIO:

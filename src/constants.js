@@ -19,8 +19,6 @@ export const hiddenFields = {
         'account_id',
         'x_client',
         'reader_serial',
-        'reader_type',
-        'reader_name',
         'uid',
         'machine_type'
     ],
@@ -62,6 +60,11 @@ export const userFieldNames = {
     "login_domain": "Login domain"
 }
 
+export const readerDisplayNames = {
+    "PCSCREADER": "PC/SC",
+    "PCPROXREADER": "rf IDEAS"
+}
+
 // Field in activity logs are displayed in this order with the below names
 export const logFieldNames = {
     uid: "UID",
@@ -76,11 +79,11 @@ export const logFieldNames = {
         "public_ip": "Public IP",
         "local_ip": "Last Known IP",
         "group_type": "Group type",
+        "reader_type": "Reader type",
         "os": "OS",
         "x_client": "X client",
         "reader_serial": "Reader serial",
         "account_id": "Account ID",
-        "reader_type": "Reader type",
         "reader_name": "Reader name"
     },
     activity: {
@@ -317,7 +320,8 @@ export const PASSWORD = "PASSWORD";
 export const KIOSK = "KIOSK";
 export const CARD_ENROLL = "CARD_ENROLL";
 export const LOCAL_USER_PROVISIONING = "LOCAL_USER_PROVISIONING";
-export const VIRTUAL_DESKTOP_INTERFACE = "VDI"
+export const VIRTUAL_DESKTOP_INTERFACE = "VDI";
+export const BIO = "BIO";
 
 //Local User Provisioning Policy
 export const userProfileDisplayNames = {
@@ -344,7 +348,8 @@ export const policyDisplayNames = {
     [KIOSK]: "Kiosk",
     [CARD_ENROLL]: "Card Enrollment",
     [LOCAL_USER_PROVISIONING]: "Local User Provisioning",
-    [VIRTUAL_DESKTOP_INTERFACE]: "VDI"
+    [VIRTUAL_DESKTOP_INTERFACE]: "VDI",
+    [BIO]: "Bio"
 }
 
 // LocalStorage constants
@@ -357,6 +362,7 @@ export const KioskPolicyDescription = 'KIOSK policies applies to machines where 
 export const CardEnrollmentPolicyDescription = 'Card enrollment policies enable admins to configure max number of cards allowed per user group during enrollment';
 export const LocalUserProvisioningPolicyDescription = 'Local user provisioning policies enable admins to automatically create local user profile on the machines. This is applicable only for Standard and Kiosk machines.';
 export const VDI_Description = 'VDI policies enable admins to configure the VDI Template for Citrix, VMware, or Microsoft which TecTANGO will use to connect to remote desktops hosted on a virtual machine server.';
+export const BioDescription = 'Bio Description';
 
 //Mechanism Descriptions
 export const TECTANGO_LOCK_DESCRIPTION = 'Lock the machine or sign-out from the apps launched by TecTANGO.';

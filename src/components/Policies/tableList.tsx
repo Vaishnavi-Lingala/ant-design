@@ -11,6 +11,7 @@ import { openNotification } from "../Layout/Notification";
 import ApiUrls from "../../ApiUtils";
 import ApiService from "../../Api.service";
 import { CARD_ENROLL, KIOSK, LOCAL_USER_PROVISIONING, PASSWORD, PIN, policyDisplayNames, VIRTUAL_DESKTOP_INTERFACE } from "../../constants";
+import BioPolicy from "./BioPolicy";
 
 function TableList({ handleGetPolicies, policy_type, policy_description, activateColumns, activePolicies, draggableContainer, draggableBodyRow, deActivateColumns, inActivePolicies }) {
     const [isModal, setIsModal] = useState(false);
@@ -74,30 +75,18 @@ function TableList({ handleGetPolicies, policy_type, policy_description, activat
         auth_policy_groups: [],
     }
 
-    const vdiData = {
-        name: "",
-        description: "",
+    const bioData = {
         auth_policy_groups: [],
-        policy_type: VIRTUAL_DESKTOP_INTERFACE,
-        kiosk_machine_groups: [],
-        policy_req: {
-            vdi_type: "",
-            app_template: "",
-            // machine_group_type: ""
-        }
-    }
-
-    const userProvisioningData = {
-        name: "",
         description: "",
-        auth_policy_groups: [],
         kiosk_machine_groups: [],
-        policy_type: LOCAL_USER_PROVISIONING,
+        name: "",
+        order: 0,
         policy_req: {
-            local_profile_format: "EMAIL_PREFIX",
-            local_profile_user_type: "STANDARD",
-            password_sync: true
-        }
+            min_fingerprint_scan: 2,
+            max_fingerprint_scan: 4,
+            threshold_score: "0x7FFFFFFF"
+        },
+        policy_type: "BIO",
     }
 
     const handleOk = (policyType: string, object: object) => {
@@ -200,7 +189,9 @@ function TableList({ handleGetPolicies, policy_type, policy_description, activat
                         <PasswordPolicy passwordDetails={passwordData} buttonLoading={buttonLoading} handleOk={handleOk} handleCancel={handleCancel} /> :
                         policy_type === KIOSK ?
                             <KioskPolicy kioskDetails={kioskData} buttonLoading={buttonLoading} handleOk={handleOk} handleCancel={handleCancel} /> :
-                                <CardEnrollmentPolicy policyDetails={cardEnrollData} buttonLoading={buttonLoading} handleOk={handleOk} handleCancel={handleCancel} />
+                            policy_type === CARD_ENROLL ?
+                            <CardEnrollmentPolicy policyDetails={cardEnrollData} buttonLoading={buttonLoading} handleOk={handleOk} handleCancel={handleCancel} /> :
+                            <BioPolicy policyDetails={bioData} buttonLoading={buttonLoading} handleOk={handleOk} handleCancel={handleCancel} />
                 }
             </Modal>
         </>
