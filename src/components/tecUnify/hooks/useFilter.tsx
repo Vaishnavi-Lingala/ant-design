@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import type { FilterType } from '../types';
+import type { AppList, FilterType, User } from '../types';
 
 interface FilterHookProps<T> {
   list: T;

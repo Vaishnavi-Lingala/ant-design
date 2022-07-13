@@ -1,5 +1,3 @@
-import { FormItemProps, InputNumberProps, SelectProps } from "antd";
-
 export type App = Config & Template;
 export type Domains = string[];
 
