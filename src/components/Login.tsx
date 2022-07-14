@@ -87,8 +87,6 @@ function Login() {
         }
     }
 
-    console.log('Login authState: ', authState);
-
     function checkInvalid() {
         if ((email.length === 0 || !email.includes('@') || emailPrefix === "" || domain === "" ||
             !domain.includes('.') || domain.split('.')[0] === "" || domain.split('.')[1] === "") &&
