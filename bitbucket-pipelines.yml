@@ -23,6 +23,7 @@ pipelines:
               - touch .env.local
               - echo "DISABLE_ESLINT_PLUGIN=true" | cat >> .env.local
               - echo "REACT_APP_API_URL=${PORTAL_API_URL}" | cat >> .env.local
+              - echo "REACT_APP_ENV=dev" | cat >> .env.local
               - docker build -t $IMAGE:$TAG .
               - aws configure set aws_access_key_id "${AWS_ACCESS_KEY_DEV}"
               - aws configure set aws_secret_access_key "${AWS_SECRET_ACCESS_KEY_DEV}"
@@ -57,6 +58,7 @@ pipelines:
               - touch .env.local
               - echo "DISABLE_ESLINT_PLUGIN=true" | cat >> .env.local
               - echo "REACT_APP_API_URL=${PORTAL_API_URL}" | cat >> .env.local
+              - echo "REACT_APP_ENV=test" | cat >> .env.local
               - docker build -t $IMAGE:$TAG .
               - aws configure set aws_access_key_id "${AWS_ACCESS_KEY_TEST}"
               - aws configure set aws_secret_access_key "${AWS_SECRET_ACCESS_KEY_TEST}"
@@ -92,6 +94,7 @@ pipelines:
               - touch .env.local
               - echo "DISABLE_ESLINT_PLUGIN=true" | cat >> .env.local
               - echo "REACT_APP_API_URL=${PORTAL_API_URL}" | cat >> .env.local
+              - echo "REACT_APP_ENV=prod" | cat >> .env.local
               - docker build -t $IMAGE:$TAG .
               - aws configure set aws_access_key_id "${AWS_ACCESS_KEY}"
               - aws configure set aws_secret_access_key "${AWS_SECRET_ACCESS_KEY}"
