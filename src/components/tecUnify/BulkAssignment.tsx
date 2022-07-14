@@ -2,26 +2,14 @@ import { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Button, Checkbox, List, Input, Skeleton } from 'antd';
 import { CaretDownOutlined } from '@ant-design/icons';
-import * as H from 'history';
 
 import { useFetchUsers } from './hooks/useFetch';
-import useFilter from './hooks/useFilter';
-import { App, Page, PaginationApiRes, User } from './types';
+import { useFetch } from './hooks/useUnifyFetch';
+import { ConfiguredTemplate, Page, User } from './types';
 import { CheckboxValueType } from 'antd/lib/checkbox/Group';
-import { RouteComponentProps } from 'react-router-dom';
-
-interface BulkAssignmentProps extends RouteComponentProps {
-  location: PassedState;
-};
-
-interface PassedState extends H.Location {
-  state: {
-    activeList: App[]
-  };
-};
 
 const initialPState: Page = {
-  current: 1,
+  start: 1,
   limit: 10
 };
 
@@ -29,8 +17,7 @@ const { Search } = Input;
 
 function PascalCase(s: string) { return s.charAt(0).toUpperCase() + s.substring(1).toLowerCase(); }
 
-// TODO: list styling better
-function BulkAssignment(props: BulkAssignmentProps) {
+function BulkAssignment() {
   const [userPage, setUserPage] = useState(initialPState);
   const [appPage, setAppPage] = useState(initialPState);
   const [appSelection, setAppSelection] = useState<CheckboxValueType[]>([]);
@@ -38,25 +25,12 @@ function BulkAssignment(props: BulkAssignmentProps) {
   const history = useHistory();
 
   const { userList, resetFilter, isFetching } = useFetchUsers(userPage);
-
-  // TODO: Determine a better way of reseting any data filtered by the useFilter hook
-  // should be fairly generic, use across maybe different data types(possibily)
-
-  const {
-    filteredData: filteredApps,
-    updateFilter: updateAppFilter
-  } = useFilter<App[]>({
-    list: props.location.state.activeList,
-    filterOn: 'display_name'
+  const { data, isFetching: isFetchingTemplates } = useFetch<ConfiguredTemplate>({
+    template: 'Configured',
+    page: { start: 1, limit: 10 }
   });
+  const isFetchingBoth = isFetching || isFetchingTemplates;
 
-  const {
-    filteredData: filteredUsers,
-    updateFilter: updateUserFilter
-  } = useFilter<PaginationApiRes>({
-    list: userList,
-    filterOn: 'first_name'
-  });
 
   function handleCheckBox(id: CheckboxValueType[], isUser: boolean) {
     console.log(id);
@@ -82,7 +56,6 @@ function BulkAssignment(props: BulkAssignmentProps) {
         <ListSubHeader
           leftText="Users"
           rightText="Status"
-          onSearch={updateUserFilter}
           key='users'
         />
 
@@ -95,10 +68,10 @@ function BulkAssignment(props: BulkAssignmentProps) {
             pagination={{
               onChange: (pageNum) => setUserPage(currPage => { return { ...currPage, current: pageNum } }),
               pageSize: userPage.limit,
-              total: userList.total_items,
+              total: userList?.total_items,
               size: 'small'
             }}
-            dataSource={userList.results}
+            dataSource={userList?.results}
             renderItem={(user: User) => ListItem(user)}
           />
         </Checkbox.Group>
@@ -116,7 +89,6 @@ function BulkAssignment(props: BulkAssignmentProps) {
 
         <ListSubHeader
           leftText="Applications"
-          onSearch={updateAppFilter}
           key='application'
         />
 
@@ -129,10 +101,10 @@ function BulkAssignment(props: BulkAssignmentProps) {
             pagination={{
               onChange: pageNum => setAppPage(currPage => { return { ...currPage, current: pageNum } }),
               pageSize: appPage.limit,
-              total: filteredApps.length,
+              total: data?.total_items,
               size: 'small'
             }}
-            dataSource={filteredApps}
+            dataSource={data?.results}
             renderItem={(app) => <ListItem {...app} />}
           />
         </Checkbox.Group>
@@ -140,16 +112,16 @@ function BulkAssignment(props: BulkAssignmentProps) {
     );
   }
 
-  function ListItem(item: App | User) {
+  function ListItem(item: ConfiguredTemplate | User) {
     const isUser = 'idp_user_id' in item;
     return (
       <List.Item
         className='BulkAssignment-ListItems'
       >
         <Checkbox
-          value={isUser ? item.uid : item.app_id}
+          value={item.uid}
           style={{ marginLeft: '7px', alignSelf: 'center' }}
-          checked={isUser ? userSelection.includes(item.uid) : appSelection.includes(item.app_id)}
+          checked={isUser ? userSelection.includes(item.uid) : appSelection.includes(item.uid)}
         />
 
         <h4 style={{ alignSelf: 'center', marginBottom: '0px', marginRight: 'auto' }}>
@@ -157,7 +129,7 @@ function BulkAssignment(props: BulkAssignmentProps) {
             isUser ?
               item.first_name + ' ' + item.last_name
               :
-              item.display_name
+              item.name
           }
         </h4>
 
@@ -173,11 +145,10 @@ function BulkAssignment(props: BulkAssignmentProps) {
 
   const ResetButton = <Button onClick={resetFilter} type='link' size='small'>reset</Button>;
 
-  function ListSubHeader({ leftText = "", rightText = "", onSearch }) {
+  function ListSubHeader({ leftText = "", rightText = "", }) {
     return (
       <>
         <Search
-          onSearch={onSearch}
           style={{ padding: '7px' }}
           size='small'
           width='fill'
@@ -209,21 +180,21 @@ function BulkAssignment(props: BulkAssignmentProps) {
       </div>
 
       <div className='Content-ComponentView'>
-        <Skeleton loading={isFetching} className={`${isFetching && "_Padding"}`}>
-          <div className='BulkAssignment'>
-            <Button
-              className='Content-ContainerButton'
-              type='primary'
-              size='middle'
-            >
-              Next
-            </Button>
-            <div className='BulkAssignment-ListGroup'>
+        <div className='BulkAssignment'>
+          <Button
+            className='Content-ContainerButton'
+            type='primary'
+            size='middle'
+          >
+            Next
+          </Button>
+          <div className='BulkAssignment-ListGroup'>
+            <Skeleton loading={isFetchingBoth} className={`${isFetchingBoth && "_Padding"}`}>
               <ApplicationList />
               <UserList />
-            </div>
+            </Skeleton>
           </div>
-        </Skeleton>
+        </div>
       </div>
     </>
   );

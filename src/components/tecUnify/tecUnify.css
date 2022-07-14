@@ -28,12 +28,6 @@
     text-align: center;
 }
 
-.Form-SubItemCard {
-    box-shadow: 0 4px 8px 0 rgba(0 0 0 / 20%);
-    border: 1px solid #d7d7dc;
-    padding: 4px;
-}
-
 .AppSettings {
     display: flex;
     flex-direction: column;
@@ -118,67 +112,8 @@
 }
 
 .AppList {
-    display: flex;
-    flex: 1 1 auto;
-    flex-wrap: wrap;
-    padding: 10px;
-    gap: 10px;
-    list-style: none;
-}
-
-.AppList-Item, .AppList-Card, .AppList-Banner {
-    display: flex;
-    padding: 3px;
-    border: 1px solid #d7d7dc;
-    box-shadow: 0 3px 6px rgb(33 33 38 / 25%);
-    border-radius: 2px;
-}
-
-.AppList-Banner {
-    align-items: center;
-}
-
-.AppList-Card {
-    width: 20%;
-    height: 50%;
-    transition: transform .2s;
-}
-
-.AppList-CardHeader {
-    font-size: 1.5rem;
-}
-
-.AppList-CardBody {
-    display: flex;
-    flex-direction: column;
-}
-
-.AppList-CardHeader_ImgSize {
-    width: 50%;
-}
-
-@media (max-width: 1000px) {
-    .AppList-CardHeader > img {
-        display: none;
-    }
-}
-
-.AppList-Card:hover {
-    transform: scale(1.01);
-}
-
-.AppList-Banner > a {
-    margin: 0 auto 0 0;
-    color: black;
-    transition: all .3s linear;
-}
-
-.AppList-Banner > a:hover {
-    color: var(--ant-primary-color);
-}
-
-.AppList-Banner > img:hover {
-    cursor: pointer;
+    margin: 5px;
+    width: 100%;
 }
 
 .Content-HeaderContainer, .Content-SubHeader {
@@ -189,17 +124,6 @@
     padding: 10px;
     gap: 10px;
     width: 100%;
-}
-
-.FakeTabs {
-    display: flex;
-    width: 100%;
-    gap: 20px;
-    border-bottom: 1px solid #d7d7dc;
-}
-
-.FakeTabs > .Content-HeaderContainer {
-    border-bottom: 0px;
 }
 
 .Content-HeaderTasks {

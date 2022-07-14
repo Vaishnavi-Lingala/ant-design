@@ -1,15 +1,51 @@
-export type App = Config & Template;
+import { FormItemProps, InputNumberProps, RadioProps, SelectProps } from "antd";
+import { FormItemInputProps } from "antd/lib/form/FormItemInput";
+import { ValidateMessages } from "rc-field-form/lib/interface";
+
 export type Domains = string[];
 
 export interface AppList {
-  active: App[];
-  inactive: App[];
+  active: (MasterTemplate | ConfiguredTemplate)[];
+  inactive: (MasterTemplate | ConfiguredTemplate)[];
+}
+
+export interface ConfiguredTemplate extends MasterTemplate {
+  account_id: number,
+  template_master_id: number
+}
+
+export interface MasterTemplate {
+  id: number,
+  uid: string,
+  name: string,
+  template_type: string,
+  template: JSON,
+  active: boolean
 }
 
 export interface ApiResError {
   errorCauses: string[];
   errorCode: string;
   errorSummary: string;
+}
+
+interface HeadingProps {
+  label: string;
+  type: 'heading';
+}
+
+interface CustomRenderProps {
+  type: 'custom';
+  render: JSX.Element
+}
+
+type FormItem = FormItemProps | FormItemInputProps |
+  RadioProps | SelectProps | InputNumberProps | HeadingProps | CustomRenderProps;
+
+export interface FormArgs {
+  formTitle: string;
+  validationMessages?: ValidateMessages;
+  formItems: FormItem[];
 }
 
 export interface TimeoutOptions {
@@ -28,111 +64,13 @@ export interface FilterType {
   updated: boolean;
 }
 
-export interface ControlName {
-  x: number;
-  deleted: boolean;
-  line: string;
-  action_type: number;
-  wait_time: number;
-  rect: string;
-  flt: string;
-  rect_name: string;
-  action_name: string;
-  wrdname: string;
-  force: boolean;
-  id: number;
-  udf: string;
-  ord: number;
-  block: string;
-  template_id: number;
-  txvalue: string;
-  para: string;
-  txname: string;
-  y: number;
-}
-
-export interface Template {
-  file_path: string;
-  operator_value: number;
-  url: string;
-  check_window: string;
-  logo: string;
-  deleted: boolean;
-  path: string;
-  retry_count: number;
-  app_id: string;
-  udf: string;
-  display: boolean;
-  single_instance: boolean;
-  published_app_name: string;
-  desktop_args: string;
-  app_name: string;
-  app_type_name: string;
-  wait_time: number;
-  template_type_name: string;
-  template_type: number;
-  display_name: string;
-  app_type: number;
-  id: number;
-  launch_required: boolean;
-  domain: string;
-  window_title: string;
-  browserapp: string;
-  operator_value_name: string;
-}
-
-export interface Config {
-  min2tray: boolean;
-  tab_name: string;
-  signalR_command: string;
-  tap_out_activity: string;
-  rfid_reader: string;
-  tecverify_url: string;
-  sequence_launch_flag: boolean;
-  pic_path: string;
-  tap_seq: string;
-  browser_session_flag: boolean;
-  tenant_url: string;
-  install_token: string;
-  memo: string;
-  remember_me_flag: boolean;
-  kiosk: boolean;
-  ocr_words: string;
-  ocr_PageSegmentationMode: string;
-  config_deleted: boolean;
-  xref_id: number;
-  udf: string;
-  ocr_EngineMode: string;
-  ocr_TesseractVersion: string;
-  theme: string;
-  xref_deleted: boolean;
-  signalR_user: string;
-  app_idle_time: number;
-  ocr_path: string;
-  active: boolean;
-  delay_loop: number;
-  template_id: number;
-  auto_launch_flag: boolean;
-  signalR_end_point: string;
-  ad_intergrated: boolean;
-  config_id: number;
-  min_browser: boolean;
-  ocr_fast: string;
-  tap_seq_name: string;
-  pipe_name: string;
-  signalR_reg_code: string;
-  debug: boolean;
-  account_id: number;
-  signalR_hub: string;
-}
-
-export interface PaginationApiRes {
+export interface PaginationApiRes<T> {
   items_on_page: number;
   items_per_page: number;
   next: string;
   page: number;
   previous: string;
-  results: User[];
+  results: T[];
   total_items: number;
 }
 
@@ -165,27 +103,6 @@ export interface User {
 }
 
 export interface Page {
-  current: number;
+  start: number;
   limit: number;
-}
-
-export interface AppFormProps {
-  showModal: boolean;
-  toggleModal: () => void;
-}
-
-type InputType = 'input' | 'select' | 'checkbox' | 'numeric' | 'heading' | 'radio';
-
-interface FormItemChildren extends AdditionalItemProps {
-  dependant?: string;
-}
-
-interface AdditionalItemProps {
-  type: InputType;
-  children?: FormItemChildren[] | React.ReactNode;
-}
-
-export interface FormArgs {
-  form_title: string;
-  form_items: AdditionalItemProps[]
 }

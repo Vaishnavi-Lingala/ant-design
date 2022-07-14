@@ -2,38 +2,15 @@ import { useEffect, useState } from 'react';
 import { openNotification } from "../../Layout/Notification";
 import ApiService from "../../../Api.service"
 import ApiUrls from '../../../ApiUtils';
-import type { PaginationApiRes, TimeoutOptions, Page, ApiResError, Domains } from '../types';
+import type { PaginationApiRes, TimeoutOptions, Page, ApiResError, Domains, User } from '../types';
 
-// TODO: Move into single hook, allow hook user to supply a string referencing which fetch
-// that they would like to use. (Generics!)
-
-const initUserList: PaginationApiRes = {
-  items_on_page: 0,
-  items_per_page: 0,
-  next: '',
-  page: 0,
-  previous: '',
-  results: [],
-  total_items: 0
-};
-
-const initOptions: TimeoutOptions = {
-  FIFTEEN_MINUTES: "",
-  FIVE_MINUTES: "",
-  NINETY_MINUTES: "",
-  ONE_TWENTY_MINUTES: "",
-  SIXTY_MINUTES: "",
-  TEN_MINUTES: "",
-  THIRTY_MINUTES: ""
-}
-
-async function getUsersList({ current, limit }: Page) {
-  const res: PaginationApiRes | ApiResError = await ApiService
+async function getUsersList(page: Page) {
+  const res: PaginationApiRes<User> | ApiResError = await ApiService
     .get(ApiUrls
       .users(localStorage.getItem('accountId')),
-      { start: current, limit: limit });
+      page
+    );
 
-  // Type gaurd, narrowing the type down and also ensuring we throw a rejected promise 
   if ('errorSummary' in res)
     return Promise.reject(res)
 
@@ -62,7 +39,7 @@ async function getTimeoutOptions() {
 }
 
 export function useFetchTimeout() {
-  const [timeoutOptions, setOptions] = useState<TimeoutOptions>(initOptions);
+  const [timeoutOptions, setOptions] = useState<TimeoutOptions>();
   const [isFetching, toggleFetching] = useState(true);
 
   useEffect(() => {
@@ -82,7 +59,7 @@ export function useFetchTimeout() {
 }
 
 export function useFetchUsers(userPage: Page) {
-  const [userList, setUserList] = useState<PaginationApiRes>(initUserList);
+  const [userList, setUserList] = useState<PaginationApiRes<User>>();
   const [isFetching, toggleFetching] = useState(true);
 
   useEffect(() => {
@@ -95,7 +72,6 @@ export function useFetchUsers(userPage: Page) {
         console.error('Error: ', error);
         openNotification('error', `Error fetching list of users: ${error.errorSummary}`);
       });
-
   }, [userPage]);
 
   // Hard reset of the filter(searchbox and checkboxes) by way of returning

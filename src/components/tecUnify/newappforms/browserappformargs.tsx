@@ -1,11 +1,17 @@
+import { FormArgs } from "../types";
 import { UserCredentials, SelectTermination } from "./FormComponents";
 
-export const formArgs = {
-  form_title: 'Configure Browser App',
-  form_items: [
+const formArgs: FormArgs = {
+  formTitle: 'Configure Browser App',
+  formItems: [
+    {
+      label: 'Name',
+      name: 'name',
+      type: 'input'
+    },
     {
       label: 'Browser',
-      name: 'browser',
+      name: ['template', 'browser'],
       type: 'select',
       rules: [
         {
@@ -29,12 +35,12 @@ export const formArgs = {
     },
     {
       label: 'Window Title',
-      name: 'window_title',
+      name: ['template', 'window_title'],
       type: 'input'
     },
     {
       label: 'App Url',
-      name: 'app_url',
+      name: ['template', 'app_url'],
       type: 'input',
       rules: [
         {
@@ -44,7 +50,7 @@ export const formArgs = {
     },
     {
       label: 'Wait Time',
-      name: 'wait_time',
+      name: ['template', 'wait_time'],
       type: 'numeric',
       initialValue: 0,
       step: 100,
@@ -53,7 +59,7 @@ export const formArgs = {
     },
     {
       label: 'Termination Method',
-      name: 'termination_method',
+      name: ['template', 'termination_method'],
       type: 'radio',
       options: [
         {
@@ -80,3 +86,5 @@ export const formArgs = {
     },
   ]
 };
+
+export default formArgs;

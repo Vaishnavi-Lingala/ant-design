@@ -2,29 +2,58 @@ import { useState } from 'react';
 import { Modal, Radio, Input, InputNumber, Form, Select, Checkbox, FormItemProps } from 'antd';
 import { CloseOutlined, LoadingOutlined } from '@ant-design/icons';
 
-import { formArgs } from './browserappformargs';
-import { AppFormProps } from '../types';
+import { ApiResError, FormArgs } from '../types';
+import ApiService from '../../../Api.service';
+import ApiUrls from '../../../ApiUtils';
+import { openNotification } from '../../Layout/Notification';
 
-function AppFormRenderer({ showModal, toggleModal }: AppFormProps) {
+export interface AppFormProps {
+  showModal: boolean;
+  toggleModal: () => void;
+  formArgs?: FormArgs;
+  appUID?: string;
+}
+
+function AppFormRenderer({ showModal, toggleModal, formArgs, appUID }: AppFormProps) {
   const [isValidating, toggleValidating] = useState(false);
   const [form] = Form.useForm();
 
+  if (formArgs === undefined) {
+    return <></>
+  }
+
   function onOk() {
-    // Async function, will wait to close modal until validation is complete and
-    // the fields have been sucessfully sent
     toggleValidating(true);
     form
       .validateFields()
       .then(values => {
-        console.log("onOk", values)
-        form.resetFields()
         toggleValidating(false);
-        toggleModal();
+
+        // addTemplate(values)
+        //   .then((res) => console.log('On Ok', res))
+        //   .catch((err: ApiResError) => {
+        //     console.error(err)
+        //     openNotification('error', 'Error sending data to server.');
+        //   });
       })
-      .catch(err => {
+      .catch((err: ApiResError) => {
         toggleValidating(false);
         console.error('Validate Failed:', err);
       });
+  }
+
+  async function addTemplate(values: any) {
+    const accountId = localStorage.getItem('accountId');
+
+    if (appUID !== undefined && accountId !== null) {
+      const res = await ApiService
+        .post(ApiUrls.addTemplate(accountId, appUID), values)
+
+      if ('errorSummary' in res)
+        throw res;
+
+      return res;
+    }
   }
 
   function onCancel() {
@@ -43,7 +72,6 @@ function AppFormRenderer({ showModal, toggleModal }: AppFormProps) {
         }
         initialValue={initialValue && initialValue}
         name={name}
-        key={name as any}
         rules={rules}
         children={children}
       />
@@ -62,21 +90,16 @@ function AppFormRenderer({ showModal, toggleModal }: AppFormProps) {
         )
 
       case 'select':
-
         return (
           <FormItemWrapper {...args}>
-            <Select
-              options={args.options}
-            />
+            <Select options={args.options} />
           </FormItemWrapper>
         );
 
       case 'radio':
         return (
           <FormItemWrapper {...args}>
-            <Radio.Group
-              options={args.options}
-            />
+            <Radio.Group options={args.options} />
           </FormItemWrapper>
         );
 
@@ -113,7 +136,7 @@ function AppFormRenderer({ showModal, toggleModal }: AppFormProps) {
 
   return (
     <Modal
-      title={<span className='Modal-Header'>{formArgs.form_title}</span>}
+      title={<span className='Modal-Header'>{formArgs.formTitle}</span>}
       closeIcon={<CloseOutlined />}
       maskClosable={false}
       centered
@@ -121,6 +144,7 @@ function AppFormRenderer({ showModal, toggleModal }: AppFormProps) {
       onOk={onOk}
       onCancel={onCancel}
       okText={isValidating ? <LoadingOutlined /> : 'Add'}
+      destroyOnClose
     >
       <Form
         name='NewApp'
@@ -129,13 +153,10 @@ function AppFormRenderer({ showModal, toggleModal }: AppFormProps) {
         autoComplete='off'
         size='small'
         form={form}
+        validateMessages={formArgs.validationMessages}
         requiredMark={false}
       >
-        {
-          formArgs.form_items.map((args) =>
-            <InputSelect {...args} />
-          )
-        }
+        {formArgs.formItems.map((args) => <InputSelect {...args}/>)}
       </Form>
     </Modal>
   );

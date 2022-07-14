@@ -11,7 +11,7 @@ export function UserCredentials() {
     <>
       <Form.Item
         label={<span className='Modal-FormLabel'>Same as Windows account</span>}
-        name='same_credentials'
+        name={['template', 'same_credentials']}
         valuePropName='checked'
       >
         <Checkbox />
@@ -24,25 +24,25 @@ export function UserCredentials() {
         {
           ({ getFieldValue }) => {
             return (
-              <Form.Item noStyle hidden={getFieldValue('same_credentials')}>
-                <Form.Item
-                  label={<span className='Modal-FormLabel'>Username</span>}
-                  name='username'
-                  children={<Input />}
-                  rules={[{ required: true }]}
-                />
+              <Form.Item noStyle hidden={getFieldValue(['template', 'same_credentials'])}>
+        <Form.Item
+          label={<span className='Modal-FormLabel'>Username</span>}
+          name={['template', 'username']}
+          children={<Input />}
+          rules={[{ required: true }]}
+        />
 
-                <Form.Item
-                  label={<span className='Modal-FormLabel'>Password</span>}
-                  name='password'
-                  children={<Input />}
-                  rules={[{ required: true }]}
-                />
-              </Form.Item>
-            );
+        <Form.Item
+          label={<span className='Modal-FormLabel'>Password</span>}
+          name={['template', 'password']}
+          children={<Input />}
+          rules={[{ required: true }]}
+        />
+      </Form.Item>
+      );
           }
         }
-      </Form.Item>
+    </Form.Item>
     </>
   );
 }
@@ -55,7 +55,7 @@ export function SelectTermination() {
         return (
           <Form.Item
             label={<span className='Modal-FormLabel'>Process Name*</span>}
-            name='process_name'
+            name={['template', 'process_name']}
             rules={[{ required: true }]}
             children={<Input />}
           />
@@ -65,7 +65,7 @@ export function SelectTermination() {
         return (
           <Form.Item
             label={<span className='Modal-FormLabel'>Window Title*</span>}
-            name='window_title'
+            name={['template', 'window_title']}
             rules={[{ required: true }]}
             children={<Input />}
           />
@@ -80,7 +80,7 @@ export function SelectTermination() {
       noStyle
       shouldUpdate={(prev, curr) => prev !== curr}
     >
-      {({ getFieldValue }) => FieldSwitch(getFieldValue('termination_method'))}
+      {({ getFieldValue }) => FieldSwitch(getFieldValue(['template', 'termination_method']))}
     </Form.Item>
   );
 }
@@ -94,7 +94,7 @@ export function SelectResource() {
         return (
           <Form.Item
             label={<span className='Modal-FormLabel'>Published App Name*</span>}
-            name='published_app_name'
+            name={['template', 'published_app_name']}
             rules={[{ required: true }]}
             children={<Input />}
           />
@@ -104,7 +104,7 @@ export function SelectResource() {
         return (
           <Form.Item
             label={<span className='Modal-FormLabel'>App Name*</span>}
-            name='app_name'
+            name={['template', 'app_name']}
             rules={[{ required: true }]}
             children={<Input />}
           />
@@ -119,7 +119,7 @@ export function SelectResource() {
       noStyle
       shouldUpdate={(prev, curr) => prev !== curr}
     >
-      {({ getFieldValue }) => FieldSwitch(getFieldValue('resource_type'))}
+      {({ getFieldValue }) => FieldSwitch(getFieldValue(['template', 'resource_type']))}
     </Form.Item>
   );
 }
@@ -131,7 +131,7 @@ export function SelectDomain() {
   return (
     <Form.Item
       label={<span className='Modal-FormLabel'>Domain</span>}
-      name='domain'
+      name={['template', 'domain']}
     >
       <Select
         loading={fetchingDomains}

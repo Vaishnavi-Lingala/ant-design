@@ -1,5 +1,6 @@
 import { SelectDomain, SelectResource } from './FormComponents';
 import type { Rule } from 'antd/lib/form';
+import { FormArgs } from '../types';
 
 // RegExp matches urls to the format specified by Citrix 'https://StoreFront.domain.com/Citrix/Store'
 const storefrontRules: Rule = {
@@ -15,19 +16,29 @@ const overrideMessages = {
   }
 };
 
-export const formArgs = {
-  form_title: 'Configure Citrix VDI App',
+const formArgs: FormArgs = {
+  formTitle: 'Configure Citrix VDI App',
   validationMessages: overrideMessages,
-  form_items: [
+  formItems: [
+    {
+      label: 'Name',
+      name: 'name',
+      type: 'input',
+      rules: [
+        {
+          required: true
+        }
+      ]
+    },
     {
       label: 'Citrix Storefront URL',
-      name: 'url',
+      name: ['template', 'url'],
       type: 'input',
       rules: [storefrontRules]
     },
     {
       label: 'Citrix PNA Store URL',
-      name: 'path',
+      name: ['template', 'path'],
       type: 'input',
       rules: [
         {
@@ -37,17 +48,17 @@ export const formArgs = {
     },
     {
       label: 'Citrix Gateway URL',
-      name: 'gateway_url',
+      name: ['template', 'gatway_url'],
       type: 'input',
     },
     {
       label: 'Window Title',
-      name: 'window_title',
+      name: ['template', 'window_title'],
       type: 'input',
     },
     {
       label: 'Resource Type',
-      name: 'resource_type',
+      name: ['template', 'resource_type'],
       type: 'radio',
       rules: [
         {
@@ -75,3 +86,5 @@ export const formArgs = {
     }
   ]
 };
+
+export default formArgs;
