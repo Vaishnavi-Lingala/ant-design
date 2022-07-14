@@ -9,71 +9,109 @@ definitions:
 pipelines:
   branches:
       dev:
-      - step:
-          services:
-            - docker
-          size: 2x
-          caches:
-            - pip
-          script:
-            - pip3 install awscli
-            - pip3 install envsubst
-            - IMAGE="${ACCOUNT_NUMBER_DEV}.dkr.ecr.us-east-1.amazonaws.com/credenti-admin-portal"
-            - TAG="${BITBUCKET_BUILD_NUMBER}"
-            - touch .env.local
-            - echo "DISABLE_ESLINT_PLUGIN=true" | cat >> .env.local
-            - echo "REACT_APP_API_URL=${PORTAL_API_URL}" | cat >> .env.local
-            - docker build -t $IMAGE:$TAG .
-            - aws configure set aws_access_key_id "${AWS_ACCESS_KEY_DEV}"
-            - aws configure set aws_secret_access_key "${AWS_SECRET_ACCESS_KEY_DEV}"
-            - eval $(aws ecr get-login --no-include-email --region us-east-1 | sed 's;https://;;g')
-            - docker push $IMAGE:$TAG
-            - export BUILD_NUMBER="${BITBUCKET_BUILD_NUMBER}"
-            - export ACCOUNT_NUMBER="${ACCOUNT_NUMBER_DEV}"
-            - export NAMESPACE=ct-dev
-            - envsubst <deployment.yml >credenti-deployment.yaml
-            - pipe: atlassian/aws-eks-kubectl-run:2.2.0
-              variables:
-                AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_DEV}
-                AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY_DEV}
-                AWS_DEFAULT_REGION: "us-east-1"
-                CLUSTER_NAME: ${AWS_CLUSTER_DEV}
-                KUBECTL_COMMAND: "apply"
-                RESOURCE_PATH: "credenti-deployment.yaml"
-                DEBUG: "true"
+        - step:
+            services:
+              - docker
+            size: 2x
+            caches:
+              - pip
+            script:
+              - pip3 install awscli
+              - pip3 install envsubst
+              - IMAGE="${ACCOUNT_NUMBER_DEV}.dkr.ecr.us-east-1.amazonaws.com/credenti-admin-portal"
+              - TAG="${BITBUCKET_BUILD_NUMBER}"
+              - touch .env.local
+              - echo "DISABLE_ESLINT_PLUGIN=true" | cat >> .env.local
+              - echo "REACT_APP_API_URL=${PORTAL_API_URL}" | cat >> .env.local
+              - echo "REACT_APP_ENV=dev" | cat >> .env.local
+              - docker build -t $IMAGE:$TAG .
+              - aws configure set aws_access_key_id "${AWS_ACCESS_KEY_DEV}"
+              - aws configure set aws_secret_access_key "${AWS_SECRET_ACCESS_KEY_DEV}"
+              - eval $(aws ecr get-login --no-include-email --region us-east-1 | sed 's;https://;;g')
+              - docker push $IMAGE:$TAG
+              - export BUILD_NUMBER="${BITBUCKET_BUILD_NUMBER}"
+              - export ACCOUNT_NUMBER="${ACCOUNT_NUMBER_DEV}"
+              - export NAMESPACE=ct-dev
+              - envsubst <deployment.yml >credenti-deployment.yaml
+              - pipe: atlassian/aws-eks-kubectl-run:2.2.0
+                variables:
+                  AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_DEV}
+                  AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY_DEV}
+                  AWS_DEFAULT_REGION: "us-east-1"
+                  CLUSTER_NAME: ${AWS_CLUSTER_DEV}
+                  KUBECTL_COMMAND: "apply"
+                  RESOURCE_PATH: "credenti-deployment.yaml"
+                  DEBUG: "true"
       test:
-      - step:
-          deployment: test
-          services:
-            - docker
-          size: 2x
-          caches:
-            - pip
-          script:
-            - pip3 install awscli
-            - pip3 install envsubst
-            - IMAGE="${ACCOUNT_NUMBER_TEST}.dkr.ecr.us-east-1.amazonaws.com/credenti-admin-portal"
-            - TAG="${BITBUCKET_BUILD_NUMBER}"
-            - touch .env.local
-            - echo "DISABLE_ESLINT_PLUGIN=true" | cat >> .env.local
-            - echo "REACT_APP_API_URL=${PORTAL_API_URL}" | cat >> .env.local
-            - docker build -t $IMAGE:$TAG .
-            - aws configure set aws_access_key_id "${AWS_ACCESS_KEY_TEST}"
-            - aws configure set aws_secret_access_key "${AWS_SECRET_ACCESS_KEY_TEST}"
-            - eval $(aws ecr get-login --no-include-email --region us-east-1 | sed 's;https://;;g')
-            - docker push $IMAGE:$TAG
-            - export BUILD_NUMBER="${BITBUCKET_BUILD_NUMBER}"
-            - export ACCOUNT_NUMBER="${ACCOUNT_NUMBER_TEST}"
-            - export NAMESPACE=ct-test
-            - envsubst <deployment.yml >credenti-deployment.yaml
-            - pipe: atlassian/aws-eks-kubectl-run:2.2.0
-              variables:
-                AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_TEST}
-                AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY_TEST}
-                AWS_DEFAULT_REGION: "us-east-1"
-                CLUSTER_NAME: ${AWS_CLUSTER_TEST}
-                KUBECTL_COMMAND: "apply"
-                RESOURCE_PATH: "credenti-deployment.yaml"
-                DEBUG: "true"
+        - step:
+            deployment: test
+            services:
+              - docker
+            size: 2x
+            caches:
+              - pip
+            script:
+              - pip3 install awscli
+              - pip3 install envsubst
+              - IMAGE="${ACCOUNT_NUMBER_TEST}.dkr.ecr.us-east-1.amazonaws.com/credenti-admin-portal"
+              - TAG="${BITBUCKET_BUILD_NUMBER}"
+              - touch .env.local
+              - echo "DISABLE_ESLINT_PLUGIN=true" | cat >> .env.local
+              - echo "REACT_APP_API_URL=${PORTAL_API_URL}" | cat >> .env.local
+              - echo "REACT_APP_ENV=test" | cat >> .env.local
+              - docker build -t $IMAGE:$TAG .
+              - aws configure set aws_access_key_id "${AWS_ACCESS_KEY_TEST}"
+              - aws configure set aws_secret_access_key "${AWS_SECRET_ACCESS_KEY_TEST}"
+              - eval $(aws ecr get-login --no-include-email --region us-east-1 | sed 's;https://;;g')
+              - docker push $IMAGE:$TAG
+              - export BUILD_NUMBER="${BITBUCKET_BUILD_NUMBER}"
+              - export ACCOUNT_NUMBER="${ACCOUNT_NUMBER_TEST}"
+              - export NAMESPACE=ct-test
+              - envsubst <deployment.yml >credenti-deployment.yaml
+              - pipe: atlassian/aws-eks-kubectl-run:2.2.0
+                variables:
+                  AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_TEST}
+                  AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY_TEST}
+                  AWS_DEFAULT_REGION: "us-east-1"
+                  CLUSTER_NAME: ${AWS_CLUSTER_TEST}
+                  KUBECTL_COMMAND: "apply"
+                  RESOURCE_PATH: "credenti-deployment.yaml"
+                  DEBUG: "true"
+  custom:
+      production:
+        - step:
+            deployment: production
+            services:
+              - docker
+            size: 2x
+            caches:
+              - pip
+            script:
+              - pip3 install awscli
+              - pip3 install envsubst
+              - IMAGE="${ACCOUNT_NUMBER}.dkr.ecr.us-east-1.amazonaws.com/credenti-admin-portal"
+              - TAG="${BITBUCKET_BUILD_NUMBER}"
+              - touch .env.local
+              - echo "DISABLE_ESLINT_PLUGIN=true" | cat >> .env.local
+              - echo "REACT_APP_API_URL=${PORTAL_API_URL}" | cat >> .env.local
+              - echo "REACT_APP_ENV=prod" | cat >> .env.local
+              - docker build -t $IMAGE:$TAG .
+              - aws configure set aws_access_key_id "${AWS_ACCESS_KEY}"
+              - aws configure set aws_secret_access_key "${AWS_SECRET_ACCESS_KEY}"
+              - eval $(aws ecr get-login --no-include-email --region us-east-1 | sed 's;https://;;g')
+              - docker push $IMAGE:$TAG
+              - export BUILD_NUMBER="${BITBUCKET_BUILD_NUMBER}"
+              - export ACCOUNT_NUMBER="${ACCOUNT_NUMBER}"
+              - export NAMESPACE=ct-prod
+              - envsubst <deployment.yml >credenti-deployment.yaml
+              - pipe: atlassian/aws-eks-kubectl-run:2.2.0
+                variables:
+                  AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY}
+                  AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+                  AWS_DEFAULT_REGION: "us-east-1"
+                  CLUSTER_NAME: ${AWS_CLUSTER}
+                  KUBECTL_COMMAND: "apply"
+                  RESOURCE_PATH: "credenti-deployment.yaml"
+                  DEBUG: "true"
             
             
