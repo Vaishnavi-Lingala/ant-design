@@ -19,8 +19,6 @@ export const hiddenFields = {
         'account_id',
         'x_client',
         'reader_serial',
-        'reader_type',
-        'reader_name',
         'uid',
         'machine_type'
     ],
@@ -62,6 +60,11 @@ export const userFieldNames = {
     "login_domain": "Login domain"
 }
 
+export const readerDisplayNames = {
+    "PCSCREADER": "PC/SC",
+    "PCPROXREADER": "rf IDEAS"
+}
+
 // Field in activity logs are displayed in this order with the below names
 export const logFieldNames = {
     uid: "UID",
@@ -76,11 +79,11 @@ export const logFieldNames = {
         "public_ip": "Public IP",
         "local_ip": "Last Known IP",
         "group_type": "Group type",
+        "reader_type": "Reader type",
         "os": "OS",
         "x_client": "X client",
         "reader_serial": "Reader serial",
         "account_id": "Account ID",
-        "reader_type": "Reader type",
         "reader_name": "Reader name"
     },
     activity: {
