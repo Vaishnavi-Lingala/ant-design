@@ -46,7 +46,7 @@ function Login() {
                         }).then((data) => {
                             setSelectedHeader(Directory);
                         }).catch((error) => {
-                            console.log(error);
+                            console.error(error);
                         })
                     }
                     else {
@@ -61,12 +61,12 @@ function Login() {
                     //@ts-ignore
                     setErrorMessage("Login failed due to an internal error");
                     setButtonLoading(false);
-                    console.log(data);
+                    console.error(data);
                 }
             }).catch((error) => {
                 setErrorMessage(error.message + ". Please contact Admin");
                 setButtonLoading(false);
-                console.log(error);
+                console.error(error);
             })
     }
 
@@ -86,8 +86,6 @@ function Login() {
             validateEmail();
         }
     }
-
-    console.log('Login authState: ', authState);
 
     function checkInvalid() {
         if ((email.length === 0 || !email.includes('@') || emailPrefix === "" || domain === "" ||
