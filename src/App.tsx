@@ -1,4 +1,4 @@
-import { Route, useHistory, Switch } from "react-router-dom";
+import { Redirect, Route, useHistory, Switch } from "react-router-dom";
 import { OktaAuth, toRelativeUrl } from "@okta/okta-auth-js";
 import { Security, LoginCallback, SecureRoute } from "@okta/okta-react";
 import { ConfigProvider } from "antd";
@@ -32,6 +32,13 @@ import GlobalPolicies from "./components/GlobalPolicies/GlobalPolicies";
 
 const oktaAuth = new OktaAuth(config.oidc);
 
+oktaAuth.tokenManager.on('expired', function (key, expiredToken) {
+    console.log('Token with key', key, ' has expired:');
+    console.log(expiredToken);
+    <Redirect to={"/"} />
+});
+
+
 function App() {
     const history = useHistory();
 
@@ -47,8 +54,13 @@ function App() {
         );
     };
 
+    const customAuthHandler = async () => {
+        console.log('CustomAuthHandler called');
+        <Redirect to={"/"} />
+      };
+
     return (
-        <Security oktaAuth={oktaAuth} restoreOriginalUri={restoreOriginalUri}>
+        <Security oktaAuth={oktaAuth} restoreOriginalUri={restoreOriginalUri} onAuthRequired={customAuthHandler}>
             <StoreProvider>
                 <Switch>
                     <Route path="/" exact component={Login} />
