@@ -3,7 +3,47 @@
  * describe the behavior in a formargs file and handle that in the form renderer
 */
 import { Select, Form, Input, Checkbox } from 'antd';
-import { useFetchDomains } from '../hooks/useFetch';
+
+import ApiUrls from '../../../ApiUtils';
+import { useFetch } from '../hooks/useFetch';
+import type { Domains } from '../types';
+
+function FieldSwitch(value: string) {
+  switch (value) {
+    case 'published_app_name':
+      return (
+        <Form.Item
+          label={<span className='Modal-FormLabel'>Published App Name*</span>}
+          name={['template', 'published_app_name']}
+          rules={[{ required: true }]}
+          children={<Input />}
+        />
+      )
+
+    case 'desktop_app_name':
+      return (
+        <Form.Item
+          label={<span className='Modal-FormLabel'>App Name*</span>}
+          name={['template', 'app_name']}
+          rules={[{ required: true }]}
+          children={<Input />}
+        />
+      )
+
+    case 'process_name':
+      return (
+        <Form.Item
+          label={<span className='Modal-FormLabel'>Process Name*</span>}
+          name={['template', 'process_name']}
+          rules={[{ required: true }]}
+          children={<Input />}
+        />
+      )
+
+    default:
+      return null;
+  }
+}
 
 // Browser App Specific
 export function UserCredentials() {
@@ -23,58 +63,67 @@ export function UserCredentials() {
       >
         {
           ({ getFieldValue }) => {
-            return (
-              <Form.Item noStyle hidden={getFieldValue(['template', 'same_credentials'])}>
-        <Form.Item
-          label={<span className='Modal-FormLabel'>Username</span>}
-          name={['template', 'username']}
-          children={<Input />}
-          rules={[{ required: true }]}
-        />
+            const notChecked = !getFieldValue(['template', 'same_credentials']);
 
-        <Form.Item
-          label={<span className='Modal-FormLabel'>Password</span>}
-          name={['template', 'password']}
-          children={<Input />}
-          rules={[{ required: true }]}
-        />
-      </Form.Item>
-      );
+            return (
+              <Form.Item noStyle hidden={!notChecked}>
+                <Form.Item
+                  label={
+                    <span className='Modal-FormLabel'>
+                      {`Username ${notChecked ? '*' : ''}`}
+                    </span>
+                  }
+                  name={['template', 'username']}
+                  children={<Input />}
+                  rules={[{ required: notChecked }]}
+                />
+
+                <Form.Item
+                  label={
+                    <span className='Modal-FormLabel'>
+                      {`Password ${notChecked ? '*' : ''}`}
+                    </span>
+                  }
+                  name={['template', 'password']}
+                  children={<Input.Password />}
+                  rules={[{ required: notChecked }]}
+                />
+
+                <Form.Item
+                  label={
+                    <span className='Modal-FormLabel'>
+                      {`Confirm Password ${notChecked ? '*' : ''}`}
+                    </span>
+                  }
+                  dependencies={['template', 'password']}
+                  name='confirm_password'
+                  children={<Input.Password />}
+                  rules={[
+                    {
+                      required: notChecked,
+                      message: 'Please Confirm your password!'
+                    },
+                    ({ getFieldValue }) => ({
+                      validator(_, value) {
+                        if (!value || getFieldValue(['template', 'password']) === value) {
+                          return Promise.resolve();
+                        }
+                        return Promise.reject(new Error('Passwords do not match!'))
+                      }
+                    })
+                  ]}
+                />
+
+              </Form.Item>
+            );
           }
         }
-    </Form.Item>
+      </Form.Item>
     </>
   );
 }
 
 export function SelectTermination() {
-
-  function FieldSwitch(value: string) {
-    switch (value) {
-      case 'process_name':
-        return (
-          <Form.Item
-            label={<span className='Modal-FormLabel'>Process Name*</span>}
-            name={['template', 'process_name']}
-            rules={[{ required: true }]}
-            children={<Input />}
-          />
-        )
-
-      case 'window_title':
-        return (
-          <Form.Item
-            label={<span className='Modal-FormLabel'>Window Title*</span>}
-            name={['template', 'window_title']}
-            rules={[{ required: true }]}
-            children={<Input />}
-          />
-        )
-      default:
-        return null;
-    }
-  }
-
   return (
     <Form.Item
       noStyle
@@ -87,33 +136,6 @@ export function SelectTermination() {
 
 // Citrix Specific
 export function SelectResource() {
-
-  function FieldSwitch(value: string) {
-    switch (value) {
-      case 'published_app_name':
-        return (
-          <Form.Item
-            label={<span className='Modal-FormLabel'>Published App Name*</span>}
-            name={['template', 'published_app_name']}
-            rules={[{ required: true }]}
-            children={<Input />}
-          />
-        )
-
-      case 'desktop_app_name':
-        return (
-          <Form.Item
-            label={<span className='Modal-FormLabel'>App Name*</span>}
-            name={['template', 'app_name']}
-            rules={[{ required: true }]}
-            children={<Input />}
-          />
-        )
-      default:
-        return null;
-    }
-  }
-
   return (
     <Form.Item
       noStyle
@@ -126,7 +148,13 @@ export function SelectResource() {
 
 // Citrix Specific
 export function SelectDomain() {
-  const { domains, isFetching: fetchingDomains } = useFetchDomains();
+
+  const accountId = localStorage.getItem('accountId') as string;
+  const { data, status } = useFetch<Domains>({
+    url: ApiUrls.domains(accountId)
+  });
+
+
 
   return (
     <Form.Item
@@ -134,15 +162,16 @@ export function SelectDomain() {
       name={['template', 'domain']}
     >
       <Select
-        loading={fetchingDomains}
+        loading={status === 'fetching'}
         options={
-          domains.map(
-            (domain) => {
-              return {
-                label: domain,
-                value: domain
-              }
-            })}
+          data?.filter(domain => !domain.match('WORKGROUP'))
+            .map(
+              (domain) => {
+                return {
+                  label: domain,
+                  value: domain
+                }
+              })}
       />
     </Form.Item>
   );

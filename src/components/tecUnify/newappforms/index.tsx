@@ -7,6 +7,7 @@ import ApiService from '../../../Api.service';
 import ApiUrls from '../../../ApiUtils';
 import { openNotification } from '../../Layout/Notification';
 
+
 export interface AppFormProps {
   showModal: boolean;
   toggleModal: () => void;
@@ -15,7 +16,7 @@ export interface AppFormProps {
 }
 
 function AppFormRenderer({ showModal, toggleModal, formArgs, appUID }: AppFormProps) {
-  const [isValidating, toggleValidating] = useState(false);
+  const [sendingData, toggleSendingData] = useState(false);
   const [form] = Form.useForm();
 
   if (formArgs === undefined) {
@@ -23,21 +24,23 @@ function AppFormRenderer({ showModal, toggleModal, formArgs, appUID }: AppFormPr
   }
 
   function onOk() {
-    toggleValidating(true);
-    form
-      .validateFields()
+    form.validateFields()
       .then(values => {
-        toggleValidating(false);
 
-        // addTemplate(values)
-        //   .then((res) => console.log('On Ok', res))
-        //   .catch((err: ApiResError) => {
-        //     console.error(err)
-        //     openNotification('error', 'Error sending data to server.');
-        //   });
+        toggleSendingData(true)
+        addTemplate(values)
+          .then((res) => console.log('On Ok', res))
+          .catch((err: ApiResError) => {
+            console.error(err)
+            openNotification('error', 'Error sending data to server.');
+          })
+          .finally(() =>
+            toggleSendingData(false)
+          );
+
+        console.log(values);
       })
       .catch((err: ApiResError) => {
-        toggleValidating(false);
         console.error('Validate Failed:', err);
       });
   }
@@ -143,7 +146,7 @@ function AppFormRenderer({ showModal, toggleModal, formArgs, appUID }: AppFormPr
       visible={showModal}
       onOk={onOk}
       onCancel={onCancel}
-      okText={isValidating ? <LoadingOutlined /> : 'Add'}
+      okText={sendingData ? <LoadingOutlined /> : 'Add'}
       destroyOnClose
     >
       <Form
@@ -156,7 +159,7 @@ function AppFormRenderer({ showModal, toggleModal, formArgs, appUID }: AppFormPr
         validateMessages={formArgs.validationMessages}
         requiredMark={false}
       >
-        {formArgs.formItems.map((args) => <InputSelect {...args}/>)}
+        {formArgs.formItems.map((args) => <InputSelect {...args} />)}
       </Form>
     </Modal>
   );

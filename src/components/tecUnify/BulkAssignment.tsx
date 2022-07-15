@@ -3,10 +3,10 @@ import { useHistory } from 'react-router-dom';
 import { Button, Checkbox, List, Input, Skeleton } from 'antd';
 import { CaretDownOutlined } from '@ant-design/icons';
 
-import { useFetchUsers } from './hooks/useFetch';
-import { useFetch } from './hooks/useUnifyFetch';
-import { ConfiguredTemplate, Page, User } from './types';
-import { CheckboxValueType } from 'antd/lib/checkbox/Group';
+import { useFetch } from './hooks/useFetch';
+import ApiUrls from '../../ApiUtils';
+import type { ConfiguredTemplate, Page, PaginationApiRes, User } from './types';
+import type { CheckboxValueType } from 'antd/lib/checkbox/Group';
 
 const initialPState: Page = {
   start: 1,
@@ -22,14 +22,20 @@ function BulkAssignment() {
   const [appPage, setAppPage] = useState(initialPState);
   const [appSelection, setAppSelection] = useState<CheckboxValueType[]>([]);
   const [userSelection, setUserSelection] = useState<CheckboxValueType[]>([]);
+  const accountId = localStorage.getItem('accountId') as string;
   const history = useHistory();
 
-  const { userList, resetFilter, isFetching } = useFetchUsers(userPage);
-  const { data, isFetching: isFetchingTemplates } = useFetch<ConfiguredTemplate>({
-    template: 'Configured',
+  const { data: userData, status: userStatus } = useFetch<PaginationApiRes<User>>({
+    url: ApiUrls.users(accountId),
     page: { start: 1, limit: 10 }
   });
-  const isFetchingBoth = isFetching || isFetchingTemplates;
+
+  const { data: templateData, status: templateStatus } = useFetch<PaginationApiRes<ConfiguredTemplate>>({
+    url: ApiUrls.configuredTemplates(accountId),
+    page: { start: 1, limit: 10 }
+  });
+
+  const isFetchingBoth = userStatus === 'fetching' || templateStatus === 'fetching';
 
 
   function handleCheckBox(id: CheckboxValueType[], isUser: boolean) {
@@ -68,10 +74,10 @@ function BulkAssignment() {
             pagination={{
               onChange: (pageNum) => setUserPage(currPage => { return { ...currPage, current: pageNum } }),
               pageSize: userPage.limit,
-              total: userList?.total_items,
+              total: userData?.total_items,
               size: 'small'
             }}
-            dataSource={userList?.results}
+            dataSource={userData?.results}
             renderItem={(user: User) => ListItem(user)}
           />
         </Checkbox.Group>
@@ -101,10 +107,10 @@ function BulkAssignment() {
             pagination={{
               onChange: pageNum => setAppPage(currPage => { return { ...currPage, current: pageNum } }),
               pageSize: appPage.limit,
-              total: data?.total_items,
+              total: templateData?.total_items,
               size: 'small'
             }}
-            dataSource={data?.results}
+            dataSource={templateData?.results}
             renderItem={(app) => <ListItem {...app} />}
           />
         </Checkbox.Group>
@@ -143,7 +149,7 @@ function BulkAssignment() {
     );
   }
 
-  const ResetButton = <Button onClick={resetFilter} type='link' size='small'>reset</Button>;
+  const ResetButton = <Button type='link' size='small'>reset</Button>;
 
   function ListSubHeader({ leftText = "", rightText = "", }) {
     return (

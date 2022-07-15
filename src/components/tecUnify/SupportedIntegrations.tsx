@@ -2,22 +2,25 @@ import { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Input, Skeleton, Button, List } from 'antd';
 
-import { useFetch } from './hooks/useUnifyFetch';
+import { useFetch } from './hooks/useFetch';
 import useFormSwitch from './hooks/useFormSwitch';
 import AppFormRenderer from './newappforms';
-import type { MasterTemplate } from './types';
+import ApiUrls from '../../ApiUtils';
+
+import type { MasterTemplate, PaginationApiRes } from './types';
 
 const { Search } = Input;
 
 function SupportedIntegrations(): JSX.Element {
+  const accountId = localStorage.getItem('accountId') as string;
   const [modalVisible, toggleModal] = useState(false);
   const [appUID, setAppUID] = useState('');
+  const history = useHistory();
 
-  const { data, isFetching } = useFetch<MasterTemplate>({
-    template: 'Available',
+  const { data, status } = useFetch<PaginationApiRes<MasterTemplate>>({
+    url: ApiUrls.availableTemplates(accountId),
     page: { start: 1, limit: 10 }
   });
-  const history = useHistory();
 
   const { formArgs, setTemplateType } = useFormSwitch();
 
@@ -51,9 +54,9 @@ function SupportedIntegrations(): JSX.Element {
       </div>
 
       <Skeleton
-        loading={isFetching}
+        loading={status === 'fetching'}
         active={true}
-        className={`${isFetching ? '_Padding' : ''}`}
+        className={`${status === 'fetching' ? '_Padding' : ''}`}
       >
         <div className='Content-HeaderContainer'>
         </div>

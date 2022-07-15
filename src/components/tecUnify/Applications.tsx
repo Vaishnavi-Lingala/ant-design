@@ -4,8 +4,9 @@ import { BarsOutlined, UserAddOutlined, UsergroupAddOutlined, PoweroffOutlined }
 
 import './tecUnify.css';
 
-import { useFetch } from './hooks/useUnifyFetch';
-import { ConfiguredTemplate } from './types';
+import ApiUrls from '../../ApiUtils';
+import { useFetch } from './hooks/useFetch';
+import { ConfiguredTemplate, PaginationApiRes } from './types';
 
 const { Search } = Input;
 
@@ -40,10 +41,11 @@ const gridList = {
 };
 
 function Applications() {
+  const accountId = localStorage.getItem('accountId') as string;
   const match = useRouteMatch();
 
-  const { data, isFetching } = useFetch<ConfiguredTemplate>({
-    template: 'Configured',
+  const { data, status } = useFetch<PaginationApiRes<ConfiguredTemplate>>({
+    url: ApiUrls.configuredTemplates(accountId),
     page: { start: 1, limit: 10 }
   });
 
@@ -64,9 +66,9 @@ function Applications() {
       </div>
 
       <Skeleton
-        loading={isFetching}
+        loading={status === 'fetching'}
         active={true}
-        className={`${isFetching ? '_Padding' : ''}`}
+        className={`${status === 'fetching' ? '_Padding' : ''}`}
       >
         <div className='Content-HeaderContainer'>
           <Button value='supported' size='large' type='primary'>

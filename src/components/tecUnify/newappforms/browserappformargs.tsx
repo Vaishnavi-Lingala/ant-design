@@ -1,13 +1,23 @@
 import { FormArgs } from "../types";
 import { UserCredentials, SelectTermination } from "./FormComponents";
 
+const overrideMessages = {
+  required: 'Field is required!'
+};
+
 const formArgs: FormArgs = {
   formTitle: 'Configure Browser App',
+  validationMessages: overrideMessages,
   formItems: [
     {
       label: 'Name',
       name: 'name',
-      type: 'input'
+      type: 'input',
+      rules: [
+        {
+          required: true
+        }
+      ]
     },
     {
       label: 'Browser',
@@ -36,7 +46,12 @@ const formArgs: FormArgs = {
     {
       label: 'Window Title',
       name: ['template', 'window_title'],
-      type: 'input'
+      type: 'input',
+      rules: [
+        {
+          required: true
+        }
+      ]
     },
     {
       label: 'App Url',

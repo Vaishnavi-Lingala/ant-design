@@ -13,7 +13,7 @@ function useFormSwitch() {
   const [formArgs, setFormArgs] = useState<FormArgs>();
 
   useEffect(() => {
-    let file = 'browserappformargs';
+    let file = '';
     switch (currentTemplateType) {
       case 'CITRIX':
         file = 'citrixformargs';
@@ -27,7 +27,8 @@ function useFormSwitch() {
       await import(`../newappforms/${file}`)
         .then(args => setFormArgs(args.default));
     }
-    importForm();
+
+    (file !== '') && importForm();
   }, [currentTemplateType]);
 
 
