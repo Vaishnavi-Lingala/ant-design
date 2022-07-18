@@ -26,13 +26,11 @@ function BulkAssignment() {
   const history = useHistory();
 
   const { data: userData, status: userStatus } = useFetch<PaginationApiRes<User>>({
-    url: ApiUrls.users(accountId),
-    page: { start: 1, limit: 10 }
+    url: ApiUrls.users(accountId)
   });
 
-  const { data: templateData, status: templateStatus } = useFetch<PaginationApiRes<ConfiguredTemplate>>({
-    url: ApiUrls.configuredTemplates(accountId),
-    page: { start: 1, limit: 10 }
+  const { data: templateData, status: templateStatus } = useFetch<ConfiguredTemplate[]>({
+    url: ApiUrls.configuredTemplates(accountId)
   });
 
   const isFetchingBoth = userStatus === 'fetching' || templateStatus === 'fetching';
@@ -70,16 +68,19 @@ function BulkAssignment() {
           value={userSelection}
           onChange={(event) => handleCheckBox(event, true)}
         >
-          <List
-            pagination={{
-              onChange: (pageNum) => setUserPage(currPage => { return { ...currPage, current: pageNum } }),
-              pageSize: userPage.limit,
-              total: userData?.total_items,
-              size: 'small'
-            }}
-            dataSource={userData?.results}
-            renderItem={(user: User) => ListItem(user)}
-          />
+          {
+            'next' in userData &&
+            <List
+              pagination={{
+                onChange: (pageNum) => setUserPage(currPage => { return { ...currPage, current: pageNum } }),
+                pageSize: userPage.limit,
+                total: userData?.total_items,
+                size: 'small'
+              }}
+              dataSource={userData.results}
+              renderItem={(user) => ListItem(user)}
+            />
+          }
         </Checkbox.Group>
       </div>
     );
@@ -103,16 +104,19 @@ function BulkAssignment() {
           value={appSelection}
           onChange={(event) => handleCheckBox(event, false)}
         >
-          <List
-            pagination={{
-              onChange: pageNum => setAppPage(currPage => { return { ...currPage, current: pageNum } }),
-              pageSize: appPage.limit,
-              total: templateData?.total_items,
-              size: 'small'
-            }}
-            dataSource={templateData?.results}
-            renderItem={(app) => <ListItem {...app} />}
-          />
+          {
+            'results' in templateData &&
+            <List
+              pagination={{
+                onChange: pageNum => setAppPage(currPage => { return { ...currPage, current: pageNum } }),
+                pageSize: appPage.limit,
+                total: templateData.total_items,
+                size: 'small'
+              }}
+              dataSource={templateData.results}
+              renderItem={(app) => <ListItem {...app} />}
+            />
+          }
         </Checkbox.Group>
       </div>
     );

@@ -28,6 +28,11 @@
     text-align: center;
 }
 
+._CenterInParent {
+    align-self: center;
+    width: 100%;
+}
+
 .AppSettings {
     display: flex;
     flex-direction: column;

@@ -1,13 +1,15 @@
 import { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Input, Skeleton, Button, List } from 'antd';
+import { Input, Button, List, Empty } from 'antd';
+import { BarsOutlined } from '@ant-design/icons';
 
 import { useFetch } from './hooks/useFetch';
 import useFormSwitch from './hooks/useFormSwitch';
 import AppFormRenderer from './newappforms';
 import ApiUrls from '../../ApiUtils';
 
-import type { MasterTemplate, PaginationApiRes } from './types';
+import type { MasterTemplate } from './types';
+import type { PaginationConfig } from 'antd/lib/pagination';
 
 const { Search } = Input;
 
@@ -17,9 +19,8 @@ function SupportedIntegrations(): JSX.Element {
   const [appUID, setAppUID] = useState('');
   const history = useHistory();
 
-  const { data, status } = useFetch<PaginationApiRes<MasterTemplate>>({
-    url: ApiUrls.availableTemplates(accountId),
-    page: { start: 1, limit: 10 }
+  const { data, status } = useFetch<MasterTemplate[]>({
+    url: ApiUrls.availableTemplates(accountId)
   });
 
   const { formArgs, setTemplateType } = useFormSwitch();
@@ -28,23 +29,17 @@ function SupportedIntegrations(): JSX.Element {
     return <></>;
   }
 
+  const paginationConfig: PaginationConfig = {
+    position: 'bottom',
+    total: 'total_items' in data ? data.total_items : 0,
+    pageSize: 5
+  };
+
   function handleClick(e) {
     setAppUID(e.currentTarget.value)
     setTemplateType(e.currentTarget.id);
     toggleModal(true)
   }
-
-  const ActionButton = ({ uid, template_type }) => (
-    <Button
-      id={template_type}
-      value={uid}
-      size='middle'
-      type='primary'
-      onClick={handleClick}
-    >
-      Configure
-    </Button>
-  );
 
   return (
     <>
@@ -53,51 +48,65 @@ function SupportedIntegrations(): JSX.Element {
         <Button onClick={() => history.goBack()}>Return</Button>
       </div>
 
-      <Skeleton
-        loading={status === 'fetching'}
-        active={true}
-        className={`${status === 'fetching' ? '_Padding' : ''}`}
-      >
-        <div className='Content-HeaderContainer'>
-        </div>
+      <div className='Content-HeaderContainer'>
+      </div>
 
 
-        <div className='Content-ComponentView'>
-          <div className='Sidebar'>
-            <Search />
-            <div>
-              filters
-            </div>
+      <div className='Content-ComponentView'>
+        <div className='Sidebar'>
+          <Search />
+          <div>
+            filters
           </div>
-
-          <List
-            className='AppList'
-            itemLayout='vertical'
-            dataSource={data.results}
-            pagination={{ position: 'bottom' }}
-            size='small'
-            renderItem={app => (
-              <List.Item key={app.uid} extra={<ActionButton {...app} />}>
-                <List.Item.Meta
-                  avatar={<img alt='app logo' src='https://placeholder.pics/svg/75' />}
-                  title={app.name}
-                  description='Short blurb'
-                />
-              </List.Item>
-            )}
-          />
-
         </div>
-        <AppFormRenderer
-          showModal={modalVisible}
-          toggleModal={() => {
-            toggleModal(false);
-            setTemplateType('');
-          }}
-          formArgs={formArgs}
-          appUID={appUID}
-        />
-      </Skeleton>
+
+        {
+          status === 'error' ?
+            <Empty className='_CenterInParent' />
+            :
+            <>
+              {
+                'results' in data &&
+                <List
+                  className='AppList'
+                  itemLayout='horizontal'
+                  size='small'
+                  loading={status === 'fetching'}
+                  dataSource={data.results}
+                  pagination={paginationConfig}
+                  renderItem={app => (
+                    <List.Item
+                      key={app.uid}
+                      extra={
+                        <Button
+                          icon={<BarsOutlined />}
+                          onClick={handleClick}
+                          id={app.template_type}
+                          value={app.uid}
+                        />
+                      }
+                    >
+                      <List.Item.Meta
+                        avatar={<img alt='app logo' src='https://placeholder.pics/svg/50' />}
+                        title={app.name}
+                      />
+                    </List.Item>
+                  )}
+                />
+              }
+
+              <AppFormRenderer
+                showModal={modalVisible}
+                toggleModal={() => {
+                  toggleModal(false);
+                  setTemplateType('');
+                }}
+                formArgs={formArgs}
+                appUID={appUID}
+              />
+            </>
+        }
+      </div>
     </>
   );
 }

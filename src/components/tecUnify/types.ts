@@ -2,8 +2,6 @@ import { FormItemProps, InputNumberProps, RadioProps, SelectProps } from "antd";
 import { FormItemInputProps } from "antd/lib/form/FormItemInput";
 import { ValidateMessages } from "rc-field-form/lib/interface";
 
-export type Domains = string[];
-
 export interface AppList {
   active: (MasterTemplate | ConfiguredTemplate)[];
   inactive: (MasterTemplate | ConfiguredTemplate)[];

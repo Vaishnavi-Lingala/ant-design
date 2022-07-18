@@ -6,7 +6,6 @@ import { Select, Form, Input, Checkbox } from 'antd';
 
 import ApiUrls from '../../../ApiUtils';
 import { useFetch } from '../hooks/useFetch';
-import type { Domains } from '../types';
 
 function FieldSwitch(value: string) {
   switch (value) {
@@ -150,29 +149,30 @@ export function SelectResource() {
 export function SelectDomain() {
 
   const accountId = localStorage.getItem('accountId') as string;
-  const { data, status } = useFetch<Domains>({
+  const { data, status } = useFetch<string[]>({
     url: ApiUrls.domains(accountId)
   });
-
-
 
   return (
     <Form.Item
       label={<span className='Modal-FormLabel'>Domain</span>}
       name={['template', 'domain']}
     >
-      <Select
-        loading={status === 'fetching'}
-        options={
-          data?.filter(domain => !domain.match('WORKGROUP'))
-            .map(
-              (domain) => {
-                return {
-                  label: domain,
-                  value: domain
-                }
-              })}
-      />
+      {
+        ('results' in data && data.results !== undefined) &&
+        <Select
+          loading={status === 'fetching'}
+          options={
+            data.results.filter(domain => !domain.match('WORKGROUP'))
+              .map(
+                (domain) => {
+                  return {
+                    label: domain,
+                    value: domain
+                  }
+                })}
+        />
+      }
     </Form.Item>
   );
 };

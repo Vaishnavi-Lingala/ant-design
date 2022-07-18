@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import type { AppList, FilterType, User } from '../types';
 
 interface FilterHookProps<T> {
@@ -12,7 +12,7 @@ const defaultFilterState: FilterType = {
   updated: false
 }
 
-// Typeguard to verify that the object passed in is actaully as array
+// Typeguard to verify that the object passed in is actually an array
 // of type 'T'
 function isArray<T>(list: any | any[]): list is T[] {
   return Array.isArray(list);
@@ -34,9 +34,9 @@ function useFilter<T>({ list, filterOn }: FilterHookProps<T>) {
   const [filteredData, setFilteredData] = useState<T>(list);
   const [filter, setFilter] = useState<FilterType>(defaultFilterState);
 
-  function listIncludes(item: T): boolean {
+  const listIncludes = useCallback((item: T) => {
     return item[filterOn].toLowerCase().includes(filter.search);
-  }
+  },[filter.search])
 
   function filterList() {
     // If the filter is empty, reset the current search
@@ -46,8 +46,8 @@ function useFilter<T>({ list, filterOn }: FilterHookProps<T>) {
     }
 
     if (filter.updated && isArray<T>(list)) {
-      const test = genFilter<T>(list, listIncludes);
-      setFilteredData((test as unknown) as T);
+      const data = genFilter<T>(list, listIncludes);
+      setFilteredData((data as unknown) as T);
     }
   }
 

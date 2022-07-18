@@ -1,12 +1,13 @@
 import { Link, useRouteMatch } from 'react-router-dom';
-import { Button, Skeleton, Menu, List, Input, Dropdown } from 'antd';
+import { Button, Menu, List, Input, Dropdown, Empty } from 'antd';
 import { BarsOutlined, UserAddOutlined, UsergroupAddOutlined, PoweroffOutlined } from '@ant-design/icons';
 
 import './tecUnify.css';
 
 import ApiUrls from '../../ApiUtils';
-import { useFetch } from './hooks/useFetch';
-import { ConfiguredTemplate, PaginationApiRes } from './types';
+import { useFetch, State } from './hooks/useFetch';
+import { ConfiguredTemplate } from './types';
+import { PaginationConfig } from 'antd/lib/pagination';
 
 const { Search } = Input;
 
@@ -30,28 +31,17 @@ const options = (
     } />
 );
 
-const gridList = {
-  gutter: 10,
-  xs: 1,
-  sm: 2,
-  md: 4,
-  lg: 4,
-  xl: 6,
-  xxl: 3,
-};
-
 function Applications() {
   const accountId = localStorage.getItem('accountId') as string;
   const match = useRouteMatch();
 
-  const { data, status } = useFetch<PaginationApiRes<ConfiguredTemplate>>({
-    url: ApiUrls.configuredTemplates(accountId),
-    page: { start: 1, limit: 10 }
+  const { data, status } = useFetch<ConfiguredTemplate[]>({
+    url: ApiUrls.configuredTemplates(accountId)
   });
 
-  if (data === undefined) {
-    return <></>;
-  }
+  //TODO(CODY): Better method of type narrowing
+  if (Array.isArray(data))
+    return <></>
 
   const OptionsMenu = (
     <Dropdown placement='bottomRight' overlay={options} trigger={['click']}>
@@ -59,60 +49,79 @@ function Applications() {
     </Dropdown>
   );
 
+  const paginationConfig: PaginationConfig = {
+    position: 'bottom',
+    total: data.total_items,
+    pageSize: 5,
+  };
+
+  // TODO(Cody): Cleaner function to count active/inactive templates.
+  // Possibly move to useFilter Hook
+  function activityCount(data: State<ConfiguredTemplate[]>, activityType: string) {
+    let count: number = 0; 
+
+    if (activityType === 'active')
+      count = data.results?.filter(template => template.active === true).length as number
+
+    if (activityType === 'inactive')
+      count = data.results?.filter(template => template.active === false).length as number
+
+    return count
+  }
+
   return (
     <>
       <div className='content-header'>
         Configured Applications
       </div>
 
-      <Skeleton
-        loading={status === 'fetching'}
-        active={true}
-        className={`${status === 'fetching' ? '_Padding' : ''}`}
-      >
-        <div className='Content-HeaderContainer'>
-          <Button value='supported' size='large' type='primary'>
-            <Link to={{ pathname: `${match.url}/supported`, }}>
-              Browse Supported Apps
-            </Link>
-          </Button>
+      <div className='Content-HeaderContainer'>
+        <Button value='supported' size='large' type='primary'>
+          <Link to={{ pathname: `${match.url}/supported`, }}>
+            Browse Supported Apps
+          </Link>
+        </Button>
 
-          <Button value='bulk' size='large' type='primary'>
-            <Link to={{ pathname: `${match.url}/assign` }}>
-              Bulk Assign Apps
-            </Link>
-          </Button>
+        <Button value='bulk' size='large' type='primary'>
+          <Link to={{ pathname: `${match.url}/assign` }}>
+            Bulk Assign Apps
+          </Link>
+        </Button>
+      </div>
+
+      <div className='Content-ComponentView'>
+        <div className='Sidebar'>
+          <Search />
+          <Menu className='_NoBorder'>
+            <Menu.Item key='active'>Active - ({activityCount(data, 'active')})</Menu.Item>
+            <Menu.Item key='inactive'>Inactive - ({activityCount(data, 'inactive')})</Menu.Item>
+          </Menu>
         </div>
-
-        <div className='Content-ComponentView'>
-          <div className='Sidebar'>
-            <Search />
-            <Menu className='_NoBorder'>
-              <Menu.Item key='active'>Active - ()</Menu.Item>
-              <Menu.Item key='inactive'>Inactive - ()</Menu.Item>
-            </Menu>
-          </div>
-
-          <List
-            className='AppList'
-            itemLayout='horizontal'
-            dataSource={data.results}
-            pagination={{ position: 'bottom' }}
-            grid={gridList}
-            renderItem={app => (
-              <List.Item
-                key={app.uid}
-                extra={OptionsMenu}
-              >
-                <List.Item.Meta
-                  avatar={<img alt='app logo' src='https://placeholder.pics/svg/50' />}
-                  title={app.name}
-                />
-              </List.Item>
-            )}
-          />
-        </div>
-      </Skeleton>
+        {
+          status === 'error' || data === undefined ?
+            <Empty className='_CenterInParent' />
+            :
+            <List
+              className='AppList'
+              itemLayout='horizontal'
+              size='small'
+              loading={status === 'fetching'}
+              dataSource={data.results}
+              pagination={paginationConfig}
+              renderItem={app => (
+                <List.Item
+                  key={app.uid}
+                  extra={OptionsMenu}
+                >
+                  <List.Item.Meta
+                    avatar={<img alt='app logo' src='https://placeholder.pics/svg/50' />}
+                    title={app.name}
+                  />
+                </List.Item>
+              )}
+            />
+        }
+      </div>
     </>
   );
 }
