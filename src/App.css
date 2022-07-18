@@ -19,3 +19,7 @@
 .mandatory {
   color: red;
 }
+
+.select-mandatory>.ant-select-selector {
+  border-color: red !important;
+}

@@ -8,6 +8,9 @@ import App from './App';
 import config from './config';
 import reportWebVitals from './reportWebVitals';
 
+if (process.env.REACT_APP_ENV !== "dev")
+    console.log = () => {};
+
 ReactDOM.render(
 	<Router basename={config.app.basename}>
 		<React.StrictMode>

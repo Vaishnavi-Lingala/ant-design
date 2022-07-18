@@ -70,8 +70,8 @@ export default function Users() {
 						<Tooltip title="View">
 							<Button icon={<BarsOutlined />} onClick={() => {
 								sessionStorage.setItem("email", record.email);
-								sessionStorage.setItem("first_name", record.first_name.slice(0, 1).toUpperCase() + record.first_name.slice(1));
-								sessionStorage.setItem("last_name", record.last_name.slice(0, 1).toUpperCase() + record.last_name.slice(1));
+								sessionStorage.setItem("first_name", record?.first_name? record.first_name.slice(0, 1).toUpperCase() + record.first_name.slice(1): '');
+								sessionStorage.setItem("last_name", record?.last_name? record.last_name.slice(0, 1).toUpperCase() + record.last_name.slice(1): '');
 								sessionStorage.setItem("user_name", record.idp_user_name);
 								history.push(`/user/${record.uid}/profile`)
 							}}
