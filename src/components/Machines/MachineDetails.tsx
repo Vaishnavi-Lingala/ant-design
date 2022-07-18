@@ -122,22 +122,21 @@ export function MachineDetails(props: any) {
                     <div className="content-policy-key-header">Certificate Details</div>
 
                     {
-                        Object.keys(machineDetails).map((machineField) => (
-                            machineField === 'cert_details' ?
-                                <>
-                                    {Object.keys(machineFieldNames.cert_details)?.map(key =>
-                                        <DisplayField
-                                            displayName={machineFieldNames.cert_details[key]}
-                                            value={machineDetails['cert_details'][key]}
-                                            key={machineDetails['cert_details'][key]}
-                                        />)}
+                        Object.keys(machineDetails).find(machineField => machineField === 'cert_details') ?
+                            <>
+                                {Object.keys(machineFieldNames.cert_details)?.map(key =>
                                     <DisplayField
-                                        displayName={'Expiry days'}
-                                        value={calculateExpiryDays(machineDetails['cert_details']['valid_to'])}
-                                        key="expiry-days"
-                                    />
-                                </> : <></>
-                        ))
+                                        displayName={machineFieldNames.cert_details[key]}
+                                        value={machineDetails['cert_details'][key]}
+                                        key={machineDetails['cert_details'][key]}
+                                    />)}
+                                <DisplayField
+                                    displayName={'Expiry days'}
+                                    value={calculateExpiryDays(machineDetails['cert_details']['valid_to'])}
+                                    key="expiry-days"
+                                />
+                            </> : <></>
+
                     }
 
                     <Divider style={{ borderTop: '1px solid #d7d7dc' }} />

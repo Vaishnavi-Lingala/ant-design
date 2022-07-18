@@ -111,6 +111,7 @@ function Applications() {
               renderItem={app => (
                 <List.Item
                   key={app.uid}
+                  //@ts-ignore
                   extra={OptionsMenu}
                 >
                   <List.Item.Meta
