@@ -66,7 +66,7 @@ function App() {
         console.log('CustomAuthHandler called');
         <Redirect to={"/"} />
       };
-
+  
     return (
         <Security oktaAuth={oktaAuth} restoreOriginalUri={restoreOriginalUri} onAuthRequired={customAuthHandler}>
             <StoreProvider>

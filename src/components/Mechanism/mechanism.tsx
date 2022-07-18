@@ -516,7 +516,18 @@ function Mechanism(props: any) {
                         : editData?.idle_timeout_flag === true ? idleTimeoutOptions[displayDetails['idle_timeout']] : <>(x) minutes</>
                 } user will be locked/signed-out.
 
-
+                <div style={{ padding: '20px 0 0 0' }}>
+                    <Checkbox
+                        defaultChecked={editData?.launch_idp_dashboard}
+                        disabled={!isEdit}
+                        onChange={(e) => {
+                            setEditData({
+                                ...editData,
+                                launch_idp_dashboard: e.target.checked
+                            })
+                        }}
+                    /> Launch IDP Dashboard
+                </div>
             </div>
 
             {
