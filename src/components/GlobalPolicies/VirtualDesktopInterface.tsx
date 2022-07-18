@@ -28,6 +28,7 @@ function VDIPolicy(props: any) {
         Promise.all(([
             ApiService.get(ApiUrls.groups(accountId)),
             ApiService.get(ApiUrls.vdiTypeOptions(accountId)),
+            ApiService.get(ApiUrls.templates(accountId)),
             ApiService.get(ApiUrls.globalPolicy(accountId, window.location.pathname.split('/')[3]))
         ]))
             .then(data => {
@@ -41,10 +42,10 @@ function VDIPolicy(props: any) {
                 setFullGroups(groups);
                 var groupTypegroups: any = [];
                 if (window.location.pathname.split('/').length !== 3) {
-                    console.log(data[2].kiosk_machine_groups[0].type);
-                    setGroupType(data[2].kiosk_machine_groups[0].type);
+                    console.log(data[3].kiosk_machine_groups[0].type);
+                    setGroupType(data[3].kiosk_machine_groups[0].type);
                     Object.keys(groups).map(index => {
-                        if (groups[index]["type"] === data[2].kiosk_machine_groups[0].type) {
+                        if (groups[index]["type"] === data[3].kiosk_machine_groups[0].type) {
                             groupTypegroups.push(groups[index]);
                         }
                     })
@@ -61,14 +62,16 @@ function VDIPolicy(props: any) {
                 setVDITypeOptions(data[1]);
 
                 console.log(data[2]);
-                if (!data[2].errorSummary) {
-                    setVDIEditedData(data[2]);
-                    setVDIDisplayData(data[2]);
-                    if (data[2].uid !== undefined) {
-                        Object.keys(data[2].kiosk_machine_groups).map(index => {
-                            groupNames.push(data[2].kiosk_machine_groups[index].name);
-                            groupUids.push(data[2].kiosk_machine_groups[index].uid);
-                            setGroupType(data[2].kiosk_machine_groups[index].type);
+
+                console.log(data[3]);
+                if (!data[3].errorSummary) {
+                    setVDIEditedData(data[3]);
+                    setVDIDisplayData(data[3]);
+                    if (data[3].uid !== undefined) {
+                        Object.keys(data[3].kiosk_machine_groups).map(index => {
+                            groupNames.push(data[3].kiosk_machine_groups[index].name);
+                            groupUids.push(data[3].kiosk_machine_groups[index].uid);
+                            setGroupType(data[3].kiosk_machine_groups[index].type);
                             setGroupUids(groupUids);
                             setGroupNames(groupNames)
                             console.log(groupUids);
@@ -84,8 +87,8 @@ function VDIPolicy(props: any) {
                     setLoading(false);
                 }
                 else {
-                    console.log('else: ', data[2]);
-                    openNotification('error', data[2].errorCauses.length !== 0 ? data[2].errorCauses[1].errorSummary : data[2].errorSummary);
+                    console.log('else: ', data[3]);
+                    openNotification('error', data[3].errorCauses.length !== 0 ? data[3].errorCauses[1].errorSummary : data[3].errorSummary);
                     history.push(`/global-policies/virtual-desktop-interface`);
                 }
             }, error => {
@@ -307,7 +310,7 @@ function VDIPolicy(props: any) {
                 </div>
 
                 <div className="content-policy-key-header" style={{ padding: '10px 0 10px 0' }}>
-                    App Template:
+                    Template:
                 </div>
                 <div style={{ padding: '12px 0 10px 0' }}>
                     {isEdit ? <TextArea className="form-control"
@@ -318,13 +321,13 @@ function VDIPolicy(props: any) {
                         //         ...vdiEditData,
                         //         policy_req: {
                         //             ...policy_req,
-                        //             app_template: e.target.value
+                        //             template: e.target.value
                         //         }
                         //     }
                         // })}
-                        defaultValue={vdiDisplayData['policy_req']?.app_template?.name}
+                        defaultValue={vdiDisplayData['policy_req']?.template?.name}
                         placeholder='Enter app template'
-                    /> : vdiDisplayData['policy_req']?.app_template?.name
+                    /> : vdiDisplayData['policy_req']?.template?.name
                     }
                 </div>
             </div>

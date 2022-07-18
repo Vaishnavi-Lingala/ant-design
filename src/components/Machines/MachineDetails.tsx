@@ -14,7 +14,7 @@ export function MachineDetails(props: any) {
     const [loadingDetails, setLoadingDetails] = useState(false);
     const [machineDetails, setMachineDetails] = useState({});
     const [products, setProducts]: any = useState([]);
-    const [readerType, setReaderType]= useState({});
+    const [readerType, setReaderType] = useState({});
     const accountId = localStorage.getItem('accountId');
     const history = useHistory();
 
@@ -63,28 +63,28 @@ export function MachineDetails(props: any) {
             ApiService.get(ApiUrls.mechanismOptions(localStorage.getItem('accountId'))),
             ApiService.get(ApiUrls.machineDetails(localStorage.getItem('accountId'), machineId))
         ])
-        .then((data: any) => {
-            console.log(data[0]);
-            setReaderType(data[0]['readers'])
-            
-            console.log('Machine details:', data[1]);
-            let machineProducts: MachineProducts[] = [];
-            Object.keys(data[1].products).map((product) => {
-                let activeVersion = data[1].products[product].find(record => record.active === true)
-                if (activeVersion) {
-                    activeVersion.key = activeVersion.product_version
-                    machineProducts.push(activeVersion)
-                }
-                // activeVersion ? machineProducts.push(activeVersion) : console.log('No active version for product ', product);
-            })
-            setProducts(machineProducts)
-            setMachineDetails(data[1]);
-        }).catch(error => {
-            console.error('Error: ', error);
-            openNotification('error', 'An Error has occured with getting machine details');
-        }).finally(() => {
-            setLoadingDetails(false);
-        });
+            .then((data: any) => {
+                console.log(data[0]);
+                setReaderType(data[0]['readers'])
+
+                console.log('Machine details:', data[1]);
+                let machineProducts: MachineProducts[] = [];
+                Object.keys(data[1].products).map((product) => {
+                    let activeVersion = data[1].products[product].find(record => record.active === true)
+                    if (activeVersion) {
+                        activeVersion.key = activeVersion.product_version
+                        machineProducts.push(activeVersion)
+                    }
+                    // activeVersion ? machineProducts.push(activeVersion) : console.log('No active version for product ', product);
+                })
+                setProducts(machineProducts)
+                setMachineDetails(data[1]);
+            }).catch(error => {
+                console.error('Error: ', error);
+                openNotification('error', 'An Error has occured with getting machine details');
+            }).finally(() => {
+                setLoadingDetails(false);
+            });
 
         window.scrollTo({
             top: 0,
@@ -107,8 +107,8 @@ export function MachineDetails(props: any) {
                     <Divider style={{ borderTop: '1px solid #d7d7dc' }} />
 
                     {
-                        Object.keys(machineDetails).map((machineField) => (
-                            machineField !== 'products' && machineDetails[machineField] !== 'object' ?
+                        Object.keys(machineFieldNames).map((machineField) => (
+                            machineField !== 'products' && machineField !== 'cert_details' ?
                                 <DisplayField
                                     displayName={machineFieldNames[machineField]}
                                     value={machineField !== 'reader_type' ? machineDetails[machineField] : readerType[machineDetails[machineField]]}
@@ -122,7 +122,7 @@ export function MachineDetails(props: any) {
                     <div className="content-policy-key-header">Certificate Details</div>
 
                     {
-                        typeof machineDetails['cert_details'] === 'object' ?
+                        Object.keys(machineDetails).find(machineField => machineField === 'cert_details') ?
                             <>
                                 {Object.keys(machineFieldNames.cert_details)?.map(key =>
                                     <DisplayField
@@ -136,6 +136,7 @@ export function MachineDetails(props: any) {
                                     key="expiry-days"
                                 />
                             </> : <></>
+
                     }
 
                     <Divider style={{ borderTop: '1px solid #d7d7dc' }} />

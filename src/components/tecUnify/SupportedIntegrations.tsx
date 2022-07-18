@@ -77,6 +77,7 @@ function SupportedIntegrations(): JSX.Element {
                   renderItem={app => (
                     <List.Item
                       key={app.uid}
+                      //@ts-ignore
                       extra={
                         <Button
                           icon={<BarsOutlined />}
