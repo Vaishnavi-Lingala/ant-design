@@ -323,7 +323,7 @@ export function AddUser(props) {
                 <Col span={12}>
                     <span style={{ paddingLeft: '80px', paddingRight: '20px' }}>
                         <Input
-                            style={{ borderColor: requiredFieldsModel?.sam }}
+                            style= {samRequired ? {borderColor: requiredFieldsModel?.sam} : {borderColor: ''}}
                             name="sam"
                             type="text"
                             className="form-control"
@@ -345,7 +345,7 @@ export function AddUser(props) {
                     <span style={{ paddingLeft: '80px', paddingRight: '20px' }}>
 
                         <Input
-                            style={{ borderColor: requiredFieldsModel?.upn }}
+                            style={upnRequired ? {borderColor: requiredFieldsModel?.upn} : {borderColor: ''}}
                             name="upn"
                             type="text"
                             className="form-control"
