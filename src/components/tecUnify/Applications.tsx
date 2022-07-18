@@ -35,14 +35,10 @@ function Applications() {
   const accountId = localStorage.getItem('accountId') as string;
   const match = useRouteMatch();
 
-  const { data, status } = useFetch<ConfiguredTemplate[]>({
+  const { data, status } = useFetch<ConfiguredTemplate>({
     url: ApiUrls.configuredTemplates(accountId)
   });
-
-  //TODO(CODY): Better method of type narrowing
-  if (Array.isArray(data))
-    return <></>
-
+  
   const OptionsMenu = (
     <Dropdown placement='bottomRight' overlay={options} trigger={['click']}>
       <Button icon={<BarsOutlined />} />
@@ -51,7 +47,7 @@ function Applications() {
 
   const paginationConfig: PaginationConfig = {
     position: 'bottom',
-    total: data.total_items,
+    total: data === undefined ? 0 : data.total_items,
     pageSize: 5,
   };
 
@@ -61,10 +57,10 @@ function Applications() {
     let count: number = 0; 
 
     if (activityType === 'active')
-      count = data.results?.filter(template => template.active === true).length as number
+      count = data.results.filter(template => template.active).length as number
 
-    if (activityType === 'inactive')
-      count = data.results?.filter(template => template.active === false).length as number
+    if (activityType === 'inactive' && data.results !== undefined)
+      count = data.results.filter(template => !template.active).length as number
 
     return count
   }
@@ -93,8 +89,8 @@ function Applications() {
         <div className='Sidebar'>
           <Search />
           <Menu className='_NoBorder'>
-            <Menu.Item key='active'>Active - ({activityCount(data, 'active')})</Menu.Item>
-            <Menu.Item key='inactive'>Inactive - ({activityCount(data, 'inactive')})</Menu.Item>
+            <Menu.Item key='active'>Active - ({data !== undefined && activityCount(data, 'active')})</Menu.Item>
+            <Menu.Item key='inactive'>Inactive - ({data !== undefined && activityCount(data, 'inactive')})</Menu.Item>
           </Menu>
         </div>
         {

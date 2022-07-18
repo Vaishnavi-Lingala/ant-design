@@ -68,7 +68,7 @@ export interface PaginationApiRes<T> {
   next: string;
   page: number;
   previous: string;
-  results: T[];
+  results: T;
   total_items: number;
 }
 

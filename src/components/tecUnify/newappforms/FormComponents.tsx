@@ -149,7 +149,7 @@ export function SelectResource() {
 export function SelectDomain() {
 
   const accountId = localStorage.getItem('accountId') as string;
-  const { data, status } = useFetch<string[]>({
+  const { data, status } = useFetch<string>({
     url: ApiUrls.domains(accountId)
   });
 
@@ -159,7 +159,7 @@ export function SelectDomain() {
       name={['template', 'domain']}
     >
       {
-        ('results' in data && data.results !== undefined) &&
+        (data !== undefined) &&
         <Select
           loading={status === 'fetching'}
           options={

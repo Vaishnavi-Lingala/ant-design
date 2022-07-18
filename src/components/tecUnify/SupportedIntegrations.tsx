@@ -19,7 +19,7 @@ function SupportedIntegrations(): JSX.Element {
   const [appUID, setAppUID] = useState('');
   const history = useHistory();
 
-  const { data, status } = useFetch<MasterTemplate[]>({
+  const { data, status } = useFetch<MasterTemplate>({
     url: ApiUrls.availableTemplates(accountId)
   });
 
@@ -65,35 +65,32 @@ function SupportedIntegrations(): JSX.Element {
             <Empty className='_CenterInParent' />
             :
             <>
-              {
-                'results' in data &&
-                <List
-                  className='AppList'
-                  itemLayout='horizontal'
-                  size='small'
-                  loading={status === 'fetching'}
-                  dataSource={data.results}
-                  pagination={paginationConfig}
-                  renderItem={app => (
-                    <List.Item
-                      key={app.uid}
-                      extra={
-                        <Button
-                          icon={<BarsOutlined />}
-                          onClick={handleClick}
-                          id={app.template_type}
-                          value={app.uid}
-                        />
-                      }
-                    >
-                      <List.Item.Meta
-                        avatar={<img alt='app logo' src='https://placeholder.pics/svg/50' />}
-                        title={app.name}
+              <List
+                className='AppList'
+                itemLayout='horizontal'
+                size='small'
+                loading={status === 'fetching'}
+                dataSource={data.results}
+                pagination={paginationConfig}
+                renderItem={app => (
+                  <List.Item
+                    key={app.uid}
+                    extra={
+                      <Button
+                        icon={<BarsOutlined />}
+                        onClick={handleClick}
+                        id={app.template_type}
+                        value={app.uid}
                       />
-                    </List.Item>
-                  )}
-                />
-              }
+                    }
+                  >
+                    <List.Item.Meta
+                      avatar={<img alt='app logo' src='https://placeholder.pics/svg/50' />}
+                      title={app.name}
+                    />
+                  </List.Item>
+                )}
+              />
 
               <AppFormRenderer
                 showModal={modalVisible}
