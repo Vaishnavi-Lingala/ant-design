@@ -107,7 +107,6 @@ export default function Mechanisms() {
 		setLoading(true);
 		ApiService.get(ApiUrls.mechanisms(accountId, productId))
 			.then(data => {
-				console.log(data);
 				var activeCounter = 0;
 				var inActiveCounter = 0;
 				var activeArray: any = [];
@@ -139,7 +138,6 @@ export default function Mechanisms() {
 					}
 				}
 				setActiveMechanisms(activeArray);
-				console.log(activeArray);
 				setInactiveMechanisms(inActiveArray);
 				setLoading(false);
 			}, error => {
