@@ -81,29 +81,35 @@ export default function Groups() {
         setTableLoading(true);
         ApiService.post(ApiUrls.groupFilter(accountId), object, param)
             .then(data => {
-                setPage(data.page);
-                setPageSize(data.items_per_page);
-                setTotalItems(data.total_items);
-                console.log('Groups: ', data);
-                let userGroupsList: Group[] = [];
-                let kioskGroupsList: Group[] = [];
-                let standardGroupsList: Group[] = [];
-                data.forEach((group: Group) => {
-                    group.key = group.uid;
-                    if (group.type === 'USER') {
-                        userGroupsList.push(group);
-                    }
-                    if (group.type === 'KIOSK') {
-                        kioskGroupsList.push(group);
-                    }
-                    if (group.type === 'STANDARD') {
-                        standardGroupsList.push(group);
-                    }
-                })
-                setUserGroups(userGroupsList);
-                setKioskMachineGroups(kioskGroupsList);
-                setStandardMachineGroups(standardGroupsList);
-                setTableLoading(false);
+                if (!data.errorSummary) {
+                    setPage(data.page);
+                    setPageSize(data.items_per_page);
+                    setTotalItems(data.total_items);
+                    console.log('Groups: ', data);
+                    let userGroupsList: Group[] = [];
+                    let kioskGroupsList: Group[] = [];
+                    let standardGroupsList: Group[] = [];
+                    data.forEach((group: Group) => {
+                        group.key = group.uid;
+                        if (group.type === 'USER') {
+                            userGroupsList.push(group);
+                        }
+                        if (group.type === 'KIOSK') {
+                            kioskGroupsList.push(group);
+                        }
+                        if (group.type === 'STANDARD') {
+                            standardGroupsList.push(group);
+                        }
+                    })
+                    setUserGroups(userGroupsList);
+                    setKioskMachineGroups(kioskGroupsList);
+                    setStandardMachineGroups(standardGroupsList);
+                    setTableLoading(false);
+                }
+                else {
+                    openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
+                    setTableLoading(false);
+                }
             }, error => {
                 console.error('Error: ', error);
                 openNotification('error', 'An Error has occured with getting Groups');
@@ -115,34 +121,40 @@ export default function Groups() {
         setLoadingDetails(true);
         ApiService.post(ApiUrls.groupFilter(accountId), object, param)
             .then(data => {
-                setPage(data.page);
-                setPageSize(data.items_per_page);
-                setTotalItems(data.total_items);
-                console.log('Groups: ', data);
-                let userGroupsList: Group[] = [];
-                let kioskGroupsList: Group[] = [];
-                let standardGroupsList: Group[] = [];
-                let thinGroupsList: Group[] = [];
-                data.forEach((group: Group) => {
-                    group.key = group.uid;
-                    if (group.type === 'USER') {
-                        userGroupsList.push(group);
-                    }
-                    if (group.type === 'KIOSK') {
-                        kioskGroupsList.push(group);
-                    }
-                    if (group.type === 'STANDARD') {
-                        standardGroupsList.push(group);
-                    }
-                    if (group.type === 'THIN') {
-                        thinGroupsList.push(group);
-                    }
-                })
-                setUserGroups(userGroupsList);
-                setKioskMachineGroups(kioskGroupsList);
-                setStandardMachineGroups(standardGroupsList);
-                setThinMachineGroups(thinGroupsList);
-                setLoadingDetails(false);
+                if (!data.errorSummary) {
+                    setPage(data.page);
+                    setPageSize(data.items_per_page);
+                    setTotalItems(data.total_items);
+                    console.log('Groups: ', data);
+                    let userGroupsList: Group[] = [];
+                    let kioskGroupsList: Group[] = [];
+                    let standardGroupsList: Group[] = [];
+                    let thinGroupsList: Group[] = [];
+                    data.forEach((group: Group) => {
+                        group.key = group.uid;
+                        if (group.type === 'USER') {
+                            userGroupsList.push(group);
+                        }
+                        if (group.type === 'KIOSK') {
+                            kioskGroupsList.push(group);
+                        }
+                        if (group.type === 'STANDARD') {
+                            standardGroupsList.push(group);
+                        }
+                        if (group.type === 'THIN') {
+                            thinGroupsList.push(group);
+                        }
+                    })
+                    setUserGroups(userGroupsList);
+                    setKioskMachineGroups(kioskGroupsList);
+                    setStandardMachineGroups(standardGroupsList);
+                    setThinMachineGroups(thinGroupsList);
+                    setLoadingDetails(false);
+                }
+                else {
+                    openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
+                    setLoadingDetails(false);
+                }
             }, error => {
                 console.error('Error: ', error);
                 openNotification('error', 'An Error has occured with getting Groups');

@@ -22,6 +22,17 @@
     padding: 1vmax !important;
 }
 
+._SubHeading {
+    font-weight: 600;
+    font-size: large;
+    text-align: center;
+}
+
+._CenterInParent {
+    align-self: center;
+    width: 100%;
+}
+
 .AppSettings {
     display: flex;
     flex-direction: column;
@@ -41,17 +52,19 @@
     flex-direction: column;
     padding: 10px;
     border-right: 1px solid #d7d7dc;
+    font-weight: 600;
+    font-size: medium;
 }
 
 .BulkAssignment {
     display: flex;
     flex-direction: column;
-    flex-grow: 1;
+    width: 100%;
+    margin-bottom: 20px;
 }
 
 .BulkAssignment-ListGroup {
     display: flex;
-    flex-direction: row;
 }
 
 .BulkAssignment-List {
@@ -63,7 +76,7 @@
     margin-block-start: 1vmax;
     margin-inline: 3vmax;
     padding-bottom: 1%;
-    flex-grow: 1;
+    width: 50%;
 }
 
 .BulkAssignment-ListHeader {
@@ -104,67 +117,8 @@
 }
 
 .AppList {
-    display: flex;
-    flex: 1 1 auto;
-    flex-wrap: wrap;
-    padding: 10px;
-    gap: 10px;
-    list-style: none;
-}
-
-.AppList-Item, .AppList-Card, .AppList-Banner {
-    display: flex;
-    padding: 3px;
-    border: 1px solid #d7d7dc;
-    box-shadow: 0 3px 6px rgb(33 33 38 / 25%);
-    border-radius: 2px;
-}
-
-.AppList-Banner {
-    align-items: center;
-}
-
-.AppList-Card {
-    width: 20%;
-    height: 50%;
-    transition: transform .2s;
-}
-
-.AppList-CardHeader {
-    font-size: 1.5rem;
-}
-
-.AppList-CardBody {
-    display: flex;
-    flex-direction: column;
-}
-
-.AppList-CardHeader_ImgSize {
-    width: 50%;
-}
-
-@media (max-width: 1000px) {
-    .AppList-CardHeader > img {
-        display: none;
-    }
-}
-
-.AppList-Card:hover {
-    transform: scale(1.01);
-}
-
-.AppList-Banner > a {
-    margin: 0 auto 0 0;
-    color: black;
-    transition: all .3s linear;
-}
-
-.AppList-Banner > a:hover {
-    color: var(--ant-primary-color);
-}
-
-.AppList-Banner > img:hover {
-    cursor: pointer;
+    margin: 5px;
+    width: 100%;
 }
 
 .Content-HeaderContainer, .Content-SubHeader {
@@ -174,6 +128,22 @@
     border: 1px solid #d7d7dc;
     padding: 10px;
     gap: 10px;
+    width: 100%;
+}
+
+.Content-HeaderTasks {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+}
+
+.Content-HeaderTasks > h2 {
+    margin: 0px;
+}
+
+.Content-ContainerButton {
+    margin: 5px 5px 0px 0px;
+    align-self: end;
 }
 
 .content-header > button {
@@ -187,7 +157,7 @@
 
 .Content-ComponentView {
     display: flex;
-    min-height: 65vh;
+    min-height: fit-content;
     border: 1px solid #d7d7dc;
     border-top: 0px;
 }

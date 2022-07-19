@@ -1,61 +1,113 @@
-/*
- * NOTE:
- * Apps to be displayed will either be by account_id or config_id
- * 
- */
+import { useState } from 'react';
+import { useHistory } from 'react-router-dom';
+import { Input, Button, List, Empty } from 'antd';
+import { BarsOutlined } from '@ant-design/icons';
 
-import { Card, Input } from 'antd';
+import { useFetch } from './hooks/useFetch';
+import useFormSwitch from './hooks/useFormSwitch';
+import AppFormRenderer from './newappforms';
+import ApiUrls from '../../ApiUtils';
 
-import useFilter from './hooks/useFilter';
-
-import type { Template } from './types';
+import type { MasterTemplate } from './types';
+import type { PaginationConfig } from 'antd/lib/pagination';
 
 const { Search } = Input;
 
-interface SIProps {
-  templateList: Template[];
-}
+function SupportedIntegrations(): JSX.Element {
+  const accountId = localStorage.getItem('accountId') as string;
+  const [modalVisible, toggleModal] = useState(false);
+  const [appUID, setAppUID] = useState('');
+  const history = useHistory();
 
-function SupportedIntegrations({templateList}: SIProps): JSX.Element {
+  const { data, status } = useFetch<MasterTemplate[]>({
+    url: ApiUrls.availableTemplates(accountId)
+  });
 
-  function handleClick(e) {
+  const { formArgs, setTemplateType } = useFormSwitch();
+
+  if (data === undefined) {
+    return <></>;
   }
 
-  function AppCard({app_id, display_name, window_title}: Template) {
-    return (
-      <>
-        <h4 className='AppList-CardHeader'>
-          {display_name}
-          <img className='AppList-CardBody_ImgSize' alt='app logo' src='https://placeholder.pics/svg/100' />
-        </h4>
-        <div className='AppList-CardBody'>
-          <span>Window Title: {window_title}</span>
-          <span>App Id: {app_id}</span>
-        </div>
-      </>
-    );
+  const paginationConfig: PaginationConfig = {
+    position: 'bottom',
+    total: 'total_items' in data ? data.total_items : 0,
+    pageSize: 5
+  };
+
+  function handleClick(e) {
+    setAppUID(e.currentTarget.value)
+    setTemplateType(e.currentTarget.id);
+    toggleModal(true)
   }
 
   return (
     <>
-      <div className='Sidebar'>
-        <Search/>
-        <div>
-          filters
-        </div>
+      <div className='content-header'>
+        Supported Applications
+        <Button onClick={() => history.goBack()}>Return</Button>
       </div>
 
-        <ul className='AppList'>
-        { 
-          templateList.map((item): JSX.Element => {
-            return (
-              <li className='AppList-Item AppList-Card'>
-                <AppCard {...item}/>
-              </li>
-            );
-          })
+      <div className='Content-HeaderContainer'>
+      </div>
+
+
+      <div className='Content-ComponentView'>
+        <div className='Sidebar'>
+          <Search />
+          <div>
+            filters
+          </div>
+        </div>
+
+        {
+          status === 'error' ?
+            <Empty className='_CenterInParent' />
+            :
+            <>
+              {
+                'results' in data &&
+                <List
+                  className='AppList'
+                  itemLayout='horizontal'
+                  size='small'
+                  loading={status === 'fetching'}
+                  dataSource={data.results}
+                  pagination={paginationConfig}
+                  renderItem={app => (
+                    <List.Item
+                      key={app.uid}
+                      //@ts-ignore
+                      extra={
+                        <Button
+                          icon={<BarsOutlined />}
+                          onClick={handleClick}
+                          id={app.template_type}
+                          value={app.uid}
+                        />
+                      }
+                    >
+                      <List.Item.Meta
+                        avatar={<img alt='app logo' src='https://placeholder.pics/svg/50' />}
+                        title={app.name}
+                      />
+                    </List.Item>
+                  )}
+                />
+              }
+
+              <AppFormRenderer
+                showModal={modalVisible}
+                toggleModal={() => {
+                  toggleModal(false);
+                  setTemplateType('');
+                }}
+                formArgs={formArgs}
+                appUID={appUID}
+              />
+            </>
         }
-        </ul>
+      </div>
     </>
   );
 }

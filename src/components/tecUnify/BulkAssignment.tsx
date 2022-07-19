@@ -1,18 +1,15 @@
 import { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import { Button, Checkbox, List, Input, Skeleton } from 'antd';
 import { CaretDownOutlined } from '@ant-design/icons';
 
-
-import { useFetchUsers } from './hooks/useFetch';
-import { App, Page, User } from './types';
-import { CheckboxValueType } from 'antd/lib/checkbox/Group';
-
-interface BAProps {
-  activeList: App[];
-}
+import { useFetch } from './hooks/useFetch';
+import ApiUrls from '../../ApiUtils';
+import type { ConfiguredTemplate, Page, PaginationApiRes, User } from './types';
+import type { CheckboxValueType } from 'antd/lib/checkbox/Group';
 
 const initialPState: Page = {
-  current: 1,
+  start: 1,
   limit: 10
 };
 
@@ -20,23 +17,28 @@ const { Search } = Input;
 
 function PascalCase(s: string) { return s.charAt(0).toUpperCase() + s.substring(1).toLowerCase(); }
 
-// TODO: list styling better
-function BulkAssignment({ activeList }: BAProps) {
+function BulkAssignment() {
   const [userPage, setUserPage] = useState(initialPState);
   const [appPage, setAppPage] = useState(initialPState);
   const [appSelection, setAppSelection] = useState<CheckboxValueType[]>([]);
   const [userSelection, setUserSelection] = useState<CheckboxValueType[]>([]);
-  const [filteredApps, setFilteredApps] = useState(activeList);
+  const accountId = localStorage.getItem('accountId') as string;
+  const history = useHistory();
 
-  const { userList, resetFilter, isFetching } = useFetchUsers(userPage);
+  const { data: userData, status: userStatus } = useFetch<PaginationApiRes<User>>({
+    url: ApiUrls.users(accountId)
+  });
 
-  function filterFields(searchVal: string) {
-    console.log(searchVal)
-  }
+  const { data: templateData, status: templateStatus } = useFetch<ConfiguredTemplate[]>({
+    url: ApiUrls.configuredTemplates(accountId)
+  });
+
+  const isFetchingBoth = userStatus === 'fetching' || templateStatus === 'fetching';
+
 
   function handleCheckBox(id: CheckboxValueType[], isUser: boolean) {
     console.log(id);
-    // isUser ? setUserSelection(id) : setAppSelection(id);
+    isUser ? setUserSelection(id) : setAppSelection(id);
   }
 
   function sortFields(e: any) {
@@ -54,20 +56,31 @@ function BulkAssignment({ activeList }: BAProps) {
           <span>Selected Users - {userSelection.length}</span>
           {ResetButton}
         </div>
-        <ListSubHeader leftText="Users" rightText="Status" />
 
-        <Checkbox.Group onChange={(event) => handleCheckBox(event, true)}>
-          <List
-            itemLayout='vertical'
-            pagination={{
-              onChange: pageNum => setUserPage(currPage => { return { ...currPage, current: pageNum } }),
-              pageSize: userPage.limit,
-              total: userList.total_items,
-              size: 'small'
-            }}
-            dataSource={userList.results}
-            renderItem={(user): React.ReactNode => ListItem(user)}
-          />
+        <ListSubHeader
+          leftText="Users"
+          rightText="Status"
+          key='users'
+        />
+
+        <Checkbox.Group
+          name='user'
+          value={userSelection}
+          onChange={(event) => handleCheckBox(event, true)}
+        >
+          {
+            'next' in userData &&
+            <List
+              pagination={{
+                onChange: (pageNum) => setUserPage(currPage => { return { ...currPage, current: pageNum } }),
+                pageSize: userPage.limit,
+                total: userData?.total_items,
+                size: 'small'
+              }}
+              dataSource={userData.results}
+              renderItem={(user) => ListItem(user)}
+            />
+          }
         </Checkbox.Group>
       </div>
     );
@@ -80,38 +93,54 @@ function BulkAssignment({ activeList }: BAProps) {
           <span>Selected Applications - {appSelection.length}</span>
           {ResetButton}
         </div>
-        <ListSubHeader leftText="Applications" />
-        <Checkbox.Group onChange={(event) => handleCheckBox(event, false)} >
-          <List
-            itemLayout='vertical'
-            pagination={{
-              onChange: pageNum => setAppPage(currPage => { return { ...currPage, current: pageNum } }),
-              pageSize: appPage.limit,
-              total: filteredApps.length,
-              size: 'small'
-            }}
-            dataSource={filteredApps}
-            renderItem={(app) => <ListItem {...app} />}
-          />
+
+        <ListSubHeader
+          leftText="Applications"
+          key='application'
+        />
+
+        <Checkbox.Group
+          name='app'
+          value={appSelection}
+          onChange={(event) => handleCheckBox(event, false)}
+        >
+          {
+            'results' in templateData &&
+            <List
+              pagination={{
+                onChange: pageNum => setAppPage(currPage => { return { ...currPage, current: pageNum } }),
+                pageSize: appPage.limit,
+                total: templateData.total_items,
+                size: 'small'
+              }}
+              dataSource={templateData.results}
+              renderItem={(app) => <ListItem {...app} />}
+            />
+          }
         </Checkbox.Group>
       </div>
     );
   }
 
-  function ListItem(item: App | User) {
-    const isUser = "user_name" in item;
+  function ListItem(item: ConfiguredTemplate | User) {
+    const isUser = 'idp_user_id' in item;
     return (
       <List.Item
         className='BulkAssignment-ListItems'
       >
         <Checkbox
-          value={isUser ? item.uid : item.app_id}
+          value={item.uid}
           style={{ marginLeft: '7px', alignSelf: 'center' }}
-          checked={isUser ? userSelection.includes(item.uid) : appSelection.includes(item.app_id)}
+          checked={isUser ? userSelection.includes(item.uid) : appSelection.includes(item.uid)}
         />
 
         <h4 style={{ alignSelf: 'center', marginBottom: '0px', marginRight: 'auto' }}>
-          {isUser ? item.user_name : item.display_name}
+          {
+            isUser ?
+              item.first_name + ' ' + item.last_name
+              :
+              item.name
+          }
         </h4>
 
         {
@@ -124,13 +153,12 @@ function BulkAssignment({ activeList }: BAProps) {
     );
   }
 
-  const ResetButton = <Button onClick={resetFilter} type='link' size='small'>reset</Button>;
+  const ResetButton = <Button type='link' size='small'>reset</Button>;
 
-  function ListSubHeader({ leftText = "", rightText = "" }) {
+  function ListSubHeader({ leftText = "", rightText = "", }) {
     return (
       <>
         <Search
-          onSearch={val => console.log(val)}
           style={{ padding: '7px' }}
           size='small'
           width='fill'
@@ -152,15 +180,33 @@ function BulkAssignment({ activeList }: BAProps) {
 
 
   return (
-    <Skeleton loading={isFetching} className={`${isFetching && "_Padding"}`}>
-      <div className='BulkAssignment'>
-        <Button style={{ alignSelf: 'end', margin: '5px 5px 0px' }} type='primary' size='middle'>Next</Button>
-        <div className='BulkAssignment-ListGroup'>
-          <ApplicationList />
-          <UserList />
+    <>
+      <div className='content-header'>
+        Bulk Assign Applications
+        <Button onClick={() => history.goBack()}>Return</Button>
+      </div>
+
+      <div className='Content-HeaderContainer'>
+      </div>
+
+      <div className='Content-ComponentView'>
+        <div className='BulkAssignment'>
+          <Button
+            className='Content-ContainerButton'
+            type='primary'
+            size='middle'
+          >
+            Next
+          </Button>
+          <div className='BulkAssignment-ListGroup'>
+            <Skeleton loading={isFetchingBoth} className={`${isFetchingBoth && "_Padding"}`}>
+              <ApplicationList />
+              <UserList />
+            </Skeleton>
+          </div>
         </div>
       </div>
-    </Skeleton>
+    </>
   );
 }
 
