@@ -40,16 +40,22 @@ oktaAuth.tokenManager.getTokens().then(({ accessToken, idToken }) => {
     console.log('ID token: ', idToken);
     if (accessToken) {
         console.log('Access token expired: ', oktaAuth.tokenManager.hasExpired(accessToken));
-        <Redirect to={"/"} />
+        oktaAuth.tokenManager.hasExpired(accessToken)? localStorage.removeItem("okta-token-storage") : console.log('Access token is valid')
     } else {
         console.log('Access token not available')
     } 
-    idToken? console.log('ID token expired: ', oktaAuth.tokenManager.hasExpired(idToken)): console.log('ID token not available')
+    if (idToken) {
+        console.log('ID token expired: ', oktaAuth.tokenManager.hasExpired(idToken));
+        oktaAuth.tokenManager.hasExpired(idToken)? localStorage.removeItem("okta-token-storage") : console.log('ID token is valid')
+        
+    } else {
+        console.log('ID token not available')
+    } 
   });
 
 oktaAuth.tokenManager.on('expired', function (key, expiredToken) {
-    console.log('Token with key', key, ' has expired:');
-    console.log(expiredToken);
+    console.log('Token with key', key, ' has expired: ', expiredToken);
+    localStorage.removeItem("okta-token-storage");
     <Redirect to={"/"} />
 });
 
