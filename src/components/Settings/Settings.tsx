@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Button, Divider, Input, Skeleton, Tooltip } from 'antd';
+import { Button, Divider, Input, Radio, Select, Skeleton, Tooltip } from 'antd';
 import { CopyOutlined, InfoCircleOutlined } from '@ant-design/icons';
 
 import './Settings.css'
@@ -7,7 +7,7 @@ import './Settings.css'
 import { openNotification } from '../Layout/Notification';
 import ApiUrls from '../../ApiUtils';
 import ApiService from '../../Api.service';
-import { Account, accountBillingContact, accountTechnicalContact, settingsFieldNames, settingsIdpFields, settingsTokenNames } from '../../constants';
+import { Account, accountBillingContact, accountTechnicalContact, settingsFieldNames, settingsIdpFields, settingsLDAPFields, settingsTokenNames, usernameFormatOptions } from '../../constants';
 
 function Settings() {
     const [loading, setLoading] = useState(false);
@@ -126,6 +126,86 @@ function Settings() {
                             />
                         )
                     }
+
+                    <Divider style={{ borderTop: '1px solid #d7d7dc' }} />
+                    <div style={{ width: "100%", display: "flex", marginBottom: "10px" }}>
+                        <div style={{ width: "50%" }}>
+                            <b>
+                                LDAP Host:
+                            </b>
+                        </div>
+                        <div>
+                            <Input defaultValue={"IP or DNS Name"} style={{ width: "275px" }} />
+                        </div>
+                    </div>
+
+                    <div style={{ width: "100%", display: "flex", marginBottom: "10px" }}>
+
+                        <div style={{ width: "50%" }}>
+                            <b>
+                                LDAP Port:
+                            </b>
+                        </div>
+                        <div>
+                            <Radio.Group defaultValue={636}
+                            // onChange={}
+                            >
+                                <Radio key={636} value={636}>
+                                    636
+                                </Radio>
+                                <br />
+                                <Radio key={389} value={389}>
+                                    389
+                                </Radio>
+                            </Radio.Group>
+                        </div>
+                    </div>
+
+                    <div style={{ width: "100%", display: "flex", marginBottom: "10px" }}>
+                        <div style={{ width: "50%" }}>
+                            <b>
+                                Base DN:
+                            </b>
+                        </div>
+                        <div>
+                            <Input defaultValue={"dc=lab,dc=tld"} style={{ width: "275px" }} />
+                        </div>
+                    </div>
+
+                    <div style={{ width: "100%", display: "flex", marginBottom: "10px" }}>
+                        <div style={{ width: "50%" }}>
+                            <b>
+                                User Base DN:
+                            </b>
+                        </div>
+                        <div>
+                            <Input defaultValue={"ou=user,dc=lab,dc=tld"} style={{ width: "275px" }} />
+                        </div>
+                    </div>
+
+                    <div style={{ width: "100%", display: "flex", marginBottom: "10px" }}>
+                        <div style={{ width: "50%" }}>
+                            <b>
+                                Username Format:
+                            </b>
+                        </div>
+                        <div>
+                            <Select
+                                size={"large"}
+                                placeholder="Please select username format"
+                                defaultValue={"SAMACCOUNTNAME"}
+                                style={{ width: '275px' }}
+                            >
+                                {
+                                    Object.keys(usernameFormatOptions).map(nameFormat => {
+                                        return <Select.Option key={nameFormat} value={nameFormat}>
+                                            {usernameFormatOptions[nameFormat]}
+                                        </Select.Option>
+                                    })
+                                }
+                            </Select>
+                        </div>
+                    </div>
 
                     <Divider style={{ borderTop: '1px solid #d7d7dc' }} />
 

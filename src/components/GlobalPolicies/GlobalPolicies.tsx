@@ -280,14 +280,14 @@ function GlobalPolicies() {
     }
 
     useEffect(() => {
-        if (window.location.pathname.split("/").length === 2) {
-            history.push(`global-policies/local-user-provisioning`);
-        }
-
         ApiService.get(ApiUrls.info(accountId))
             .then(data => {
                 setIsLocalProvisioning(data.enable_local_provisioning);
                 setIsVdi(data.enable_vdi);
+
+                if (window.location.pathname.split("/").length === 2) {
+                    history.push(`global-policies/${data.enable_local_provisioning ? 'local-user-provisioning' : 'virtual-desktop-interface'}`);
+                }
             })
 
         getGlobalPolicies();
@@ -368,7 +368,7 @@ function GlobalPolicies() {
                     history.push(`/global-policies/` + key);
                 }}
             >
-                {isLocalProvisioning ? <TabPane  tab={policyDisplayNames[LOCAL_USER_PROVISIONING]} key="local-user-provisioning">
+                {isLocalProvisioning ? <TabPane tab={policyDisplayNames[LOCAL_USER_PROVISIONING]} key="local-user-provisioning">
                     <Skeleton loading={loadingDetails}>
                         {window.location.pathname.split('/').length === 4 ?
                             <ProtectedRoute path={`/global-policies/local-user-provisioning/:id`} component={UserProvisioningPolicy} subRoute /> :

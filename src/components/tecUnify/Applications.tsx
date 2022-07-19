@@ -1,118 +1,128 @@
-import { useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { Button, Skeleton } from 'antd';
+import { Link, useRouteMatch } from 'react-router-dom';
+import { Button, Menu, List, Input, Dropdown, Empty } from 'antd';
+import { BarsOutlined, UserAddOutlined, UsergroupAddOutlined, PoweroffOutlined } from '@ant-design/icons';
 
 import './tecUnify.css';
 
-import SupportedIntegrations from './SupportedIntegrations';
-import AccountIntegrations from './AccountIntegrations';
-import BulkAssignment from './BulkAssignment';
-// import AppSettings from './AppSettings';
-import { useFetch } from './hooks/useUnifyFetch';
-import { AppList } from './types';
-import NewAppForm from './newappforms/CitrixForm';
+import ApiUrls from '../../ApiUtils';
+import { useFetch, State } from './hooks/useFetch';
+import { ConfiguredTemplate } from './types';
+import { PaginationConfig } from 'antd/lib/pagination';
 
-interface PageType {
-  name: string;
-  isLoading: boolean;
-}
+const { Search } = Input;
 
-const initialComponent: PageType = {
-  name: 'configured',
-  isLoading: false,
-};
-
-const initAppList: AppList = {
-  active: [],
-  inactive: []
-};
-
-function capitalizeFirst(s: string): string {
-  return s.charAt(0).toUpperCase() + s.slice(1);
-}
+const options = (
+  <Menu
+    items={
+      [
+        {
+          key: '1',
+          label: <span><UserAddOutlined /> Assign to User</span>,
+        },
+        {
+          key: '2',
+          label: <span><UsergroupAddOutlined /> Assign to Group</span>
+        },
+        {
+          key: '3',
+          label: <span><PoweroffOutlined /> Move to Inactive</span>
+        },
+      ]
+    } />
+);
 
 function Applications() {
-  const [currPage, setCurrPage] = useState(initialComponent);
-  const [modalVisible, toggleModal] = useState(false);
-  const { data, isFetching, update } = useFetch(48, initAppList);
+  const accountId = localStorage.getItem('accountId') as string;
+  const match = useRouteMatch();
 
-  const { productId } = useParams<any>();
+  const { data, status } = useFetch<ConfiguredTemplate[]>({
+    url: ApiUrls.configuredTemplates(accountId)
+  });
 
-  const isBulkAssignmentPage = (currPage.name === 'assignment');
-  const isConfiguredPage = (currPage.name === 'configured');
+  //TODO(CODY): Better method of type narrowing
+  if (Array.isArray(data))
+    return <></>
 
-  function handleClick(e: any) {
-    const currentPage = {
-      name: e.target.parentNode.id,
-      isLoading: false
-    };
+  const OptionsMenu = (
+    <Dropdown placement='bottomRight' overlay={options} trigger={['click']}>
+      <Button icon={<BarsOutlined />} />
+    </Dropdown>
+  );
 
-    setCurrPage(currentPage);
-  }
+  const paginationConfig: PaginationConfig = {
+    position: 'bottom',
+    total: data.total_items,
+    pageSize: 5,
+  };
 
-  function handleBack() {
-    setCurrPage(initialComponent);
-  }
+  // TODO(Cody): Cleaner function to count active/inactive templates.
+  // Possibly move to useFilter Hook
+  function activityCount(data: State<ConfiguredTemplate[]>, activityType: string) {
+    let count: number = 0; 
 
-  function RenderOptions(): JSX.Element | null {
-    switch (currPage.name) {
-      case 'configured':
-        return <AccountIntegrations appList={data} />;
-      case 'supported':
-        return <>Component In Progress</>;
-      // return <SupportedIntegrations templateList={}/>;
-      case 'assignment':
-        return <BulkAssignment activeList={data.active} />;
-      // case 'settings':
-      //   return <AppSettings />;
-      default:
-        return null;
-    }
+    if (activityType === 'active')
+      count = data.results?.filter(template => template.active === true).length as number
+
+    if (activityType === 'inactive')
+      count = data.results?.filter(template => template.active === false).length as number
+
+    return count
   }
 
   return (
     <>
       <div className='content-header'>
-        {
-          !isBulkAssignmentPage ?
-            <>{capitalizeFirst(currPage.name)} Applications</> : <span>Bulk Assignment</span>
-        }
-
-        {
-          !isConfiguredPage &&
-          <Button onClick={handleBack}>Back</Button>
-        }
+        Configured Applications
       </div>
 
-      <Skeleton
-        loading={isFetching}
-        active={true}
-        className={`${isFetching ? '_Padding' : ''}`}
-      >
-        <div className='Content-HeaderContainer'>
-          <Button id='supported' size='large' type='primary' onClick={handleClick}>
+      <div className='Content-HeaderContainer'>
+        <Button value='supported' size='large' type='primary'>
+          <Link to={{ pathname: `${match.url}/supported`, }}>
             Browse Supported Apps
-          </Button>
+          </Link>
+        </Button>
 
-          <Button id='assignment' size='large' type='primary' onClick={handleClick}>
+        <Button value='bulk' size='large' type='primary'>
+          <Link to={{ pathname: `${match.url}/assign` }}>
             Bulk Assign Apps
-          </Button>
+          </Link>
+        </Button>
+      </div>
 
-          {
-            isConfiguredPage &&
-            <Button id='new' size='large' type='primary' onClick={() => toggleModal(curr => !curr)}>
-              {/* NOTE: Temparary until we get supported app page displaying integrations */}
-              {/* Configure new App */}
-              Configure New Citrix VDI
-            </Button>
-          }
+      <div className='Content-ComponentView'>
+        <div className='Sidebar'>
+          <Search />
+          <Menu className='_NoBorder'>
+            <Menu.Item key='active'>Active - ({activityCount(data, 'active')})</Menu.Item>
+            <Menu.Item key='inactive'>Inactive - ({activityCount(data, 'inactive')})</Menu.Item>
+          </Menu>
         </div>
-
-        <div className='Content-ComponentView'>
-          <RenderOptions />
-        </div>
-      </Skeleton>
-      <NewAppForm showModal={modalVisible} toggleModal={() => toggleModal(curr => !curr)} />
+        {
+          status === 'error' || data === undefined ?
+            <Empty className='_CenterInParent' />
+            :
+            <List
+              className='AppList'
+              itemLayout='horizontal'
+              size='small'
+              loading={status === 'fetching'}
+              dataSource={data.results}
+              pagination={paginationConfig}
+              renderItem={app => (
+                <List.Item
+                  key={app.uid}
+                  //@ts-ignore
+                  extra={OptionsMenu}
+                >
+                  <List.Item.Meta
+                    avatar={<img alt='app logo' src='https://placeholder.pics/svg/50' />}
+                    title={app.name}
+                  />
+                </List.Item>
+              )}
+            />
+        }
+      </div>
     </>
   );
 }

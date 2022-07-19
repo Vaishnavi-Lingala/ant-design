@@ -114,7 +114,7 @@ export const logFieldNames = {
         "display_name": "Display name",
         "idp_user_name": "User name",
         "email": "Email",
-        "sam": "samAccount Name",
+        "sam": "sAMAccount Name",
         "upn": "UPN",
         "idp_user_id": "IDP user ID",
         "account_id": "Account ID",
@@ -197,6 +197,20 @@ export const settingsIdpFields = {
     issuer_url: "Tenant URL",
     idp_portal_oidc_client_id: "Portal OIDC Client ID",
     idp_app_oidc_client_id: "App OIDC Client ID"
+}
+
+export const settingsLDAPFields = {
+    ldap_host: "LDAP Host",
+    ldap_port: "LDAP Port",
+    base_dn: "Base DN",
+    user_base_dn: "User Base DN",
+    username_format: "Username Format"
+}
+
+export const usernameFormatOptions = {
+    SAMACCOUNTNAME: "sAMAccountName - SAM",
+    USERPRINCIPALNAME: "userPrincipalName - UPN",
+    MAIL: "mail - Email ID"
 }
 
 export const tapOutFields = {

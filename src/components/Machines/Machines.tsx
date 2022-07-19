@@ -75,15 +75,21 @@ export default function Machines() {
         setTableLoading(true);
         setObject(objectData);
         ApiService.post(ApiUrls.machineFilter(accountId), objectData, params).then(data => {
-            console.log('Machines: ', data);
-            data.results.forEach(machine => {
-                machine.key = machine.uid;
-            })
-            setPage(data.page);
-            setPageSize(data.items_per_page);
-            setMachines(data.results);
-            setTotalItems(data.total_items);
-            setTableLoading(false);
+            if (!data.errorSummary) {
+                console.log('Machines: ', data);
+                data.results.forEach(machine => {
+                    machine.key = machine.uid;
+                })
+                setPage(data.page);
+                setPageSize(data.items_per_page);
+                setMachines(data.results);
+                setTotalItems(data.total_items);
+                setTableLoading(false);
+            }
+            else {
+                openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
+                setTableLoading(false);
+            }
         }, error => {
             console.error('Error: ', error);
             openNotification('error', 'An Error has occured with getting Machines');
@@ -94,15 +100,21 @@ export default function Machines() {
     function getMachines(object = {}, params = {}) {
         setLoadingDetails(true);
         ApiService.post(ApiUrls.machineFilter(accountId), object, params).then(data => {
-            console.log('Machines: ', data);
-            data.results.forEach(machine => {
-                machine.key = machine.uid;
-            })
-            setPage(data.page);
-            setPageSize(data.items_per_page);
-            setMachines(data.results);
-            setTotalItems(data.total_items);
-            setLoadingDetails(false);
+            if (!data.errorSummary) {
+                console.log('Machines: ', data);
+                data.results.forEach(machine => {
+                    machine.key = machine.uid;
+                })
+                setPage(data.page);
+                setPageSize(data.items_per_page);
+                setMachines(data.results);
+                setTotalItems(data.total_items);
+                setLoadingDetails(false);
+            }
+            else {
+                openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
+                setLoadingDetails(false);
+            }
         }, error => {
             console.error('Error: ', error);
             openNotification('error', 'An Error has occured with getting Machines');
@@ -121,11 +133,11 @@ export default function Machines() {
 
     return (
         <>
-            <div style={{display: 'flex'}}>
-                <div className='content-header' style={{width: '75%'}}>
+            <div style={{ display: 'flex' }}>
+                <div className='content-header' style={{ width: '75%' }}>
                     <span>Machines</span>
                 </div>
-                <div style={{paddingTop: '24px'}}>
+                <div style={{ paddingTop: '24px' }}>
                     <MachinesFiltersModal
                         getMachinesByFilter={getMachinesByFilter}
                         onFilterApply={applyAdvancedFilters}

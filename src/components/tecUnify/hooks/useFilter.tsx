@@ -1,55 +1,78 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import type { AppList, FilterType, User } from '../types';
 
-import type { App, AppList, FilterType } from '../types';
-
-interface FilterHookProps {
-  appList: AppList;
+interface FilterHookProps<T> {
+  list: T;
+  filterOn: string;
 }
 
 const defaultFilterState: FilterType = {
   activity: 'active',
-  search: '',
+  search: undefined,
   updated: false
 }
 
-function useFilter({ appList }: FilterHookProps) {
-  const [filteredAppList, setFilteredAppList] = useState<AppList>(appList);
+// Typeguard to verify that the object passed in is actually an array
+// of type 'T'
+function isArray<T>(list: any | any[]): list is T[] {
+  return Array.isArray(list);
+};
+
+// Generic filter function, .filter() was giving issues when using on the list passed into the hook
+function genFilter<T>(list: T[], filterFunc: (item: T) => boolean): T[] {
+  const result = new Array<T>();
+  list.forEach(
+    (item) => filterFunc(item) && result.push(item)
+  )
+  return result;
+}
+
+// Takes the list passed in and the filterOn value, running the filter
+// every time updateFilter func is ran from outside this hook. Will be kept in-sync
+// via useEffect
+function useFilter<T>({ list, filterOn }: FilterHookProps<T>) {
+  const [filteredData, setFilteredData] = useState<T>(list);
   const [filter, setFilter] = useState<FilterType>(defaultFilterState);
 
-  useEffect(() => {
-    filterList();
-
-    setFilter((curr) => {
-      return {
-        ...curr,
-        updated: false
-      }
-    });
-  }, [filter.activity, filter.search]);
+  const listIncludes = useCallback((item: T) => {
+    return item[filterOn].toLowerCase().includes(filter.search);
+  },[filter.search])
 
   function filterList() {
-    if (filter.search === '') {
-      setFilteredAppList(appList);
+    // If the filter is empty, reset the current search
+    if (filter.search === '' || filter.search === undefined) {
+      setFilteredData(list);
       return
     }
 
-    if (filter.updated) {
-      setFilteredAppList((curr) => {
+    if (filter.updated && isArray<T>(list)) {
+      const data = genFilter<T>(list, listIncludes);
+      setFilteredData((data as unknown) as T);
+    }
+  }
+
+  function filterActivityList() {
+    if (filter.search === '' || filter.search === undefined) {
+      setFilteredData(list);
+      return
+    }
+
+    if (filter.updated && ('activity' in filter)) {
+      setFilteredData((curr) => {
         return {
           ...curr,
-          [filter.activity]: curr[filter.activity].filter(
-            (app: App): boolean =>
-              app.display_name.toLowerCase().includes(filter.search))
+          [filter.activity!]: genFilter<T>(curr[filter.activity!], listIncludes)
         }
       });
     }
   };
 
   function updateFilter(event: any) {
+    console.log('filtering args:', event);
     setFilter((curr) => {
       if (event.key) {
         return {
-          search: '',
+          ...curr,
           activity: event.key,
           updated: true
         }
@@ -63,7 +86,22 @@ function useFilter({ appList }: FilterHookProps) {
     });
   }
 
-  return { filter, filteredAppList, updateFilter };
+  useEffect(() => {
+    if ('active' in list)
+      filterActivityList();
+
+    if (isArray<T>(list) && 'template_type' in list[0])
+      filterList();
+
+    setFilter((curr) => {
+      return {
+        ...curr,
+        updated: false
+      }
+    });
+  }, [filter.activity, filter.search, list]);
+
+  return { filter, filteredData, updateFilter };
 }
 
 export default useFilter;

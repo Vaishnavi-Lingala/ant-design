@@ -1,5 +1,4 @@
 export const base_url = process.env.REACT_APP_API_URL
-export const unify_url = process.env.REACT_APP_UNIFY_API_URL
 
 export function getAccessToken() {
     const okta_token_storage = localStorage.getItem("okta-token-storage");
@@ -77,7 +76,8 @@ const Urls = {
     profileUserTypesOptions: (accountId) => `account/${accountId}/auth-policy/local-profile-user-types`,
     profileUserFormatOptions: (accountId) => `account/${accountId}/auth-policy/local-profile-format-types`,
     vdiTypeOptions: (accountId) => `account/${accountId}/auth-policy/vdi-types`,
-    
+    templates: (accountId) => `account/${accountId}/templates`,
+
     // Mechanism Urls
     mechanisms: (accountId, productId) => `account/${accountId}/product/${productId}/mechanism`,
     addMechanism: (accountId, productId) => `account/${accountId}/product/${productId}/mechanism`,
@@ -97,13 +97,12 @@ const Urls = {
     // Licenses
     licences: (accountId) => `account/${accountId}/license`,
 
-    // app templates
-    templateById: (id: number) => `app-template?id=${id}`,
-    controlNameByTemplateId: (template_id: number) => `app-control-names?template_id=${template_id}`,
-    appConfigById: (config_id: number) => `app-configuration?id=${config_id}`,
-    xrefByAccount: (account_id: number) => `app-xref?account_id=${account_id}`,
-    allAccountConfigs: (account_id: number) => `combo-account?id=${account_id}`,
-    templatesByConfigId: (config_id: number) => `combo-config?id=${config_id}`
+    // App Templates
+    availableTemplates: (accountId: string) => `account/${accountId}/available-templates`,
+    configuredTemplates: (accountId: string) => `account/${accountId}/templates`,
+    templateByUID: (accountId: string, templateUID: string) => `account/${accountId}/templates/${templateUID}`,
+    addTemplate: (accountId: string, templateUID: string) => `account/${accountId}/templates/${templateUID}`,
+    updateTemplate: (accountId: string, templateUID: string) => `account/${accountId}/templates/${templateUID}`,
 }
 
 export default Urls;
