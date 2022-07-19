@@ -135,7 +135,7 @@ export default function Users() {
 
 	useEffect(() => {
 		if (lifeCycleTypes) {
-			getUsersList({}, { start: page, limit: pageSize });
+			getUpdatedUsersList();
 		}
 	}, [lifeCycleTypes])
 
@@ -196,6 +196,7 @@ export default function Users() {
 			start: page,
 			limit: pageSize
 		}
+		console.log(`pagination params: ${JSON.stringify(params)}`);
 
 		getUsersList({}, params);
 	}

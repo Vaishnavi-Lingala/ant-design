@@ -14,7 +14,7 @@ export function AddUser(props) {
     const [newUser, setNewUser] = useState({
         'first_name': '',
         'last_name': '',
-        'user_name': '',
+        'idp_user_name': '',
         'email': '',
         'login_domain': '',
         'sam': '',
@@ -35,7 +35,7 @@ export function AddUser(props) {
         setNewUser({
             'first_name': '',
             'last_name': '',
-            'user_name': '',
+            'idp_user_name': '',
             'email': '',
             'login_domain': '',
             'sam': '',
@@ -49,7 +49,7 @@ export function AddUser(props) {
         setRequiredFieldsModel({
             'first_name': '',
             'last_name': '',
-            'user_name': '',
+            'idp_user_name': '',
             'email': '',
             'login_domain': '',
             'sam': '',
@@ -282,15 +282,15 @@ export function AddUser(props) {
                     <span style={{ paddingLeft: '80px', paddingRight: '20px' }}>
 
                         <Input
-                            style={{ borderColor: requiredFieldsModel?.user_name }}
+                            style={{ borderColor: requiredFieldsModel?.idp_user_name }}
                             name="username"
                             type="text"
                             className="form-control"
                             onChange={(e) => setNewUser({
                                 ...newUser,
-                                user_name: e.target.value
+                                idp_user_name: e.target.value
                             })}
-                            value={newUser.user_name}
+                            value={newUser.idp_user_name}
                         />
 
                     </span>
