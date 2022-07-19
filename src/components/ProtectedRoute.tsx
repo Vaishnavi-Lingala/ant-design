@@ -14,14 +14,14 @@ export default function ProtectedRoute({
     const oktaStorage = localStorage.getItem("okta-token-storage");
 
     function removeItems() {
-        localStorage.removeItem("domain");
-        localStorage.removeItem("clientId");
-        localStorage.removeItem("issuer");
-        localStorage.removeItem("accountId");
-        localStorage.removeItem("productId");
-        localStorage.removeItem("productName");
-        localStorage.removeItem("SELECTED_HEADER");
         history.push('/');
+        // localStorage.removeItem("domain");
+        // localStorage.removeItem("clientId");
+        // localStorage.removeItem("issuer");
+        // localStorage.removeItem("accountId");
+        // localStorage.removeItem("productId");
+        // localStorage.removeItem("productName");
+        // localStorage.removeItem("SELECTED_HEADER");
     }
 
     if (oktaStorage === null || oktaStorage === "" || oktaStorage === "{}") {

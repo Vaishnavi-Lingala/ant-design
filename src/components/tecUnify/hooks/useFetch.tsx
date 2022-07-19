@@ -2,34 +2,25 @@ import { useEffect, useState } from 'react';
 
 import { openNotification } from "../../Layout/Notification";
 import ApiService from '../../../Api.service';
-import type { ApiResError, PaginationApiRes } from '../types';
+import { ApiResError, isArray, isPaginationType, PaginationApiRes } from '../types';
 
-interface FetchOptions {
+interface FetchProps {
   url: string;
 }
 
 export interface State<T> {
-  results: T;
+  results: T[];
   total_items: number;
 }
 
 type Status = 'idle' | 'fetching' | 'error';
 
 // Fetch apps using above async function, resolve the promises and sort
-export function useFetch<T>({ url }: FetchOptions) {
-  const [data, setData] = useState<State<T[]>>({ results: [], total_items: 0 });
-
-  const initPagedData: PaginationApiRes<T[]> = {
-    items_on_page: 0,
-    items_per_page: 0,
-    next: '',
-    page: 0,
-    previous: '',
+export function useFetch<T>({ url }: FetchProps) {
+  const [data, setData] = useState<State<T> | PaginationApiRes<T>>({
     results: new Array<T>(),
     total_items: 0
-  }
-
-  const [pagedData, setPagedData] = useState<PaginationApiRes<T[]>>(initPagedData);
+  });
   const [status, setStatus] = useState<Status>('idle');
 
   useEffect(() => {
@@ -46,11 +37,11 @@ export function useFetch<T>({ url }: FetchOptions) {
     }
 
     fetchApps()
-      .then((data) => {
-        if (!isPaginationType<T>(data)) {
-          setData({ results: data, total_items: data.length })
-        } else {
-          setPagedData(data)
+      .then((res) => {
+        if (!isPaginationType<T>(res) && isArray<T>(res)) {
+          setData({ results: res, total_items: res.length })
+        } else if (Array.isArray(res)) {
+          setData(res)
         }
 
         setStatus('idle');
@@ -61,12 +52,11 @@ export function useFetch<T>({ url }: FetchOptions) {
       });
   }, [url]);
 
-  if (isPaginationType<T>(data))
-    return { pagedData, status }
+  // Using type predicate to narrow our return type down
+  if (isPaginationType<T>(data)) {
+    console.log('paged via backend', data)
+    return { data, status }
+  }
 
   return { data, status }
-}
-
-function isPaginationType<T>(o: any): o is PaginationApiRes<T[]> {
-  return 'next' in o;
 }

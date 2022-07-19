@@ -19,6 +19,8 @@ const Urls = {
     stats: (accountId) => `account/${accountId}/stats`,
     domains: (accountId) => `account/${accountId}/domains`,
     info: (accountId) => `account/${accountId}/info`,
+    ldapConfig: (accountId) => `account/${accountId}/ldap-config`,
+    loginOptions : (accountId) => `account/${accountId}/login/options`,
 
     //Device Urls
     devices: (accountId) => `account/${accountId}/devices`,
@@ -76,7 +78,8 @@ const Urls = {
     profileUserTypesOptions: (accountId) => `account/${accountId}/auth-policy/local-profile-user-types`,
     profileUserFormatOptions: (accountId) => `account/${accountId}/auth-policy/local-profile-format-types`,
     vdiTypeOptions: (accountId) => `account/${accountId}/auth-policy/vdi-types`,
-    
+    templates: (accountId) => `account/${accountId}/templates`,
+
     // Mechanism Urls
     mechanisms: (accountId, productId) => `account/${accountId}/product/${productId}/mechanism`,
     addMechanism: (accountId, productId) => `account/${accountId}/product/${productId}/mechanism`,

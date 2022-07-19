@@ -2,9 +2,16 @@ import { FormItemProps, InputNumberProps, RadioProps, SelectProps } from "antd";
 import { FormItemInputProps } from "antd/lib/form/FormItemInput";
 import { ValidateMessages } from "rc-field-form/lib/interface";
 
-export interface AppList {
-  active: (MasterTemplate | ConfiguredTemplate)[];
-  inactive: (MasterTemplate | ConfiguredTemplate)[];
+// Type Predicate utility function
+// https://www.typescriptlang.org/docs/handbook/2/narrowing.html#handbook-content
+export function isPaginationType<T>(o: any): o is PaginationApiRes<T> {
+  return 'next' in o;
+}
+
+// Type predicate to verify item passed is an array of type T 
+// extending Array.isArray() a bit
+export function isArray<T>(a: any | any[]): a is T[] {
+  return Array.isArray(a);
 }
 
 export interface ConfiguredTemplate extends MasterTemplate {
@@ -34,11 +41,11 @@ interface HeadingProps {
 
 interface CustomRenderProps {
   type: 'custom';
-  render: JSX.Element
+  render: JSX.Element;
+  key: string;
 }
 
-type FormItem = FormItemProps | FormItemInputProps |
-  RadioProps | SelectProps | InputNumberProps | HeadingProps | CustomRenderProps;
+export type FormItem = CustomRenderProps | FormItemProps | RadioProps | SelectProps | InputNumberProps | HeadingProps;
 
 export interface FormArgs {
   formTitle: string;
@@ -46,19 +53,8 @@ export interface FormArgs {
   formItems: FormItem[];
 }
 
-export interface TimeoutOptions {
-  FIFTEEN_MINUTES: string;
-  FIVE_MINUTES: string;
-  NINETY_MINUTES: string;
-  ONE_TWENTY_MINUTES: string;
-  SIXTY_MINUTES: string;
-  TEN_MINUTES: string;
-  THIRTY_MINUTES: string;
-}
-
 export interface FilterType {
-  activity: string;
-  search?: string;
+  search: string;
   updated: boolean;
 }
 
@@ -68,7 +64,7 @@ export interface PaginationApiRes<T> {
   next: string;
   page: number;
   previous: string;
-  results: T;
+  results: T[];
   total_items: number;
 }
 

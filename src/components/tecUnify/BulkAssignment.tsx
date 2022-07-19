@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 import { Button, Checkbox, List, Input, Skeleton, Empty } from 'antd';
 import { CaretDownOutlined } from '@ant-design/icons';
 
-import { useFetch } from './hooks/useFetch';
+import { useFetch } from './hooks';
 import ApiUrls from '../../ApiUtils';
 import type { ConfiguredTemplate, Page, User } from './types';
 import type { CheckboxValueType } from 'antd/lib/checkbox/Group';
@@ -34,7 +34,6 @@ function BulkAssignment() {
   });
 
   const isFetchingBoth = userStatus === 'fetching' || templateStatus === 'fetching';
-
 
   function handleCheckBox(id: CheckboxValueType[], isUser: boolean) {
     console.log(id);
@@ -69,14 +68,14 @@ function BulkAssignment() {
           onChange={(event) => handleCheckBox(event, true)}
         >
           {
-            userStatus === 'error' || userData === undefined ?
+            userStatus === 'error' ?
               <Empty className='_CenterInParent' />
               :
               <List
                 pagination={{
                   onChange: (pageNum) => setUserPage(currPage => { return { ...currPage, current: pageNum } }),
                   pageSize: userPage.limit,
-                  total: userData?.total_items,
+                  total: userData.total_items,
                   size: 'small'
                 }}
                 dataSource={userData.results}
@@ -107,14 +106,14 @@ function BulkAssignment() {
           onChange={(event) => handleCheckBox(event, false)}
         >
           {
-            templateStatus === 'error' || templateData === undefined ?
+            templateStatus === 'error' ?
               <Empty className='_CenterInParent' />
               :
               <List
                 pagination={{
                   onChange: pageNum => setAppPage(currPage => { return { ...currPage, current: pageNum } }),
                   pageSize: appPage.limit,
-                  total: templateData?.total_items,
+                  total: templateData.total_items,
                   size: 'small'
                 }}
                 dataSource={templateData.results}
