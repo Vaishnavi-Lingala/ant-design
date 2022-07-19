@@ -36,7 +36,12 @@ oktaAuth.tokenManager.getTokens().then(({ accessToken, idToken }) => {
     // handle accessToken and idToken
     console.log('Access token: ', accessToken);
     console.log('ID token: ', idToken);
-    accessToken? console.log('Access token expired: ', oktaAuth.tokenManager.hasExpired(accessToken)): console.log('Access token not available')
+    if (accessToken) {
+        console.log('Access token expired: ', oktaAuth.tokenManager.hasExpired(accessToken));
+        <Redirect to={"/"} />
+    } else {
+        console.log('Access token not available')
+    } 
     idToken? console.log('ID token expired: ', oktaAuth.tokenManager.hasExpired(idToken)): console.log('ID token not available')
   });
 
@@ -63,6 +68,15 @@ function App() {
     };
 
     const customAuthHandler = async () => {
+        const previousAuthState = oktaAuth.authStateManager.getPreviousAuthState();
+        console.log('Previous auth state: ', previousAuthState);
+        if (!previousAuthState || !previousAuthState.isAuthenticated) {
+            console.log('App initialization stage');
+        // await triggerLogin();
+        } else {
+            console.log('Ask the user to trigger the login process during token autoRenew process');
+        // setAuthRequiredModalOpen(true);
+        }
         console.log('CustomAuthHandler called');
         <Redirect to={"/"} />
       };
