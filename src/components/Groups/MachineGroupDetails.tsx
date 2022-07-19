@@ -104,7 +104,7 @@ export default function MachineGroupDetails(props: any) {
                     setTotalItems(data.total_items);
                     setAction('');
                 }
-                openNotification('success', 'Successfully added Group Machines');
+                openNotification('success', 'Successfully added User to the Group Machines');
                 setLoadingDetails(false);
             }
             else {
