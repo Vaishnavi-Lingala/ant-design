@@ -89,14 +89,14 @@ function SupportedIntegrations() {
                     }
                   >
                     <List.Item.Meta
-                    title={app.name}
-                    avatar={<img
-                      alt='app logo'
-                      width={100}
-                      height={75}
-                      src='https://placeholder.pics/svg/50'
-                    />
-                    }
+                      title={app.name}
+                      avatar={<img
+                        alt='app logo'
+                        width={100}
+                        height={75}
+                        src='https://placeholder.pics/svg/50'
+                      />
+                      }
                     />
                   </List.Item>
                 )}
@@ -113,7 +113,7 @@ function SupportedIntegrations() {
               />
             </>
         }
-      </div>
+      </div >
     </>
   );
 }
