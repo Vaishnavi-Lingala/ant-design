@@ -19,6 +19,8 @@ const Urls = {
     stats: (accountId) => `account/${accountId}/stats`,
     domains: (accountId) => `account/${accountId}/domains`,
     info: (accountId) => `account/${accountId}/info`,
+    ldapConfig: (accountId) => `account/${accountId}/ldap-config`,
+    loginOptions : (accountId) => `account/${accountId}/login/options`,
 
     //Device Urls
     devices: (accountId) => `account/${accountId}/devices`,
