@@ -73,6 +73,7 @@ export default function Users() {
 								sessionStorage.setItem("first_name", record?.first_name? record.first_name.slice(0, 1).toUpperCase() + record.first_name.slice(1): '');
 								sessionStorage.setItem("last_name", record?.last_name? record.last_name.slice(0, 1).toUpperCase() + record.last_name.slice(1): '');
 								sessionStorage.setItem("user_name", record.idp_user_name);
+								localStorage.setItem("usersPageParams", JSON.stringify({'page': page, 'pageSize': pageSize}));
 								history.push(`/user/${record.uid}/profile`)
 							}}
 							/>
@@ -193,11 +194,22 @@ export default function Users() {
 
 	const getUpdatedUsersList = () => {
 		const params = {
-			start: page,
-			limit: pageSize
+			start: null,
+			limit: null
+		}
+		const pageDetails:any  = localStorage.getItem('usersPageParams');
+		console.log(JSON.parse(pageDetails));
+		if (pageDetails && JSON.parse(pageDetails)) {
+			setPage(JSON.parse(pageDetails).page);
+			setPageSize(JSON.parse(pageDetails).pageSize);
+			params.start = JSON.parse(pageDetails).page;
+			params.limit = JSON.parse(pageDetails).pageSize;
+			localStorage.removeItem('usersPageParams');
+		} else {
+			params.start = page;
+			params.limit = pageSize;
 		}
 		console.log(`pagination params: ${JSON.stringify(params)}`);
-
 		getUsersList({}, params);
 	}
 
