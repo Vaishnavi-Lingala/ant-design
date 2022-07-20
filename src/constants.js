@@ -208,12 +208,6 @@ export const settingsLDAPFields = {
     username_format: "Username Format"
 }
 
-export const usernameFormatOptions = {
-    SAMACCOUNTNAME: "sAMAccountName - SAM",
-    USERPRINCIPALNAME: "userPrincipalName - UPN",
-    MAIL: "mail - Email ID"
-}
-
 export const tapOutFields = {
     LOCK: "Lock",
     SIGN_OUT: "Sign-out",
