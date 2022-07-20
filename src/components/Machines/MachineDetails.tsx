@@ -130,11 +130,11 @@ export function MachineDetails(props: any) {
                                         value={machineDetails['cert_details'][key]}
                                         key={machineDetails['cert_details'][key]}
                                     />)}
-                                <DisplayField
+                                {/* <DisplayField
                                     displayName={'Expiry days'}
                                     value={calculateExpiryDays(machineDetails['cert_details']['valid_to'])}
                                     key="expiry-days"
-                                />
+                                /> */}
                             </> : <></>
 
                     }

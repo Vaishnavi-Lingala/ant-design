@@ -177,6 +177,7 @@ export const machineFieldNames = {
         san: "SAN",
         valid_from: "Valid from",
         valid_to: "Valid to",
+        expiry: "Expiry days"
     },
 }
 

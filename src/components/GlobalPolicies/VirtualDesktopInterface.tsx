@@ -22,7 +22,9 @@ function VDIPolicy(props: any) {
     const history = useHistory();
     const accountId = localStorage.getItem('accountId');
     const [groupType, setGroupType] = useState("");
-    // const clearItems = useRef(null);
+    const [templates, setTemplates]: any = useState([]);
+    const [typeTemplates, setTypeTemplates]: any = useState([]);
+    const [templateName, setTemplateName] = useState("");
 
     useEffect(() => {
         Promise.all(([
@@ -62,12 +64,30 @@ function VDIPolicy(props: any) {
                 setVDITypeOptions(data[1]);
 
                 console.log(data[2]);
+                data[2].forEach(object => {
+                    templates.push({
+                        label: object.name,
+                        value: object.uid,
+                        type: object.template_type
+                    })
+                })
+                setTemplates(templates);
+                if (window.location.pathname.split('/').length !== 3) {
+                    var vdiTypeTemplates: any = [];
+                    Object.keys(templates).map(index => {
+                        if (templates[index]["type"] === data[3].policy_req.template.template_type) {
+                            vdiTypeTemplates.push(templates[index])
+                        }
+                    })
+                    setTypeTemplates(vdiTypeTemplates);
+                }
 
                 console.log(data[3]);
                 if (!data[3].errorSummary) {
                     setVDIEditedData(data[3]);
                     setVDIDisplayData(data[3]);
                     if (data[3].uid !== undefined) {
+                        setTemplateName(data[3].policy_req?.template?.name);
                         Object.keys(data[3].kiosk_machine_groups).map(index => {
                             groupNames.push(data[3].kiosk_machine_groups[index].name);
                             groupUids.push(data[3].kiosk_machine_groups[index].uid);
@@ -100,16 +120,17 @@ function VDIPolicy(props: any) {
 
     function handleEditClick() {
         setIsEdit(!isEdit);
+        setTemplateName(vdiDisplayData['policy_req']?.template?.name)
         setVDIEditedData({ ...vdiDisplayData });
     }
 
     function handleCancelClick() {
+        setTemplateName(vdiDisplayData['policy_req']?.template?.name)
         setVDIEditedData({ ...vdiDisplayData });
         setIsEdit(false);
     }
 
     function handleSaveClick() {
-        console.log(vdiEditData);
         updateUserProvisioningPolicy();
     }
 
@@ -127,6 +148,7 @@ function VDIPolicy(props: any) {
             .then(data => {
                 if (!data.errorSummary) {
                     groupNames.length = 0;
+                    setTemplateName(data.policy_req.template.name)
                     setVDIDisplayData({ ...vdiEditData });
                     openNotification('success', 'Successfully updated VDI Policy');
                     Object.keys(data.kiosk_machine_groups).map(index => {
@@ -287,6 +309,23 @@ function VDIPolicy(props: any) {
                         disabled={!isEdit}
                         onChange={(e) => setVDIEditedData((state) => {
                             const { policy_req } = state;
+                            // setVDIEditedData((state) => {
+                            //     const {policy_req} = state
+                            //     return {
+                            //         ...vdiEditData,
+                            //         policy_req: {
+                            //             ...policy_req,
+                            //             template: ""
+                            //         }
+                            //     }
+                            // });
+                            var vdiTypeTemplates: any = [];
+                            Object.keys(templates).map(index => {
+                                if (templates[index]["type"] === e.target.value) {
+                                    vdiTypeTemplates.push(templates[index])
+                                }
+                            })
+                            setTypeTemplates(vdiTypeTemplates);
                             return {
                                 ...vdiEditData,
                                 policy_req: {
@@ -313,21 +352,25 @@ function VDIPolicy(props: any) {
                     Template:
                 </div>
                 <div style={{ padding: '12px 0 10px 0' }}>
-                    {isEdit ? <TextArea className="form-control"
-                        style={{ width: "275px" }}
-                        // onChange={(e) => setVDIEditedData((state) => {
-                        //     const { policy_req } = state;
-                        //     return {
-                        //         ...vdiEditData,
-                        //         policy_req: {
-                        //             ...policy_req,
-                        //             template: e.target.value
-                        //         }
-                        //     }
-                        // })}
-                        defaultValue={vdiDisplayData['policy_req']?.template?.name}
-                        placeholder='Enter app template'
-                    /> : vdiDisplayData['policy_req']?.template?.name
+                    {isEdit ?
+                        <Select
+                            size={"large"}
+                            placeholder="Please select template"
+                            value={templateName}
+                            onChange={(value) => setVDIEditedData((state) => {
+                                const { policy_req } = state
+                                return {
+                                    ...vdiEditData,
+                                    policy_req: {
+                                        ...policy_req,
+                                        template: value
+                                    }
+                                }
+                            })}
+                            options={typeTemplates}
+                            style={{ width: '275px' }}
+                        />
+                        : templateName
                     }
                 </div>
             </div>

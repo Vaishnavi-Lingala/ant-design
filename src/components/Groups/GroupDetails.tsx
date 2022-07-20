@@ -57,7 +57,7 @@ export default function GroupDetails(props: any) {
                     setTotalItems(data.total_items);
                     setAction('');
                     setLoadingDetails(false);
-                    openNotification('success', 'Successfully added Group User');
+                    openNotification('success', 'Successfully added User to the Group');
                 }
                 else {
                     openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);

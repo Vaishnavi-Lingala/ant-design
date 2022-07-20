@@ -518,7 +518,7 @@ function Mechanism(props: any) {
 
                 <div style={{ padding: '20px 0 0 0' }}>
                     <Checkbox
-                        defaultChecked={editData?.launch_idp_dashboard}
+                        checked={editData?.launch_idp_dashboard}
                         disabled={!isEdit}
                         onChange={(e) => {
                             setEditData({

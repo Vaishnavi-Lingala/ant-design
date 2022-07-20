@@ -292,7 +292,6 @@ export default function Policies() {
 			setLoadingDetails(true)
 			ApiService.get(ApiUrls.policies(accountId, productId))
 				.then(data => {
-					console.log(data);
 					var pinCounter = 0;
 					var passwordCounter = 0;
 					var kioskCounter = 0;
@@ -486,7 +485,6 @@ export default function Policies() {
 			if (seletedProduct === TecTANGO) {
 				try {
 					let licenses = await ApiService.get(ApiUrls.licences(accountId));
-					console.log(licenses);
 					licenses.forEach(license => {
 						if (license.product.sku === TecTANGO && license.max_enroll_allowed) {
 							setMaxEnroll(license.max_enroll_allowed);
