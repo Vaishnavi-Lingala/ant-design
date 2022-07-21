@@ -478,7 +478,7 @@ function Mechanism(props: any) {
                 <Divider style={{ borderTop: '1px solid #d7d7dc' }} />
 
                 <div style={{ padding: '0 0 20px 0' }}>
-                    <b>AND IF</b> user idle timeout (period of inactivity) is {
+                    <b>IF</b> user idle timeout (period of inactivity) is {
                         <Checkbox
                             defaultChecked={editData?.idle_timeout_flag}
                             disabled={!isEdit}
