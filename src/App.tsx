@@ -28,7 +28,6 @@ import Domains from "./components/Domains/Domains";
 
 import Applications from "./components/tecUnify/Applications";
 import BulkAssignment from "./components/tecUnify/BulkAssignment";
-import AppSettings from "./components/tecUnify/AppSettings";
 import SupportedIntegrations from "./components/tecUnify/SupportedIntegrations";
 import GlobalPolicies from "./components/GlobalPolicies/GlobalPolicies";
 
@@ -109,7 +108,6 @@ function App() {
                     <ProtectedRoute path={`/product/:productId/apps`} exact component={Applications} />
                     <ProtectedRoute path={`/product/:productId/apps/assign`} component={BulkAssignment} />
                     <ProtectedRoute path={`/product/:productId/apps/supported`} component={SupportedIntegrations} />
-                    <ProtectedRoute path={`/product/:productId/apps/:app_id/:app_name`} component={AppSettings} />
                     <ProtectedRoute path={`/machines`} exact component={Machines} />
                     <ProtectedRoute path={`/machines/:id`} component={MachineDetails} />
                     <ProtectedRoute path={`/devices`} exact component={Devices} />

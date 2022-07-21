@@ -67,7 +67,6 @@ const formArgs: FormArgs = {
       label: 'Wait Time',
       name: ['template', 'wait_time'],
       type: 'numeric',
-      initialValue: 0,
       step: 100,
       formatter: value => `${value}ms`,
       parser: value => value!.replace('ms', '')

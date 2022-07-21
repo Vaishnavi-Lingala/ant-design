@@ -10,14 +10,6 @@
     cursor: pointer !important;
 }
 
-._FlexColumn {
-    flex-direction: column !important;
-}
-
-._FlexRow {
-    flex-direction: row !important;
-}
-
 ._Padding {
     padding: 1vmax !important;
 }
@@ -32,6 +24,11 @@
     align-self: center;
     width: 100%;
 }
+
+._RowGap {
+    display: flex;
+    gap: 3;
+} 
 
 .AppSettings {
     display: flex;
@@ -54,6 +51,7 @@
     border-right: 1px solid #d7d7dc;
     font-weight: 600;
     font-size: medium;
+    width: 25%;
 }
 
 .BulkAssignment {

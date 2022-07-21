@@ -149,30 +149,28 @@ export function SelectResource() {
 export function SelectDomain() {
 
   const accountId = localStorage.getItem('accountId') as string;
-  const { data, status } = useFetch<string[]>({
+  const { data, status } = useFetch<string>({
     url: ApiUrls.domains(accountId)
   });
+  if (data === undefined ) return <></>
 
   return (
     <Form.Item
       label={<span className='Modal-FormLabel'>Domain</span>}
       name={['template', 'domain']}
     >
-      {
-        ('results' in data && data.results !== undefined) &&
-        <Select
-          loading={status === 'fetching'}
-          options={
-            data.results.filter(domain => !domain.match('WORKGROUP'))
-              .map(
-                (domain) => {
-                  return {
-                    label: domain,
-                    value: domain
-                  }
-                })}
-        />
-      }
+      <Select
+        loading={status === 'fetching'}
+        options={
+          data.results.filter(domain => !domain.match('WORKGROUP'))
+            .map(
+              (domain) => {
+                return {
+                  label: domain,
+                  value: domain
+                }
+              })}
+      />
     </Form.Item>
   );
 };
