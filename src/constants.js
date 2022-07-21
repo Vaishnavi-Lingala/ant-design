@@ -60,6 +60,8 @@ export const userFieldNames = {
     "login_domain": "Login domain"
 }
 
+export const editableFields = ['first_name', 'last_name', 'display_name', 'sam', 'upn', 'login_domain']
+
 export const readerDisplayNames = {
     "PCSCREADER": "PC/SC",
     "PCPROXREADER": "rf IDEAS"
