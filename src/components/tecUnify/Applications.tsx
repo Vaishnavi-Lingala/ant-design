@@ -1,73 +1,112 @@
+import { useEffect, useState } from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
-import { Button, Menu, List, Input, Dropdown, Empty } from 'antd';
-import { BarsOutlined, UserAddOutlined, UsergroupAddOutlined, PoweroffOutlined } from '@ant-design/icons';
+import { Button, Menu, List, Input, Tooltip, Empty, Divider } from 'antd';
+import { BarsOutlined, PoweroffOutlined } from '@ant-design/icons';
 
 import './tecUnify.css';
 
+import ApiService from '../../Api.service';
 import ApiUrls from '../../ApiUtils';
-import { useFetch, State } from './hooks/useFetch';
-import { ConfiguredTemplate } from './types';
-import { PaginationConfig } from 'antd/lib/pagination';
+import { useFetch, useFilter } from './hooks';
+import AppFormRenderer from './newappforms';
+
+import type { ConfiguredTemplate } from './types';
+import type { PaginationConfig } from 'antd/lib/pagination';
 
 const { Search } = Input;
 
-const options = (
-  <Menu
-    items={
-      [
-        {
-          key: '1',
-          label: <span><UserAddOutlined /> Assign to User</span>,
-        },
-        {
-          key: '2',
-          label: <span><UsergroupAddOutlined /> Assign to Group</span>
-        },
-        {
-          key: '3',
-          label: <span><PoweroffOutlined /> Move to Inactive</span>
-        },
-      ]
-    } />
-);
-
 function Applications() {
+  const [activity, setActivity] = useState('active');
+  const [modalVisible, toggleModal] = useState(false);
+  const [template, setTemplate] = useState<ConfiguredTemplate>();
   const accountId = localStorage.getItem('accountId') as string;
   const match = useRouteMatch();
 
-  const { data, status } = useFetch<ConfiguredTemplate[]>({
+  const templateSelected = template !== undefined;
+
+  const { data, status } = useFetch<ConfiguredTemplate>({
     url: ApiUrls.configuredTemplates(accountId)
   });
 
-  //TODO(CODY): Better method of type narrowing
-  if (Array.isArray(data))
-    return <></>
+  const { filteredData, updateFilter } = useFilter({
+    list: data.results,
+    searchOn: 'name',
+  })
 
-  const OptionsMenu = (
-    <Dropdown placement='bottomRight' overlay={options} trigger={['click']}>
-      <Button icon={<BarsOutlined />} />
-    </Dropdown>
+  let sortedByActivity = {
+    active: filteredData.filter(item => item.active),
+    inactive: filteredData.filter(item => !item.active)
+  };
+
+  async function changeActivity(appUID: string, values: { "active": boolean }) {
+    const res = await ApiService
+      .put(ApiUrls.updateTemplate(accountId, appUID), values)
+
+    if ('errorSummary' in res)
+      throw res;
+
+    return res;
+  }
+
+  function handleActivityChange(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+    console.log(e.currentTarget.value);
+    const selectedTemplate = filteredData.filter(item =>
+      item.uid === e.currentTarget.value)[0];
+
+    // Change sortedByActivity to state
+    // update state here so we can trigger a rerender
+    changeActivity(e.currentTarget.value, { "active": !selectedTemplate.active })
+      .then()
+      .catch(err => console.error(err))
+  }
+
+  function handleClick(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+    setTemplate(filteredData.filter(item =>
+      item.uid === e.currentTarget.value)[0]);
+    toggleModal(true);
+  }
+
+  useEffect(() => {
+    if (template === undefined)
+      toggleModal(curr => !curr)
+  }, [template]);
+
+  const OptionsMenu = ({ uid, active }) => (
+    <span>
+      <Tooltip
+        placement='left'
+        title='View'
+        destroyTooltipOnHide
+      >
+        <Button
+          type='default'
+          icon={<BarsOutlined />}
+          value={uid}
+          onClick={handleClick}
+        />
+      </Tooltip>
+
+      <Tooltip
+        placement='right'
+        title={active ? 'Set Inactive' : 'Set Active'}
+        destroyTooltipOnHide
+      >
+        <Button
+          type='primary'
+          danger={active}
+          icon={<PoweroffOutlined />}
+          value={uid}
+          onClick={handleActivityChange}
+        />
+      </Tooltip>
+    </span>
   );
 
   const paginationConfig: PaginationConfig = {
     position: 'bottom',
-    total: data.total_items,
-    pageSize: 5,
+    total: sortedByActivity[activity].length,
+    pageSize: 10,
   };
-
-  // TODO(Cody): Cleaner function to count active/inactive templates.
-  // Possibly move to useFilter Hook
-  function activityCount(data: State<ConfiguredTemplate[]>, activityType: string) {
-    let count: number = 0; 
-
-    if (activityType === 'active')
-      count = data.results?.filter(template => template.active === true).length as number
-
-    if (activityType === 'inactive')
-      count = data.results?.filter(template => template.active === false).length as number
-
-    return count
-  }
 
   return (
     <>
@@ -91,14 +130,24 @@ function Applications() {
 
       <div className='Content-ComponentView'>
         <div className='Sidebar'>
-          <Search />
-          <Menu className='_NoBorder'>
-            <Menu.Item key='active'>Active - ({activityCount(data, 'active')})</Menu.Item>
-            <Menu.Item key='inactive'>Inactive - ({activityCount(data, 'inactive')})</Menu.Item>
+          <Search
+            onSearch={updateFilter}
+            placeholder='Search'
+          />
+          <Divider />
+          <Menu className='_NoBorder' onClick={e => setActivity(e.key)} defaultSelectedKeys={['active']}>
+            <Menu.Item key='active'>
+              Active - ({sortedByActivity.active.length})
+            </Menu.Item>
+
+            <Menu.Item key='inactive'>
+              Inactive - ({sortedByActivity.inactive.length})
+            </Menu.Item>
           </Menu>
         </div>
+
         {
-          status === 'error' || data === undefined ?
+          status === 'error' ?
             <Empty className='_CenterInParent' />
             :
             <List
@@ -106,23 +155,42 @@ function Applications() {
               itemLayout='horizontal'
               size='small'
               loading={status === 'fetching'}
-              dataSource={data.results}
+              dataSource={sortedByActivity[activity]}
               pagination={paginationConfig}
-              renderItem={app => (
+              renderItem={(template: ConfiguredTemplate) => (
                 <List.Item
-                  key={app.uid}
-                  //@ts-ignore
-                  extra={OptionsMenu}
+                  key={template.uid}
+                  extra={<OptionsMenu uid={template.uid} active={template.active} />}
                 >
                   <List.Item.Meta
-                    avatar={<img alt='app logo' src='https://placeholder.pics/svg/50' />}
-                    title={app.name}
+                    title={template.name}
+                    avatar={<img
+                      alt='app logo'
+                      width={100}
+                      height={75}
+                      src='https://placeholder.pics/svg/50'
+                    />
+                    }
                   />
                 </List.Item>
               )}
             />
         }
       </div>
+
+      {
+        templateSelected &&
+        <AppFormRenderer
+          showModal={modalVisible}
+          toggleModal={() => {
+            setTemplate(undefined);
+            toggleModal(false);
+          }}
+          defaultValues={template}
+          templateType={template.template_type}
+          appUID={template.uid}
+        />
+      }
     </>
   );
 }
