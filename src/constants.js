@@ -60,6 +60,8 @@ export const userFieldNames = {
     "login_domain": "Login domain"
 }
 
+export const editableFields = ['first_name', 'last_name', 'display_name', 'sam', 'upn', 'login_domain']
+
 export const readerDisplayNames = {
     "PCSCREADER": "PC/SC",
     "PCPROXREADER": "rf IDEAS"
@@ -163,11 +165,11 @@ export const machineFieldNames = {
     group_type: "Group type",
     domain: "Domain",
     reader_type: "Reader type",
-    serial_number: "Serial number",
+    // serial_number: "Serial number",
     x_client: "X Client",
     public_ip: "Public IP",
     reader_name: "Reader name",
-    reader_serial: "Reader serial",
+    // reader_serial: "Reader serial",
     products: "Products",
     product_version: 'Product version',
     machine_name: "Machine name",

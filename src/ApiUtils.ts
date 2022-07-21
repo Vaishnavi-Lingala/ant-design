@@ -40,6 +40,7 @@ const Urls = {
     // Users Urls
     userGroups: (accountId, userId) => `account/${accountId}/users/${userId}/groups`,
     users: (accountId) => `account/${accountId}/users`,
+    updateUserInfo: (accountId, userId) => `account/${accountId}/users/${userId}`,
     userInfo: (accountId, userId) => `account/${accountId}/users/${userId}`,
     changeUserStatus: (accountId, userId) =>  `account/${accountId}/users/${userId}/lifecycle`,
     lifeCycleOptions: (accountId) => `account/${accountId}/users/lifecycle/options`,
