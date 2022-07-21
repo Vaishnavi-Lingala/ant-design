@@ -81,13 +81,29 @@ export function AddUser(props) {
     }, []);
 
     const handleOk = () => {
+        let emailPrefix = newUser.email.split('@')[0];
+        let domain = newUser.email.split('@')[1];
         setLoading(true);
         console.log(newUser);
         let errorMsg = validateUserInfo(newUser);
         if (errorMsg) {
             setLoading(false);
             openNotification(`error`, errorMsg);
-        } else {
+        }
+        else if (!newUser.email.includes('@') || emailPrefix === "" || domain === "" || !domain.includes('.') ||
+            domain.split('.')[0] === "" || domain.split('.')[1] === "") {
+            setLoading(false);
+            setRequiredFieldsModel((prevState) => ({
+                ...prevState,
+                email: 'red'
+            }));
+            openNotification("error", "Please enter a valid email");
+        }
+        else {
+            setRequiredFieldsModel((prevState) => ({
+                ...prevState,
+                email: ''
+            }));
             ApiService.post(ApiUrls.users(accountId), newUser).then(data => {
                 if (!data.errorSummary) {
                     console.log('Post user response: ', JSON.stringify(data));
@@ -105,7 +121,7 @@ export function AddUser(props) {
                 setLoading(false);
             });
         }
-    };
+    }
 
     const validateUserInfo = (newUser) => {
         let requiredFields: any = [];
@@ -206,191 +222,191 @@ export function AddUser(props) {
                 <Button key="submit" type="primary" loading={loading} onClick={handleOk}>
                     Save
                 </Button>
-            ] }
+            ]}
         >
             <div className="content-container">
-            <Row gutter={16}>
-                <Col span={6}>
-                    <p style={{ fontWeight: 600, fontSize: 'medium' }}>Login Domain<span className="mandatory">*</span>:</p>
-                </Col>
-                <Col span={12}>
-                    <span style={{ paddingLeft: '80px', paddingRight: '20px' }}>
-                        <Select style={{
-                            width: "100%",
-                        }}
-                        className={requiredFieldsModel?.login_domain === 'red'?'select-mandatory': ''}
-                            onChange={
-                                onDomainChange
-                            } value={newUser.login_domain}>
-                            {
-                                domains.map(eachDomain => {
-                                    return <Select.Option value={eachDomain} key={eachDomain}> {eachDomain} </Select.Option>
-                                })
-                            }
-
-                        </Select>
-                    </span>
-                </Col>
-            </Row>
-            <Row gutter={16}>
-                <Col span={6}>
-                    <p style={{ fontWeight: 600, fontSize: 'medium' }}>First Name <span className="mandatory">*</span> :</p>
-                </Col>
-                <Col span={12}>
-                    <span style={{ paddingLeft: '80px', paddingRight: '20px' }}>
-                        <Input
-                            style={{ borderColor: requiredFieldsModel?.first_name }}
-                            name="firstName"
-                            type="text"
-                            className="form-control"
-                            onChange={(e) => setNewUser({
-                                ...newUser,
-                                first_name: e.target.value
-                            })}
-                            value={newUser.first_name}
-                        />
-                    </span>
-                </Col>
-            </Row>
-            <Row gutter={16}>
-                <Col span={6}>
-                    <p style={{ fontWeight: 600, fontSize: 'medium' }}>Last Name<span className="mandatory">*</span> :</p>
-                </Col>
-                <Col span={12}>
-                    <span style={{ paddingLeft: '80px', paddingRight: '20px' }}>
-
-                        <Input
-                            style={{ borderColor: requiredFieldsModel?.last_name }}
-                            name="lastName"
-                            type="text"
-                            className="form-control"
-                            onChange={(e) => setNewUser({
-                                ...newUser,
-                                last_name: e.target.value
-                            })}
-                            value={newUser.last_name}
-                        />
-
-                    </span>
-                </Col>
-            </Row>
-            <Row gutter={16}>
-                <Col span={6}>
-                    <p style={{ fontWeight: 600, fontSize: 'medium' }}>Username<span className="mandatory">*</span> :</p>
-                </Col>
-                <Col span={12}>
-                    <span style={{ paddingLeft: '80px', paddingRight: '20px' }}>
-
-                        <Input
-                            style={{ borderColor: requiredFieldsModel?.idp_user_name }}
-                            name="username"
-                            type="text"
-                            className="form-control"
-                            onChange={(e) => setNewUser({
-                                ...newUser,
-                                idp_user_name: e.target.value
-                            })}
-                            value={newUser.idp_user_name}
-                        />
-
-                    </span>
-                </Col>
-            </Row>
-            <Row gutter={16}>
-                <Col span={6}>
-                    <p style={{ fontWeight: 600, fontSize: 'medium' }}>Email<span className="mandatory">*</span> :</p>
-                </Col>
-                <Col span={12}>
-                    <span style={{ paddingLeft: '80px', paddingRight: '20px' }}>
-                        <Input
-                            style={{ borderColor: requiredFieldsModel?.email }}
-                            name="email"
-                            type="text"
-                            className="form-control"
-                            onChange={(e) => setNewUser({
-                                ...newUser,
-                                email: e.target.value
-                            })}
-                            value={newUser.email}
-                        />
-                    </span>
-                </Col>
-            </Row>
-            <Row gutter={16}>
-                <Col span={6}>
-                    <p style={{ fontWeight: 600, fontSize: 'medium' }}>SAM{samRequired ? <span className="mandatory">*</span> : <></>} :</p>
-                </Col>
-                <Col span={12}>
-                    <span style={{ paddingLeft: '80px', paddingRight: '20px' }}>
-                        <Input
-                            style= {samRequired ? {borderColor: requiredFieldsModel?.sam} : {borderColor: ''}}
-                            name="sam"
-                            type="text"
-                            className="form-control"
-                            onChange={(e) => setNewUser({
-                                ...newUser,
-                                sam: e.target.value
-                            })}
-                            value={newUser.sam}
-                        />
-
-                    </span>
-                </Col>
-            </Row>
-            <Row gutter={16}>
-                <Col span={6}>
-                    <p style={{ fontWeight: 600, fontSize: 'medium' }}>UPN{upnRequired ? <span className="mandatory">*</span> : <></>} :</p>
-                </Col>
-                <Col span={12}>
-                    <span style={{ paddingLeft: '80px', paddingRight: '20px' }}>
-
-                        <Input
-                            style={upnRequired ? {borderColor: requiredFieldsModel?.upn} : {borderColor: ''}}
-                            name="upn"
-                            type="text"
-                            className="form-control"
-                            onChange={(e) => setNewUser({
-                                ...newUser,
-                                upn: e.target.value
-                            })}
-                            value={newUser.upn}
-                        />
-                    </span>
-                </Col>
-            </Row>
-            <Row gutter={16}>
-                <Col span={6}>
-                    <p style={{ fontWeight: 600, fontSize: 'medium' }}>Select Group:</p>
-                </Col>
-                <Col span={12}>
-                    <span style={{ paddingLeft: '80px', paddingRight: '20px' }}>
-                        <Select
-                            mode="multiple"
-                            placeholder={<div>Please select group</div>}
-                            onChange={(value) => {
-                                console.log(`Selected value: ${value}`);
-                                setNewUser({
-                                    ...newUser,
-                                    assignedGroups: value
-                                })
-                                setSelectedGroups(value)
+                <Row gutter={16}>
+                    <Col span={6}>
+                        <p style={{ fontWeight: 600, fontSize: 'medium' }}>Login Domain<span className="mandatory">*</span>:</p>
+                    </Col>
+                    <Col span={12}>
+                        <span style={{ paddingLeft: '80px', paddingRight: '20px' }}>
+                            <Select style={{
+                                width: "100%",
                             }}
-                            style={{ width: '100%' }}
-                            value={selectedGroups}
-                        >
-                            {
-                                groups.map(eachGroup => {
-                                    return <Select.Option value={eachGroup.uid} key={eachGroup.uid}>
-                                        {eachGroup.name}
-                                    </Select.Option>
-                                })
-                            }
-                        </Select>
-                    </span>
-                </Col>
-            </Row>
+                                className={requiredFieldsModel?.login_domain === 'red' ? 'select-mandatory' : ''}
+                                onChange={
+                                    onDomainChange
+                                } value={newUser.login_domain}>
+                                {
+                                    domains.map(eachDomain => {
+                                        return <Select.Option value={eachDomain} key={eachDomain}> {eachDomain} </Select.Option>
+                                    })
+                                }
+
+                            </Select>
+                        </span>
+                    </Col>
+                </Row>
+                <Row gutter={16}>
+                    <Col span={6}>
+                        <p style={{ fontWeight: 600, fontSize: 'medium' }}>First Name <span className="mandatory">*</span> :</p>
+                    </Col>
+                    <Col span={12}>
+                        <span style={{ paddingLeft: '80px', paddingRight: '20px' }}>
+                            <Input
+                                style={{ borderColor: requiredFieldsModel?.first_name }}
+                                name="firstName"
+                                type="text"
+                                className="form-control"
+                                onChange={(e) => setNewUser({
+                                    ...newUser,
+                                    first_name: e.target.value
+                                })}
+                                value={newUser.first_name}
+                            />
+                        </span>
+                    </Col>
+                </Row>
+                <Row gutter={16}>
+                    <Col span={6}>
+                        <p style={{ fontWeight: 600, fontSize: 'medium' }}>Last Name<span className="mandatory">*</span> :</p>
+                    </Col>
+                    <Col span={12}>
+                        <span style={{ paddingLeft: '80px', paddingRight: '20px' }}>
+
+                            <Input
+                                style={{ borderColor: requiredFieldsModel?.last_name }}
+                                name="lastName"
+                                type="text"
+                                className="form-control"
+                                onChange={(e) => setNewUser({
+                                    ...newUser,
+                                    last_name: e.target.value
+                                })}
+                                value={newUser.last_name}
+                            />
+
+                        </span>
+                    </Col>
+                </Row>
+                <Row gutter={16}>
+                    <Col span={6}>
+                        <p style={{ fontWeight: 600, fontSize: 'medium' }}>Username<span className="mandatory">*</span> :</p>
+                    </Col>
+                    <Col span={12}>
+                        <span style={{ paddingLeft: '80px', paddingRight: '20px' }}>
+
+                            <Input
+                                style={{ borderColor: requiredFieldsModel?.idp_user_name }}
+                                name="username"
+                                type="text"
+                                className="form-control"
+                                onChange={(e) => setNewUser({
+                                    ...newUser,
+                                    idp_user_name: e.target.value
+                                })}
+                                value={newUser.idp_user_name}
+                            />
+
+                        </span>
+                    </Col>
+                </Row>
+                <Row gutter={16}>
+                    <Col span={6}>
+                        <p style={{ fontWeight: 600, fontSize: 'medium' }}>Email<span className="mandatory">*</span> :</p>
+                    </Col>
+                    <Col span={12}>
+                        <span style={{ paddingLeft: '80px', paddingRight: '20px' }}>
+                            <Input
+                                style={{ borderColor: requiredFieldsModel?.email }}
+                                name="email"
+                                type="text"
+                                className="form-control"
+                                onChange={(e) => setNewUser({
+                                    ...newUser,
+                                    email: e.target.value
+                                })}
+                                value={newUser.email}
+                            />
+                        </span>
+                    </Col>
+                </Row>
+                <Row gutter={16}>
+                    <Col span={6}>
+                        <p style={{ fontWeight: 600, fontSize: 'medium' }}>SAM{samRequired ? <span className="mandatory">*</span> : <></>} :</p>
+                    </Col>
+                    <Col span={12}>
+                        <span style={{ paddingLeft: '80px', paddingRight: '20px' }}>
+                            <Input
+                                style={samRequired ? { borderColor: requiredFieldsModel?.sam } : { borderColor: '' }}
+                                name="sam"
+                                type="text"
+                                className="form-control"
+                                onChange={(e) => setNewUser({
+                                    ...newUser,
+                                    sam: e.target.value
+                                })}
+                                value={newUser.sam}
+                            />
+
+                        </span>
+                    </Col>
+                </Row>
+                <Row gutter={16}>
+                    <Col span={6}>
+                        <p style={{ fontWeight: 600, fontSize: 'medium' }}>UPN{upnRequired ? <span className="mandatory">*</span> : <></>} :</p>
+                    </Col>
+                    <Col span={12}>
+                        <span style={{ paddingLeft: '80px', paddingRight: '20px' }}>
+
+                            <Input
+                                style={upnRequired ? { borderColor: requiredFieldsModel?.upn } : { borderColor: '' }}
+                                name="upn"
+                                type="text"
+                                className="form-control"
+                                onChange={(e) => setNewUser({
+                                    ...newUser,
+                                    upn: e.target.value
+                                })}
+                                value={newUser.upn}
+                            />
+                        </span>
+                    </Col>
+                </Row>
+                <Row gutter={16}>
+                    <Col span={6}>
+                        <p style={{ fontWeight: 600, fontSize: 'medium' }}>Select Group:</p>
+                    </Col>
+                    <Col span={12}>
+                        <span style={{ paddingLeft: '80px', paddingRight: '20px' }}>
+                            <Select
+                                mode="multiple"
+                                placeholder={<div>Please select group</div>}
+                                onChange={(value) => {
+                                    console.log(`Selected value: ${value}`);
+                                    setNewUser({
+                                        ...newUser,
+                                        assignedGroups: value
+                                    })
+                                    setSelectedGroups(value)
+                                }}
+                                style={{ width: '100%' }}
+                                value={selectedGroups}
+                            >
+                                {
+                                    groups.map(eachGroup => {
+                                        return <Select.Option value={eachGroup.uid} key={eachGroup.uid}>
+                                            {eachGroup.name}
+                                        </Select.Option>
+                                    })
+                                }
+                            </Select>
+                        </span>
+                    </Col>
+                </Row>
             </div>
-           
+
         </Modal>
     </>
 }
