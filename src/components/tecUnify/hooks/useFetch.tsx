@@ -1,129 +1,62 @@
 import { useEffect, useState } from 'react';
+
 import { openNotification } from "../../Layout/Notification";
-import ApiService from "../../../Api.service"
-import ApiUrls from '../../../ApiUtils';
+import ApiService from '../../../Api.service';
+import { ApiResError, isArray, isPaginationType, PaginationApiRes } from '../types';
 
-import type { PaginationApiRes, Page, Domains, ApiResError, TimeoutOptions } from '../types';
-
-// TODO: Move into single hook, allow hook user to supply a string referencing which fetch
-// that they would like to use. (Generics!)
-
-const initUserList: PaginationApiRes = {
-  items_on_page: 0,
-  items_per_page: 0,
-  next: '',
-  page: 0,
-  previous: '',
-  results: [],
-  total_items: 0
-};
-
-const initOptions: TimeoutOptions = {
-  FIFTEEN_MINUTES: "",
-  FIVE_MINUTES: "",
-  NINETY_MINUTES: "",
-  ONE_TWENTY_MINUTES: "",
-  SIXTY_MINUTES: "",
-  TEN_MINUTES: "",
-  THIRTY_MINUTES: ""
+interface FetchProps {
+  url: string;
 }
 
-async function getUsersList({ current, limit }: Page) {
-  const res: PaginationApiRes | ApiResError = await ApiService
-    .get(ApiUrls
-      .users(localStorage.getItem('accountId')),
-      { start: current, limit: limit });
-
-  // Type gaurd, narrowing the type down and also ensuring we throw a rejected promise 
-  if ('errorSummary' in res)
-    return Promise.reject(res)
-
-  return res;
+export interface State<T> {
+  results: T[];
+  total_items: number;
 }
 
-async function getDomains() {
-  let res: Domains | ApiResError = await ApiService
-    .get(ApiUrls.domains(localStorage.getItem('accountId')))
+type Status = 'idle' | 'fetching' | 'error';
 
-  if ('errorSummary' in res)
-    return Promise.reject(res)
-
-  // Remove 'WORKGROUP' from the data response
-  return res.filter(domain => !domain.match('WORKGROUP')) as Domains;
-}
-
-async function getTimeoutOptions() {
-  let res: TimeoutOptions | ApiResError = await ApiService
-    .get(ApiUrls.idleTimeoutOptions(localStorage.getItem('accountId')))
-
-  if ('errorSummary' in res)
-    return Promise.reject(res)
-
-  return res;
-}
-
-export function useFetchTimeout() {
-  const [timeoutOptions, setOptions] = useState<TimeoutOptions>(initOptions);
-  const [isFetching, toggleFetching] = useState(true);
+// Fetch apps using above async function, resolve the promises and sort
+export function useFetch<T>({ url }: FetchProps) {
+  const [data, setData] = useState<State<T> | PaginationApiRes<T>>({
+    results: new Array<T>(),
+    total_items: 0
+  });
+  const [status, setStatus] = useState<Status>('idle');
 
   useEffect(() => {
-    getTimeoutOptions()
-      .then((options) => {
-        setOptions(options)
-        toggleFetching(false);
-      })
-      .catch((error: ApiResError) => {
-        console.error('Error: ', error.errorSummary);
-        toggleFetching(false);
-        openNotification('error', `Error fetching list of domains: ${error.errorSummary}`);
-      })
-  }, []);
+    if (!url) return
 
-  return { timeoutOptions, isFetching }
-}
+    async function fetchApps() {
+      setStatus('fetching');
 
-export function useFetchUsers(userPage: Page) {
-  const [userList, setUserList] = useState<PaginationApiRes>(initUserList);
-  const [isFetching, toggleFetching] = useState(true);
+      const res: ApiResError | T[] | PaginationApiRes<T[]> = await ApiService.get(url);
+      if ('errorSummary' in res)
+        throw res;
 
-  useEffect(() => {
-    getUsersList(userPage)
-      .then((pagedList) => {
-        setUserList(pagedList);
-        toggleFetching(false);
+      return res;
+    }
+
+    fetchApps()
+      .then((res) => {
+        if (!isPaginationType<T>(res) && isArray<T>(res)) {
+          setData({ results: res, total_items: res.length })
+        } else if (Array.isArray(res)) {
+          setData(res)
+        }
+
+        setStatus('idle');
       })
-      .catch(error => {
-        console.error('Error: ', error);
-        openNotification('error', `Error fetching list of users: ${error.errorSummary}`);
+      .catch((err: ApiResError) => {
+        setStatus('error');
+        openNotification('error', `Error fetching data: ${err.errorSummary}`);
       });
+  }, [url]);
 
-  }, [userPage]);
-
-  // Hard reset of the filter(searchbox and checkboxes) by way of returning
-  // the original userlist
-  function resetFilter() {
-    return userList;
+  // Using type predicate to narrow our return type down
+  if (isPaginationType<T>(data)) {
+    console.log('paged via backend', data)
+    return { data, status }
   }
 
-  return { userList, resetFilter, isFetching }
-}
-
-export function useFetchDomains() {
-  const [domains, setDomains] = useState<Domains>([]);
-  const [isFetching, toggleFetching] = useState(true);
-
-  useEffect(() => {
-    getDomains()
-      .then((domains) => {
-        setDomains(domains)
-        toggleFetching(false);
-      })
-      .catch((error: ApiResError) => {
-        console.error('Error: ', error.errorSummary);
-        toggleFetching(false);
-        openNotification('error', `Error fetching list of domains: ${error.errorSummary}`);
-      })
-  }, []);
-
-  return { domains, isFetching }
+  return { data, status }
 }

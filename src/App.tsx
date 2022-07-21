@@ -1,4 +1,4 @@
-import { Route, useHistory, Switch } from "react-router-dom";
+import { Redirect, Route, useHistory, Switch } from "react-router-dom";
 import { OktaAuth, toRelativeUrl } from "@okta/okta-auth-js";
 import { Security, LoginCallback, SecureRoute } from "@okta/okta-react";
 import { ConfigProvider } from "antd";
@@ -27,10 +27,37 @@ import { User } from "./components/Users/User";
 import Domains from "./components/Domains/Domains";
 
 import Applications from "./components/tecUnify/Applications";
-import AppSettings from "./components/tecUnify/AppSettings";
+import BulkAssignment from "./components/tecUnify/BulkAssignment";
+import SupportedIntegrations from "./components/tecUnify/SupportedIntegrations";
 import GlobalPolicies from "./components/GlobalPolicies/GlobalPolicies";
 
 const oktaAuth = new OktaAuth(config.oidc);
+
+oktaAuth.tokenManager.getTokens().then(({ accessToken, idToken }) => {
+    // handle accessToken and idToken
+    console.log('Access token: ', accessToken);
+    console.log('ID token: ', idToken);
+    if (accessToken) {
+        console.log('Access token expired: ', oktaAuth.tokenManager.hasExpired(accessToken));
+        oktaAuth.tokenManager.hasExpired(accessToken)? localStorage.removeItem("okta-token-storage") : console.log('Access token is valid')
+    } else {
+        console.log('Access token not available')
+    } 
+    if (idToken) {
+        console.log('ID token expired: ', oktaAuth.tokenManager.hasExpired(idToken));
+        oktaAuth.tokenManager.hasExpired(idToken)? localStorage.removeItem("okta-token-storage") : console.log('ID token is valid')
+        
+    } else {
+        console.log('ID token not available')
+    } 
+  });
+
+oktaAuth.tokenManager.on('expired', function (key, expiredToken) {
+    console.log('Token with key', key, ' has expired: ', expiredToken);
+    localStorage.removeItem("okta-token-storage");
+    <Redirect to={"/"} />
+});
+
 
 function App() {
     const history = useHistory();
@@ -47,8 +74,22 @@ function App() {
         );
     };
 
+    const customAuthHandler = async () => {
+        const previousAuthState = oktaAuth.authStateManager.getPreviousAuthState();
+        console.log('Previous auth state: ', previousAuthState);
+        if (!previousAuthState || !previousAuthState.isAuthenticated) {
+            console.log('App initialization stage');
+        // await triggerLogin();
+        } else {
+            console.log('Ask the user to trigger the login process during token autoRenew process');
+        // setAuthRequiredModalOpen(true);
+        }
+        console.log('CustomAuthHandler called');
+        <Redirect to={"/"} />
+      };
+  
     return (
-        <Security oktaAuth={oktaAuth} restoreOriginalUri={restoreOriginalUri}>
+        <Security oktaAuth={oktaAuth} restoreOriginalUri={restoreOriginalUri} onAuthRequired={customAuthHandler}>
             <StoreProvider>
                 <Switch>
                     <Route path="/" exact component={Login} />
@@ -65,7 +106,8 @@ function App() {
                     <ProtectedRoute path={`/groups`} component={Groups} />
                     <ProtectedRoute path={`/users`} component={Users} />
                     <ProtectedRoute path={`/product/:productId/apps`} exact component={Applications} />
-                    <ProtectedRoute path={`/product/:productId/apps/:app_id/:app_name`} component={AppSettings} />
+                    <ProtectedRoute path={`/product/:productId/apps/assign`} component={BulkAssignment} />
+                    <ProtectedRoute path={`/product/:productId/apps/supported`} component={SupportedIntegrations} />
                     <ProtectedRoute path={`/machines`} exact component={Machines} />
                     <ProtectedRoute path={`/machines/:id`} component={MachineDetails} />
                     <ProtectedRoute path={`/devices`} exact component={Devices} />

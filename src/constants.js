@@ -50,15 +50,17 @@ export const userFieldNames = {
     "first_name": "First name",
     "last_name": "Last name",
     "display_name": "Display name",
-    "user_name": "User name",
+    "idp_user_name": "User name",
     "email": "Email",
-    "sam": "sAMAccount Name",
+    "sam": "SAM Account Name",
     "upn": "UPN",
     "idp_user_id": "IDP user ID",
     "account_id": "Account ID",
     "sourced_by": "Sourced by",
     "login_domain": "Login domain"
 }
+
+export const editableFields = ['first_name', 'last_name', 'display_name', 'sam', 'upn', 'login_domain']
 
 export const readerDisplayNames = {
     "PCSCREADER": "PC/SC",
@@ -114,7 +116,7 @@ export const logFieldNames = {
         "display_name": "Display name",
         "idp_user_name": "User name",
         "email": "Email",
-        "sam": "samAccount Name",
+        "sam": "sAMAccount Name",
         "upn": "UPN",
         "idp_user_id": "IDP user ID",
         "account_id": "Account ID",
@@ -163,11 +165,11 @@ export const machineFieldNames = {
     group_type: "Group type",
     domain: "Domain",
     reader_type: "Reader type",
-    serial_number: "Serial number",
+    // serial_number: "Serial number",
     x_client: "X Client",
     public_ip: "Public IP",
     reader_name: "Reader name",
-    reader_serial: "Reader serial",
+    // reader_serial: "Reader serial",
     products: "Products",
     product_version: 'Product version',
     machine_name: "Machine name",
@@ -177,6 +179,7 @@ export const machineFieldNames = {
         san: "SAN",
         valid_from: "Valid from",
         valid_to: "Valid to",
+        expiry: "Expiry days"
     },
 }
 
@@ -197,6 +200,14 @@ export const settingsIdpFields = {
     issuer_url: "Tenant URL",
     idp_portal_oidc_client_id: "Portal OIDC Client ID",
     idp_app_oidc_client_id: "App OIDC Client ID"
+}
+
+export const settingsLDAPFields = {
+    ldap_host: "LDAP Host",
+    ldap_port: "LDAP Port",
+    base_dn: "Base DN",
+    user_base_dn: "User Base DN",
+    username_format: "Username Format"
 }
 
 export const tapOutFields = {
@@ -372,12 +383,12 @@ export const TECBIO_LOCK_DESCRIPTION = 'Lock the machine or sign-out from the ap
 export const TECBIO_SIGN_OUT_DESCRIPTION = 'Sign-out the current user from the machine.';
 export const TECBIO_SIGN_OUT_ALL_DESCRIPTION = 'Sign-out all the users on the machine. Select this option to allow only 1 active session on the machine. This helps to  avoid issues arising due to limited  resource availability such as RAM & CPU by logging off the other sessions before initiating a new session.';
 
-export const userRequiredFields = ['login_domain', 'first_name', 'last_name', 'user_name', 'email', 'sam', 'upn'];
+export const userRequiredFields = ['login_domain', 'first_name', 'last_name', 'idp_user_name', 'email', 'sam', 'upn'];
 export const userDataModel = {
     login_domain: 'Login Domain',
     first_name: 'First Name',
     last_name: 'Last Name',
-    user_name: 'Username',
+    idp_user_name: 'Username',
     email: 'Email',
     sam: 'SAM',
     upn: 'UPN'

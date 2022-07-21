@@ -1,118 +1,196 @@
-import { useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { Button, Skeleton } from 'antd';
+import { useEffect, useState } from 'react';
+import { Link, useRouteMatch } from 'react-router-dom';
+import { Button, Menu, List, Input, Tooltip, Empty, Divider } from 'antd';
+import { BarsOutlined, PoweroffOutlined } from '@ant-design/icons';
 
 import './tecUnify.css';
 
-import SupportedIntegrations from './SupportedIntegrations';
-import AccountIntegrations from './AccountIntegrations';
-import BulkAssignment from './BulkAssignment';
-// import AppSettings from './AppSettings';
-import { useFetch } from './hooks/useUnifyFetch';
-import { AppList } from './types';
-import NewAppForm from './newappforms/CitrixForm';
+import ApiService from '../../Api.service';
+import ApiUrls from '../../ApiUtils';
+import { useFetch, useFilter } from './hooks';
+import AppFormRenderer from './newappforms';
 
-interface PageType {
-  name: string;
-  isLoading: boolean;
-}
+import type { ConfiguredTemplate } from './types';
+import type { PaginationConfig } from 'antd/lib/pagination';
 
-const initialComponent: PageType = {
-  name: 'configured',
-  isLoading: false,
-};
-
-const initAppList: AppList = {
-  active: [],
-  inactive: []
-};
-
-function capitalizeFirst(s: string): string {
-  return s.charAt(0).toUpperCase() + s.slice(1);
-}
+const { Search } = Input;
 
 function Applications() {
-  const [currPage, setCurrPage] = useState(initialComponent);
+  const [activity, setActivity] = useState('active');
   const [modalVisible, toggleModal] = useState(false);
-  const { data, isFetching, update } = useFetch(48, initAppList);
+  const [template, setTemplate] = useState<ConfiguredTemplate>();
+  const accountId = localStorage.getItem('accountId') as string;
+  const match = useRouteMatch();
 
-  const { productId } = useParams<any>();
+  const templateSelected = template !== undefined;
 
-  const isBulkAssignmentPage = (currPage.name === 'assignment');
-  const isConfiguredPage = (currPage.name === 'configured');
+  const { data, status } = useFetch<ConfiguredTemplate>({
+    url: ApiUrls.configuredTemplates(accountId)
+  });
 
-  function handleClick(e: any) {
-    const currentPage = {
-      name: e.target.parentNode.id,
-      isLoading: false
-    };
+  const { filteredData, updateFilter } = useFilter({
+    list: data.results,
+    searchOn: 'name',
+  })
 
-    setCurrPage(currentPage);
+  let sortedByActivity = {
+    active: filteredData.filter(item => item.active),
+    inactive: filteredData.filter(item => !item.active)
+  };
+
+  async function changeActivity(appUID: string, values: { "active": boolean }) {
+    const res = await ApiService
+      .put(ApiUrls.updateTemplate(accountId, appUID), values)
+
+    if ('errorSummary' in res)
+      throw res;
+
+    return res;
   }
 
-  function handleBack() {
-    setCurrPage(initialComponent);
+  function handleActivityChange(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+    console.log(e.currentTarget.value);
+    const selectedTemplate = filteredData.filter(item =>
+      item.uid === e.currentTarget.value)[0];
+
+    // Change sortedByActivity to state
+    // update state here so we can trigger a rerender
+    changeActivity(e.currentTarget.value, { "active": !selectedTemplate.active })
+      .then()
+      .catch(err => console.error(err))
   }
 
-  function RenderOptions(): JSX.Element | null {
-    switch (currPage.name) {
-      case 'configured':
-        return <AccountIntegrations appList={data} />;
-      case 'supported':
-        return <>Component In Progress</>;
-      // return <SupportedIntegrations templateList={}/>;
-      case 'assignment':
-        return <BulkAssignment activeList={data.active} />;
-      // case 'settings':
-      //   return <AppSettings />;
-      default:
-        return null;
-    }
+  function handleClick(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+    setTemplate(filteredData.filter(item =>
+      item.uid === e.currentTarget.value)[0]);
+    toggleModal(true);
   }
+
+  useEffect(() => {
+    if (template === undefined)
+      toggleModal(curr => !curr)
+  }, [template]);
+
+  const OptionsMenu = ({ uid, active }) => (
+    <span>
+      <Tooltip
+        placement='left'
+        title='View'
+        destroyTooltipOnHide
+      >
+        <Button
+          type='default'
+          icon={<BarsOutlined />}
+          value={uid}
+          onClick={handleClick}
+        />
+      </Tooltip>
+
+      <Tooltip
+        placement='right'
+        title={active ? 'Set Inactive' : 'Set Active'}
+        destroyTooltipOnHide
+      >
+        <Button
+          type='primary'
+          danger={active}
+          icon={<PoweroffOutlined />}
+          value={uid}
+          onClick={handleActivityChange}
+        />
+      </Tooltip>
+    </span>
+  );
+
+  const paginationConfig: PaginationConfig = {
+    position: 'bottom',
+    total: sortedByActivity[activity].length,
+    pageSize: 10,
+  };
 
   return (
     <>
       <div className='content-header'>
-        {
-          !isBulkAssignmentPage ?
-            <>{capitalizeFirst(currPage.name)} Applications</> : <span>Bulk Assignment</span>
-        }
+        Configured Applications
+      </div>
+
+      <div className='Content-HeaderContainer'>
+        <Button value='supported' size='large' type='primary'>
+          <Link to={{ pathname: `${match.url}/supported`, }}>
+            Browse Supported Apps
+          </Link>
+        </Button>
+
+        <Button value='bulk' size='large' type='primary'>
+          <Link to={{ pathname: `${match.url}/assign` }}>
+            Bulk Assign Apps
+          </Link>
+        </Button>
+      </div>
+
+      <div className='Content-ComponentView'>
+        <div className='Sidebar'>
+          <Search
+            onSearch={updateFilter}
+            placeholder='Search'
+          />
+          <Divider />
+          <Menu className='_NoBorder' onClick={e => setActivity(e.key)} defaultSelectedKeys={['active']}>
+            <Menu.Item key='active'>
+              Active - ({sortedByActivity.active.length})
+            </Menu.Item>
+
+            <Menu.Item key='inactive'>
+              Inactive - ({sortedByActivity.inactive.length})
+            </Menu.Item>
+          </Menu>
+        </div>
 
         {
-          !isConfiguredPage &&
-          <Button onClick={handleBack}>Back</Button>
+          status === 'error' ?
+            <Empty className='_CenterInParent' />
+            :
+            <List
+              className='AppList'
+              itemLayout='horizontal'
+              size='small'
+              loading={status === 'fetching'}
+              dataSource={sortedByActivity[activity]}
+              pagination={paginationConfig}
+              renderItem={(template: ConfiguredTemplate) => (
+                <List.Item
+                  key={template.uid}
+                  extra={<OptionsMenu uid={template.uid} active={template.active} />}
+                >
+                  <List.Item.Meta
+                    title={template.name}
+                    avatar={<img
+                      alt='app logo'
+                      width={100}
+                      height={75}
+                      src='https://placeholder.pics/svg/50'
+                    />
+                    }
+                  />
+                </List.Item>
+              )}
+            />
         }
       </div>
 
-      <Skeleton
-        loading={isFetching}
-        active={true}
-        className={`${isFetching ? '_Padding' : ''}`}
-      >
-        <div className='Content-HeaderContainer'>
-          <Button id='supported' size='large' type='primary' onClick={handleClick}>
-            Browse Supported Apps
-          </Button>
-
-          <Button id='assignment' size='large' type='primary' onClick={handleClick}>
-            Bulk Assign Apps
-          </Button>
-
-          {
-            isConfiguredPage &&
-            <Button id='new' size='large' type='primary' onClick={() => toggleModal(curr => !curr)}>
-              {/* NOTE: Temparary until we get supported app page displaying integrations */}
-              {/* Configure new App */}
-              Configure New Citrix VDI
-            </Button>
-          }
-        </div>
-
-        <div className='Content-ComponentView'>
-          <RenderOptions />
-        </div>
-      </Skeleton>
-      <NewAppForm showModal={modalVisible} toggleModal={() => toggleModal(curr => !curr)} />
+      {
+        templateSelected &&
+        <AppFormRenderer
+          showModal={modalVisible}
+          toggleModal={() => {
+            setTemplate(undefined);
+            toggleModal(false);
+          }}
+          defaultValues={template}
+          templateType={template.template_type}
+          appUID={template.uid}
+        />
+      }
     </>
   );
 }
