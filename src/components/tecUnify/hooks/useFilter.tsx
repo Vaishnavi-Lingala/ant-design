@@ -1,22 +1,67 @@
 import { useState, useEffect, useCallback } from 'react';
-import type { AppList, FilterType, User } from '../types';
+import { FilterType, isArray } from '../types';
 
 interface FilterHookProps<T> {
-  list: T;
-  filterOn: string;
+  list: T[];
+  searchOn: string;
 }
 
 const defaultFilterState: FilterType = {
-  activity: 'active',
-  search: undefined,
+  search: '',
   updated: false
 }
 
-// Typeguard to verify that the object passed in is actually an array
-// of type 'T'
-function isArray<T>(list: any | any[]): list is T[] {
-  return Array.isArray(list);
-};
+// Takes the list passed in and the filterOn value, running the filter
+// every time updateFilter func is ran from outside this hook. Will be kept in-sync
+// via useEffect
+function useFilter<T>({ list, searchOn }: FilterHookProps<T>) {
+  const [filteredData, setFilteredData] = useState<T[]>(list);
+  const [filter, setFilter] = useState<FilterType>(defaultFilterState);
+
+  function updateFilter(event: any) {
+    setFilter((curr) => {
+      return {
+        ...curr,
+        search: event.toLowerCase(),
+        updated: true
+      }
+    });
+  }
+
+  const runFilter = useCallback(() => {
+    // If the filter is empty, reset the current search
+    if (filter.search === '') {
+      setFilteredData(list);
+      return
+    }
+
+    const listIncludes = (item: T) =>
+      item[searchOn].toLowerCase().includes(filter.search);
+
+    if (isArray<T>(list)) {
+      // Since we know the data being given to the hook is an array,
+      // we can safely convert the type to an array in the below function
+      // and later turn that T[] back into just T
+      const filtered = genFilter<T>(list, listIncludes);
+      setFilteredData(filtered);
+    }
+
+  }, [filter.search, list, searchOn])
+
+  useEffect(() => {
+    runFilter();
+    // Return to an 'idle' state
+    setFilter((curr) => {
+      return {
+        ...curr,
+        updated: false
+      }
+    });
+
+  }, [runFilter]);
+
+  return { filter, filteredData, updateFilter };
+}
 
 // Generic filter function, .filter() was giving issues when using on the list passed into the hook
 function genFilter<T>(list: T[], filterFunc: (item: T) => boolean): T[] {
@@ -25,83 +70,6 @@ function genFilter<T>(list: T[], filterFunc: (item: T) => boolean): T[] {
     (item) => filterFunc(item) && result.push(item)
   )
   return result;
-}
-
-// Takes the list passed in and the filterOn value, running the filter
-// every time updateFilter func is ran from outside this hook. Will be kept in-sync
-// via useEffect
-function useFilter<T>({ list, filterOn }: FilterHookProps<T>) {
-  const [filteredData, setFilteredData] = useState<T>(list);
-  const [filter, setFilter] = useState<FilterType>(defaultFilterState);
-
-  const listIncludes = useCallback((item: T) => {
-    return item[filterOn].toLowerCase().includes(filter.search);
-  },[filter.search])
-
-  function filterList() {
-    // If the filter is empty, reset the current search
-    if (filter.search === '' || filter.search === undefined) {
-      setFilteredData(list);
-      return
-    }
-
-    if (filter.updated && isArray<T>(list)) {
-      const data = genFilter<T>(list, listIncludes);
-      setFilteredData((data as unknown) as T);
-    }
-  }
-
-  function filterActivityList() {
-    if (filter.search === '' || filter.search === undefined) {
-      setFilteredData(list);
-      return
-    }
-
-    if (filter.updated && ('activity' in filter)) {
-      setFilteredData((curr) => {
-        return {
-          ...curr,
-          [filter.activity!]: genFilter<T>(curr[filter.activity!], listIncludes)
-        }
-      });
-    }
-  };
-
-  function updateFilter(event: any) {
-    console.log('filtering args:', event);
-    setFilter((curr) => {
-      if (event.key) {
-        return {
-          ...curr,
-          activity: event.key,
-          updated: true
-        }
-      } else {
-        return {
-          ...curr,
-          search: event.toLowerCase(),
-          updated: true
-        }
-      }
-    });
-  }
-
-  useEffect(() => {
-    if ('active' in list)
-      filterActivityList();
-
-    if (isArray<T>(list) && 'template_type' in list[0])
-      filterList();
-
-    setFilter((curr) => {
-      return {
-        ...curr,
-        updated: false
-      }
-    });
-  }, [filter.activity, filter.search, list]);
-
-  return { filter, filteredData, updateFilter };
 }
 
 export default useFilter;

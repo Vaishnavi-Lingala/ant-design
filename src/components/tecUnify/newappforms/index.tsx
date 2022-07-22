@@ -1,34 +1,41 @@
 import { useState } from 'react';
 import { Modal, Radio, Input, InputNumber, Form, Select, Checkbox, FormItemProps } from 'antd';
-import { CloseOutlined, LoadingOutlined } from '@ant-design/icons';
+import { CloseOutlined } from '@ant-design/icons';
 
-import { ApiResError, FormArgs } from '../types';
+import { ApiResError, FormItem } from '../types';
 import ApiService from '../../../Api.service';
 import ApiUrls from '../../../ApiUtils';
 import { openNotification } from '../../Layout/Notification';
-
+import { useFormSwitch } from '../hooks';
 
 export interface AppFormProps {
   showModal: boolean;
   toggleModal: () => void;
-  formArgs?: FormArgs;
-  appUID?: string;
+  defaultValues?: any;
+  appUID: string;
+  templateType?: string;
 }
 
-function AppFormRenderer({ showModal, toggleModal, formArgs, appUID }: AppFormProps) {
+const accountId = localStorage.getItem('accountId');
+
+function AppFormRenderer({ showModal, toggleModal, appUID, templateType, defaultValues }: AppFormProps) {
   const [sendingData, toggleSendingData] = useState(false);
   const [form] = Form.useForm();
 
-  if (formArgs === undefined) {
+  const { formArgs } = useFormSwitch({
+    templateType
+  });
+
+  console.log(formArgs);
+  if (formArgs === undefined || appUID === undefined) {
     return <></>
   }
 
   function onOk() {
     form.validateFields()
       .then(values => {
-
         toggleSendingData(true)
-        addTemplate(values)
+        updateDB(values)
           .then((res) => console.log('On Ok', res))
           .catch((err: ApiResError) => {
             console.error(err)
@@ -45,12 +52,14 @@ function AppFormRenderer({ showModal, toggleModal, formArgs, appUID }: AppFormPr
       });
   }
 
-  async function addTemplate(values: any) {
-    const accountId = localStorage.getItem('accountId');
+  async function updateDB(values: any) {
+    if (accountId !== null) {
+      let res: any;
 
-    if (appUID !== undefined && accountId !== null) {
-      const res = await ApiService
-        .post(ApiUrls.addTemplate(accountId, appUID), values)
+      defaultValues ?
+        res = await ApiService.put(ApiUrls.updateTemplate(accountId, appUID), values)
+        :
+        res = await ApiService.post(ApiUrls.addTemplate(accountId, appUID), values)
 
       if ('errorSummary' in res)
         throw res;
@@ -65,7 +74,7 @@ function AppFormRenderer({ showModal, toggleModal, formArgs, appUID }: AppFormPr
   }
 
   // Wraps the child field in a Form.Item component
-  function FormItemWrapper({ label, rules, name, initialValue, children }: FormItemProps) {
+  function FormItemWrapper({ label, rules, name, children}: FormItemProps) {
     return (
       <Form.Item
         label={
@@ -73,7 +82,6 @@ function AppFormRenderer({ showModal, toggleModal, formArgs, appUID }: AppFormPr
             {`${label} ${rules?.at(0) ? '*' : ''}`}
           </span>
         }
-        initialValue={initialValue && initialValue}
         name={name}
         rules={rules}
         children={children}
@@ -84,7 +92,6 @@ function AppFormRenderer({ showModal, toggleModal, formArgs, appUID }: AppFormPr
   // Select different components based on the type of input provided
   function InputSelect(args: any) {
     switch (args.type) {
-
       case 'input':
         return (
           <FormItemWrapper {...args}>
@@ -146,8 +153,8 @@ function AppFormRenderer({ showModal, toggleModal, formArgs, appUID }: AppFormPr
       visible={showModal}
       onOk={onOk}
       onCancel={onCancel}
-      okText={sendingData ? <LoadingOutlined /> : 'Add'}
-      destroyOnClose
+      confirmLoading={sendingData}
+      okText={<span>Add</span>}
     >
       <Form
         name='NewApp'
@@ -158,8 +165,10 @@ function AppFormRenderer({ showModal, toggleModal, formArgs, appUID }: AppFormPr
         form={form}
         validateMessages={formArgs.validationMessages}
         requiredMark={false}
+        initialValues={defaultValues}
+        colon={false}
       >
-        {formArgs.formItems.map((args) => <InputSelect {...args} />)}
+        {formArgs.formItems.map((args, index) => <InputSelect {...args} key={index} />)}
       </Form>
     </Modal>
   );

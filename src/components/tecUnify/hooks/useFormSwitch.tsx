@@ -4,17 +4,12 @@ import { FormArgs } from '../types';
 // Hook will import a different file to supply Form Render Component with
 // the proper formArg data. Can be extending to include more Template Types
 // in the future
-
-function useFormSwitch() {
-  const [currentTemplateType, setTemplateType] = useState('');
-
-  // TODO(Cody): Come up with proper types and structure that each form file
-  // should follow.
+function useFormSwitch({ templateType }) {
   const [formArgs, setFormArgs] = useState<FormArgs>();
 
   useEffect(() => {
-    let file = '';
-    switch (currentTemplateType) {
+    let file: string | undefined;
+    switch (templateType) {
       case 'CITRIX':
         file = 'citrixformargs';
         break;
@@ -28,11 +23,15 @@ function useFormSwitch() {
         .then(args => setFormArgs(args.default));
     }
 
-    (file !== '') && importForm();
-  }, [currentTemplateType]);
+    // Do not import any form if file is undefined
+    (file !== undefined) && importForm();
 
+    // Clear the currently selected formArgs if templateType is undefined
+    (templateType === undefined) && setFormArgs(undefined);
 
-  return { formArgs, setTemplateType }
+  }, [templateType]);
+
+  return { formArgs }
 }
 
 export default useFormSwitch;
