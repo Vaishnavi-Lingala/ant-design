@@ -394,3 +394,5 @@ export const userDataModel = {
     upn: 'UPN'
 }
 export const requiredFieldsErrorMsg = `Please fill required attributes`;
+
+export const deactivateConfirmMsg = 'Deactivating a user will remove all enrollments associated with the user. This action cannot be reversed. Do you want to proceed?'
