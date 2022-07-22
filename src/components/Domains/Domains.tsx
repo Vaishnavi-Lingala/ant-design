@@ -95,13 +95,13 @@ function Domains() {
                         <div>
                             {
                                 !isEdit ? domains.map((value, index) => {
-                                    return <div key={value}>
-                                        {value}
+                                    return <div key={value} style={{ padding: '5px' }}>
+                                        <Button style={{ cursor: 'text', width: '200px', textAlign: 'left' }}>{value}</Button>
                                     </div>
                                 }) : domains.map((value, index) => {
                                     return <div key={value} style={{ padding: '5px' }}>
                                         <Input className="form-control"
-                                        readOnly={value === "WORKGROUP"}
+                                            readOnly={value === "WORKGROUP"}
                                             defaultValue={value} onChange={(e) => {
                                                 //@ts-ignore
                                                 domains[index] = e.target.value

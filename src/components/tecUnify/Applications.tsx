@@ -160,6 +160,7 @@ function Applications() {
               renderItem={(template: ConfiguredTemplate) => (
                 <List.Item
                   key={template.uid}
+                  //@ts-ignore
                   extra={<OptionsMenu uid={template.uid} active={template.active} />}
                 >
                   <List.Item.Meta
