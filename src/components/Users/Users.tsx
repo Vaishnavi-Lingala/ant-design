@@ -61,7 +61,7 @@ export default function Users() {
 		{
 			title: 'Details',
 			dataIndex: 'details',
-			width: '25%',
+			width: '10%',
 			render: (text: any, record: { uid: any; idp_user_name: any, first_name: any, last_name: any, email: any, status: string }) => (
 
 				<Tooltip title="View">
@@ -80,7 +80,7 @@ export default function Users() {
 		{
 			title: 'Actions',
 			dataIndex: 'actions',
-			width: '25%',
+			width: '10%',
 			render: (text: any, record: { uid: any; idp_user_name: any, first_name: any, last_name: any, email: any, status: string }) => (
 				<Dropdown overlay={
 					<Menu key={"changeStatus"} title={"Change Status"} >
