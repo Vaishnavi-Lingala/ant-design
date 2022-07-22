@@ -1,5 +1,4 @@
 import { FormItemProps, InputNumberProps, RadioProps, SelectProps } from "antd";
-import { FormItemInputProps } from "antd/lib/form/FormItemInput";
 import { ValidateMessages } from "rc-field-form/lib/interface";
 
 // Type Predicate utility function
@@ -25,7 +24,8 @@ export interface MasterTemplate {
   name: string,
   template_type: string,
   template: JSON,
-  active: boolean
+  active: boolean,
+  app_img_url: string
 }
 
 export interface ApiResError {
