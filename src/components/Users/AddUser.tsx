@@ -56,7 +56,7 @@ export function AddUser(props) {
             'upn': ''
         })
         Promise.all([ApiService.get(ApiUrls.domains(accountId)),
-        ApiService.get(ApiUrls.groups(accountId))]).then(result => {
+        ApiService.get(ApiUrls.groups(accountId), {type: "USER"})]).then(result => {
             if (!result[0].errorSummary) {
                 console.log('Domains list ', JSON.stringify(result[0]));
                 setIsModalVisible(false);
@@ -250,6 +250,37 @@ export function AddUser(props) {
                 </Row>
                 <Row gutter={16}>
                     <Col span={6}>
+                        <p style={{ fontWeight: 600, fontSize: 'medium' }}>Select Group:</p>
+                    </Col>
+                    <Col span={12}>
+                        <span style={{ paddingLeft: '80px', paddingRight: '20px' }}>
+                            <Select
+                                mode="multiple"
+                                placeholder={<div>Please select group</div>}
+                                onChange={(value) => {
+                                    console.log(`Selected value: ${value}`);
+                                    setNewUser({
+                                        ...newUser,
+                                        assignedGroups: value
+                                    })
+                                    setSelectedGroups(value)
+                                }}
+                                style={{ width: '100%' }}
+                                value={selectedGroups}
+                            >
+                                {
+                                    groups.map(eachGroup => {
+                                        return <Select.Option value={eachGroup.uid} key={eachGroup.uid}>
+                                            {eachGroup.name}
+                                        </Select.Option>
+                                    })
+                                }
+                            </Select>
+                        </span>
+                    </Col>
+                </Row>
+                <Row gutter={16}>
+                    <Col span={6}>
                         <p style={{ fontWeight: 600, fontSize: 'medium' }}>First Name <span className="mandatory">*</span> :</p>
                     </Col>
                     <Col span={12}>
@@ -332,79 +363,54 @@ export function AddUser(props) {
                         </span>
                     </Col>
                 </Row>
-                <Row gutter={16}>
-                    <Col span={6}>
-                        <p style={{ fontWeight: 600, fontSize: 'medium' }}>SAM{samRequired ? <span className="mandatory">*</span> : <></>} :</p>
-                    </Col>
-                    <Col span={12}>
-                        <span style={{ paddingLeft: '80px', paddingRight: '20px' }}>
-                            <Input
-                                style={samRequired ? { borderColor: requiredFieldsModel?.sam } : { borderColor: '' }}
-                                name="sam"
-                                type="text"
-                                className="form-control"
-                                onChange={(e) => setNewUser({
-                                    ...newUser,
-                                    sam: e.target.value
-                                })}
-                                value={newUser.sam}
-                            />
+                {
+                    newUser.login_domain !== 'WORKGROUP' ?
+                        <Row gutter={16}>
+                            <Col span={6}>
+                                <p style={{ fontWeight: 600, fontSize: 'medium' }}>SAM{samRequired ? <span className="mandatory">*</span> : <></>} :</p>
+                            </Col>
+                            <Col span={12}>
+                                <span style={{ paddingLeft: '80px', paddingRight: '20px' }}>
+                                    <Input
+                                        style={samRequired ? { borderColor: requiredFieldsModel?.sam } : { borderColor: '' }}
+                                        name="sam"
+                                        type="text"
+                                        className="form-control"
+                                        onChange={(e) => setNewUser({
+                                            ...newUser,
+                                            sam: e.target.value
+                                        })}
+                                        value={newUser.sam}
+                                    />
 
-                        </span>
-                    </Col>
-                </Row>
-                <Row gutter={16}>
-                    <Col span={6}>
-                        <p style={{ fontWeight: 600, fontSize: 'medium' }}>UPN{upnRequired ? <span className="mandatory">*</span> : <></>} :</p>
-                    </Col>
-                    <Col span={12}>
-                        <span style={{ paddingLeft: '80px', paddingRight: '20px' }}>
+                                </span>
+                            </Col>
+                        </Row> : <></>
+                }
+                {
+                    newUser.login_domain !== 'WORKGROUP' ?
+                        <Row gutter={16}>
+                            <Col span={6}>
+                                <p style={{ fontWeight: 600, fontSize: 'medium' }}>UPN{upnRequired ? <span className="mandatory">*</span> : <></>} :</p>
+                            </Col>
+                            <Col span={12}>
+                                <span style={{ paddingLeft: '80px', paddingRight: '20px' }}>
 
-                            <Input
-                                style={upnRequired ? { borderColor: requiredFieldsModel?.upn } : { borderColor: '' }}
-                                name="upn"
-                                type="text"
-                                className="form-control"
-                                onChange={(e) => setNewUser({
-                                    ...newUser,
-                                    upn: e.target.value
-                                })}
-                                value={newUser.upn}
-                            />
-                        </span>
-                    </Col>
-                </Row>
-                <Row gutter={16}>
-                    <Col span={6}>
-                        <p style={{ fontWeight: 600, fontSize: 'medium' }}>Select Group:</p>
-                    </Col>
-                    <Col span={12}>
-                        <span style={{ paddingLeft: '80px', paddingRight: '20px' }}>
-                            <Select
-                                mode="multiple"
-                                placeholder={<div>Please select group</div>}
-                                onChange={(value) => {
-                                    console.log(`Selected value: ${value}`);
-                                    setNewUser({
-                                        ...newUser,
-                                        assignedGroups: value
-                                    })
-                                    setSelectedGroups(value)
-                                }}
-                                style={{ width: '100%' }}
-                                value={selectedGroups}
-                            >
-                                {
-                                    groups.map(eachGroup => {
-                                        return <Select.Option value={eachGroup.uid} key={eachGroup.uid}>
-                                            {eachGroup.name}
-                                        </Select.Option>
-                                    })
-                                }
-                            </Select>
-                        </span>
-                    </Col>
-                </Row>
+                                    <Input
+                                        style={upnRequired ? { borderColor: requiredFieldsModel?.upn } : { borderColor: '' }}
+                                        name="upn"
+                                        type="text"
+                                        className="form-control"
+                                        onChange={(e) => setNewUser({
+                                            ...newUser,
+                                            upn: e.target.value
+                                        })}
+                                        value={newUser.upn}
+                                    />
+                                </span>
+                            </Col>
+                        </Row> : <></>
+                }
             </div>
 
         </Modal>
