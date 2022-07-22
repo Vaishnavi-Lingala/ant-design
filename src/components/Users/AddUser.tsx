@@ -56,7 +56,7 @@ export function AddUser(props) {
             'upn': ''
         })
         Promise.all([ApiService.get(ApiUrls.domains(accountId)),
-        ApiService.get(ApiUrls.groups(accountId))]).then(result => {
+        ApiService.get(ApiUrls.groups(accountId), {type: "USER"})]).then(result => {
             if (!result[0].errorSummary) {
                 console.log('Domains list ', JSON.stringify(result[0]));
                 setIsModalVisible(false);
