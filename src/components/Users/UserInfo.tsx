@@ -129,6 +129,7 @@ export function UserInfo() {
                     onCancel={() => setIsModal(false)}
                 >
                     <b>SAM</b> account name is created based on <b>Local User Provisioning policy</b>, Any change made here will over ride the default value.
+                    If you still want to update the user details then click <b>Ok</b>. 
                 </Modal>
             </div>
             {
