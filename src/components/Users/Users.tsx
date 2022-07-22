@@ -27,7 +27,6 @@ export default function Users() {
 	const [isDeactivateModalVisible, setIsDeactivateModalVisible] = useState(false);
 	const [deactivateUserId, setDeactivateUserId]: any = useState(null);
 	const [deactivateUsername, setDeactivateUsername]: any = useState(null);
-	const { Title } = Typography;
 	const columns = [
 		{
 			title: 'First Name',
@@ -308,7 +307,7 @@ export default function Users() {
 					/>
 				</>}
 			</Skeleton>
-			<Modal closeIcon={<Button icon={<CloseOutlined />}></Button>} title={<Title level={2}>Status Confirmation</Title>} visible={isDeactivateModalVisible} onOk={handleOnStatusOk} onCancel={handleOnStatusCancel} width='500px'
+			<Modal closeIcon={<Button icon={<CloseOutlined />}></Button>} title={<b>Warning</b>} visible={isDeactivateModalVisible} onOk={handleOnStatusOk} onCancel={handleOnStatusCancel} width='500px'
             footer={[
                 <Button key="cancel" onClick={handleOnStatusCancel}>
                     No
@@ -318,7 +317,7 @@ export default function Users() {
                 </Button>
             ]}
         >
-            <div className="content-device-key-header">
+            <div>
                {deactivateConfirmMsg}
             </div>
         </Modal>
