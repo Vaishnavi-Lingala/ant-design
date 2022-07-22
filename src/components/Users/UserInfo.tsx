@@ -56,11 +56,11 @@ export function UserInfo() {
     function updateUserInfo() {
         ApiService.put(ApiUrls.updateUserInfo(accountId, window.location.pathname.split('/')[2]), editUserData)
             .then(data => {
-                if(!data.errorSummary){
+                if (!data.errorSummary) {
                     setUserDetails(data);
                     openNotification('success', `Successfull updated ${data.first_name}'s Information.`);
                 }
-                else{
+                else {
                     openNotification('error', data.errorCauses.length !== 0 ? data.errorCauses[0].errorSummary : data.errorSummary);
                 }
             })
@@ -128,8 +128,8 @@ export function UserInfo() {
                 <Modal visible={isModal} title={<b>Warning</b>} closeIcon={<Button icon={<CloseOutlined />} />} onOk={updateUserInfo}
                     onCancel={() => setIsModal(false)}
                 >
-                    <b>SAM</b> account name is created based on <b>Local User Provisioning policy</b>, Any change made here will over ride the default value.
-                    If you still want to update the user details then click <b>Ok</b>. 
+                    <b>SAM</b> Account Name is created based on <b>Local User Provisioning policy</b>, Any changes made here will override the default value.
+                    If you still want to update the user details then click <b>Ok</b>.
                 </Modal>
             </div>
             {
