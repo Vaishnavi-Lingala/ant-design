@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Button, Dropdown, Menu, Skeleton, Table, Tooltip, Row, Col } from "antd";
-import { MoreOutlined, BarsOutlined } from "@ant-design/icons"
+import { Button, Dropdown, Menu, Skeleton, Table, Tooltip, Modal, Typography } from "antd";
+import { MoreOutlined, BarsOutlined, CloseOutlined } from "@ant-design/icons"
 
 import { AddUser } from "./AddUser";
 import { User } from "./User";
@@ -9,6 +9,7 @@ import ApiUrls from '../../ApiUtils';
 import ApiService from "../../Api.service";
 import { useHistory } from "react-router-dom";
 import DisplayDateTimeFormat from "../Controls/DateTimeHelper";
+import { deactivateConfirmMsg } from "../../constants";
 
 export default function Users() {
 	const [userDetails, setUserDetails]: any = useState(undefined);
@@ -23,7 +24,9 @@ export default function Users() {
 	const history = useHistory();
 	const [object, setObject] = useState({});
 	const accountId = localStorage.getItem('accountId');
-
+	const [isDeactivateModalVisible, setIsDeactivateModalVisible] = useState(false);
+	const [deactivateUserId, setDeactivateUserId]: any = useState(null);
+	const [deactivateUsername, setDeactivateUsername]: any = useState(null);
 	const columns = [
 		{
 			title: 'First Name',
@@ -35,11 +38,6 @@ export default function Users() {
 			dataIndex: 'last_name',
 			width: '10%'
 		},
-		// {
-		// 	title: 'Email',
-		// 	dataIndex: 'email',
-		// 	width: '15%'
-		// },
 		{
 			title: 'Username',
 			dataIndex: 'idp_user_name',
@@ -61,48 +59,47 @@ export default function Users() {
 			render: (text, record) => <>{record.last_login_ts !== null ? DisplayDateTimeFormat(record.last_login_ts) : null}</>
 		},
 		{
+			title: 'Details',
+			dataIndex: 'details',
+			width: '10%',
+			render: (text: any, record: { uid: any; idp_user_name: any, first_name: any, last_name: any, email: any, status: string }) => (
+
+				<Tooltip title="View">
+					<Button icon={<BarsOutlined />} onClick={() => {
+						sessionStorage.setItem("email", record.email);
+						sessionStorage.setItem("first_name", record?.first_name ? record.first_name.slice(0, 1).toUpperCase() + record.first_name.slice(1) : '');
+						sessionStorage.setItem("last_name", record?.last_name ? record.last_name.slice(0, 1).toUpperCase() + record.last_name.slice(1) : '');
+						sessionStorage.setItem("user_name", record.idp_user_name);
+						localStorage.setItem("usersPageParams", JSON.stringify({ 'page': page, 'pageSize': pageSize }));
+						history.push(`/user/${record.uid}/profile`)
+					}}
+					/>
+				</Tooltip>
+			)
+		},
+		{
 			title: 'Actions',
 			dataIndex: 'actions',
-			width: '25%',
+			width: '10%',
 			render: (text: any, record: { uid: any; idp_user_name: any, first_name: any, last_name: any, email: any, status: string }) => (
-				<Row>
-					<Col span={12}>
-						<Tooltip title="View">
-							<Button icon={<BarsOutlined />} onClick={() => {
-								sessionStorage.setItem("email", record.email);
-								sessionStorage.setItem("first_name", record?.first_name? record.first_name.slice(0, 1).toUpperCase() + record.first_name.slice(1): '');
-								sessionStorage.setItem("last_name", record?.last_name? record.last_name.slice(0, 1).toUpperCase() + record.last_name.slice(1): '');
-								sessionStorage.setItem("user_name", record.idp_user_name);
-								localStorage.setItem("usersPageParams", JSON.stringify({'page': page, 'pageSize': pageSize}));
-								history.push(`/user/${record.uid}/profile`)
-							}}
-							/>
+				<Dropdown overlay={
+					<Menu key={"changeStatus"} title={"Change Status"} >
+						{
+							statusList.map(item => {
+								return <Menu.Item key={item.key} disabled={disableStatus(item.key, record.status)} onClick={({ key }) => { changeStatusConfirmation(key, record.uid, record.idp_user_name) }}>
+									{item.value}
+								</Menu.Item>
+							})
+						}
+					</Menu>
+				}>
+					{
+						<Tooltip title="Change status">
+							<Button icon={<MoreOutlined />} onClick={e => e.preventDefault()} />
+
 						</Tooltip>
-					</Col>
-					<Col span={12}>
-						<Dropdown overlay={
-							<Menu key={"changeStatus"} title={"Change Status"} >
-								{
-									statusList.map(item => {
-										return <Menu.Item key={item.key} disabled={disableStatus(item.key, record.status)} onClick={({ key }) => { changeUserStatus(key, record.uid, record.idp_user_name) }}>
-											{item.value}
-										</Menu.Item>
-									})
-								}
-							</Menu>
-						}>
-							{
-								<Tooltip title="Change status">
-									<Button icon={<MoreOutlined />} onClick={e => e.preventDefault()} />
-
-								</Tooltip>
-							}
-						</Dropdown>
-					</Col>
-
-				</Row>
-
-
+					}
+				</Dropdown>
 			)
 		}
 	];
@@ -197,7 +194,7 @@ export default function Users() {
 			start: null,
 			limit: null
 		}
-		const pageDetails:any  = localStorage.getItem('usersPageParams');
+		const pageDetails: any = localStorage.getItem('usersPageParams');
 		console.log(JSON.parse(pageDetails));
 		if (pageDetails && JSON.parse(pageDetails)) {
 			setPage(JSON.parse(pageDetails).page);
@@ -221,30 +218,64 @@ export default function Users() {
 		return usersList;
 	}
 
+	const changeStatusConfirmation = (status, userId: string, user_name: string) => {
+		if (status.toLowerCase() === 'DEACTIVATED'.toLowerCase()) {
+			setIsDeactivateModalVisible(true);
+			setDeactivateUserId(userId);
+			setDeactivateUsername(user_name);
+		} else {
+			changeUserStatus(status, userId, user_name);
+		}
+	} 
+
 	const changeUserStatus = async (status, userId: string, user_name: string) => {
 		setLoadingDetails(true);
-		let statusObj = {
-			status: status
-		}
-		let result = await ApiService.post(ApiUrls.changeUserStatus(accountId, userId), statusObj)
-			.then(data => {
-				console.log(user_name);
-				openNotification('success', `Status for ${user_name.split('@')[0]} has been updated successfully with ${status.toLowerCase()}.`);
-			})
-			.catch(error => {
-				console.error('Error: ', error);
-				openNotification('error', 'An Error has occured with Updating User Status');
-			}).finally(() => {
-				setLoadingDetails(false);
-			});
-		console.log(`Status for ${user_name} is updated successfully with ${status}.`);
-		getUpdatedUsersList();
+		console.log(status);
+		
+			let statusObj = {
+				status: status
+			}
+			let result = await ApiService.post(ApiUrls.changeUserStatus(accountId, userId), statusObj)
+				.then(data => {
+					console.log(data);
+					if (data.errorSummary) {
+						openNotification('error', data.errorSummary);
+					} else {
+						console.log(user_name);
+						openNotification('success', `Status for ${user_name.split('@')[0]} has been updated successfully with ${status.toLowerCase()}.`);
+					}
+				})
+				.catch(error => {
+					console.error('Error: ', error);
+					openNotification('error', 'An Error has occured with Updating User Status');
+				}).finally(() => {
+					setLoadingDetails(false);
+					if (status.toLowerCase() === 'deactivated') {
+						setDeactivateUserId(null);
+						setDeactivateUsername(null);
+						setIsDeactivateModalVisible(false);
+					}
+				});
+			getUpdatedUsersList();
 	}
 
 	const disableStatus = (key, currentStatus) => {
 		const currentStatusKey = Object.keys(lifeCycleTypes).find(eachItem => lifeCycleTypes[eachItem] === currentStatus);
 		return (key === currentStatusKey) ? true : false;
 	}
+
+	const handleOnStatusCancel = () => {
+		setIsDeactivateModalVisible(false);
+		setDeactivateUserId(null);
+		setDeactivateUsername(null);
+	}
+
+	const handleOnStatusOk = () => {
+		console.log(deactivateUserId);
+		console.log(deactivateUsername);
+		changeUserStatus('DEACTIVATED', deactivateUserId, deactivateUsername);
+	}
+
 
 	return (
 		<>
@@ -276,7 +307,20 @@ export default function Users() {
 					/>
 				</>}
 			</Skeleton>
+			<Modal closeIcon={<Button icon={<CloseOutlined />}></Button>} title={<b>Warning</b>} visible={isDeactivateModalVisible} onOk={handleOnStatusOk} onCancel={handleOnStatusCancel} width='500px'
+            footer={[
+                <Button key="cancel" onClick={handleOnStatusCancel}>
+                    No
+                </Button>,
+                <Button key="submit" type="primary" loading={loadingDetails} onClick={handleOnStatusOk}>
+                    Yes
+                </Button>
+            ]}
+        >
+            <div>
+               {deactivateConfirmMsg}
+            </div>
+        </Modal>
 		</>
-
 	);
 }
