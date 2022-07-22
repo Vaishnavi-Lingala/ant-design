@@ -45,15 +45,9 @@
     "resize-observer-polyfill" "^1.5.0"
 
 "@apideck/better-ajv-errors@^0.3.1":
-<<<<<<< HEAD
-  "integrity" "sha512-9o+HO2MbJhJHjDYZaDxJmSDckvDpiuItEsrIShV0DXeCshXWRHhqYyU/PKHMkuClOmFnZhRd6wzv4vpDu/dRKg=="
-  "resolved" "https://registry.npmjs.org/@apideck/better-ajv-errors/-/better-ajv-errors-0.3.3.tgz"
-  "version" "0.3.3"
-=======
   "integrity" "sha512-Ic2d8ZT6HJiSikGVQvSklaFyw1OUv4g8sDOxa0PXSlbmN/3gL5IO1WYY9DOwTDqOFmjWoqG1yaaKnPDqYCE9KA=="
   "resolved" "https://registry.npmjs.org/@apideck/better-ajv-errors/-/better-ajv-errors-0.3.4.tgz"
   "version" "0.3.4"
->>>>>>> 92e866b2f6d90f9f230a3d53e0c5970a6c486e34
   dependencies:
     "json-schema" "^0.4.0"
     "jsonpointer" "^5.0.0"
