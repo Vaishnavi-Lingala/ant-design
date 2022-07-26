@@ -96,12 +96,16 @@ function AppFormRenderer({
     beforeUpload: file => {
       const isPngOrJpg = file.type === 'image/png' || file.type === 'image/jpeg';
 
-      if (!isPngOrJpg)
+      if (!isPngOrJpg) {
         message.error('Please upload a file in the correct format.');
+        return false
+      }
 
       const aboveSizeLimit = file.size / 1024 / 1024 < 1;
-      if (!aboveSizeLimit)
+      if (!aboveSizeLimit) {
         message.error('File size is too large.')
+        return false
+      }
 
       blobToBase64(file);
       return isPngOrJpg && aboveSizeLimit
@@ -110,7 +114,7 @@ function AppFormRenderer({
       return undefined
     },
     // Avoid using the default upload methods
-    customRequest: () => { }
+    customRequest: () => {}
   }
 
   function onOk() {
@@ -123,7 +127,7 @@ function AppFormRenderer({
           })
           .catch((err: ApiResError) => {
             console.error(err)
-            openNotification('error', 'Error sending data to server.');
+            openNotification('error', err.errorSummary);
           })
           .finally(() =>
             toggleSendingData(false)
@@ -249,7 +253,7 @@ function AppFormRenderer({
         <Divider>App logo</Divider>
 
 
-        <h4 style={{textAlign: 'center'}}>Requirments</h4>
+        <h4 style={{ textAlign: 'center' }}>Requirments</h4>
         <div className='Modal-UploadRulesContainer'>
           <ul className='Modal-UploadRules'>
             <li>Images should be less than 1mb</li>

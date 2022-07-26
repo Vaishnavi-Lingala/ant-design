@@ -73,6 +73,7 @@ function SupportedIntegrations() {
                 renderItem={template => (
                   <List.Item
                     key={template.uid}
+                    //@ts-ignore
                     extra={
                       <Tooltip
                         placement='left'
