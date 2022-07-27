@@ -6,12 +6,7 @@ import ColorPicker from "../Controls/ColorPicker";
 import { DEFAULT_BACKGROUND_COLOR, DEFAULT_TEXT_COLOR } from "../../constants";
 
 const PrivacyShieldPolicy = (props) => {
-    const [background, setBackground] = useState('#D0021B');
-    const [displayColorPicker, setDisplayColorPicker] = useState(false);
     useEffect(() => {});
-
-    
-    
 
     return (
         <Skeleton loading={false}>
