@@ -16,9 +16,10 @@ import { openNotification } from '../Layout/Notification';
 import ProtectedRoute from '../ProtectedRoute';
 import ApiUrls from '../../ApiUtils';
 import ApiService from '../../Api.service';
-import { BIO, BioDescription, CardEnrollmentPolicyDescription, CARD_ENROLL, KIOSK, KioskPolicyDescription, PASSWORD, PasswordPolicyDescription, PIN, PinPolicyDescription, policyDisplayNames, TecBIO, TecTANGO } from '../../constants';
+import { BIO, BioDescription, CardEnrollmentPolicyDescription, CARD_ENROLL, KIOSK, KioskPolicyDescription, PASSWORD, PasswordPolicyDescription, PIN, PinPolicyDescription, policyDisplayNames, PRIVACY, TecBIO, TecTANGO } from '../../constants';
 import { Store } from '../../Store';
 import BioPolicy from './BioPolicy';
+import PrivacyShieldPolicy from './PrivacyShieldPolicy';
 
 export default function Policies() {
 	const history = useHistory();
@@ -637,6 +638,11 @@ export default function Policies() {
 							</Skeleton>
 						</TabPane> : null
 				}
+				<TabPane tab={policyDisplayNames[PRIVACY]} key="privacy">
+					<Skeleton loading={loadingDetails}>
+						<ProtectedRoute path={`/product/${productId}/policies/privacy`} component={PrivacyShieldPolicy} subRoute />
+					</Skeleton>
+				</TabPane>
 			</Tabs>
 		</>
 	);
