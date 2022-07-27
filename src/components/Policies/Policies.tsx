@@ -598,7 +598,7 @@ export default function Policies() {
 					</Skeleton>
 				</TabPane>
 				{
-					seletedProduct === TecTANGO ?
+					seletedProduct === TecTANGO && process.env.REACT_APP_ENV === 'dev'?
 					<TabPane tab={policyDisplayNames[KIOSK]} key="kiosk">
 						<Skeleton loading={loadingDetails}>
 							{window.location.pathname.split('/').length === 6 ?
