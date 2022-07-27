@@ -77,11 +77,12 @@ const settingsItems = [
     key: domain,
     icon: <GlobalOutlined />
   },
+  (process.env.REACT_APP_ENV === 'dev' &&
   {
     label: GlobalPolicies,
     key: globalPolicies,
     icon: <SolutionOutlined />
-  }
+  })
 ];
 
 const tecUnifyItems = [
