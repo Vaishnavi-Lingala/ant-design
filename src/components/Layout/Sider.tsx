@@ -89,6 +89,21 @@ const tecUnifyItems = [
 		label: Applications,
 		key: applications,
 		icon: <AppstoreOutlined />
+	},
+	{
+		label: Mechanisms,
+		key: mechanisms,
+		icon: <LockOutlined />
+	},
+	{
+		label: Policies,
+		key: policies,
+		icon: <SolutionOutlined />
+	},
+	{
+		label: ActivityLogs,
+		key: activityLogs,
+		icon: <PieChartOutlined />
 	}
 ];
 

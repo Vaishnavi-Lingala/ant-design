@@ -161,7 +161,7 @@ function UserProvisioningPolicy(props: any) {
                 </div>
                 <div style={{ paddingTop: '20px' }}>
                     {isEdit ? <Input className="form-control"
-                        style={{ width: "275px" }}
+                        style={{ width: "275px", borderColor: props?.policyReqFields?.name }}
                         onChange={(e) => setUserProvisioningEditedData({
                             ...userProvisioningEditData,
                             name: e.target.value
@@ -196,7 +196,7 @@ function UserProvisioningPolicy(props: any) {
             </div>
 
             <div style={{ padding: '0 0 20px 0' }}>
-                <b>AND</b> User's group membership includes {
+                <b>AND</b> User's group membership includes <span className="mandatory">* </span>{
                     isEdit ?
                         <Select
                             mode="multiple"
@@ -204,7 +204,8 @@ function UserProvisioningPolicy(props: any) {
                             placeholder={<div>Please select groups</div>}
                             defaultValue={userProvisioningDisplayData['name'] !== "" ? groupNames : []}
                             onChange={handleGroups}
-                            style={{ width: '275px' }}
+                            style={{ width: '275px'}}
+                            className={props?.policyReqFields?.auth_policy_groups === 'red' ? 'select-mandatory' : ''}
                             options={groups}
                             filterOption={(input, option) =>
                                 //@ts-ignore

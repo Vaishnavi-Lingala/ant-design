@@ -197,7 +197,7 @@ function VDIPolicy(props: any) {
                 </div>
                 <div style={{ paddingTop: '20px' }}>
                     {isEdit ? <Input className="form-control"
-                        style={{ width: "275px" }}
+                        style={{ width: "275px", borderColor: props?.vdiPolicyReqFields?.name}}
                         onChange={(e) => setVDIEditedData({
                             ...vdiEditData,
                             name: e.target.value
@@ -232,6 +232,7 @@ function VDIPolicy(props: any) {
                         defaultValue={groupType}
                         disabled={!isEdit}
                         onChange={(e) => {
+                            vdiEditData.groupType = e.target.value
                             groupNames.length = 0
                             setGroupNames([]);
                             //@ts-ignore
@@ -276,6 +277,7 @@ function VDIPolicy(props: any) {
                             defaultValue={vdiDisplayData['name'] !== "" ? groupNames : []}
                             onChange={handleGroups}
                             style={{ width: '275px' }}
+                            className={props?.vdiPolicyReqFields?.kiosk_machine_groups === 'red' ? 'select-mandatory' : ''}
                             options={groups}
                             filterOption={(input, option) =>
                                 // @ts-ignore
@@ -349,7 +351,7 @@ function VDIPolicy(props: any) {
                 </div>
 
                 <div className="content-policy-key-header" style={{ padding: '10px 0 10px 0' }}>
-                    Template:
+                    Template<span className="mandatory">*</span> : 
                 </div>
                 <div style={{ padding: '12px 0 10px 0' }}>
                     {isEdit ?
@@ -369,6 +371,7 @@ function VDIPolicy(props: any) {
                             })}
                             options={typeTemplates}
                             style={{ width: '275px' }}
+                            className={props.vdiPolicyReqFields?.template === 'red' ? 'select-mandatory' : ''}
                         />
                         : templateName
                     }
