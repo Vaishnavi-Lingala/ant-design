@@ -11,7 +11,7 @@ import {
 	ActivityLogs, activityLogs, Dashboard, dashboard, Directory, Groups, groups,
 	Machines, machines, Devices, devices, Mechanisms, mechanisms, MenuItemPaths,
 	Policies, policies, productNames, account, Settings, TecBIO, TecTANGO, Users,
-	users, TecTango, TecUNIFY, TecBio, Account, Domain, domain, Applications, applications, globalPolicies, GlobalPolicies
+	users, TecTango, TecUNIFY, TecBio, Account, Domain, domain, Applications, applications, globalPolicies, GlobalPolicies, TecUnify
 } from "../../constants";
 
 import { Store } from "../../Store";
@@ -111,18 +111,18 @@ function AppSider() {
 	const history = useHistory();
 	const [selectedHeaderOption] = useContext(Store);
 	const selectedProductId = localStorage.getItem("productId");
-	
+
 	useEffect(() => {
 		ApiService.get(ApiUrls.info(localStorage.getItem('accountId')))
-		.then(data => {
-			console.log(data);
-			if(data.enable_vdi === false && data.enable_local_provisioning === false){
-				sessionStorage.setItem("ShowGlobal", "false");
-			}
-			else{
-				sessionStorage.clear();
-			}
-		})
+			.then(data => {
+				console.log(data);
+				if (data.enable_vdi === false && data.enable_local_provisioning === false) {
+					sessionStorage.setItem("ShowGlobal", "false");
+				}
+				else {
+					sessionStorage.clear();
+				}
+			})
 	}, [])
 
 	function openScreen(screen: string) {
@@ -137,6 +137,9 @@ function AppSider() {
 				break;
 			default:
 				if (screen === TecTANGO || screen === TecBIO) {
+					history.push(`/product/${selectedProductId}${MenuItemPaths[screen]}`);
+				}
+				else if (screen === TecUNIFY) {
 					history.push(`/product/${selectedProductId}${MenuItemPaths[screen]}`);
 				}
 				else {
@@ -160,6 +163,17 @@ function AppSider() {
 			...commonProductItems
 		];
 
+		const tecUnifyItemsWithHeader = [
+			{
+				label: <div className="sidebar-header-content">
+					<img height={28} width={28} src={window.location.origin + "/TecTango.png"} />
+					{productNames[selectedHeaderOption]}
+				</div>,
+				key: selectedHeaderOption
+			},
+			...tecUnifyItems
+		];
+
 		switch (selectedHeaderOption) {
 			case Directory:
 				return directoryItems;
@@ -170,7 +184,7 @@ function AppSider() {
 			case TecBIO:
 				return productItemsWithHeader;
 			case TecUNIFY:
-				return tecUnifyItems;
+				return tecUnifyItemsWithHeader;
 			default:
 				return [];
 		}
