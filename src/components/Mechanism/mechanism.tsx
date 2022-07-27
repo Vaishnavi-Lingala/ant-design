@@ -351,7 +351,7 @@ function Mechanism(props: any) {
                 <Divider style={{ borderTop: '1px solid #d7d7dc' }} />
 
                 {
-                    selectedHeader === TecTANGO ?
+                    selectedHeader !== TecBIO ?
                         <div style={{ padding: '0 0 20px 0' }}>
                             <b>WHEN</b> user <b>TAPS</b> the proximity card/badge on the card reader
                         </div> :
@@ -431,7 +431,7 @@ function Mechanism(props: any) {
                 <Divider style={{ borderTop: '1px solid #d7d7dc' }} />
 
                 {
-                    selectedHeader === TecTANGO ?
+                    selectedHeader !== TecBIO ?
                         <div style={{ padding: '0 0 20px 0' }}>
                             <b>WHEN</b> user <b>TAPS</b> the proximity card/badge on the card reader over an active session
                         </div> :
