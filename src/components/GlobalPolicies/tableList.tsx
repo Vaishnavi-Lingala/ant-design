@@ -5,14 +5,15 @@ import { CloseOutlined } from "@ant-design/icons";
 import { openNotification } from "../Layout/Notification";
 import ApiUrls from "../../ApiUtils";
 import ApiService from "../../Api.service";
-import { CARD_ENROLL, KIOSK, LOCAL_USER_PROVISIONING, PASSWORD, PIN, policyDisplayNames, VIRTUAL_DESKTOP_INTERFACE } from "../../constants";
+import { CARD_ENROLL, globalPolicyReqFields, KIOSK, LOCAL_USER_PROVISIONING, PASSWORD, PIN, policyDisplayNames, policyInfoModel, requiredFieldsErrorMsg, VIRTUAL_DESKTOP_INTERFACE } from "../../constants";
 import UserProvisioningPolicy from "./UserProvisioningPolicy";
 import VDIPolicy from "./VirtualDesktopInterface";
 
 function TableList({ handleGetPolicies, policy_type, policy_description, activateColumns, activePolicies, draggableContainer, draggableBodyRow, deActivateColumns, inActivePolicies }) {
     const [isModal, setIsModal] = useState(false);
     const [buttonLoading, setButtonLoading] = useState(false);
-
+    const [policyReqFieldsModel, setPolicyReqFieldsModel]: any = useState({'name': '', 'auth_policy_groups': ''});
+    const [vdiReqFieldsModel, setVdiReqFieldsModel]: any = useState({'name': '', });
     const vdiData = {
         name: "",
         description: "",
@@ -39,9 +40,66 @@ function TableList({ handleGetPolicies, policy_type, policy_description, activat
         }
     }
 
+    const validateGlobalPolicy = (policyInfo) => {
+        let requiredFields: any = [];
+        let errorMsg = ``;
+        let fields = '';
+        let reqFields = JSON.parse(JSON.stringify(globalPolicyReqFields));
+        reqFields.forEach((eachField: any) => {
+            if (eachField.dataType === 'string') {
+                if (policyInfo[eachField.field] === null || policyInfo[eachField.field] === '') {
+                    requiredFields.push(policyInfoModel[eachField.field]);
+                    setPolicyReqFieldsModel((prevState) => ({
+                        ...prevState,
+                        [eachField.field]: 'red'
+                    }));
+                } else {
+                    setPolicyReqFieldsModel((prevState) => ({
+                        ...prevState,
+                        [eachField.field]: ''
+                    }));
+                }
+            } else if (eachField.dataType === 'array') {
+                if (policyInfo[eachField.field].length <= 0) {
+                    requiredFields.push(policyInfoModel[eachField.field]);
+                    setPolicyReqFieldsModel((prevState) => ({
+                        ...prevState,
+                        [eachField.field]: 'red'
+                    }));
+                } else {
+                    setPolicyReqFieldsModel((prevState) => ({
+                        ...prevState,
+                        [eachField.field]: ''
+                    }));
+                }
+            }
+        })
+        if (requiredFields.length) {
+            requiredFields.forEach((each, index) => {
+                if (index < requiredFields.length - 1) {
+                    fields = `${fields} ${each},`
+                } else {
+                    fields = `${fields} ${each}`
+                }
+            })
+            errorMsg = requiredFieldsErrorMsg + fields;
+        }
+        return errorMsg;
+    }
+
     const handleOk = (policyType: string, object: object) => {
         setButtonLoading(true);
-        ApiService.post(ApiUrls.addGlobalPolicy(localStorage.getItem('accountId')), object)
+        console.log(JSON.stringify(object));
+        console.log(policyType);
+        let error;
+        if (policyType === 'LOCAL_USER_PROVISIONING') {
+            error = validateGlobalPolicy(object);
+        }
+         if (error) {
+            openNotification('error', error);
+            setButtonLoading(false);
+        } else {
+            ApiService.post(ApiUrls.addGlobalPolicy(localStorage.getItem('accountId')), object)
             .then(data => {
                 if (!data.errorSummary) {
                     console.log(data);
@@ -59,6 +117,8 @@ function TableList({ handleGetPolicies, policy_type, policy_description, activat
                 setButtonLoading(false);
                 openNotification('error', `An Error has occured with creating ${policyType.slice(0, 1) + policyType.slice(1).toLowerCase()} Policy`);
             })
+        }
+        
     }
 
     const handleCancel = () => {
@@ -135,7 +195,7 @@ function TableList({ handleGetPolicies, policy_type, policy_description, activat
             >
                 {
                     policy_type === LOCAL_USER_PROVISIONING ?
-                        <UserProvisioningPolicy policyDetails={userProvisioningData} buttonLoading={buttonLoading} handleOk={handleOk} handleCancel={handleCancel} /> :
+                        <UserProvisioningPolicy policyDetails={userProvisioningData} buttonLoading={buttonLoading} handleOk={handleOk} handleCancel={handleCancel} policyReqFields={policyReqFieldsModel}/> :
                         <VDIPolicy policyDetails={vdiData} buttonLoading={buttonLoading} handleOk={handleOk} handleCancel={handleCancel} />
                 }
             </Modal>

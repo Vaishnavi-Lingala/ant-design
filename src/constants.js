@@ -396,3 +396,10 @@ export const userDataModel = {
 export const requiredFieldsErrorMsg = `Please fill required attributes`;
 
 export const deactivateConfirmMsg = 'Deactivating a user will remove all enrollments associated with the user. This action cannot be reversed. Do you want to proceed?'
+
+export const globalPolicyReqFields = [{field: 'name', dataType: 'string'}, {field: 'auth_policy_groups', dataType: 'array'}];
+
+export const policyInfoModel = {
+    name: 'Policy Name',
+    auth_policy_groups: 'Group Name'
+}
