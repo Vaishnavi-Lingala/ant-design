@@ -220,7 +220,7 @@ export function AddUser(props) {
                     Cancel
                 </Button>,
                 <Button key="submit" type="primary" loading={loading} onClick={handleOk}>
-                    Save
+                    Create
                 </Button>
             ]}
         >

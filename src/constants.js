@@ -351,7 +351,7 @@ export const MenuItemPaths = {
     [Settings]: "/account",
     [TecTANGO]: "/mechanism",
     [TecBIO]: "/mechanism",
-    [TecUNIFY]: "/apps"
+    [TecUNIFY]: "/mechanism"
 }
 
 export const policyDisplayNames = {
@@ -375,7 +375,7 @@ export const KioskPolicyDescription = 'KIOSK policies applies to machines where 
 export const CardEnrollmentPolicyDescription = 'Card enrollment policies enable admins to configure max number of cards allowed per user group during enrollment';
 export const LocalUserProvisioningPolicyDescription = 'Local user provisioning policies enable admins to automatically create local user profile on the machines. This is applicable only for Standard and Kiosk machines.';
 export const VDI_Description = 'VDI policies enable admins to configure the VDI Template for Citrix, VMware, or Microsoft which TecTANGO will use to connect to remote desktops hosted on a virtual machine server.';
-export const BioDescription = 'Bio Description';
+export const BioDescription = 'Biometric policies enable admins to configure min and max fingers enrollmnent allowed per user group';
 
 //Mechanism Descriptions
 export const TECTANGO_LOCK_DESCRIPTION = 'Lock the machine or sign-out from the apps launched by TecTANGO.';
@@ -403,3 +403,19 @@ export const deactivateConfirmMsg = 'Deactivating a user will remove all enrollm
 
 export const DEFAULT_TEXT_COLOR = '#000000';
 export const DEFAULT_BACKGROUND_COLOR = 'FFFFFF';
+export const globalPolicyReqFields = [{field: 'name', dataType: 'string'}, {field: 'auth_policy_groups', dataType: 'array'}];
+
+export const policyInfoModel = {
+    name: 'Policy Name',
+    auth_policy_groups: 'Group Name'
+}
+
+export const vdiPolicyReqFields = [{field: 'name', dataType: 'string'}, {field: 'groupType', dataType: 'string'}, {field: 'kiosk_machine_groups', dataType: 'array'}, {field: 'vdi_type', dataType: 'string', objectName: 'policy_req'}, {field: 'template', dataType: 'string', objectName: 'policy_req'}];
+
+export const vdiPolicyInfoModel = {
+    name: 'Policy Name',
+    groupType: 'Group Type',
+    kiosk_machine_groups: 'Group Name',
+    vdi_type: 'VDI Type',
+    template: 'Template'
+}

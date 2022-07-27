@@ -4,7 +4,7 @@ definitions:
   services: 
     docker: 
       # Memory docker-in-docker 
-      memory: 3072
+      memory: 4096
 
 pipelines:
   branches:
