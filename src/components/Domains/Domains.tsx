@@ -9,10 +9,11 @@ import { Domain } from '../../constants';
 
 function Domains() {
     const [loading, setLoading] = useState(false);
-    const [domains, setDomains] = useState([]);
+    const [domains, setDomains]: any = useState([]);
     const [displayDomains, setDisplayDomains] = useState([]);
     const [isEdit, setIsEdit] = useState(false);
     const accountId = localStorage.getItem('accountId');
+    const initialValue = "";
 
     useEffect(() => {
         getDomains();
@@ -94,16 +95,15 @@ function Domains() {
                         </div>
                         <div>
                             {
-                                !isEdit ? domains.map((value, index) => {
+                                !isEdit ? domains.map((value) => {
                                     return <div key={value} style={{ padding: '5px' }}>
                                         <Button style={{ cursor: 'text', width: '200px', textAlign: 'left' }}>{value}</Button>
                                     </div>
                                 }) : domains.map((value, index) => {
-                                    return <div key={value} style={{ padding: '5px' }}>
+                                    return <div key={value + "" + index} style={{ padding: '5px' }}>
                                         <Input className="form-control"
                                             readOnly={value === "WORKGROUP"}
                                             defaultValue={value} onChange={(e) => {
-                                                //@ts-ignore
                                                 domains[index] = e.target.value
                                                 setDomains(domains);
                                             }} style={{ width: '200px' }}
