@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
-import { Button, Input, InputNumber, Select, Skeleton } from "antd";
+import { Button, Divider, Input, InputNumber, Radio, Select, Skeleton } from "antd";
 import TextArea from "antd/lib/input/TextArea";
 
 import './Policies.css';
@@ -20,6 +20,7 @@ const CardEnrollmentPolicy = (props) => {
     const [groupNames, setGroupNames]: any = useState([]);
     const [groupUids, setGroupUids]: any = useState([]);
     const [groupsChange, setGroupsChange]: any = useState([]);
+    const [maxEnrollOptions, setMaxEnrollOptions] = useState({});
     const [maxEnroll, setMaxEnroll] = useState(1);
     const [isLimitReached, setIsLimitReached] = useState(false);
     const history = useHistory();
@@ -29,6 +30,7 @@ const CardEnrollmentPolicy = (props) => {
     useEffect(() => {
         Promise.all(([
             ApiService.get(ApiUrls.groups(accountId), { type: "USER" }),
+            ApiService.get(ApiUrls.maxCardEnrollExceedOptions(accountId)),
             ApiService.get(ApiUrls.policy(accountId, productId, window.location.pathname.split('/')[5]))
         ]))
             .then(data => {
@@ -47,14 +49,18 @@ const CardEnrollmentPolicy = (props) => {
                 groupsChange.push(object);
                 setGroupsChange(groupsChange);
 
-                if (!data[1].errorSummary) {
-                    setCardEnrollDisplayData(data[1]);
-                    setCardEnrollEditedData(data[1]);
-                    setPolicyRequirements(data[1].policy_req);
+                console.log(data[1]);
+                setMaxEnrollOptions(data[1]);
 
-                    Object.keys(data[1]['auth_policy_groups']).map(index => {
-                        groupNames.push(data[1].auth_policy_groups[index].name);
-                        groupUids.push(data[1].auth_policy_groups[index].uid)
+                console.log(data[2]);
+                if (!data[2].errorSummary) {
+                    setCardEnrollDisplayData(data[2]);
+                    setCardEnrollEditedData(data[2]);
+                    setPolicyRequirements(data[2].policy_req);
+
+                    Object.keys(data[2]['auth_policy_groups']).map(index => {
+                        groupNames.push(data[2].auth_policy_groups[index].name);
+                        groupUids.push(data[2].auth_policy_groups[index].uid)
                         setGroupNames(groupNames);
                         setGroupUids(groupUids);
                     });
@@ -68,13 +74,13 @@ const CardEnrollmentPolicy = (props) => {
                     setLoading(false);
                 }
                 else {
-                    console.log('else: ', data[1]);
-                    openNotification('error', data[1].errorCauses.length !== 0 ? data[1].errorCauses[1].errorSummary : data[1].errorSummary);
+                    console.log('else: ', data[2]);
+                    openNotification('error', data[2].errorCauses.length !== 0 ? data[2].errorCauses[1].errorSummary : data[2].errorSummary);
                     history.push(`/product/${localStorage.getItem("productId")}/policies/card-enrollment`);
                 }
             }, error => {
                 console.error('Error: ', error);
-                openNotification('error', 'An Error has occured with getting Groups');
+                openNotification('error', 'An Error has occured with getting Details');
                 setLoading(false);
             })
     }, []);
@@ -97,6 +103,9 @@ const CardEnrollmentPolicy = (props) => {
     }, []);
 
     function updateCardEnrollPolicy() {
+        if (cardEnrollEditData?.policy_req?.max_card_enroll_exceed_config === "DO_NOT_ALLOW") {
+            cardEnrollEditData.policy_req.last_used_days = null
+        }
         cardEnrollEditData['auth_policy_groups'] = groupUids;
         ApiService.put(ApiUrls.policy(accountId, productId, cardEnrollDisplayData['uid']), cardEnrollEditData)
             .then(data => {
@@ -238,7 +247,9 @@ const CardEnrollmentPolicy = (props) => {
                     <div>
                         {policyDisplayNames[cardEnrollDisplayData['policy_type']]}
                     </div>
+                </div>
 
+                <div className="row-policy-container">
                     <div className="content-policy-key-header" style={{ paddingTop: '20px' }}>
                         Max Card Enrollment:
                     </div>
@@ -257,27 +268,104 @@ const CardEnrollmentPolicy = (props) => {
                                 defaultValue={policyRequirements['max_card_enrollment']}
                             />
                             {isLimitReached ? <div style={{ padding: '5px', color: 'red' }}>
-                            By default users may only be allowed to have {maxEnroll} cards enrolled to them. If a higher limit is required please contact your support team.
+                                By default users may only be allowed to have {maxEnroll} cards enrolled to them. If a higher limit is required please contact your support team.
                                 {/* Max card enrollment limit is {maxEnroll}. Please contact Tecnics to update it. */}
                             </div> : null}
                         </> : policyRequirements['max_card_enrollment']
                         }
                     </div>
                 </div>
+
+                <Divider style={{ borderTop: '1px solid #d7d7dc' }} />
+                
+                <div>
+                    <b>WHEN</b> max card enrollment is exceeded <b>THEN</b>
+                </div>
+                <div style={{ paddingTop: '10px' }}>
+                    <Radio.Group onChange={(e) => {
+                        setCardEnrollEditedData((state) => {
+                            const { policy_req } = state
+                            return {
+                                ...cardEnrollEditData,
+                                policy_req: {
+                                    ...policy_req,
+                                    max_card_enroll_exceed_config: e.target.value
+                                }
+                            }
+                        })
+                    }} disabled={!isEdit} value={cardEnrollEditData?.policy_req?.max_card_enroll_exceed_config}
+                    >
+                        {
+                            Object.keys(maxEnrollOptions).map(key => {
+                                return <>
+                                    <Radio value={key} key={key}>
+                                        {maxEnrollOptions[key]}
+                                        {key === "DO_NOT_ALLOW" ?
+                                            <> enrollment unless admin manually unenroll the card in the portal</> :
+                                            key === "UNENROLL_LEAST_USED" ?
+                                                <> in the last {
+                                                    isEdit ?
+                                                        cardEnrollEditData?.policy_req?.max_card_enroll_exceed_config === "UNENROLL_LEAST_USED" ?
+                                                            <InputNumber min={1} value={cardEnrollEditData?.policy_req?.last_used_days}
+                                                                style={{ width: '55px' }}
+                                                                onChange={(value) => {
+                                                                    setCardEnrollEditedData((state) => {
+                                                                        const { policy_req } = state
+                                                                        return {
+                                                                            ...cardEnrollEditData,
+                                                                            policy_req: {
+                                                                                ...policy_req,
+                                                                                last_used_days: value
+                                                                            }
+                                                                        }
+                                                                    })
+                                                                }} /> : <>(x)</> : cardEnrollEditData?.policy_req?.max_card_enroll_exceed_config === "UNENROLL_LEAST_USED" ?
+                                                            cardEnrollEditData?.policy_req?.last_used_days === null ? <>(x)</> : cardEnrollEditData?.policy_req?.last_used_days : <>(x)</>
+                                                } day(s) & allow new enrollment.
+                                                </> :
+                                                <> in the last {
+                                                    isEdit ?
+                                                        cardEnrollEditData?.policy_req?.max_card_enroll_exceed_config === "UNENROLL_FREQUENTLY_USED" ?
+                                                            <InputNumber min={1} value={cardEnrollEditData?.policy_req?.last_used_days}
+                                                                style={{ width: '55px' }}
+                                                                onChange={(value) => {
+                                                                    setCardEnrollEditedData((state) => {
+                                                                        const { policy_req } = state
+                                                                        return {
+                                                                            ...cardEnrollEditData,
+                                                                            policy_req: {
+                                                                                ...policy_req,
+                                                                                last_used_days: value
+                                                                            }
+                                                                        }
+                                                                    })
+                                                                }} /> : <>(x)</> : cardEnrollEditData?.policy_req?.max_card_enroll_exceed_config === "UNENROLL_FREQUENTLY_USED" ?
+                                                            cardEnrollEditData?.policy_req?.last_used_days === null ? <>(x)</> : cardEnrollEditData?.policy_req?.last_used_days : <>(x)</>
+                                                } day(s) & allow new enrollment.
+                                                </>
+                                        }
+                                    </Radio>
+                                    <br />
+                                </>
+                            })
+                        }
+                    </Radio.Group>
+                </div>
             </div>
-            {cardEnrollDisplayData['uid'] !== undefined ?
-                (isEdit ? <div style={{ paddingTop: '10px', paddingRight: '45px' }}>
-                    <Button style={{ float: 'right', marginLeft: '10px' }}
-                        onClick={handleCancelClick}>Cancel</Button>
-                    <Button disabled={isLimitReached} type='primary' style={{ float: 'right' }}
-                        onClick={handleSaveClick}>Save</Button>
-                </div> : <></>) : <div style={{ paddingTop: '10px', paddingRight: '45px', paddingBottom: '20px' }}>
-                    <Button style={{ float: 'right', marginLeft: '10px' }}
-                        onClick={setCancelClick}>Cancel</Button>
-                    <Button type='primary' loading={props.buttonLoading} style={{ float: 'right' }}
-                        onClick={createCardEnrollPolicy}>Create</Button></div>
+            {
+                cardEnrollDisplayData['uid'] !== undefined ?
+                    (isEdit ? <div style={{ paddingTop: '10px', paddingRight: '45px' }}>
+                        <Button style={{ float: 'right', marginLeft: '10px' }}
+                            onClick={handleCancelClick}>Cancel</Button>
+                        <Button disabled={isLimitReached} type='primary' style={{ float: 'right' }}
+                            onClick={handleSaveClick}>Save</Button>
+                    </div> : <></>) : <div style={{ paddingTop: '10px', paddingRight: '45px', paddingBottom: '20px' }}>
+                        <Button style={{ float: 'right', marginLeft: '10px' }}
+                            onClick={setCancelClick}>Cancel</Button>
+                        <Button type='primary' loading={props.buttonLoading} style={{ float: 'right' }}
+                            onClick={createCardEnrollPolicy}>Create</Button></div>
             }
-        </Skeleton>
+        </Skeleton >
     );
 }
 

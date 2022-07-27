@@ -68,7 +68,9 @@ function TableList({ handleGetPolicies, policy_type, policy_description, activat
         description: "",
         name: "",
         policy_req: {
-            max_card_enrollment: 1
+            max_card_enrollment: 1,
+            max_card_enroll_exceed_config: "DO_NOT_ALLOW",
+            last_used_days: null
         },
         kiosk_machine_groups: [],
         policy_type: CARD_ENROLL,
