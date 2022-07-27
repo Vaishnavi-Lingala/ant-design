@@ -33,7 +33,7 @@ function Applications() {
     searchOn: 'name',
   })
 
-  let sortedByActivity = {
+  const templatesByActivity = {
     active: filteredData.filter(item => item.active),
     inactive: filteredData.filter(item => !item.active)
   };
@@ -104,7 +104,7 @@ function Applications() {
 
   const paginationConfig: PaginationConfig = {
     position: 'bottom',
-    total: sortedByActivity[activity].length,
+    total: templatesByActivity[activity].length,
     pageSize: 10,
   };
 
@@ -137,11 +137,11 @@ function Applications() {
           <Divider />
           <Menu className='_NoBorder' onClick={e => setActivity(e.key)} defaultSelectedKeys={['active']}>
             <Menu.Item key='active'>
-              Active - ({sortedByActivity.active.length})
+              Active - ({templatesByActivity.active.length})
             </Menu.Item>
 
             <Menu.Item key='inactive'>
-              Inactive - ({sortedByActivity.inactive.length})
+              Inactive - ({templatesByActivity.inactive.length})
             </Menu.Item>
           </Menu>
         </div>
@@ -155,7 +155,7 @@ function Applications() {
               itemLayout='horizontal'
               size='small'
               loading={status === 'fetching'}
-              dataSource={sortedByActivity[activity]}
+              dataSource={templatesByActivity[activity]}
               pagination={paginationConfig}
               renderItem={(template: ConfiguredTemplate) => (
                 <List.Item
@@ -166,10 +166,9 @@ function Applications() {
                   <List.Item.Meta
                     title={template.name}
                     avatar={<img
-                      alt='app logo'
+                      alt='App logo'
                       width={100}
-                      height={75}
-                      src='https://placeholder.pics/svg/50'
+                      src={template.app_img_url}
                     />
                     }
                   />

@@ -150,7 +150,7 @@
 }
 
 .Content-SubHeader {
-    justify-content: space-between;
+    justify-content: center;
 }
 
 .Content-ComponentView {
@@ -167,4 +167,16 @@
 .Modal-FormLabel {
     font-weight: 600;
     font-size: medium;
+}
+
+.ant-upload {
+    width: 100% !important;
+}
+
+.Modal-UploadRulesContainer {
+    display: flex;
+}
+
+.Modal-UploadRules {
+    padding: 10;
 }
