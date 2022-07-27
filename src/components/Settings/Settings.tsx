@@ -193,156 +193,156 @@ function Settings() {
                         })
                     }
 
-                    <Divider style={{ borderTop: '1px solid #d7d7dc' }} />
-                    {/* <div style={{ paddingTop: '30px' }}>
-                        <b>
-                            LDAP:
-                        </b>
-                    </div> */}
-                    <div style={{ paddingRight: '30px', paddingBottom: '10px' }}>
-                        {
-                            !isEdit ?
-                                <Button style={{ float: 'right' }} onClick={handleEditClick}>
-                                    Edit
-                                </Button> :
-                                <></>
-                        }
-                    </div>
-
-                    <div style={{ width: "100%", display: "flex", marginBottom: "10px" }}>
-                        <div style={{ width: "50%" }}>
-                            <b>
-                                LDAP Host:
-                            </b>
-                        </div>
+                    {process.env.REACT_APP_ENV === 'dev' && 
                         <div>
-                            {
-                                isEdit ?
-                                    <Input value={ldapEditDetails?.host}
+                            <Divider style={{ borderTop: '1px solid #d7d7dc' }} />
+
+                            <div style={{ paddingRight: '30px', paddingBottom: '10px' }}>
+                                {
+                                    !isEdit ?
+                                        <Button style={{ float: 'right' }} onClick={handleEditClick}>
+                                            Edit
+                                        </Button> :
+                                        <></>
+                                }
+                            </div>
+
+                            <div style={{ width: "100%", display: "flex", marginBottom: "10px" }}>
+                                <div style={{ width: "50%" }}>
+                                    <b>
+                                        LDAP Host:
+                                    </b>
+                                </div>
+                                <div>
+                                    {
+                                        isEdit ?
+                                            <Input value={ldapEditDetails?.host}
+                                                onChange={(e) => {
+                                                    setLDAPEditDetails({
+                                                        ...ldapEditDetails,
+                                                        host: e.target.value
+                                                    })
+                                                }}
+                                                style={{ width: "275px" }}
+                                            /> : ldapDisplayDetails['host']
+                                    }
+                                </div>
+                            </div>
+
+                            <div style={{ width: "100%", display: "flex", marginBottom: "10px" }}>
+
+                                <div style={{ width: "50%" }}>
+                                    <b>
+                                        LDAP Port:
+                                    </b>
+                                </div>
+                                <div>
+                                    <Radio.Group value={ldapEditDetails?.port}
+                                        disabled={!isEdit}
                                         onChange={(e) => {
                                             setLDAPEditDetails({
                                                 ...ldapEditDetails,
-                                                host: e.target.value
+                                                port: e.target.value
                                             })
                                         }}
-                                        style={{ width: "275px" }}
-                                    /> : ldapDisplayDetails['host']
-                            }
-                        </div>
-                    </div>
-
-                    <div style={{ width: "100%", display: "flex", marginBottom: "10px" }}>
-
-                        <div style={{ width: "50%" }}>
-                            <b>
-                                LDAP Port:
-                            </b>
-                        </div>
-                        <div>
-                            <Radio.Group value={ldapEditDetails?.port}
-                                disabled={!isEdit}
-                                onChange={(e) => {
-                                    setLDAPEditDetails({
-                                        ...ldapEditDetails,
-                                        port: e.target.value
-                                    })
-                                }}
-                            >
-                                <Radio key={636} value={636}>
-                                    636
-                                </Radio>
-                                <br />
-                                <Radio key={389} value={389}>
-                                    389
-                                </Radio>
-                            </Radio.Group>
-                        </div>
-                    </div>
-
-                    <div style={{ width: "100%", display: "flex", marginBottom: "10px" }}>
-                        <div style={{ width: "50%" }}>
-                            <b>
-                                Base DN:
-                            </b>
-                        </div>
-                        <div>
-                            {
-                                isEdit ?
-                                    <Input defaultValue={ldapEditDetails?.base_dn}
-                                        style={{ width: "275px" }}
-                                        onChange={(e) => {
-                                            setLDAPEditDetails({
-                                                ...ldapEditDetails,
-                                                base_dn: e.target.value
-                                            })
-                                        }}
-                                    /> : ldapDisplayDetails['base_dn']
-                            }
-                        </div>
-                    </div>
-
-                    <div style={{ width: "100%", display: "flex", marginBottom: "10px" }}>
-                        <div style={{ width: "50%" }}>
-                            <b>
-                                User Base DN:
-                            </b>
-                        </div>
-                        <div>
-                            {
-                                isEdit ?
-                                    <Input value={ldapEditDetails?.user_base_dn}
-                                        onChange={(e) => {
-                                            setLDAPEditDetails({
-                                                ...ldapEditDetails,
-                                                user_base_dn: e.target.value
-                                            })
-                                        }}
-                                        style={{ width: "275px" }}
-                                    /> : ldapDisplayDetails['user_base_dn']
-                            }
-                        </div>
-                    </div>
-
-                    <div style={{ width: "100%", display: "flex", marginBottom: "10px" }}>
-                        <div style={{ width: "50%" }}>
-                            <b>
-                                Username Format:
-                            </b>
-                        </div>
-                        <div>
-                            {
-                                isEdit ?
-                                    <Select
-                                        size={"large"}
-                                        placeholder="Please select username format"
-                                        value={usernameFormatOptions[ldapEditDetails?.user_name_format]}
-                                        onChange={(value) => {
-                                            setLDAPEditDetails({
-                                                ...ldapEditDetails,
-                                                user_name_format: value
-                                            })
-                                        }}
-                                        style={{ width: '275px' }}
                                     >
-                                        {
-                                            Object.keys(usernameFormatOptions).map(nameFormat => {
-                                                return <Select.Option key={nameFormat} value={nameFormat}>
-                                                    {usernameFormatOptions[nameFormat]}
-                                                </Select.Option>
-                                            })
-                                        }
-                                    </Select> : usernameFormatOptions[ldapDisplayDetails['user_name_format']]
+                                        <Radio key={636} value={636}>
+                                            636
+                                        </Radio>
+                                        <br />
+                                        <Radio key={389} value={389}>
+                                            389
+                                        </Radio>
+                                    </Radio.Group>
+                                </div>
+                            </div>
+
+                            <div style={{ width: "100%", display: "flex", marginBottom: "10px" }}>
+                                <div style={{ width: "50%" }}>
+                                    <b>
+                                        Base DN:
+                                    </b>
+                                </div>
+                                <div>
+                                    {
+                                        isEdit ?
+                                            <Input defaultValue={ldapEditDetails?.base_dn}
+                                                style={{ width: "275px" }}
+                                                onChange={(e) => {
+                                                    setLDAPEditDetails({
+                                                        ...ldapEditDetails,
+                                                        base_dn: e.target.value
+                                                    })
+                                                }}
+                                            /> : ldapDisplayDetails['base_dn']
+                                    }
+                                </div>
+                            </div>
+
+                            <div style={{ width: "100%", display: "flex", marginBottom: "10px" }}>
+                                <div style={{ width: "50%" }}>
+                                    <b>
+                                        User Base DN:
+                                    </b>
+                                </div>
+                                <div>
+                                    {
+                                        isEdit ?
+                                            <Input value={ldapEditDetails?.user_base_dn}
+                                                onChange={(e) => {
+                                                    setLDAPEditDetails({
+                                                        ...ldapEditDetails,
+                                                        user_base_dn: e.target.value
+                                                    })
+                                                }}
+                                                style={{ width: "275px" }}
+                                            /> : ldapDisplayDetails['user_base_dn']
+                                    }
+                                </div>
+                            </div>
+
+                            <div style={{ width: "100%", display: "flex", marginBottom: "10px" }}>
+                                <div style={{ width: "50%" }}>
+                                    <b>
+                                        Username Format:
+                                    </b>
+                                </div>
+                                <div>
+                                    {
+                                        isEdit ?
+                                            <Select
+                                                size={"large"}
+                                                placeholder="Please select username format"
+                                                value={usernameFormatOptions[ldapEditDetails?.user_name_format]}
+                                                onChange={(value) => {
+                                                    setLDAPEditDetails({
+                                                        ...ldapEditDetails,
+                                                        user_name_format: value
+                                                    })
+                                                }}
+                                                style={{ width: '275px' }}
+                                            >
+                                                {
+                                                    Object.keys(usernameFormatOptions).map(nameFormat => {
+                                                        return <Select.Option key={nameFormat} value={nameFormat}>
+                                                            {usernameFormatOptions[nameFormat]}
+                                                        </Select.Option>
+                                                    })
+                                                }
+                                            </Select> : usernameFormatOptions[ldapDisplayDetails['user_name_format']]
+                                    }
+                                </div>
+                            </div>
+
+                            {
+                                isEdit ? <div style={{ paddingTop: '20px', paddingRight: '30px' }}>
+                                    <Button style={{ float: 'right', marginLeft: '10px' }}
+                                        onClick={handleCancelClick}>Cancel</Button>
+                                    <Button type='primary' style={{ float: 'right' }}
+                                        onClick={handleSaveClick}>Save</Button>
+                                </div> : <></>
                             }
                         </div>
-                    </div>
-
-                    {
-                        isEdit ? <div style={{ paddingTop: '20px', paddingRight: '30px' }}>
-                            <Button style={{ float: 'right', marginLeft: '10px' }}
-                                onClick={handleCancelClick}>Cancel</Button>
-                            <Button type='primary' style={{ float: 'right' }}
-                                onClick={handleSaveClick}>Save</Button>
-                        </div> : <></>
                     }
                 </div>
             </Skeleton>
