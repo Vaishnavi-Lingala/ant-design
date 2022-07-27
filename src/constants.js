@@ -1,5 +1,3 @@
-import { isTemplateExpression } from "typescript";
-
 // constants
 export const date_format = "YYYY-MM-DD";
 export const date_display_format = " Do MMM YYYY";
@@ -352,7 +350,7 @@ export const MenuItemPaths = {
     [Settings]: "/account",
     [TecTANGO]: "/mechanism",
     [TecBIO]: "/mechanism",
-    [TecUNIFY]: "/apps"
+    [TecUNIFY]: "/mechanism"
 }
 
 export const policyDisplayNames = {
