@@ -103,8 +103,8 @@ const CardEnrollmentPolicy = (props) => {
     }, []);
 
     function updateCardEnrollPolicy() {
-        if (cardEnrollEditData?.policy_req?.max_card_enroll_exceed_config === "DO_NOT_ALLOW") {
-            cardEnrollEditData.policy_req.last_used_days = null
+        if (cardEnrollEditData?.policy_req?.card_unenroll_option === "DO_NOT_ALLOW") {
+            cardEnrollEditData.policy_req.date_range = null
         }
         cardEnrollEditData['auth_policy_groups'] = groupUids;
         ApiService.put(ApiUrls.policy(accountId, productId, cardEnrollDisplayData['uid']), cardEnrollEditData)
@@ -289,11 +289,11 @@ const CardEnrollmentPolicy = (props) => {
                                 ...cardEnrollEditData,
                                 policy_req: {
                                     ...policy_req,
-                                    max_card_enroll_exceed_config: e.target.value
+                                    card_unenroll_option: e.target.value
                                 }
                             }
                         })
-                    }} disabled={!isEdit} value={cardEnrollEditData?.policy_req?.max_card_enroll_exceed_config}
+                    }} disabled={!isEdit} value={cardEnrollEditData?.policy_req?.card_unenroll_option}
                     >
                         {
                             Object.keys(maxEnrollOptions).map(key => {
@@ -305,8 +305,8 @@ const CardEnrollmentPolicy = (props) => {
                                             key === "UNENROLL_LEAST_USED" ?
                                                 <> in the last {
                                                     isEdit ?
-                                                        cardEnrollEditData?.policy_req?.max_card_enroll_exceed_config === "UNENROLL_LEAST_USED" ?
-                                                            <InputNumber min={1} value={cardEnrollEditData?.policy_req?.last_used_days}
+                                                        cardEnrollEditData?.policy_req?.card_unenroll_option === "UNENROLL_LEAST_USED" ?
+                                                            <InputNumber min={1} value={cardEnrollEditData?.policy_req?.date_range}
                                                                 style={{ width: '55px' }}
                                                                 onChange={(value) => {
                                                                     setCardEnrollEditedData((state) => {
@@ -315,18 +315,18 @@ const CardEnrollmentPolicy = (props) => {
                                                                             ...cardEnrollEditData,
                                                                             policy_req: {
                                                                                 ...policy_req,
-                                                                                last_used_days: value
+                                                                                date_range: value
                                                                             }
                                                                         }
                                                                     })
-                                                                }} /> : <>(x)</> : cardEnrollEditData?.policy_req?.max_card_enroll_exceed_config === "UNENROLL_LEAST_USED" ?
-                                                            cardEnrollEditData?.policy_req?.last_used_days === null ? <>(x)</> : cardEnrollEditData?.policy_req?.last_used_days : <>(x)</>
+                                                                }} /> : <>(x)</> : cardEnrollEditData?.policy_req?.card_unenroll_option === "UNENROLL_LEAST_USED" ?
+                                                            cardEnrollEditData?.policy_req?.date_range === null ? <>(x)</> : cardEnrollEditData?.policy_req?.date_range : <>(x)</>
                                                 } day(s) & allow new enrollment.
                                                 </> :
                                                 <> in the last {
                                                     isEdit ?
-                                                        cardEnrollEditData?.policy_req?.max_card_enroll_exceed_config === "UNENROLL_FREQUENTLY_USED" ?
-                                                            <InputNumber min={1} value={cardEnrollEditData?.policy_req?.last_used_days}
+                                                        cardEnrollEditData?.policy_req?.card_unenroll_option === "UNENROLL_FREQUENTLY_USED" ?
+                                                            <InputNumber min={1} value={cardEnrollEditData?.policy_req?.date_range}
                                                                 style={{ width: '55px' }}
                                                                 onChange={(value) => {
                                                                     setCardEnrollEditedData((state) => {
@@ -335,12 +335,12 @@ const CardEnrollmentPolicy = (props) => {
                                                                             ...cardEnrollEditData,
                                                                             policy_req: {
                                                                                 ...policy_req,
-                                                                                last_used_days: value
+                                                                                date_range: value
                                                                             }
                                                                         }
                                                                     })
-                                                                }} /> : <>(x)</> : cardEnrollEditData?.policy_req?.max_card_enroll_exceed_config === "UNENROLL_FREQUENTLY_USED" ?
-                                                            cardEnrollEditData?.policy_req?.last_used_days === null ? <>(x)</> : cardEnrollEditData?.policy_req?.last_used_days : <>(x)</>
+                                                                }} /> : <>(x)</> : cardEnrollEditData?.policy_req?.card_unenroll_option === "UNENROLL_FREQUENTLY_USED" ?
+                                                            cardEnrollEditData?.policy_req?.date_range === null ? <>(x)</> : cardEnrollEditData?.policy_req?.date_range : <>(x)</>
                                                 } day(s) & allow new enrollment.
                                                 </>
                                         }

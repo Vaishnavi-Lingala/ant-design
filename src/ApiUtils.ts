@@ -68,7 +68,7 @@ const Urls = {
     deActivatePolicy: (accountId, productId, policyId) => `account/${accountId}/product/${productId}/auth-policy/${policyId}/inactivate`,
     reOrderPolicies: (accountId, productId) => `account/${accountId}/product/${productId}/auth-policy/reorder`,
     loginTypeOptions: (accountId) => `account/${accountId}/auth-policy/login-type`,
-    maxCardEnrollExceedOptions: (accountId) => `account/${accountId}/auth-policy/max-card-enroll-exceed-options`,
+    maxCardEnrollExceedOptions: (accountId) => `account/${accountId}/auth-policy/card-unenroll-options`,
     
     // Global Policy Urls
     globalPolicies: (accountId) => `account/${accountId}/auth-policies`,
