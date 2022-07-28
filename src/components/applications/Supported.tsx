@@ -8,7 +8,6 @@ import AppFormRenderer from './newappforms';
 import ApiUrls from '../../ApiUtils';
 
 import type { MasterTemplate } from './types';
-import type { PaginationConfig } from 'antd/lib/pagination';
 
 const { Search } = Input;
 
@@ -29,12 +28,6 @@ function SupportedApplications() {
   });
 
   const activeOnly = filteredData.filter(item => item.active);
-
-  const paginationConfig: PaginationConfig = {
-    position: 'bottom',
-    total: activeOnly.length,
-    pageSize: 5
-  };
 
   function handleClick(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     setTemplateUID(e.currentTarget.value)
@@ -64,12 +57,10 @@ function SupportedApplications() {
             :
             <>
               <List
-                className='AppList'
                 itemLayout='horizontal'
                 size='small'
                 loading={status === 'fetching'}
                 dataSource={activeOnly}
-                pagination={paginationConfig}
                 renderItem={template => (
                   <List.Item
                     key={template.uid}
