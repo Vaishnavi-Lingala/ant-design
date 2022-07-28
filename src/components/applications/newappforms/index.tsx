@@ -78,8 +78,9 @@ function AppFormRenderer({
       if (event.target !== null)
         bString = event.target.result as string;
 
-      form.setFieldsValue({ new_logo: btoa(bString) })
-      setImage(btoa(bString))
+      const b64String = btoa(bString);
+      form.setFieldsValue({ new_logo: b64String });
+      setImage(b64String);
     };
 
     reader.onerror = () =>

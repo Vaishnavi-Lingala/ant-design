@@ -12,7 +12,7 @@ import type { PaginationConfig } from 'antd/lib/pagination';
 
 const { Search } = Input;
 
-function SupportedIntegrations() {
+function SupportedApplications() {
   const accountId = localStorage.getItem('accountId') as string;
   const [modalVisible, toggleModal] = useState(false);
   const [templateUID, setTemplateUID] = useState('');
@@ -73,13 +73,8 @@ function SupportedIntegrations() {
                 renderItem={template => (
                   <List.Item
                     key={template.uid}
-                    //@ts-ignore
                     extra={
-                      <Tooltip
-                        placement='left'
-                        title='Add'
-                        destroyTooltipOnHide
-                      >
+                      <Tooltip placement='left' title='Add' destroyTooltipOnHide>
                         <Button
                           icon={<BarsOutlined />}
                           onClick={handleClick}
@@ -94,7 +89,6 @@ function SupportedIntegrations() {
                       avatar={<img
                         alt='App logo'
                         width={100}
-                        height={75}
                         src={template.app_img_url}
                       />
                       }
@@ -119,4 +113,4 @@ function SupportedIntegrations() {
   );
 }
 
-export default SupportedIntegrations;
+export default SupportedApplications;

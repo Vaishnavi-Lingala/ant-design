@@ -73,11 +73,7 @@ function Applications() {
 
   const OptionsMenu = ({ uid, active }) => (
     <span>
-      <Tooltip
-        placement='left'
-        title='View'
-        destroyTooltipOnHide
-      >
+      <Tooltip placement='left' title='View' destroyTooltipOnHide>
         <Button
           type='default'
           icon={<BarsOutlined />}
@@ -135,7 +131,11 @@ function Applications() {
             placeholder='Search'
           />
           <Divider />
-          <Menu className='_NoBorder' onClick={e => setActivity(e.key)} defaultSelectedKeys={['active']}>
+          <Menu
+            className='_NoBorder'
+            onClick={e => setActivity(e.key)}
+            defaultSelectedKeys={['active']}
+          >
             <Menu.Item key='active'>
               Active - ({templatesByActivity.active.length})
             </Menu.Item>
