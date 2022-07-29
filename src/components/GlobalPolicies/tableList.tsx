@@ -12,8 +12,6 @@ import VDIPolicy from "./VirtualDesktopInterface";
 function TableList({ handleGetPolicies, policy_type, policy_description, activateColumns, activePolicies, draggableContainer, draggableBodyRow, deActivateColumns, inActivePolicies }) {
     const [isModal, setIsModal] = useState(false);
     const [buttonLoading, setButtonLoading] = useState(false);
-    const [policyReqFieldsModel, setPolicyReqFieldsModel]: any = useState({'name': '', 'auth_policy_groups': ''});
-    const [vdiReqFieldsModel, setVdiReqFieldsModel]: any = useState({'name': '', 'groupType': '', 'kiosk_machine_groups': '', 'vdi_type': '', 'template': ''});
     const vdiData = {
         name: "",
         description: "",
@@ -41,129 +39,9 @@ function TableList({ handleGetPolicies, policy_type, policy_description, activat
         }
     }
 
-    const validateGlobalPolicy = (policyInfo) => {
-        let requiredFields: any = [];
-        let errorMsg = ``;
-        let fields = '';
-        let reqFields = JSON.parse(JSON.stringify(globalPolicyReqFields));
-        reqFields.forEach((eachField: any) => {
-            if (eachField.dataType === 'string') {
-                if (policyInfo[eachField.field] === null || policyInfo[eachField.field] === '') {
-                    requiredFields.push(policyInfoModel[eachField.field]);
-                    setPolicyReqFieldsModel((prevState) => ({
-                        ...prevState,
-                        [eachField.field]: 'red'
-                    }));
-                } else {
-                    setPolicyReqFieldsModel((prevState) => ({
-                        ...prevState,
-                        [eachField.field]: ''
-                    }));
-                }
-            } else if (eachField.dataType === 'array') {
-                if (policyInfo[eachField.field].length <= 0) {
-                    requiredFields.push(policyInfoModel[eachField.field]);
-                    setPolicyReqFieldsModel((prevState) => ({
-                        ...prevState,
-                        [eachField.field]: 'red'
-                    }));
-                } else {
-                    setPolicyReqFieldsModel((prevState) => ({
-                        ...prevState,
-                        [eachField.field]: ''
-                    }));
-                }
-            }
-        })
-        if (requiredFields.length) {
-            requiredFields.forEach((each, index) => {
-                if (index < requiredFields.length - 1) {
-                    fields = `${fields} ${each},`
-                } else {
-                    fields = `${fields} ${each}`
-                }
-            })
-            errorMsg = requiredFieldsErrorMsg + fields;
-        }
-        return errorMsg;
-    }
-
-    const validateVDIPolicy = (vdiPolicyData) => {
-        console.log(vdiPolicyData);
-        let requiredFields:any = [];
-        let fields: any = '';
-        let errorMsg:string = '';
-        let reqFieldsToValidate = JSON.parse(JSON.stringify(vdiPolicyReqFields));
-        reqFieldsToValidate.forEach((eachField: any) => {
-            if (eachField.dataType === 'string' && eachField?.objectName !== undefined) {
-                if (vdiPolicyData[eachField?.objectName][eachField?.field] === null || vdiPolicyData[eachField?.objectName][eachField?.field] === '') {
-                    requiredFields.push(vdiPolicyInfoModel[eachField.field]);
-                    setVdiReqFieldsModel((prevState) => ({
-                        ...prevState,
-                        [eachField.field]: 'red'
-                    }));
-                }  else {
-                    setVdiReqFieldsModel((prevState) => ({
-                        ...prevState,
-                        [eachField.field]: ''
-                    }));
-                }
-            } else if (eachField.dataType === 'string') {
-                if (vdiPolicyData[eachField.field] === null || vdiPolicyData[eachField.field] === '') {
-                    requiredFields.push(vdiPolicyInfoModel[eachField.field]);
-                    setVdiReqFieldsModel((prevState) => ({
-                        ...prevState,
-                        [eachField.field]: 'red'
-                    }));
-                } else {
-                    setVdiReqFieldsModel((prevState) => ({
-                        ...prevState,
-                        [eachField.field]: ''
-                    }));
-                }
-            } else if (eachField.dataType === 'array') {
-                if (vdiPolicyData[eachField.field].length <= 0) {
-                    requiredFields.push(vdiPolicyInfoModel[eachField.field]);
-                    setVdiReqFieldsModel((prevState) => ({
-                        ...prevState,
-                        [eachField.field]: 'red'
-                    }));
-                } else {
-                    setVdiReqFieldsModel((prevState) => ({
-                        ...prevState,
-                        [eachField.field]: ''
-                    }));
-                }
-            }
-        })
-        if (requiredFields.length) {
-            requiredFields.forEach((each, index) => {
-                if (index < requiredFields.length - 1) {
-                    fields = `${fields} ${each},`
-                } else {
-                    fields = `${fields} ${each}`
-                }
-            })
-            errorMsg = requiredFieldsErrorMsg + fields;
-        } 
-        return errorMsg;
-    }
-
     const handleOk = (policyType: string, object: object) => {
         setButtonLoading(true);
-        console.log(JSON.stringify(object));
-        console.log(policyType);
-        let error;
-        if (policyType === 'LOCAL_USER_PROVISIONING') {
-            error = validateGlobalPolicy(object);
-        } else if (policyType === 'VDI') {
-            error = validateVDIPolicy(object);
-        }
-         if (error) {
-            openNotification('error', error);
-            setButtonLoading(false);
-        } else {
-            ApiService.post(ApiUrls.addGlobalPolicy(localStorage.getItem('accountId')), object)
+        ApiService.post(ApiUrls.addGlobalPolicy(localStorage.getItem('accountId')), object)
             .then(data => {
                 if (!data.errorSummary) {
                     console.log(data);
@@ -181,8 +59,6 @@ function TableList({ handleGetPolicies, policy_type, policy_description, activat
                 setButtonLoading(false);
                 openNotification('error', `An Error has occured with creating ${policyType.slice(0, 1) + policyType.slice(1).toLowerCase()} Policy`);
             })
-        }
-        
     }
 
     const handleCancel = () => {
@@ -259,8 +135,8 @@ function TableList({ handleGetPolicies, policy_type, policy_description, activat
             >
                 {
                     policy_type === LOCAL_USER_PROVISIONING ?
-                        <UserProvisioningPolicy policyDetails={userProvisioningData} buttonLoading={buttonLoading} handleOk={handleOk} handleCancel={handleCancel} policyReqFields={policyReqFieldsModel}/> :
-                        <VDIPolicy policyDetails={vdiData} buttonLoading={buttonLoading} handleOk={handleOk} handleCancel={handleCancel} vdiPolicyReqFields={vdiReqFieldsModel}/>
+                        <UserProvisioningPolicy policyDetails={userProvisioningData} buttonLoading={buttonLoading} handleOk={handleOk} handleCancel={handleCancel} /> :
+                        <VDIPolicy policyDetails={vdiData} buttonLoading={buttonLoading} handleOk={handleOk} handleCancel={handleCancel} />
                 }
             </Modal>
         </>

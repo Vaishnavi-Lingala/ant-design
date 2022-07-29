@@ -6,7 +6,7 @@ import ApiService from "../../Api.service";
 import ApiUrls from "../../ApiUtils";
 import { openNotification } from "../Layout/Notification";
 import TextArea from "antd/lib/input/TextArea";
-import { policyDisplayNames, userProfileDisplayNames } from "../../constants";
+import { globalPolicyReqFields, policyDisplayNames, policyInfoModel, requiredFieldsErrorMsg, userProfileDisplayNames } from "../../constants";
 
 function UserProvisioningPolicy(props: any) {
     const [loading, setLoading] = useState(true);
@@ -21,8 +21,10 @@ function UserProvisioningPolicy(props: any) {
     const [userFormatOptions, setUserFormatOptions] = useState({});
     const history = useHistory();
     const accountId = localStorage.getItem('accountId');
+    const [uppReqFields, setUppReqFields]: any = useState({'name': '', 'auth_policy_groups': ''});
 
     useEffect(() => {
+        setUppReqFields(props?.policyReqFields);
         Promise.all(([
             ApiService.get(ApiUrls.groups(accountId), { type: "USER" }),
             ApiService.get(ApiUrls.profileUserFormatOptions(accountId)),
@@ -100,16 +102,98 @@ function UserProvisioningPolicy(props: any) {
     }
 
     function createUserProvisioningPolicy() {
-        props.handleOk("LOCAL_USER_PROVISIONING", userProvisioningEditData);
+        const error = validateUserPolicy(userProvisioningEditData);
+        if (error) {
+            openNotification(`error`, error);
+        } else {
+            props.handleOk("LOCAL_USER_PROVISIONING", userProvisioningEditData);
+        }    
     }
 
     function setCancelClick() {
         props.handleCancel("LOCAL_USER_PROVISIONING");
     }
 
+    const validateUserPolicy = (userPolicyData) => {
+        let requiredFields:any = [];
+        let fields: any = '';
+        let errorMsg:string = '';
+        globalPolicyReqFields.forEach((eachField: any) => {
+            if (eachField?.objectName !== undefined) {
+                if (eachField.dataType === 'string') {
+                    if (userPolicyData[eachField?.objectName][eachField?.field] === null || userPolicyData[eachField?.objectName][eachField?.field] === '') {
+                        requiredFields.push(policyInfoModel[eachField.field]);
+                        setUppReqFields((prevState) => ({
+                            ...prevState,
+                            [eachField.field]: 'red'
+                        }));
+                    }  else {
+                        setUppReqFields((prevState) => ({
+                            ...prevState,
+                            [eachField.field]: ''
+                        }));
+                    }
+                } else if (eachField.dataType === 'array') {
+                    if (userPolicyData[eachField.field].length <= 0) {
+                        requiredFields.push(policyInfoModel[eachField.field]);
+                        setUppReqFields((prevState) => ({
+                            ...prevState,
+                            [eachField.field]: 'red'
+                        }));
+                    } else {
+                        setUppReqFields((prevState) => ({
+                            ...prevState,
+                            [eachField.field]: ''
+                        }));
+                    }
+                }
+            } else if (eachField.dataType === 'string') {
+                if (userPolicyData[eachField.field] === null || userPolicyData[eachField.field] === '') {
+                    requiredFields.push(policyInfoModel[eachField.field]);
+                    setUppReqFields((prevState) => ({
+                        ...prevState,
+                        [eachField.field]: 'red'
+                    }));
+                } else {
+                    setUppReqFields((prevState) => ({
+                        ...prevState,
+                        [eachField.field]: ''
+                    }));
+                }
+            } else if (eachField.dataType === 'array') {
+                if (userPolicyData[eachField.field].length <= 0) {
+                    requiredFields.push(policyInfoModel[eachField.field]);
+                    setUppReqFields((prevState) => ({
+                        ...prevState,
+                        [eachField.field]: 'red'
+                    }));
+                } else {
+                    setUppReqFields((prevState) => ({
+                        ...prevState,
+                        [eachField.field]: ''
+                    }));
+                }
+            }
+        })
+        if (requiredFields.length) {
+            requiredFields.forEach((each, index) => {
+                if (index < requiredFields.length - 1) {
+                    fields = `${fields} ${each},`
+                } else {
+                    fields = `${fields} ${each}`
+                }
+            })
+            errorMsg = requiredFieldsErrorMsg + fields;
+        } 
+        return errorMsg;
+    }
     function updateUserProvisioningPolicy() {
         userProvisioningEditData.auth_policy_groups = groupUids;
-        ApiService.put(ApiUrls.globalPolicy(accountId, userProvisioningDisplayData['uid']), userProvisioningEditData)
+        const error = validateUserPolicy(userProvisioningEditData);
+        if (error) {
+            openNotification(`error`, error);
+        } else {
+            ApiService.put(ApiUrls.globalPolicy(accountId, userProvisioningDisplayData['uid']), userProvisioningEditData)
             .then(data => {
                 if (!data.errorSummary) {
                     groupNames.length = 0;
@@ -129,6 +213,7 @@ function UserProvisioningPolicy(props: any) {
                 console.error('Error: ', error);
                 openNotification('error', 'An Error has occured with updating Local User Provisioning Policy');
             })
+        }     
     }
 
     function handleGroups(value: any) {
@@ -161,7 +246,7 @@ function UserProvisioningPolicy(props: any) {
                 </div>
                 <div style={{ paddingTop: '20px' }}>
                     {isEdit ? <Input className="form-control"
-                        style={{ width: "275px", borderColor: props?.policyReqFields?.name }}
+                        style={{ width: "275px", borderColor: uppReqFields?.name }}
                         onChange={(e) => setUserProvisioningEditedData({
                             ...userProvisioningEditData,
                             name: e.target.value
@@ -205,7 +290,7 @@ function UserProvisioningPolicy(props: any) {
                             defaultValue={userProvisioningDisplayData['name'] !== "" ? groupNames : []}
                             onChange={handleGroups}
                             style={{ width: '275px'}}
-                            className={props?.policyReqFields?.auth_policy_groups === 'red' ? 'select-mandatory' : ''}
+                            className={ uppReqFields?.auth_policy_groups === 'red' ? 'select-mandatory' : '' }
                             options={groups}
                             filterOption={(input, option) =>
                                 //@ts-ignore
