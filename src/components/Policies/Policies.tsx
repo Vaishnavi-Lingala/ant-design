@@ -597,17 +597,20 @@ export default function Policies() {
 						}
 					</Skeleton>
 				</TabPane>
-				<TabPane tab={policyDisplayNames[KIOSK]} key="kiosk">
-					<Skeleton loading={loadingDetails}>
-						{window.location.pathname.split('/').length === 6 ?
-							<ProtectedRoute path={`/product/${productId}/policies/kiosk/:id`} component={KioskPolicy} subRoute /> :
-							<TableList policy_type={KIOSK} policy_description={KioskPolicyDescription} activateColumns={activateColumns} deActivateColumns={deActivateColumns}
-								draggableBodyRow={kioskDraggableBodyRow} draggableContainer={kioskDraggableContainer}
-								inActivePolicies={inActiveKioskPolicies} activePolicies={activeKioskPolicies} handleGetPolicies={handleGetPolicies}
-							/>
-						}
-					</Skeleton>
-				</TabPane>
+				{
+					seletedProduct === TecTANGO && process.env.REACT_APP_ENV === 'dev'?
+					<TabPane tab={policyDisplayNames[KIOSK]} key="kiosk">
+						<Skeleton loading={loadingDetails}>
+							{window.location.pathname.split('/').length === 6 ?
+								<ProtectedRoute path={`/product/${productId}/policies/kiosk/:id`} component={KioskPolicy} subRoute /> :
+								<TableList policy_type={KIOSK} policy_description={KioskPolicyDescription} activateColumns={activateColumns} deActivateColumns={deActivateColumns}
+									draggableBodyRow={kioskDraggableBodyRow} draggableContainer={kioskDraggableContainer}
+									inActivePolicies={inActiveKioskPolicies} activePolicies={activeKioskPolicies} handleGetPolicies={handleGetPolicies}
+								/>
+							}
+						</Skeleton>
+					</TabPane> : <></>
+				}
 				{
 					seletedProduct === TecTANGO && maxEnroll ?
 						<TabPane tab={policyDisplayNames[CARD_ENROLL]} key="card-enrollment">

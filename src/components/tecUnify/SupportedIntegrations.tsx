@@ -15,7 +15,7 @@ const { Search } = Input;
 function SupportedIntegrations() {
   const accountId = localStorage.getItem('accountId') as string;
   const [modalVisible, toggleModal] = useState(false);
-  const [appUID, setAppUID] = useState('');
+  const [templateUID, setTemplateUID] = useState('');
   const [templateType, setTemplateType] = useState<string>();
   const history = useHistory();
 
@@ -37,7 +37,7 @@ function SupportedIntegrations() {
   };
 
   function handleClick(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
-    setAppUID(e.currentTarget.value)
+    setTemplateUID(e.currentTarget.value)
     setTemplateType(e.currentTarget.id);
     toggleModal(true)
   }
@@ -70,9 +70,9 @@ function SupportedIntegrations() {
                 loading={status === 'fetching'}
                 dataSource={activeOnly}
                 pagination={paginationConfig}
-                renderItem={app => (
+                renderItem={template => (
                   <List.Item
-                    key={app.uid}
+                    key={template.uid}
                     //@ts-ignore
                     extra={
                       <Tooltip
@@ -83,19 +83,19 @@ function SupportedIntegrations() {
                         <Button
                           icon={<BarsOutlined />}
                           onClick={handleClick}
-                          id={app.template_type}
-                          value={app.uid}
+                          id={template.template_type}
+                          value={template.uid}
                         />
                       </Tooltip>
                     }
                   >
                     <List.Item.Meta
-                      title={app.name}
+                      title={template.name}
                       avatar={<img
-                        alt='app logo'
+                        alt='App logo'
                         width={100}
                         height={75}
-                        src='https://placeholder.pics/svg/50'
+                        src={template.app_img_url}
                       />
                       }
                     />
@@ -109,7 +109,7 @@ function SupportedIntegrations() {
                   toggleModal(false);
                   setTemplateType(undefined);
                 }}
-                appUID={appUID}
+                appUID={templateUID}
                 templateType={templateType}
               />
             </>

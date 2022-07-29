@@ -350,7 +350,7 @@ export const MenuItemPaths = {
     [Settings]: "/account",
     [TecTANGO]: "/mechanism",
     [TecBIO]: "/mechanism",
-    [TecUNIFY]: "/apps"
+    [TecUNIFY]: "/mechanism"
 }
 
 export const policyDisplayNames = {
@@ -373,7 +373,7 @@ export const KioskPolicyDescription = 'KIOSK policies applies to machines where 
 export const CardEnrollmentPolicyDescription = 'Card enrollment policies enable admins to configure max number of cards allowed per user group during enrollment';
 export const LocalUserProvisioningPolicyDescription = 'Local user provisioning policies enable admins to automatically create local user profile on the machines. This is applicable only for Standard and Kiosk machines.';
 export const VDI_Description = 'VDI policies enable admins to configure the VDI Template for Citrix, VMware, or Microsoft which TecTANGO will use to connect to remote desktops hosted on a virtual machine server.';
-export const BioDescription = 'Bio Description';
+export const BioDescription = 'Biometric policies enable admins to configure min and max fingers enrollmnent allowed per user group';
 
 //Mechanism Descriptions
 export const TECTANGO_LOCK_DESCRIPTION = 'Lock the machine or sign-out from the apps launched by TecTANGO.';

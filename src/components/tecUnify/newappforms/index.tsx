@@ -1,8 +1,20 @@
 import { useState } from 'react';
-import { Modal, Radio, Input, InputNumber, Form, Select, Checkbox, FormItemProps } from 'antd';
-import { CloseOutlined } from '@ant-design/icons';
+import {
+  Modal,
+  Radio,
+  Input,
+  InputNumber,
+  Form, Select,
+  Checkbox,
+  Upload,
+  FormItemProps,
+  Divider,
+  UploadProps,
+  message
+} from 'antd';
+import { CloseOutlined, PlusOutlined } from '@ant-design/icons';
 
-import { ApiResError, FormItem } from '../types';
+import { ApiResError } from '../types';
 import ApiService from '../../../Api.service';
 import ApiUrls from '../../../ApiUtils';
 import { openNotification } from '../../Layout/Notification';
@@ -18,28 +30,104 @@ export interface AppFormProps {
 
 const accountId = localStorage.getItem('accountId');
 
-function AppFormRenderer({ showModal, toggleModal, appUID, templateType, defaultValues }: AppFormProps) {
+async function updateDB(values: any, appUID: string, hasDefaultVals: boolean) {
+  if (accountId !== null) {
+    let res: any;
+
+    // If form has default values then we need to update the template
+    // otherwise add a new entry to the DB
+    if (hasDefaultVals) {
+      res = await ApiService.put(ApiUrls.updateTemplate(accountId, appUID), values)
+    }
+    else {
+      res = await ApiService.post(ApiUrls.addTemplate(accountId, appUID), values)
+    }
+
+    if ('errorSummary' in res)
+      throw res;
+
+    return res;
+  }
+}
+
+function AppFormRenderer({
+  showModal,
+  toggleModal,
+  appUID,
+  templateType,
+  defaultValues
+}: AppFormProps) {
+
   const [sendingData, toggleSendingData] = useState(false);
+  const [image, setImage] = useState<string>();
   const [form] = Form.useForm();
 
   const { formArgs } = useFormSwitch({
     templateType
   });
 
-  console.log(formArgs);
-  if (formArgs === undefined || appUID === undefined) {
-    return <></>
+  if (formArgs === undefined || appUID === undefined) return <></>
+
+  // Converting uploaded file to base64 string to pass through API
+  function blobToBase64(file: Blob) {
+    const reader = new FileReader();
+
+    // function to run when the reader finishes loading the file
+    reader.onload = (event) => {
+      let bString: string = '';
+      if (event.target !== null)
+        bString = event.target.result as string;
+
+      form.setFieldsValue({ new_logo: btoa(bString) })
+      setImage(btoa(bString))
+    };
+
+    reader.onerror = () =>
+      message.error('There was a problem preparing the Image.')
+
+    reader.readAsBinaryString(file);
+  }
+
+  const uploadSettings: UploadProps = {
+    fileList: undefined,
+    maxCount: 1,
+    showUploadList: false,
+    listType: 'picture-card',
+    beforeUpload: file => {
+      const isPngOrJpg = file.type === 'image/png' || file.type === 'image/jpeg';
+
+      if (!isPngOrJpg) {
+        message.error('Please upload a file in the correct format.');
+        return false
+      }
+
+      const aboveSizeLimit = file.size / 1024 / 1024 < 1;
+      if (!aboveSizeLimit) {
+        message.error('File size is too large.')
+        return false
+      }
+
+      blobToBase64(file);
+      return isPngOrJpg && aboveSizeLimit
+    },
+    onRemove: () => {
+      return undefined
+    },
+    // Avoid using the default upload methods
+    customRequest: () => {}
   }
 
   function onOk() {
     form.validateFields()
       .then(values => {
         toggleSendingData(true)
-        updateDB(values)
-          .then((res) => console.log('On Ok', res))
+        updateDB(values, appUID, defaultValues !== undefined)
+          .then((res) => {
+            console.log('On Ok', res)
+          })
           .catch((err: ApiResError) => {
             console.error(err)
-            openNotification('error', 'Error sending data to server.');
+            openNotification('error', err.errorSummary);
           })
           .finally(() =>
             toggleSendingData(false)
@@ -52,29 +140,13 @@ function AppFormRenderer({ showModal, toggleModal, appUID, templateType, default
       });
   }
 
-  async function updateDB(values: any) {
-    if (accountId !== null) {
-      let res: any;
-
-      defaultValues ?
-        res = await ApiService.put(ApiUrls.updateTemplate(accountId, appUID), values)
-        :
-        res = await ApiService.post(ApiUrls.addTemplate(accountId, appUID), values)
-
-      if ('errorSummary' in res)
-        throw res;
-
-      return res;
-    }
-  }
-
   function onCancel() {
     form.resetFields();
     toggleModal();
   }
 
   // Wraps the child field in a Form.Item component
-  function FormItemWrapper({ label, rules, name, children}: FormItemProps) {
+  const FormItemWrapper: React.FC<FormItemProps> = ({ label, rules, name, children }) => {
     return (
       <Form.Item
         label={
@@ -88,9 +160,10 @@ function AppFormRenderer({ showModal, toggleModal, appUID, templateType, default
       />
     );
   }
+  FormItemWrapper.displayName = 'Form Item Wrapper';
 
   // Select different components based on the type of input provided
-  function InputSelect(args: any) {
+  const InputSelect: React.FC<any> = (args) => {
     switch (args.type) {
       case 'input':
         return (
@@ -143,6 +216,14 @@ function AppFormRenderer({ showModal, toggleModal, appUID, templateType, default
         );
     }
   }
+  Input.displayName = 'Input Switch';
+
+  const uploadButton = (
+    <div>
+      <PlusOutlined />
+      <div style={{ marginTop: 8 }}>Upload</div>
+    </div>
+  );
 
   return (
     <Modal
@@ -169,6 +250,37 @@ function AppFormRenderer({ showModal, toggleModal, appUID, templateType, default
         colon={false}
       >
         {formArgs.formItems.map((args, index) => <InputSelect {...args} key={index} />)}
+        <Divider>App logo</Divider>
+
+
+        <h4 style={{ textAlign: 'center' }}>Requirments</h4>
+        <div className='Modal-UploadRulesContainer'>
+          <ul className='Modal-UploadRules'>
+            <li>Images should be less than 1mb</li>
+            <li>Images should be png or jpeg format</li>
+          </ul>
+
+          <ul className='Modal-UploadRules'>
+            <li>Transparent background</li>
+            <li>Minimum image size of 420x120px</li>
+          </ul>
+        </div>
+
+        <Form.Item name='new_logo' getValueFromEvent={uploadSettings.onRemove}>
+          <Upload {...uploadSettings}>
+            {
+              image ?
+                <img
+                  alt='App logo'
+                  src={`data:image/png;base64,${image}`}
+                  style={{ height: '100%' }}
+                />
+                :
+                uploadButton
+            }
+          </Upload>
+        </Form.Item>
+
       </Form>
     </Modal>
   );
