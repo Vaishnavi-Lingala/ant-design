@@ -1,5 +1,3 @@
-import { isTemplateExpression } from "typescript";
-
 // constants
 export const date_format = "YYYY-MM-DD";
 export const date_display_format = " Do MMM YYYY";
