@@ -1,53 +1,48 @@
 import { useState } from 'react';
 import {
   Modal,
-  Radio,
-  Input,
-  InputNumber,
-  Form, Select,
-  Checkbox,
+  Form,
   Upload,
-  FormItemProps,
   Divider,
   UploadProps,
-  message
 } from 'antd';
 import { CloseOutlined, PlusOutlined } from '@ant-design/icons';
 
-import { ApiResError } from '../types';
+import { ApiResError, ConfiguredTemplate, TemplateFormData } from '../types';
 import ApiService from '../../../Api.service';
 import ApiUrls from '../../../ApiUtils';
 import { openNotification } from '../../Layout/Notification';
 import { useFormSwitch } from '../hooks';
+import InputSelect from '../InputSwitch';
 
 export interface AppFormProps {
   showModal: boolean;
   toggleModal: () => void;
-  defaultValues?: any;
+  defaultValues?: ConfiguredTemplate;
   appUID: string;
   templateType?: string;
 }
 
-const accountId = localStorage.getItem('accountId');
+async function updateDB(values: TemplateFormData, appUID: string, hasDefaultVals: boolean) {
+  let res: ConfiguredTemplate | ApiResError;
 
-async function updateDB(values: any, appUID: string, hasDefaultVals: boolean) {
-  if (accountId !== null) {
-    let res: any;
+  const accountId = localStorage.getItem('accountId') as string;
+  const productId = localStorage.getItem('productId') as string;
 
-    // If form has default values then we need to update the template
-    // otherwise add a new entry to the DB
-    if (hasDefaultVals) {
-      res = await ApiService.put(ApiUrls.updateTemplate(accountId, appUID), values)
-    }
-    else {
-      res = await ApiService.post(ApiUrls.addTemplate(accountId, appUID), values)
-    }
-
-    if ('errorSummary' in res)
-      throw res;
-
-    return res;
+  // If form has default values then we need to update the template
+  // otherwise add a new entry to the DB
+  values.product_uid = productId;
+  if (hasDefaultVals) {
+    res = await ApiService.put(ApiUrls.updateTemplate(accountId, appUID), values)
   }
+  else {
+    res = await ApiService.post(ApiUrls.addTemplate(accountId, appUID), values)
+  }
+
+  if ('errorSummary' in res)
+    throw res;
+
+  return res;
 }
 
 function AppFormRenderer({
@@ -60,71 +55,62 @@ function AppFormRenderer({
 
   const [sendingData, toggleSendingData] = useState(false);
   const [image, setImage] = useState<string>();
-  const [form] = Form.useForm();
+  const [form] = Form.useForm<TemplateFormData>();
 
   const { formArgs } = useFormSwitch({
     templateType
   });
 
-  if (formArgs === undefined || appUID === undefined) return <></>
+  const hasDefaultVals = defaultValues !== undefined;
 
-  // Converting uploaded file to base64 string to pass through API
-  function blobToBase64(file: Blob) {
-    const reader = new FileReader();
-
-    // function to run when the reader finishes loading the file
-    reader.onload = (event) => {
-      let bString: string = '';
-      if (event.target !== null)
-        bString = event.target.result as string;
-
-      const b64String = btoa(bString);
-      form.setFieldsValue({ new_logo: b64String });
-      setImage(b64String);
-    };
-
-    reader.onerror = () =>
-      message.error('There was a problem preparing the Image.')
-
-    reader.readAsBinaryString(file);
-  }
+  if (formArgs === undefined) return <></>
 
   const uploadSettings: UploadProps = {
     fileList: undefined,
     maxCount: 1,
     showUploadList: false,
     listType: 'picture-card',
-    beforeUpload: file => {
+    beforeUpload: (file) => {
       const isPngOrJpg = file.type === 'image/png' || file.type === 'image/jpeg';
 
       if (!isPngOrJpg) {
-        message.error('Please upload a file in the correct format.');
+        openNotification('error', 'Please upload a file in the correct format.');
         return false
       }
 
       const aboveSizeLimit = file.size / 1024 / 1024 < 1;
       if (!aboveSizeLimit) {
-        message.error('File size is too large.')
+        openNotification('error', 'File size is too large.')
         return false
       }
 
-      blobToBase64(file);
+      file.arrayBuffer().then((buf) => {
+        // set tsconfig target to es6 or use --downleveliteration flag at compile time
+        // https://mariusschulz.com/blog/downlevel-iteration-for-es3-es5-in-typescript
+        //@ts-ignore 
+        const b64Img = btoa(String.fromCharCode(...new Uint8Array(buf)));
+        form.setFieldsValue({ new_logo: b64Img });
+        setImage(`data:${file.type};base64,${b64Img}`);
+      })
+        .catch(() =>
+          openNotification('error', 'There was a problem converting the file.')
+        );
       return isPngOrJpg && aboveSizeLimit
     },
-    onRemove: () => {
-      return undefined
-    },
     // Avoid using the default upload methods
-    customRequest: () => {}
+    customRequest: () => { }
   }
 
   function onOk() {
     form.validateFields()
       .then(values => {
         toggleSendingData(true)
-        updateDB(values, appUID, defaultValues !== undefined)
+        updateDB(values, appUID, hasDefaultVals)
           .then((res) => {
-            console.log('On Ok', res)
+            if (hasDefaultVals)
+              openNotification('success', `Updated template ${res.name}`)
+            else
+              openNotification('success', `Added template ${res.name}`)
           })
           .catch((err: ApiResError) => {
             console.error(err)
@@ -133,8 +119,6 @@ function AppFormRenderer({
           .finally(() =>
             toggleSendingData(false)
           );
-
-        console.log(values);
       })
       .catch((err: ApiResError) => {
         console.error('Validate Failed:', err);
@@ -145,79 +129,6 @@ function AppFormRenderer({
     form.resetFields();
     toggleModal();
   }
-
-  // Wraps the child field in a Form.Item component
-  const FormItemWrapper: React.FC<FormItemProps> = ({ label, rules, name, children }) => {
-    return (
-      <Form.Item
-        label={
-          <span className='Modal-FormLabel'>
-            {`${label} ${rules?.at(0) ? '*' : ''}`}
-          </span>
-        }
-        name={name}
-        rules={rules}
-        children={children}
-      />
-    );
-  }
-  FormItemWrapper.displayName = 'Form Item Wrapper';
-
-  // Select different components based on the type of input provided
-  const InputSelect: React.FC<any> = (args) => {
-    switch (args.type) {
-      case 'input':
-        return (
-          <FormItemWrapper {...args}>
-            <Input />
-          </FormItemWrapper>
-        )
-
-      case 'select':
-        return (
-          <FormItemWrapper {...args}>
-            <Select options={args.options} />
-          </FormItemWrapper>
-        );
-
-      case 'radio':
-        return (
-          <FormItemWrapper {...args}>
-            <Radio.Group options={args.options} />
-          </FormItemWrapper>
-        );
-
-      case 'numeric':
-        return (
-          <FormItemWrapper {...args}>
-            <InputNumber
-              formatter={args.formatter}
-              parser={args.parser}
-              step={args.step}
-            />
-          </FormItemWrapper>
-        );
-
-      case 'checkbox':
-        return (
-          <FormItemWrapper {...args}>
-            <Checkbox />
-          </FormItemWrapper>
-        );
-
-      case 'heading':
-        return <h4 className='_SubHeading'>{args.label}</h4>;
-
-      case 'custom':
-        return (args.render);
-
-      default:
-        return (
-          <span>Input Type not yet supported.</span>
-        );
-    }
-  }
-  Input.displayName = 'Input Switch';
 
   const uploadButton = (
     <div>
@@ -267,13 +178,13 @@ function AppFormRenderer({
           </ul>
         </div>
 
-        <Form.Item name='new_logo' getValueFromEvent={uploadSettings.onRemove}>
+        <Form.Item name='new_logo'>
           <Upload {...uploadSettings}>
             {
               image ?
                 <img
                   alt='App logo'
-                  src={`data:image/png;base64,${image}`}
+                  src={image}
                   style={{ height: '100%' }}
                 />
                 :

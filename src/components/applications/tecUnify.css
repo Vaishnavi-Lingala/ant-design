@@ -14,6 +14,10 @@
     padding: 1vmax !important;
 }
 
+.ant-radio-wrapper {
+  margin: 0;
+}
+
 ._SubHeading {
     font-weight: 600;
     font-size: large;
@@ -28,7 +32,7 @@
 ._RowGap {
     display: flex;
     gap: 3;
-} 
+}
 
 .AppSettings {
     display: flex;
