@@ -404,12 +404,12 @@ export const policyInfoModel = {
     auth_policy_groups: 'Group Name'
 }
 
-export const vdiPolicyReqFields = [{field: 'name', dataType: 'string'}, {field: 'groupType', dataType: 'string'}, {field: 'kiosk_machine_groups', dataType: 'array'}, {field: 'vdi_type', dataType: 'string', objectName: 'policy_req'}, {field: 'template', dataType: 'string', objectName: 'policy_req'}];
+export const vdiPolicyReqFields = [{field: 'name', dataType: 'string'}, {field: 'groupType', dataType: 'string'}, {field: 'kiosk_machine_groups', dataType: 'array'}, {field: 'vdi_type', dataType: 'string', objectName: 'policy_req'}, {field: 'template_id', dataType: 'string', objectName: 'policy_req'}];
 
 export const vdiPolicyInfoModel = {
     name: 'Policy Name',
     groupType: 'Group Type',
     kiosk_machine_groups: 'Group Name',
     vdi_type: 'VDI Type',
-    template: 'Template'
+    template_id: 'Template'
 }

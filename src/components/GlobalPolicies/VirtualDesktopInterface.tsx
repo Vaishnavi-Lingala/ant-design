@@ -80,6 +80,7 @@ function VDIPolicy(props: any) {
                             vdiTypeTemplates.push(templates[index])
                         }
                     })
+                    console.log(vdiTypeTemplates);
                     setTypeTemplates(vdiTypeTemplates);
                 }
 
@@ -225,9 +226,13 @@ function VDIPolicy(props: any) {
     function updateUserProvisioningPolicy() {
         vdiEditData.kiosk_machine_groups = groupUids;
         const error = validateVDIPolicy(vdiEditData);
+        console.log(vdiEditData);
         if (error) {
             openNotification(`error`, error);
         } else {
+            if (typeof vdiEditData.policy_req?.template !== 'string') {
+                vdiEditData.policy_req.template_id = vdiDisplayData['policy_req'].template.uid;
+            }
             ApiService.put(ApiUrls.globalPolicy(accountId, vdiDisplayData['uid']), vdiEditData)
             .then(data => {
                 if (!data.errorSummary) {
@@ -446,17 +451,18 @@ function VDIPolicy(props: any) {
                             value={templateName}
                             onChange={(value) => setVDIEditedData((state) => {
                                 const { policy_req } = state
+                                console.log(value);
                                 return {
                                     ...vdiEditData,
                                     policy_req: {
                                         ...policy_req,
-                                        template: value
+                                        template_id: value
                                     }
                                 }
                             })}
                             options={typeTemplates}
                             style={{ width: '275px' }}
-                            className={vdiReqFieldsModel?.template === 'red' ? 'select-mandatory' : ''}
+                            className={vdiReqFieldsModel?.template_id === 'red' ? 'select-mandatory' : ''}
                         />
                         : templateName
                     }
