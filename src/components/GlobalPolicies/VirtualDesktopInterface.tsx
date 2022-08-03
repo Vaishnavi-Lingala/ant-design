@@ -6,7 +6,7 @@ import ApiService from "../../Api.service";
 import ApiUrls from "../../ApiUtils";
 import { openNotification } from "../Layout/Notification";
 import TextArea from "antd/lib/input/TextArea";
-import { policyDisplayNames, VIRTUAL_DESKTOP_INTERFACE } from "../../constants";
+import { policyDisplayNames, requiredFieldsErrorMsg, vdiPolicyInfoModel, vdiPolicyReqFields, VIRTUAL_DESKTOP_INTERFACE } from "../../constants";
 
 function VDIPolicy(props: any) {
     const [loading, setLoading] = useState(true);
@@ -25,6 +25,7 @@ function VDIPolicy(props: any) {
     const [templates, setTemplates]: any = useState([]);
     const [typeTemplates, setTypeTemplates]: any = useState([]);
     const [templateName, setTemplateName] = useState("");
+    const [vdiReqFieldsModel, setVdiReqFieldsModel]: any = useState({'name': '', 'groupType': '', 'kiosk_machine_groups': '', 'vdi_type': '', 'template': ''});
 
     useEffect(() => {
         Promise.all(([
@@ -79,6 +80,7 @@ function VDIPolicy(props: any) {
                             vdiTypeTemplates.push(templates[index])
                         }
                     })
+                    console.log(vdiTypeTemplates);
                     setTypeTemplates(vdiTypeTemplates);
                 }
 
@@ -135,16 +137,103 @@ function VDIPolicy(props: any) {
     }
 
     function createUserProvisioningPolicy() {
-        props.handleOk(VIRTUAL_DESKTOP_INTERFACE, vdiEditData);
+        const error = validateVDIPolicy(vdiEditData);
+        if (error) {
+            openNotification(`error`, error)
+        } else {
+            props.handleOk(VIRTUAL_DESKTOP_INTERFACE, vdiEditData);
+        }  
     }
 
     function setCancelClick() {
         props.handleCancel(VIRTUAL_DESKTOP_INTERFACE);
     }
 
+    const validateVDIPolicy = (vdiPolicyData) => {
+        let requiredFields:any = [];
+        let fields: any = '';
+        let errorMsg:string = '';
+        vdiPolicyReqFields.forEach((eachField: any) => {
+            if (eachField?.objectName !== undefined) {
+                if (eachField.dataType === 'string') {
+                    if (vdiPolicyData[eachField?.objectName][eachField?.field] === null || vdiPolicyData[eachField?.objectName][eachField?.field] === '') {
+                        requiredFields.push(vdiPolicyInfoModel[eachField.field]);
+                        setVdiReqFieldsModel((prevState) => ({
+                            ...prevState,
+                            [eachField.field]: 'red'
+                        }));
+                    }  else {
+                        setVdiReqFieldsModel((prevState) => ({
+                            ...prevState,
+                            [eachField.field]: ''
+                        }));
+                    }
+                } else if (eachField.dataType === 'array') {
+                    if (vdiPolicyData[eachField.field].length <= 0) {
+                        requiredFields.push(vdiPolicyInfoModel[eachField.field]);
+                        setVdiReqFieldsModel((prevState) => ({
+                            ...prevState,
+                            [eachField.field]: 'red'
+                        }));
+                    } else {
+                        setVdiReqFieldsModel((prevState) => ({
+                            ...prevState,
+                            [eachField.field]: ''
+                        }));
+                    }
+                }
+            } else if (eachField.dataType === 'string') {
+                if (vdiPolicyData[eachField.field] === null || vdiPolicyData[eachField.field] === '') {
+                    requiredFields.push(vdiPolicyInfoModel[eachField.field]);
+                    setVdiReqFieldsModel((prevState) => ({
+                        ...prevState,
+                        [eachField.field]: 'red'
+                    }));
+                } else {
+                    setVdiReqFieldsModel((prevState) => ({
+                        ...prevState,
+                        [eachField.field]: ''
+                    }));
+                }
+            } else if (eachField.dataType === 'array') {
+                if (vdiPolicyData[eachField.field].length <= 0) {
+                    requiredFields.push(vdiPolicyInfoModel[eachField.field]);
+                    setVdiReqFieldsModel((prevState) => ({
+                        ...prevState,
+                        [eachField.field]: 'red'
+                    }));
+                } else {
+                    setVdiReqFieldsModel((prevState) => ({
+                        ...prevState,
+                        [eachField.field]: ''
+                    }));
+                }
+            }
+        })
+        if (requiredFields.length) {
+            requiredFields.forEach((each, index) => {
+                if (index < requiredFields.length - 1) {
+                    fields = `${fields} ${each},`
+                } else {
+                    fields = `${fields} ${each}`
+                }
+            })
+            errorMsg = requiredFieldsErrorMsg + fields;
+        } 
+        return errorMsg;
+    }
+
     function updateUserProvisioningPolicy() {
         vdiEditData.kiosk_machine_groups = groupUids;
-        ApiService.put(ApiUrls.globalPolicy(accountId, vdiDisplayData['uid']), vdiEditData)
+        const error = validateVDIPolicy(vdiEditData);
+        console.log(vdiEditData);
+        if (error) {
+            openNotification(`error`, error);
+        } else {
+            if (typeof vdiEditData.policy_req?.template !== 'string') {
+                vdiEditData.policy_req.template_id = vdiDisplayData['policy_req'].template.uid;
+            }
+            ApiService.put(ApiUrls.globalPolicy(accountId, vdiDisplayData['uid']), vdiEditData)
             .then(data => {
                 if (!data.errorSummary) {
                     groupNames.length = 0;
@@ -165,6 +254,7 @@ function VDIPolicy(props: any) {
                 console.error('Error: ', error);
                 openNotification('error', 'An Error has occured with updating VDI Policy');
             })
+        }   
     }
 
     function handleGroups(value: any) {
@@ -197,7 +287,7 @@ function VDIPolicy(props: any) {
                 </div>
                 <div style={{ paddingTop: '20px' }}>
                     {isEdit ? <Input className="form-control"
-                        style={{ width: "275px", borderColor: props?.vdiPolicyReqFields?.name}}
+                        style={{ width: "275px", borderColor: vdiReqFieldsModel?.name}}
                         onChange={(e) => setVDIEditedData({
                             ...vdiEditData,
                             name: e.target.value
@@ -277,7 +367,7 @@ function VDIPolicy(props: any) {
                             defaultValue={vdiDisplayData['name'] !== "" ? groupNames : []}
                             onChange={handleGroups}
                             style={{ width: '275px' }}
-                            className={props?.vdiPolicyReqFields?.kiosk_machine_groups === 'red' ? 'select-mandatory' : ''}
+                            className={vdiReqFieldsModel?.kiosk_machine_groups === 'red' ? 'select-mandatory' : ''}
                             options={groups}
                             filterOption={(input, option) =>
                                 // @ts-ignore
@@ -361,17 +451,18 @@ function VDIPolicy(props: any) {
                             value={templateName}
                             onChange={(value) => setVDIEditedData((state) => {
                                 const { policy_req } = state
+                                console.log(value);
                                 return {
                                     ...vdiEditData,
                                     policy_req: {
                                         ...policy_req,
-                                        template: value
+                                        template_id: value
                                     }
                                 }
                             })}
                             options={typeTemplates}
                             style={{ width: '275px' }}
-                            className={props.vdiPolicyReqFields?.template === 'red' ? 'select-mandatory' : ''}
+                            className={vdiReqFieldsModel?.template_id === 'red' ? 'select-mandatory' : ''}
                         />
                         : templateName
                     }

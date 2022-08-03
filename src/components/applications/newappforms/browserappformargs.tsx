@@ -74,7 +74,7 @@ const formArgs: FormArgs = {
     {
       label: 'Termination Method',
       name: ['template', 'termination_method'],
-      type: 'radio',
+      type: 'radio-group',
       options: [
         {
           label: 'Process Name',

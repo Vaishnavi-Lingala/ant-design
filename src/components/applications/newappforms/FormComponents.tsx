@@ -147,12 +147,10 @@ export function SelectResource() {
 
 // Citrix Specific
 export function SelectDomain() {
-
   const accountId = localStorage.getItem('accountId') as string;
   const { data, status } = useFetch<string>({
     url: ApiUrls.domains(accountId)
   });
-  if (data === undefined ) return <></>
 
   return (
     <Form.Item

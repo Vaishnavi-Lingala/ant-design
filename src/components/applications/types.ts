@@ -1,4 +1,4 @@
-import { FormItemProps, InputNumberProps, RadioProps, SelectProps } from "antd";
+import { FormItemProps, InputNumberProps, RadioGroupProps, RadioProps, SelectProps } from "antd";
 import { ValidateMessages } from "rc-field-form/lib/interface";
 
 // Type Predicate utility function
@@ -11,6 +11,11 @@ export function isPaginationType<T>(o: any): o is PaginationApiRes<T> {
 // extending Array.isArray() a bit
 export function isArray<T>(a: any | any[]): a is T[] {
   return Array.isArray(a);
+}
+
+export interface TemplateFormData extends Omit<ConfiguredTemplate, 'app_img_url'> {
+  new_logo: string;
+  product_uid: string;
 }
 
 export interface ConfiguredTemplate extends MasterTemplate {
@@ -45,7 +50,7 @@ interface CustomRenderProps {
   key: string;
 }
 
-export type FormItem = CustomRenderProps | FormItemProps | RadioProps | SelectProps | InputNumberProps | HeadingProps;
+export type FormItem = CustomRenderProps | FormItemProps | RadioProps | SelectProps | InputNumberProps | HeadingProps | RadioGroupProps ;
 
 export interface FormArgs {
   formTitle: string;

@@ -11,7 +11,6 @@ import { useFetch, useFilter } from './hooks';
 import AppFormRenderer from './newappforms';
 
 import type { ConfiguredTemplate } from './types';
-import type { PaginationConfig } from 'antd/lib/pagination';
 
 const { Search } = Input;
 
@@ -73,11 +72,7 @@ function Applications() {
 
   const OptionsMenu = ({ uid, active }) => (
     <span>
-      <Tooltip
-        placement='left'
-        title='View'
-        destroyTooltipOnHide
-      >
+      <Tooltip placement='left' title='View' destroyTooltipOnHide>
         <Button
           type='default'
           icon={<BarsOutlined />}
@@ -101,12 +96,6 @@ function Applications() {
       </Tooltip>
     </span>
   );
-
-  const paginationConfig: PaginationConfig = {
-    position: 'bottom',
-    total: templatesByActivity[activity].length,
-    pageSize: 10,
-  };
 
   return (
     <>
@@ -135,7 +124,11 @@ function Applications() {
             placeholder='Search'
           />
           <Divider />
-          <Menu className='_NoBorder' onClick={e => setActivity(e.key)} defaultSelectedKeys={['active']}>
+          <Menu
+            className='_NoBorder'
+            onClick={e => setActivity(e.key)}
+            defaultSelectedKeys={['active']}
+          >
             <Menu.Item key='active'>
               Active - ({templatesByActivity.active.length})
             </Menu.Item>
@@ -151,12 +144,10 @@ function Applications() {
             <Empty className='_CenterInParent' />
             :
             <List
-              className='AppList'
               itemLayout='horizontal'
               size='small'
               loading={status === 'fetching'}
               dataSource={templatesByActivity[activity]}
-              pagination={paginationConfig}
               renderItem={(template: ConfiguredTemplate) => (
                 <List.Item
                   key={template.uid}

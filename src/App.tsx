@@ -26,9 +26,9 @@ import Device from "./components/Devices/Device";
 import { User } from "./components/Users/User";
 import Domains from "./components/Domains/Domains";
 
-import Applications from "./components/tecUnify/Applications";
-import BulkAssignment from "./components/tecUnify/BulkAssignment";
-import SupportedIntegrations from "./components/tecUnify/SupportedIntegrations";
+import Applications from "./components/applications";
+import BulkAssignment from "./components/applications/BulkAssignment";
+import SupportedApplications from "./components/applications/Supported";
 import GlobalPolicies from "./components/GlobalPolicies/GlobalPolicies";
 
 const oktaAuth = new OktaAuth(config.oidc);
@@ -107,7 +107,7 @@ function App() {
                     <ProtectedRoute path={`/users`} component={Users} />
                     <ProtectedRoute path={`/product/:productId/apps`} exact component={Applications} />
                     <ProtectedRoute path={`/product/:productId/apps/assign`} component={BulkAssignment} />
-                    <ProtectedRoute path={`/product/:productId/apps/supported`} component={SupportedIntegrations} />
+                    <ProtectedRoute path={`/product/:productId/apps/supported`} component={SupportedApplications} />
                     <ProtectedRoute path={`/machines`} exact component={Machines} />
                     <ProtectedRoute path={`/machines/:id`} component={MachineDetails} />
                     <ProtectedRoute path={`/devices`} exact component={Devices} />

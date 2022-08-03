@@ -14,6 +14,10 @@
     padding: 1vmax !important;
 }
 
+.ant-radio-wrapper {
+  margin: 0;
+}
+
 ._SubHeading {
     font-weight: 600;
     font-size: large;
@@ -28,7 +32,7 @@
 ._RowGap {
     display: flex;
     gap: 3;
-} 
+}
 
 .AppSettings {
     display: flex;
@@ -114,11 +118,6 @@
     padding: 1px 0px;
 }
 
-.AppList {
-    margin: 5px;
-    width: 100%;
-}
-
 .Content-HeaderContainer, .Content-SubHeader {
     display: flex;
     flex-direction: row;
@@ -155,9 +154,28 @@
 
 .Content-ComponentView {
     display: flex;
-    min-height: fit-content;
+    max-height: 65vmin;
     border: 1px solid #d7d7dc;
     border-top: 0px;
+}
+
+.ant-list {
+    margin-right: 1px;
+    width: 100%;
+    overflow-y: scroll;
+    scrollbar-width: thin;
+    scrollbar-color: #d7d7dc #f5f5f6;
+}
+
+.ant-list::-webkit-scrollbar {
+  width: 6px;
+  height: 8px;
+  background-color: #f5f5f6; 
+}
+
+.ant-list::-webkit-scrollbar-thumb {
+  background: #d7d7dc;
+  border-radius: 5px;
 }
 
 .Modal-Header {
