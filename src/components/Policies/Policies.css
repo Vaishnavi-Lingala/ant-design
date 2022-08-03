@@ -16,6 +16,18 @@
     grid-row-gap: 15px;
 }
 
+.row-font-selection-container {
+    display: grid;
+    grid-template-columns: 50% 10% 25% 15%;
+    padding-bottom: 15px;
+}
+
+.row-display-text {
+    display: grid;
+    grid-template-columns: 50% 50%;
+    padding-bottom: 15px;
+}
+
 .ant-checkbox-disabled+span {
     color: rgba(0, 0, 0, 0.85) !important;
 }

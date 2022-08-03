@@ -333,6 +333,7 @@ export const CARD_ENROLL = "CARD_ENROLL";
 export const LOCAL_USER_PROVISIONING = "LOCAL_USER_PROVISIONING";
 export const VIRTUAL_DESKTOP_INTERFACE = "VDI";
 export const BIO = "BIO";
+export const PRIVACY = "PRIVACY";
 
 //Local User Provisioning Policy
 export const userProfileDisplayNames = {
@@ -360,7 +361,8 @@ export const policyDisplayNames = {
     [CARD_ENROLL]: "Card Enrollment",
     [LOCAL_USER_PROVISIONING]: "Local User Provisioning",
     [VIRTUAL_DESKTOP_INTERFACE]: "VDI",
-    [BIO]: "Bio"
+    [BIO]: "Bio",
+    [PRIVACY]: "Privacy Shield"
 }
 
 // LocalStorage constants
@@ -397,7 +399,11 @@ export const requiredFieldsErrorMsg = `Please fill required attributes`;
 
 export const deactivateConfirmMsg = 'Deactivating a user will remove all enrollments associated with the user. This action cannot be reversed. Do you want to proceed?'
 
-export const globalPolicyReqFields = [{ field: 'name', dataType: 'string' }, { field: 'auth_policy_groups', dataType: 'array' }];
+//Defaults colors
+
+export const DEFAULT_TEXT_COLOR = '#000000';
+export const DEFAULT_BACKGROUND_COLOR = '#ffffff';
+export const globalPolicyReqFields = [{field: 'name', dataType: 'string'}, {field: 'auth_policy_groups', dataType: 'array'}];
 
 export const policyInfoModel = {
     name: 'Policy Name',
