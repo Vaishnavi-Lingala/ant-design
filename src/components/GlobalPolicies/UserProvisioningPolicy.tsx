@@ -24,7 +24,6 @@ function UserProvisioningPolicy(props: any) {
     const [uppReqFields, setUppReqFields]: any = useState({'name': '', 'auth_policy_groups': ''});
 
     useEffect(() => {
-        setUppReqFields(props?.policyReqFields);
         Promise.all(([
             ApiService.get(ApiUrls.groups(accountId), { type: "USER" }),
             ApiService.get(ApiUrls.profileUserFormatOptions(accountId)),

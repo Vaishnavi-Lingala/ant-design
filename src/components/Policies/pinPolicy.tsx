@@ -8,7 +8,7 @@ import './Policies.css';
 import ApiService from "../../Api.service";
 import ApiUrls from '../../ApiUtils';
 import { openNotification } from "../Layout/Notification";
-import { policyDisplayNames } from "../../constants";
+import { globalPolicyReqFields, policyDisplayNames, policyInfoModel, requiredFieldsErrorMsg } from "../../constants";
 
 export const PinPolicy = (props: any) => {
 	const [isEdit, setIsEdit] = useState(false);
@@ -20,6 +20,7 @@ export const PinPolicy = (props: any) => {
 	const [groupUids, setGroupUids]: any = useState([]);
 	const [groupsChange, setGroupsChange]: any = useState([]);
 	const [policyRequirements, setPolicyRequirements] = useState({});
+	const [policyReqFields, setPolicyReqFields]: any = useState({'name': '', 'auth_policy_groups': ''});
 	const history = useHistory();
 	const accountId = localStorage.getItem('accountId');
 	const productId = window.location.pathname.split('/')[2]
@@ -81,9 +82,87 @@ export const PinPolicy = (props: any) => {
 			})
 	}, [])
 
+	const validatePinPolicy = (policyData) => {
+        let requiredFields:any = [];
+        let fields: any = '';
+        let errorMsg:string = '';
+        globalPolicyReqFields.forEach((eachField: any) => {
+            if (eachField?.objectName !== undefined) {
+                if (eachField.dataType === 'string') {
+                    if (policyData[eachField?.objectName][eachField?.field] === null || policyData[eachField?.objectName][eachField?.field] === '') {
+                        requiredFields.push(policyInfoModel[eachField.field]);
+                        setPolicyReqFields((prevState) => ({
+                            ...prevState,
+                            [eachField.field]: 'red'
+                        }));
+                    }  else {
+                        setPolicyReqFields((prevState) => ({
+                            ...prevState,
+                            [eachField.field]: ''
+                        }));
+                    }
+                } else if (eachField.dataType === 'array') {
+                    if (policyData[eachField.field].length <= 0) {
+                        requiredFields.push(policyInfoModel[eachField.field]);
+                        setPolicyReqFields((prevState) => ({
+                            ...prevState,
+                            [eachField.field]: 'red'
+                        }));
+                    } else {
+                        setPolicyReqFields((prevState) => ({
+                            ...prevState,
+                            [eachField.field]: ''
+                        }));
+                    }
+                }
+            } else if (eachField.dataType === 'string') {
+                if (policyData[eachField.field] === null || policyData[eachField.field] === '') {
+                    requiredFields.push(policyInfoModel[eachField.field]);
+                    setPolicyReqFields((prevState) => ({
+                        ...prevState,
+                        [eachField.field]: 'red'
+                    }));
+                } else {
+                    setPolicyReqFields((prevState) => ({
+                        ...prevState,
+                        [eachField.field]: ''
+                    }));
+                }
+            } else if (eachField.dataType === 'array') {
+                if (policyData[eachField.field].length <= 0) {
+                    requiredFields.push(policyInfoModel[eachField.field]);
+                    setPolicyReqFields((prevState) => ({
+                        ...prevState,
+                        [eachField.field]: 'red'
+                    }));
+                } else {
+                    setPolicyReqFields((prevState) => ({
+                        ...prevState,
+                        [eachField.field]: ''
+                    }));
+                }
+            }
+        })
+        if (requiredFields.length) {
+            requiredFields.forEach((each, index) => {
+                if (index < requiredFields.length - 1) {
+                    fields = `${fields} ${each},`
+                } else {
+                    fields = `${fields} ${each}`
+                }
+            })
+            errorMsg = requiredFieldsErrorMsg + fields;
+        } 
+        return errorMsg;
+    }
+
 	function updatePinPolicy() {
 		pinEditData.auth_policy_groups = groupUids;
-		ApiService.put(ApiUrls.policy(accountId, productId, pinDisplayData['uid']), pinEditData)
+		const error = validatePinPolicy(pinEditData);
+		if(error) {
+			openNotification(`error`, error);
+		} else {
+			ApiService.put(ApiUrls.policy(accountId, productId, pinDisplayData['uid']), pinEditData)
 			.then(data => {
 				if (!data.errorSummary) {
 					groupNames.length = 0;
@@ -103,6 +182,7 @@ export const PinPolicy = (props: any) => {
 				console.error('Error: ', error);
 				openNotification('error', 'An Error has occured with updating PIN Policy');
 			})
+		}	
 	}
 
 	function handleEditClick() {
@@ -120,7 +200,12 @@ export const PinPolicy = (props: any) => {
 	}
 
 	function createPinPolicy() {
-		props.handleOk("PIN", pinEditData);
+		const error = validatePinPolicy(pinEditData);
+		if(error) {
+			openNotification(`error`, error);
+		} else {
+			props.handleOk("PIN", pinEditData);
+		}	
 	}
 
 	function setCancelClick() {
@@ -161,7 +246,7 @@ export const PinPolicy = (props: any) => {
 					</div>
 					<div style={{ paddingTop: '20px' }}>
 						{isEdit ? <Input className="form-control"
-							style={{ width: "275px" }}
+							style={{ width: "275px", borderColor: policyReqFields?.name}}
 							onChange={(e) => setPinEditedData({
 								...pinEditData,
 								name: e.target.value
@@ -200,6 +285,7 @@ export const PinPolicy = (props: any) => {
 								defaultValue={pinDisplayData['name'] !== "" ? groupNames : []}
 								onChange={handleGroups}
 								style={{ width: '275px' }}
+								className= {policyReqFields?.auth_policy_groups === 'red' ? 'select-mandatory' : ''}
 								options={groups}
 								filterOption={(input, option) =>
 									//@ts-ignore
