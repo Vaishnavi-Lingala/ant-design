@@ -64,6 +64,7 @@ function SupportedApplications() {
                 renderItem={template => (
                   <List.Item
                     key={template.uid}
+                    //@ts-ignore
                     extra={
                       <Tooltip placement='left' title='Add' destroyTooltipOnHide>
                         <Button
