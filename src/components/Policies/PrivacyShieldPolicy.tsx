@@ -8,6 +8,10 @@ import { DEFAULT_BACKGROUND_COLOR, DEFAULT_TEXT_COLOR } from "../../constants";
 const PrivacyShieldPolicy = (props) => {
     useEffect(() => {});
 
+    function handleColorSelection(field, color) {
+        console.log(field + ': ', color);
+    }
+
     return (
         <Skeleton loading={false}>
         <div className="content-container-policy">
@@ -48,7 +52,7 @@ const PrivacyShieldPolicy = (props) => {
                 </div>
                 <div style={{ paddingTop: '5px' }}>
                     <div>Color</div>
-                    <ColorPicker defaultColor='#000000'></ColorPicker>
+                    <ColorPicker setFieldColor={handleColorSelection} field='displayName' defaultColor='#000000'></ColorPicker>
                 </div>
                 <div style={{ paddingTop: '5px' }}>
                     <div>Font</div>
@@ -78,7 +82,7 @@ const PrivacyShieldPolicy = (props) => {
                 </div>
                 <div style={{ paddingTop: '5px' }}>
                     <div>Color</div>
-                    <ColorPicker defaultColor={DEFAULT_TEXT_COLOR}></ColorPicker>
+                    <ColorPicker setFieldColor={handleColorSelection} field='loginStatus' defaultColor={DEFAULT_TEXT_COLOR}></ColorPicker>
                 </div>
                 <div style={{ paddingTop: '5px' }}>
                     <div>Font</div>
@@ -109,7 +113,7 @@ const PrivacyShieldPolicy = (props) => {
                 </div>
                 <div style={{ paddingTop: '5px' }}>
                     <div>Color</div>
-                    <ColorPicker defaultColor={DEFAULT_TEXT_COLOR}></ColorPicker>
+                    <ColorPicker setFieldColor={handleColorSelection} field='loginPrompt' defaultColor={DEFAULT_TEXT_COLOR}></ColorPicker>
                 </div>
                 <div style={{ paddingTop: '5px' }}>
                     <div>Font</div>
@@ -138,7 +142,7 @@ const PrivacyShieldPolicy = (props) => {
                 </div>
                 <div style={{ paddingTop: '5px' }}>
                     <div>Color</div>
-                    <ColorPicker defaultColor={DEFAULT_TEXT_COLOR}></ColorPicker>
+                    <ColorPicker setFieldColor={handleColorSelection} field='logoffPrompt' defaultColor={DEFAULT_TEXT_COLOR}></ColorPicker>
                 </div>
                 <div style={{ paddingTop: '5px' }}>
                     <div>Font</div>
@@ -156,7 +160,7 @@ const PrivacyShieldPolicy = (props) => {
                 </div>
                 <div>
                     <div>Color</div>
-                    <ColorPicker defaultColor={DEFAULT_BACKGROUND_COLOR}></ColorPicker>
+                    <ColorPicker setFieldColor={handleColorSelection} field='primaryBackground' defaultColor={DEFAULT_BACKGROUND_COLOR}></ColorPicker>
                 </div>
                 <div className="content-policy-key-header">
                     <p>Primary Shield logo<span className="mandatory">*</span> :</p>

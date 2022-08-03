@@ -16,8 +16,8 @@ function ColorPicker(props:any) {
     };
 
     function handleChangeComplete(color){
-        console.log('Handle change complete called');
         setBackground(color.hex);
+        props.setFieldColor(props.field, color);
     };
 
 
@@ -53,16 +53,17 @@ function ColorPicker(props:any) {
     
 
     return (
-        <div> 
+          <div> 
                 <div style={ styles.swatch } onClick={handleClick }>
                     <div style={ styles.color } />
                 </div>
+                <span style={{padding:'10px'}}>{background}</span>
                 { displayColorPicker ? <div style={ styles.popover }>
                 <div style={ styles.cover } onClick={handleClose }/>
                 <SketchPicker color={ background } onChangeComplete={ handleChangeComplete } />
                 </div> : null }
-
             </div>
+            
     )
 }
 

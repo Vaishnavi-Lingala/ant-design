@@ -402,7 +402,7 @@ export const deactivateConfirmMsg = 'Deactivating a user will remove all enrollm
 //Defaults colors
 
 export const DEFAULT_TEXT_COLOR = '#000000';
-export const DEFAULT_BACKGROUND_COLOR = 'FFFFFF';
+export const DEFAULT_BACKGROUND_COLOR = '#ffffff';
 export const globalPolicyReqFields = [{field: 'name', dataType: 'string'}, {field: 'auth_policy_groups', dataType: 'array'}];
 
 export const policyInfoModel = {
