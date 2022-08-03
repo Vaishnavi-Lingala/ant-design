@@ -59,7 +59,7 @@ const formArgs: FormArgs = {
     {
       label: 'Resource Type',
       name: ['template', 'resource_type'],
-      type: 'radio',
+      type: 'radio-group',
       rules: [
         {
           required: true
@@ -73,6 +73,11 @@ const formArgs: FormArgs = {
         {
           label: 'Desktop App',
           value: 'desktop_app_name',
+        },
+        {
+          label: 'All',
+          value: 'all',
+          
         }
       ],
     },

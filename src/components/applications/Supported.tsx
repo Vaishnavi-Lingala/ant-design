@@ -8,11 +8,10 @@ import AppFormRenderer from './newappforms';
 import ApiUrls from '../../ApiUtils';
 
 import type { MasterTemplate } from './types';
-import type { PaginationConfig } from 'antd/lib/pagination';
 
 const { Search } = Input;
 
-function SupportedIntegrations() {
+function SupportedApplications() {
   const accountId = localStorage.getItem('accountId') as string;
   const [modalVisible, toggleModal] = useState(false);
   const [templateUID, setTemplateUID] = useState('');
@@ -29,12 +28,6 @@ function SupportedIntegrations() {
   });
 
   const activeOnly = filteredData.filter(item => item.active);
-
-  const paginationConfig: PaginationConfig = {
-    position: 'bottom',
-    total: activeOnly.length,
-    pageSize: 5
-  };
 
   function handleClick(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     setTemplateUID(e.currentTarget.value)
@@ -64,22 +57,15 @@ function SupportedIntegrations() {
             :
             <>
               <List
-                className='AppList'
                 itemLayout='horizontal'
                 size='small'
                 loading={status === 'fetching'}
                 dataSource={activeOnly}
-                pagination={paginationConfig}
                 renderItem={template => (
                   <List.Item
                     key={template.uid}
-                    //@ts-ignore
                     extra={
-                      <Tooltip
-                        placement='left'
-                        title='Add'
-                        destroyTooltipOnHide
-                      >
+                      <Tooltip placement='left' title='Add' destroyTooltipOnHide>
                         <Button
                           icon={<BarsOutlined />}
                           onClick={handleClick}
@@ -94,7 +80,6 @@ function SupportedIntegrations() {
                       avatar={<img
                         alt='App logo'
                         width={100}
-                        height={75}
                         src={template.app_img_url}
                       />
                       }
@@ -119,4 +104,4 @@ function SupportedIntegrations() {
   );
 }
 
-export default SupportedIntegrations;
+export default SupportedApplications;
