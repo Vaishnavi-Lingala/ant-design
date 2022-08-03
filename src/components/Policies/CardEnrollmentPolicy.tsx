@@ -7,7 +7,7 @@ import './Policies.css';
 
 import ApiService from "../../Api.service";
 import ApiUrls from '../../ApiUtils';
-import { CARD_ENROLL, policyDisplayNames, TecTANGO } from "../../constants";
+import { CARD_ENROLL, globalPolicyReqFields, policyDisplayNames, policyInfoModel, requiredFieldsErrorMsg, TecTANGO } from "../../constants";
 import { openNotification } from "../Layout/Notification";
 
 const CardEnrollmentPolicy = (props) => {
@@ -23,6 +23,7 @@ const CardEnrollmentPolicy = (props) => {
     const [maxEnrollOptions, setMaxEnrollOptions] = useState({});
     const [maxEnroll, setMaxEnroll] = useState(1);
     const [isLimitReached, setIsLimitReached] = useState(false);
+    const [policyReqFields, setPolicyReqFields]: any = useState({'name': '', 'auth_policy_groups': ''});
     const history = useHistory();
     const accountId = localStorage.getItem('accountId');
     const productId = window.location.pathname.split('/')[2];
@@ -102,12 +103,90 @@ const CardEnrollmentPolicy = (props) => {
         })();
     }, []);
 
+    const validatePolicy = (policyData) => {
+        let requiredFields:any = [];
+        let fields: any = '';
+        let errorMsg:string = '';
+        globalPolicyReqFields.forEach((eachField: any) => {
+            if (eachField?.objectName !== undefined) {
+                if (eachField.dataType === 'string') {
+                    if (policyData[eachField?.objectName][eachField?.field] === null || policyData[eachField?.objectName][eachField?.field] === '') {
+                        requiredFields.push(policyInfoModel[eachField.field]);
+                        setPolicyReqFields((prevState) => ({
+                            ...prevState,
+                            [eachField.field]: 'red'
+                        }));
+                    }  else {
+                        setPolicyReqFields((prevState) => ({
+                            ...prevState,
+                            [eachField.field]: ''
+                        }));
+                    }
+                } else if (eachField.dataType === 'array') {
+                    if (policyData[eachField.field].length <= 0) {
+                        requiredFields.push(policyInfoModel[eachField.field]);
+                        setPolicyReqFields((prevState) => ({
+                            ...prevState,
+                            [eachField.field]: 'red'
+                        }));
+                    } else {
+                        setPolicyReqFields((prevState) => ({
+                            ...prevState,
+                            [eachField.field]: ''
+                        }));
+                    }
+                }
+            } else if (eachField.dataType === 'string') {
+                if (policyData[eachField.field] === null || policyData[eachField.field] === '') {
+                    requiredFields.push(policyInfoModel[eachField.field]);
+                    setPolicyReqFields((prevState) => ({
+                        ...prevState,
+                        [eachField.field]: 'red'
+                    }));
+                } else {
+                    setPolicyReqFields((prevState) => ({
+                        ...prevState,
+                        [eachField.field]: ''
+                    }));
+                }
+            } else if (eachField.dataType === 'array') {
+                if (policyData[eachField.field].length <= 0) {
+                    requiredFields.push(policyInfoModel[eachField.field]);
+                    setPolicyReqFields((prevState) => ({
+                        ...prevState,
+                        [eachField.field]: 'red'
+                    }));
+                } else {
+                    setPolicyReqFields((prevState) => ({
+                        ...prevState,
+                        [eachField.field]: ''
+                    }));
+                }
+            }
+        })
+        if (requiredFields.length) {
+            requiredFields.forEach((each, index) => {
+                if (index < requiredFields.length - 1) {
+                    fields = `${fields} ${each},`
+                } else {
+                    fields = `${fields} ${each}`
+                }
+            })
+            errorMsg = requiredFieldsErrorMsg + fields;
+        } 
+        return errorMsg;
+    }
+
     function updateCardEnrollPolicy() {
         if (cardEnrollEditData?.policy_req?.card_unenroll_option === "DO_NOT_ALLOW") {
             cardEnrollEditData.policy_req.date_range = null
         }
         cardEnrollEditData['auth_policy_groups'] = groupUids;
-        ApiService.put(ApiUrls.policy(accountId, productId, cardEnrollDisplayData['uid']), cardEnrollEditData)
+        const error = validatePolicy(cardEnrollEditData);
+        if (error) {
+            openNotification(`error`, error);
+        } else {
+            ApiService.put(ApiUrls.policy(accountId, productId, cardEnrollDisplayData['uid']), cardEnrollEditData)
             .then(data => {
                 if (!data.errorSummary) {
                     groupNames.length = 0;
@@ -127,6 +206,7 @@ const CardEnrollmentPolicy = (props) => {
                 console.error('Error: ', error);
                 openNotification('error', 'An Error has occured with updating CARD ENROLL Policy');
             })
+        }     
     }
 
     function handleEditClick() {
@@ -144,7 +224,12 @@ const CardEnrollmentPolicy = (props) => {
     }
 
     function createCardEnrollPolicy() {
-        props.handleOk(CARD_ENROLL, cardEnrollEditData);
+        const error = validatePolicy(cardEnrollEditData);
+        if (error) {
+            openNotification(`error`, error);
+        } else {
+            props.handleOk(CARD_ENROLL, cardEnrollEditData);
+        }    
     }
 
     function setCancelClick() {
@@ -192,7 +277,7 @@ const CardEnrollmentPolicy = (props) => {
                     </div>
                     <div style={{ paddingTop: '20px' }}>
                         {isEdit ? <Input className="form-control"
-                            style={{ width: "275px" }}
+                            style={{ width: "275px", borderColor: policyReqFields?.name }}
                             onChange={(e) => setCardEnrollEditedData({
                                 ...cardEnrollEditData,
                                 name: e.target.value
@@ -231,6 +316,7 @@ const CardEnrollmentPolicy = (props) => {
                                 defaultValue={cardEnrollDisplayData['name'] !== "" ? groupNames : []}
                                 onChange={handleGroups}
                                 style={{ width: '275px' }}
+                                className= {policyReqFields?.auth_policy_groups === 'red' ? 'select-mandatory' : ''}
                                 options={groups}
                                 filterOption={(input, option) =>
                                     //@ts-ignore

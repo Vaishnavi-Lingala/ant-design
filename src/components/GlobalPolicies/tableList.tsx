@@ -21,7 +21,7 @@ function TableList({ handleGetPolicies, policy_type, policy_description, activat
         kiosk_machine_groups: [],
         policy_req: {
             vdi_type: "",
-            template: "",
+            template_id: "",
             // machine_group_type: ""
         }
     }

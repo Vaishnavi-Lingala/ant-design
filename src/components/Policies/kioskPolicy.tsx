@@ -8,7 +8,7 @@ import './Policies.css';
 import ApiService from "../../Api.service";
 import ApiUrls from '../../ApiUtils';
 import { openNotification } from "../Layout/Notification";
-import { policyDisplayNames } from "../../constants";
+import { kioskPolicyInfoModel, kioskPolicyReqFields, policyDisplayNames, requiredFieldsErrorMsg } from "../../constants";
 
 export const KioskPolicy = (props: any) => {
 
@@ -30,6 +30,7 @@ export const KioskPolicy = (props: any) => {
     const [password, setPassword] = useState("");
     const history = useHistory();
     const [policyRequirements, setPolicyRequirements] = useState({});
+    const [policyReqFieldsForDisplay, setPolicyReqFieldsForDisplay]: any = useState({'name': '', 'auth_policy_groups': '', 'login_type': '', 'access_key_id': '','assay': '', 'confirm_assay': ''});
     const accountId = localStorage.getItem('accountId');
 	const productId = window.location.pathname.split('/')[2];
 
@@ -121,11 +122,89 @@ export const KioskPolicy = (props: any) => {
             })
     }, [])
 
+    const validatePolicy = (policyData) => {
+        let requiredFields:any = [];
+        let fields: any = '';
+        let errorMsg:string = '';
+        kioskPolicyReqFields.forEach((eachField: any) => {
+            if (eachField?.objectName !== undefined) {
+                if (eachField.dataType === 'string') {
+                    if (policyData[eachField?.objectName][eachField?.field] === null || policyData[eachField?.objectName][eachField?.field] === '') {
+                        requiredFields.push(kioskPolicyInfoModel[eachField.field]);
+                        setPolicyReqFieldsForDisplay((prevState) => ({
+                            ...prevState,
+                            [eachField.field]: 'red'
+                        }));
+                    }  else {
+                        setPolicyReqFieldsForDisplay((prevState) => ({
+                            ...prevState,
+                            [eachField.field]: ''
+                        }));
+                    }
+                } else if (eachField.dataType === 'array') {
+                    if (policyData[eachField.field].length <= 0) {
+                        requiredFields.push(kioskPolicyInfoModel[eachField.field]);
+                        setPolicyReqFieldsForDisplay((prevState) => ({
+                            ...prevState,
+                            [eachField.field]: 'red'
+                        }));
+                    } else {
+                        setPolicyReqFieldsForDisplay((prevState) => ({
+                            ...prevState,
+                            [eachField.field]: ''
+                        }));
+                    }
+                }
+            } else if (eachField.dataType === 'string') {
+                if (policyData[eachField.field] === null || policyData[eachField.field] === '') {
+                    requiredFields.push(kioskPolicyInfoModel[eachField.field]);
+                    setPolicyReqFieldsForDisplay((prevState) => ({
+                        ...prevState,
+                        [eachField.field]: 'red'
+                    }));
+                } else {
+                    setPolicyReqFieldsForDisplay((prevState) => ({
+                        ...prevState,
+                        [eachField.field]: ''
+                    }));
+                }
+            } else if (eachField.dataType === 'array') {
+                if (policyData[eachField.field].length <= 0) {
+                    requiredFields.push(kioskPolicyInfoModel[eachField.field]);
+                    setPolicyReqFieldsForDisplay((prevState) => ({
+                        ...prevState,
+                        [eachField.field]: 'red'
+                    }));
+                } else {
+                    setPolicyReqFieldsForDisplay((prevState) => ({
+                        ...prevState,
+                        [eachField.field]: ''
+                    }));
+                }
+            }
+        })
+        if (requiredFields.length) {
+            requiredFields.forEach((each, index) => {
+                if (index < requiredFields.length - 1) {
+                    fields = `${fields} ${each},`
+                } else {
+                    fields = `${fields} ${each}`
+                }
+            })
+            errorMsg = requiredFieldsErrorMsg + fields;
+        } 
+        return errorMsg;
+    }
+
     function updateKioskPolicy() {
         kioskEditData.auth_policy_groups = groupUids;
         kioskEditData.kiosk_machine_groups = kioskGroupUids;
         kioskEditData.policy_req.confirm_assay = confirmPassword;
-        ApiService.put(ApiUrls.policy(accountId, productId, kioskDisplayData['uid']), kioskEditData)
+        const error = validatePolicy(kioskEditData);
+        if (error) {
+            openNotification(`error`, error);
+        } else {
+            ApiService.put(ApiUrls.policy(accountId, productId, kioskDisplayData['uid']), kioskEditData)
             .then(data => {
                 console.log(data);
                 if (!data.errorSummary) {
@@ -157,6 +236,7 @@ export const KioskPolicy = (props: any) => {
                 console.error('Error: ', error);
                 openNotification('error', 'An Error has occured with updating Kiosk Policy');
             })
+        }     
     }
 
     function handleEditClick() {
@@ -177,7 +257,12 @@ export const KioskPolicy = (props: any) => {
 
     function createkioskPolicy() {
         kioskEditData.policy_req.confirm_assay = confirmPassword;
-        props.handleOk("KIOSK", kioskEditData);
+        const error = validatePolicy(kioskEditData);
+        if (error) {
+            openNotification(`error`, error);
+        } else {
+            props.handleOk("KIOSK", kioskEditData);
+        }      
     }
 
     function setCancelClick() {
@@ -232,7 +317,7 @@ export const KioskPolicy = (props: any) => {
                     </div>
                     <div style={{ paddingTop: '20px' }}>
                         {isEdit ? <Input className="form-control"
-                            style={{ width: "275px" }}
+                            style={{ width: "275px", borderColor: policyReqFieldsForDisplay?.name }}
                             onChange={(e) => setKioskEditedData({
                                 ...kioskEditData,
                                 name: e.target.value
@@ -271,6 +356,7 @@ export const KioskPolicy = (props: any) => {
                             onChange={handleGroups}
                             // disabled={!isEdit}
                             style={{ width: '275px' }}
+                            className= {policyReqFieldsForDisplay?.auth_policy_groups === 'red' ? 'select-mandatory' : ''}
                             options={groups}
                             filterOption={(input, option) =>
                                 //@ts-ignore
@@ -295,6 +381,7 @@ export const KioskPolicy = (props: any) => {
                             onChange={handleMachineGroups}
                             // disabled={!isEdit}
                             style={{ width: '275px' }}
+                            className= {policyReqFieldsForDisplay?.kiosk_machine_groups === 'red' ? 'select-mandatory' : ''}
                             options={kioskGroups}
                             filterOption={(input, option) =>
                                 //@ts-ignore
@@ -381,7 +468,7 @@ export const KioskPolicy = (props: any) => {
                             isEdit ?
                                 kioskEditData?.policy_req?.id_as_machine_name === false ?
                                     <Input className="form-control"
-                                        style={{ width: "275px" }}
+                                        style={{ width: "275px", borderColor: policyReqFieldsForDisplay?.access_key_id }}
                                         value={kioskEditData?.policy_req?.access_key_id}
                                         onChange={(e) => setKioskEditedData((state) => {
                                             const { policy_req } = state;
@@ -402,7 +489,7 @@ export const KioskPolicy = (props: any) => {
                     <div>
                         {
                             isEdit ? <Input.Password className="form-control"
-                                style={{ width: "275px" }}
+                                style={{ width: "275px", borderColor: policyReqFieldsForDisplay?.assay }}
                                 value={kioskEditData?.policy_req?.assay}
                                 onChange={(e) => setKioskEditedData((state) => {
                                     const { policy_req } = state;
@@ -424,7 +511,7 @@ export const KioskPolicy = (props: any) => {
                                 <div>
                                     {
                                         isEdit ? <Input.Password className="form-control"
-                                            style={{ width: "275px" }}
+                                            style={{ width: "275px", borderColor: policyReqFieldsForDisplay?.assay }}
                                             onChange={(e) => setConfirmPassword(e.target.value)}
                                             value={confirmPassword}
                                             placeholder='Enter confirm password'
