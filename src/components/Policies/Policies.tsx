@@ -641,11 +641,15 @@ export default function Policies() {
 							</Skeleton>
 						</TabPane> : null
 				}
-				<TabPane tab={policyDisplayNames[PRIVACY]} key="privacy">
-					<Skeleton loading={loadingDetails}>
-						<ProtectedRoute path={`/product/${productId}/policies/privacy`} component={PrivacyShieldPolicy} subRoute />
-					</Skeleton>
-				</TabPane>
+				{
+					process.env.REACT_APP_ENV === 'dev' && 
+					<TabPane tab={policyDisplayNames[PRIVACY]} key="privacy">
+						<Skeleton loading={loadingDetails}>
+							<ProtectedRoute path={`/product/${productId}/policies/privacy`} component={PrivacyShieldPolicy} subRoute />
+						</Skeleton>
+					</TabPane>
+				}
+				
 			</Tabs>
 		</>
 	);
