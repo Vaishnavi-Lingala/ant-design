@@ -62,20 +62,22 @@ oktaAuth.tokenManager.getTokens().then(({ accessToken, idToken }) => {
     }
 });
 
-oktaAuth?.session?.exists()
-    .then(data => {
-        console.log(data)
-    })
-    .catch(error => console.log(error));
+// oktaAuth?.session?.exists()
+//     .then(data => {
+//         console.log(data)
+//     })
+//     .catch(error => console.log(error));
 
-oktaAuth?.session?.get()
-    .then(data => {
-        console.log(data)
-    })
+// oktaAuth?.session?.get()
+//     .then(data => {
+//         console.log(data)
+//     })
 
 oktaAuth.tokenManager.on('expired', function (key, expiredToken) {
     console.log('Token with key', key, ' has expired: ', expiredToken);
     // config.oidc.issuer = String(localStorage.getItem("issuer"))
+    // localStorage.removeItem("okta-token-storage")
+    // <Redirect to={"/"} />
     // config.oidc.clientId = String(localStorage.getItem("clientId"))
     localStorage.setItem("autoRenew", "false");
     // oktaAuth?.session?.exists()
@@ -97,8 +99,6 @@ oktaAuth.tokenManager.on('expired', function (key, expiredToken) {
     //     })
 
 });
-
-console.log(oktaAuth);
 
 function App() {
     const history = useHistory();

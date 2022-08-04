@@ -64,8 +64,8 @@ function Mechanism(props: any) {
         default: false,
         order: null,
         active: false,
-        session_duration: 30,
-        session_units: "MINUTES",
+        session_duration: 2,
+        session_units: "HOURS",
         sliding_expiration: true,
         account_id: "ooa46c499ccb"
     }
