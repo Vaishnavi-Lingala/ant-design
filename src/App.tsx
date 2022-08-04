@@ -31,7 +31,17 @@ import BulkAssignment from "./components/applications/BulkAssignment";
 import SupportedApplications from "./components/applications/Supported";
 import GlobalPolicies from "./components/GlobalPolicies/GlobalPolicies";
 
-const oktaAuth = new OktaAuth(config.oidc);
+var oktaAuth;
+
+if (localStorage.getItem("clientId")) {
+    if (localStorage.getItem("autoRenew") === "false") {
+        config.oidc.tokenManager.autoRenew = false
+    }
+    config.oidc.issuer = String(localStorage.getItem("issuer"))
+    config.oidc.clientId = String(localStorage.getItem("clientId"))
+}
+console.log(config.oidc)
+oktaAuth = new OktaAuth(config.oidc)
 
 oktaAuth.tokenManager.getTokens().then(({ accessToken, idToken }) => {
     // handle accessToken and idToken
@@ -52,12 +62,43 @@ oktaAuth.tokenManager.getTokens().then(({ accessToken, idToken }) => {
     }
 });
 
+oktaAuth?.session?.exists()
+    .then(data => {
+        console.log(data)
+    })
+    .catch(error => console.log(error));
+
+oktaAuth?.session?.get()
+    .then(data => {
+        console.log(data)
+    })
+
 oktaAuth.tokenManager.on('expired', function (key, expiredToken) {
     console.log('Token with key', key, ' has expired: ', expiredToken);
-    localStorage.removeItem("okta-token-storage");
-    <Redirect to={"/"} />
+    // config.oidc.issuer = String(localStorage.getItem("issuer"))
+    // config.oidc.clientId = String(localStorage.getItem("clientId"))
+    localStorage.setItem("autoRenew", "false");
+    // oktaAuth?.session?.exists()
+    //     .then(data => {
+    //         console.log(data)
+    //         if (data === false) {
+    //             localStorage.removeItem('okta-token-storage');
+    //         }
+    //     })
+    //     .catch(error => console.log(error));
+
+    // const oktaAuth = new OktaAuth(config.oidc)
+
+    // oktaAuth.tokenManager.getTokens()
+    //     .then(({ accessToken, idToken, refreshToken }) => {
+    //         console.log("Renew Access Token: ", accessToken);
+    //         console.log("Renew Id Token: ", idToken);
+    //         console.log("Renew Refresh Token: ", refreshToken);
+    //     })
+
 });
 
+console.log(oktaAuth);
 
 function App() {
     const history = useHistory();

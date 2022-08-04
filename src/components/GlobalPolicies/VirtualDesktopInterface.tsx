@@ -24,7 +24,7 @@ function VDIPolicy(props: any) {
     const [groupType, setGroupType] = useState("");
     const [templates, setTemplates]: any = useState([]);
     const [typeTemplates, setTypeTemplates]: any = useState([]);
-    const [templateName, setTemplateName] = useState("");
+    const [templateName, setTemplateName]: any = useState("");
     const [vdiReqFieldsModel, setVdiReqFieldsModel]: any = useState({'name': '', 'groupType': '', 'kiosk_machine_groups': '', 'vdi_type': '', 'template': ''});
 
     useEffect(() => {
@@ -54,6 +54,9 @@ function VDIPolicy(props: any) {
                     })
                     console.log(groupTypegroups);
                     setGroups(groupTypegroups);
+                }
+                else{
+                    setGroups([]);
                 }
                 var object = {};
                 for (var i = 0; i < data[0].length; i++) {
@@ -161,8 +164,8 @@ function VDIPolicy(props: any) {
                         setVdiReqFieldsModel((prevState) => ({
                             ...prevState,
                             [eachField.field]: 'red'
-                        }));
-                    }  else {
+                          }));
+                    } else {
                         setVdiReqFieldsModel((prevState) => ({
                             ...prevState,
                             [eachField.field]: ''
@@ -401,16 +404,17 @@ function VDIPolicy(props: any) {
                         disabled={!isEdit}
                         onChange={(e) => setVDIEditedData((state) => {
                             const { policy_req } = state;
-                            // setVDIEditedData((state) => {
-                            //     const {policy_req} = state
-                            //     return {
-                            //         ...vdiEditData,
-                            //         policy_req: {
-                            //             ...policy_req,
-                            //             template: ""
-                            //         }
-                            //     }
-                            // });
+                            setVDIEditedData((state) => {
+                                const {policy_req} = state
+                                return {
+                                    ...vdiEditData,
+                                    policy_req: {
+                                        ...policy_req,
+                                        template: ""
+                                    }
+                                }
+                            });
+                            console.log(vdiEditData?.policy_req)
                             var vdiTypeTemplates: any = [];
                             Object.keys(templates).map(index => {
                                 if (templates[index]["type"] === e.target.value) {
@@ -448,7 +452,7 @@ function VDIPolicy(props: any) {
                         <Select
                             size={"large"}
                             placeholder="Please select template"
-                            value={templateName}
+                            defaultValue={vdiDisplayData['name'] !== "" ? templateName : []}
                             onChange={(value) => setVDIEditedData((state) => {
                                 const { policy_req } = state
                                 console.log(value);

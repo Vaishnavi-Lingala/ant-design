@@ -14,6 +14,7 @@ export default function ProtectedRoute({
     const oktaStorage = localStorage.getItem("okta-token-storage");
 
     function removeItems() {
+        localStorage.removeItem("autoRenew");
         history.push('/');
         // localStorage.removeItem("domain");
         // localStorage.removeItem("clientId");

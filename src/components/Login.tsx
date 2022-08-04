@@ -14,6 +14,7 @@ import config from "../config";
 import { Directory } from "../constants";
 import { ClientConfiguration } from "../models/Data.models";
 import { Store } from "../Store";
+import { openNotification } from "./Layout/Notification";
 
 function Login() {
     const [email, setEmail] = useState("");
@@ -38,6 +39,7 @@ function Login() {
                     localStorage.setItem("domain", domain);
                     localStorage.setItem("clientId", data.idp_portal_oidc_client_id);
                     localStorage.setItem("issuer", data.issuer_url);
+                    localStorage.setItem("autoRenew", "true");
                     if (data.issuer_url !== "" && data.idp_portal_oidc_client_id !== "") {
                         const oktaAuth = new OktaAuth(config.oidc);
                         oktaAuth.signInWithRedirect({
@@ -55,7 +57,6 @@ function Login() {
                             document.getElementById('root')
                         )
                     }
-                    setButtonLoading(false);
                 }
                 else {
                     //@ts-ignore
@@ -64,7 +65,8 @@ function Login() {
                     console.error(data);
                 }
             }).catch((error) => {
-                setErrorMessage(error.message + ". Please contact Admin");
+                openNotification('error', "Please check your internet connection")
+                // setErrorMessage(error.message + ". Please contact Admin");
                 setButtonLoading(false);
                 console.error(error);
             })

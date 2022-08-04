@@ -23,7 +23,7 @@ function AppHeader() {
     const [selectedMenuOption, setSelectedMenuOption] = useContext(Store);
     const { authState, oktaAuth } = useOktaAuth();
     const [products, setProducts] = useState(emptyObj);
-    
+
     let selectedHeaderKeys: any = [selectedMenuOption];
     if (Object.keys(productNames).includes(selectedMenuOption)) {
         selectedHeaderKeys = [Products].concat([selectedMenuOption]);
@@ -52,10 +52,22 @@ function AppHeader() {
     const [headerItems, setHeaderItems] = useState(headerItemsInitialValue);
 
     useEffect(() => {
-        ApiService.get(ApiUrls.account_info, { domain: localStorage.getItem('domain')})
+        Promise.all([
+            ApiService.get(ApiUrls.account_info, { domain: localStorage.getItem('domain') }),
+            ApiService.get(ApiUrls.licences(localStorage.getItem('accountId')))
+        ])
             .then(data => {
-                getProducts(data.uid);
-                localStorage.setItem('accountId', data.uid);
+                getProducts(data[0].uid);
+                localStorage.setItem('accountId', data[0].uid);
+                localStorage.setItem('is_vdi_enabled', data[0].enable_vdi);
+                localStorage.setItem('is_lup_enabled', data[0].enable_local_provisioning);
+
+                data[1].forEach(license => {
+                    if (license.product.sku === TecTANGO && license.max_enroll_allowed) {
+                        console.log(license)
+                        localStorage.setItem("max_enroll_allowed", license.max_enroll_allowed);
+                    }
+                })
             })
     }, []);
 
@@ -151,6 +163,9 @@ function AppHeader() {
             localStorage.removeItem("accountId");
             localStorage.removeItem("productName");
             localStorage.removeItem("productId");
+            localStorage.removeItem("autoRenew");
+            localStorage.removeItem("is_vdi_enabled");
+            localStorage.removeItem("is_lup_enabled");
         }).catch((err) => {
             console.error(err)
         })
@@ -180,7 +195,7 @@ function AppHeader() {
     return (
         <Header className="header">
             <div className="logo">
-                <img src={ window.location.origin + "/Credenti_Logo.png" } alt="Credenti TecConnect" width={150} />
+                <img src={window.location.origin + "/Credenti_Logo.png"} alt="Credenti TecConnect" width={150} />
             </div>
 
             <Menu className="border-bottom-0" theme="light" mode="horizontal"

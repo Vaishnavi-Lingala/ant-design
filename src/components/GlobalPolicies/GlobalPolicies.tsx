@@ -24,8 +24,10 @@ function GlobalPolicies() {
     const [inActiveUserProvisioningPolicies, setInActiveUserProvisioningPolicies] = useState([]);
     const [activeVDIPolicies, setActiveVDIPolicies]: any = useState([]);
     const [inActiveVDIPolicies, setInActiveVDIPolicies] = useState([]);
-    const [isLocalProvisioning, setIsLocalProvisioning] = useState(false);
-    const [isVdi, setIsVdi] = useState(false);
+    const isLocalProvisioning = Boolean(localStorage.getItem("is_lup_enabled"));
+    // const [isLocalProvisioning, setIsLocalProvisioning] = useState(false);
+    const isVdi = Boolean(localStorage.getItem("is_vdi_enabled"));
+    // const [isVdi, setIsVdi] = useState(false);
     const path = window.location.pathname.split('/').length;
     const { TabPane } = Tabs;
     const accountId = localStorage.getItem('accountId');
@@ -280,15 +282,9 @@ function GlobalPolicies() {
     }
 
     useEffect(() => {
-        ApiService.get(ApiUrls.info(accountId))
-            .then(data => {
-                setIsLocalProvisioning(data.enable_local_provisioning);
-                setIsVdi(data.enable_vdi);
-
-                if (window.location.pathname.split("/").length === 2) {
-                    history.push(`global-policies/${data.enable_local_provisioning ? 'local-user-provisioning' : 'virtual-desktop-interface'}`);
-                }
-            })
+        if (window.location.pathname.split("/").length === 2) {
+            history.push(`/global-policies/${isLocalProvisioning ? 'local-user-provisioning' : 'virtual-desktop-interface'}`);
+        }
 
         getGlobalPolicies();
     }, []);

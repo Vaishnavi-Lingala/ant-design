@@ -37,7 +37,8 @@ export default function Policies() {
 	const [activeBioPolicies, setActiveBioPolicies]: any = useState([]);
 	const [inActiveBioPolicies, setInActiveBioPolicies]: any = useState([]);
 	const path = window.location.pathname.split('/').length;
-	const [maxEnroll, setMaxEnroll] = useState(null);
+	// const [maxEnroll, setMaxEnroll] = useState(null);
+	const maxEnroll = localStorage.getItem("max_enroll_allowed");
 	const { productId } = useParams<any>();
 	const { TabPane } = Tabs;
 	const accountId = localStorage.getItem('accountId');
@@ -481,24 +482,25 @@ export default function Policies() {
 		getPolicies();
 	}, [path]);
 
-	useEffect(() => {
-		(async function () {
-			if (seletedProduct === TecTANGO) {
-				try {
-					let licenses = await ApiService.get(ApiUrls.licences(accountId));
-					licenses.forEach(license => {
-						if (license.product.sku === TecTANGO && license.max_enroll_allowed) {
-							setMaxEnroll(license.max_enroll_allowed);
-						}
-					})
-				}
-				catch (err) {
-					console.log(err);
-					openNotification("error", "Error has occured while getting details");
-				}
-			}
-		})();
-	}, []);
+	// useEffect(() => {
+	// 	(async function () {
+	// 		if (seletedProduct === TecTANGO) {
+	// 			try {
+	// 				let licenses = await ApiService.get(ApiUrls.licences(accountId));
+	// 				licenses.forEach(license => {
+	// 					if (license.product.sku === TecTANGO && license.max_enroll_allowed) {
+	// 						console.log(license)
+	//						setMaxEnroll(license.max_enroll_allowed);
+	// 					}
+	// 				})
+	// 			}
+	// 			catch (err) {
+	// 				console.log(err);
+	// 				openNotification("error", "Error has occured while getting details");
+	// 			}
+	// 		}
+	// 	})();
+	// }, []);
 
 	function activatePolicy(uid: string) {
 		console.log(uid);
