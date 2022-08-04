@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import { Button, Checkbox, Divider, Input, InputNumber, Radio, Select, Skeleton } from "antd";
+import { Button, Checkbox, Divider, Input, InputNumber, Radio, Select, Skeleton, Switch } from "antd";
 
 import './Mechanism.css'
 
@@ -24,6 +24,11 @@ function Mechanism(props: any) {
     const [challengeFactors, setChallengeFactors] = useState([]);
     const [tapOutOptions, setTapOutOption]: any = useState({});
     const [factorOptions, setFactorOptions]: any = useState({});
+    const [sessionUnitOptions, setSessionUnitOptions]: any = useState({
+        "MINUTES": "Minutes",
+        "HOURS": "Hours",
+        "DAYS": "Days"
+    });
     const [idleTimeoutOptions, setIdleTimeoutOptions]: any = useState({});
     const [render, setRender] = useState(false);
     const [groupNames, setGroupNames]: any = useState([]);
@@ -59,6 +64,9 @@ function Mechanism(props: any) {
         default: false,
         order: null,
         active: false,
+        session_duration: 2,
+        session_units: "HOURS",
+        sliding_expiration: true,
         account_id: "ooa46c499ccb"
     }
 
@@ -155,6 +163,7 @@ function Mechanism(props: any) {
 
                 console.log(data[1]);
                 setTapOutOption(data[1].tap_out_options);
+                // setSessionUnitOptions(data[1].session_units);
 
                 console.log(data[2]);
                 setFactorOptions(data[2]);
@@ -476,6 +485,60 @@ function Mechanism(props: any) {
                 </div>
 
                 <Divider style={{ borderTop: '1px solid #d7d7dc' }} />
+
+                <div className="row-containers" style={{ paddingBottom: '20px' }}>
+                    <div>
+                        <b>
+                            Maximum session lifetime:
+                        </b>
+                    </div>
+                    <div>
+                        {isEdit ?
+                            <>
+                                <InputNumber defaultValue={editData?.session_duration} min={1}
+                                    onChange={(value) => {
+                                        setEditData({
+                                            ...editData,
+                                            session_duration: value
+                                        })
+                                    }}
+                                /> &nbsp; &nbsp;
+                                <Select defaultValue={sessionUnitOptions[editData?.session_units]} style={{ width: '100px' }}
+                                    onChange={(value) => {
+                                        setEditData({
+                                            ...editData,
+                                            session_units: value
+                                        })
+                                    }}
+                                >
+                                    {
+                                        Object.keys(sessionUnitOptions).map(key => {
+                                            return <Select.Option key={key} value={key}>
+                                                {sessionUnitOptions[key]}
+                                            </Select.Option>
+                                        })
+                                    }
+                                </Select>
+                            </> : displayDetails["session_duration"] + " " + sessionUnitOptions[displayDetails["session_units"]]
+                        }
+                    </div>
+                    <div>
+                        <b>
+                            Sliding expiration:
+                        </b>
+                    </div>
+                    <div>
+                        <Switch
+                            checked={editData?.sliding_expiration} disabled={!isEdit}
+                            onChange={(value) => {
+                                setEditData({
+                                    ...editData,
+                                    sliding_expiration: value
+                                })
+                            }}
+                        />
+                    </div>
+                </div>
 
                 <div style={{ padding: '0 0 20px 0' }}>
                     <b>IF</b> user idle timeout (period of inactivity) is {
