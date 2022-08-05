@@ -10,7 +10,7 @@ import ApiService from "../../Api.service";
 import { MechanismType } from "../../models/Data.models";
 import { Store } from "../../Store";
 import Hint from "../Controls/Hint";
-import { tapOutFields, TecBIO, TECBIO_LOCK_DESCRIPTION, TECBIO_SIGN_OUT_ALL_DESCRIPTION, TECBIO_SIGN_OUT_DESCRIPTION, TecTANGO, TECTANGO_LOCK_DESCRIPTION, TECTANGO_SIGN_OUT_ALL_DESCRIPTION, TECTANGO_SIGN_OUT_DESCRIPTION } from "../../constants";
+import { mechanismInfoModel, mechanismReqFields, requiredFieldsErrorMsg, tapOutFields, TecBIO, TECBIO_LOCK_DESCRIPTION, TECBIO_SIGN_OUT_ALL_DESCRIPTION, TECBIO_SIGN_OUT_DESCRIPTION, TecTANGO, TECTANGO_LOCK_DESCRIPTION, TECTANGO_SIGN_OUT_ALL_DESCRIPTION, TECTANGO_SIGN_OUT_DESCRIPTION } from "../../constants";
 
 
 function Mechanism(props: any) {
@@ -34,6 +34,7 @@ function Mechanism(props: any) {
     const [groupNames, setGroupNames]: any = useState([]);
     const [groupUids, setGroupUids]: any = useState([]);
     const [groupsChange, setGroupsChange]: any = useState([]);
+    const [mechReqFieldsForDisplay, setMechReqFieldsForDisplay]: any = useState({'name': '', 'mechanism_groups': '', 'on_tap_out': ''});
     const [value, setValue] = useState("");
     const [disabledFactors]: any = useState([]);
     const [disabledFactors1]: any = useState([]);
@@ -184,15 +185,91 @@ function Mechanism(props: any) {
         });
     }, [])
 
+    const validateMechanismData = (mechanismData) => {
+        let requiredFields:any = [];
+        let fields: any = '';
+        let errorMsg:string = '';
+        mechanismReqFields.forEach((eachField: any) => {
+            if (eachField?.objectName !== undefined) {
+                if (eachField.dataType === 'string') {
+                    if (mechanismData[eachField?.objectName][eachField?.field] === null || mechanismData[eachField?.objectName][eachField?.field] === '') {
+                        requiredFields.push(mechanismInfoModel[eachField.field]);
+                        setMechReqFieldsForDisplay((prevState) => ({
+                            ...prevState,
+                            [eachField.field]: 'red'
+                        }));
+                    }  else {
+                        setMechReqFieldsForDisplay((prevState) => ({
+                            ...prevState,
+                            [eachField.field]: ''
+                        }));
+                    }
+                } else if (eachField.dataType === 'array') {
+                    if (mechanismData[eachField.field].length <= 0) {
+                        requiredFields.push(mechanismInfoModel[eachField.field]);
+                        setMechReqFieldsForDisplay((prevState) => ({
+                            ...prevState,
+                            [eachField.field]: 'red'
+                        }));
+                    } else {
+                        setMechReqFieldsForDisplay((prevState) => ({
+                            ...prevState,
+                            [eachField.field]: ''
+                        }));
+                    }
+                }
+            } else if (eachField.dataType === 'string') {
+                if (mechanismData[eachField.field] === null || mechanismData[eachField.field] === '') {
+                    requiredFields.push(mechanismInfoModel[eachField.field]);
+                    setMechReqFieldsForDisplay((prevState) => ({
+                        ...prevState,
+                        [eachField.field]: 'red'
+                    }));
+                } else {
+                    setMechReqFieldsForDisplay((prevState) => ({
+                        ...prevState,
+                        [eachField.field]: ''
+                    }));
+                }
+            } else if (eachField.dataType === 'array') {
+                if (mechanismData[eachField.field].length <= 0) {
+                    requiredFields.push(mechanismInfoModel[eachField.field]);
+                    setMechReqFieldsForDisplay((prevState) => ({
+                        ...prevState,
+                        [eachField.field]: 'red'
+                    }));
+                } else {
+                    setMechReqFieldsForDisplay((prevState) => ({
+                        ...prevState,
+                        [eachField.field]: ''
+                    }));
+                }
+            }
+        })
+        if (requiredFields.length) {
+            requiredFields.forEach((each, index) => {
+                if (index < requiredFields.length - 1) {
+                    fields = `${fields} ${each},`
+                } else {
+                    fields = `${fields} ${each}`
+                }
+            })
+            errorMsg = requiredFieldsErrorMsg + fields;
+        } 
+        return errorMsg;
+    }
+
     function updateMechanism() {
         console.log(groupUids);
         editData.mechanism_groups = groupUids;
-        console.log(editData);
         if (editData?.idle_timeout_flag === false) {
             editData.idle_timeout = "NONE";
         }
-        console.log(editData);
-        ApiService.put(ApiUrls.mechanism(accountId, productId, displayDetails['uid']), editData)
+        const error = validateMechanismData(editData);
+        if (error) {
+            openNotification(`error`, error);
+        } else {
+            ApiService.put(ApiUrls.mechanism(accountId, productId, displayDetails['uid']), editData)
             .then(data => {
                 if (!data.errorSummary) {
                     setDisplayDetails({ ...editData });
@@ -212,6 +289,7 @@ function Mechanism(props: any) {
                 console.error('Error: ', error);
                 openNotification('error', 'An Error has occured with updating Mechanism');
             })
+        }  
     }
 
     function handleEditClick() {
@@ -245,8 +323,12 @@ function Mechanism(props: any) {
         if (editData.challenge_factors[0].factor !== "" && editData.challenge_factors[1].factor === "") {
             editData.challenge_factors[1].factor = "NONE";
         }
-
-        props.handleOk(editData);
+        const error = validateMechanismData(editData);
+        if (error) {
+            openNotification(`error`, error);
+        } else {
+            props.handleOk(editData);
+        }     
     }
 
     function setCancelClick() {
@@ -307,7 +389,7 @@ function Mechanism(props: any) {
                                     ...editData,
                                     name: e.target.value
                                 })}
-                                style={{ width: "275px" }}
+                                style={{ width: "275px", borderColor: mechReqFieldsForDisplay?.name }}
                                 className="form-control"
                                 placeholder="Enter mechanism name"
                                 defaultValue={displayDetails['name'] !== "" ? displayDetails['name'] : ""}
@@ -327,6 +409,7 @@ function Mechanism(props: any) {
                                 defaultValue={displayDetails['name'] !== "" ? groupNames : []}
                                 onChange={handleGroups}
                                 style={{ width: '275px' }}
+                                className= {mechReqFieldsForDisplay?.mechanism_groups === 'red' ? 'select-mandatory' : ''}
                                 options={groups}
                                 filterOption={(input, option) =>
                                     //@ts-ignore
@@ -450,7 +533,7 @@ function Mechanism(props: any) {
                 }
 
                 <div style={{ padding: '0 0 20px 0' }}>
-                    <b>THEN</b> perform one of the the following action on the machine
+                    <b>THEN</b> perform one of the the following action on the machine<span className="mandatory">*</span>
                 </div>
 
                 <div className="row-containers">

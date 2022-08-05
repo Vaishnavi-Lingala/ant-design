@@ -8,6 +8,7 @@ import { openNotification } from "../Layout/Notification";
 import ApiUrls from "../../ApiUtils"
 import ApiService from "../../Api.service";
 import TextArea from "antd/lib/input/TextArea";
+import { deviceInfoModel, deviceReqFields, requiredFieldsErrorMsg } from "../../constants";
 
 function Device(props: any) {
     const history = useHistory();
@@ -17,10 +18,16 @@ function Device(props: any) {
     const [editData, setEditData]: any = useState();
     const [deviceTypeOptions, setDeviceTypeOptions] = useState({});
     const [vendorOptions, setVendorOptions] = useState({});
+    const [deviceReqFieldsForDisplay, setDeviceReqFieldsForDisplay]: any = useState({'device_name': '', 'device_type': '', 'vendor': '', 'serial_number': ''});
     const accountId = localStorage.getItem('accountId');
 
     function createDevice() {
-        props.handleOk(editData);
+        const error = validateDeviceData(editData);
+        if (error) {
+            openNotification(`error`, error);
+        } else {
+            props.handleOk(editData);
+        }       
     }
 
     useEffect(() => {
@@ -61,9 +68,87 @@ function Device(props: any) {
 
     }, [])
 
+    const validateDeviceData = (deviceData) => {
+        let requiredFields:any = [];
+        let fields: any = '';
+        let errorMsg:string = '';
+        deviceReqFields.forEach((eachField: any) => {
+            if (eachField?.objectName !== undefined) {
+                if (eachField.dataType === 'string') {
+                    if (deviceData[eachField?.objectName][eachField?.field] === null || deviceData[eachField?.objectName][eachField?.field] === '') {
+                        requiredFields.push(deviceInfoModel[eachField.field]);
+                        setDeviceReqFieldsForDisplay((prevState) => ({
+                            ...prevState,
+                            [eachField.field]: 'red'
+                        }));
+                    }  else {
+                        setDeviceReqFieldsForDisplay((prevState) => ({
+                            ...prevState,
+                            [eachField.field]: ''
+                        }));
+                    }
+                } else if (eachField.dataType === 'array') {
+                    if (deviceData[eachField.field].length <= 0) {
+                        requiredFields.push(deviceInfoModel[eachField.field]);
+                        setDeviceReqFieldsForDisplay((prevState) => ({
+                            ...prevState,
+                            [eachField.field]: 'red'
+                        }));
+                    } else {
+                        setDeviceReqFieldsForDisplay((prevState) => ({
+                            ...prevState,
+                            [eachField.field]: ''
+                        }));
+                    }
+                }
+            } else if (eachField.dataType === 'string') {
+                if (deviceData[eachField.field] === null || deviceData[eachField.field] === '') {
+                    requiredFields.push(deviceInfoModel[eachField.field]);
+                    setDeviceReqFieldsForDisplay((prevState) => ({
+                        ...prevState,
+                        [eachField.field]: 'red'
+                    }));
+                } else {
+                    setDeviceReqFieldsForDisplay((prevState) => ({
+                        ...prevState,
+                        [eachField.field]: ''
+                    }));
+                }
+            } else if (eachField.dataType === 'array') {
+                if (deviceData[eachField.field].length <= 0) {
+                    requiredFields.push(deviceInfoModel[eachField.field]);
+                    setDeviceReqFieldsForDisplay((prevState) => ({
+                        ...prevState,
+                        [eachField.field]: 'red'
+                    }));
+                } else {
+                    setDeviceReqFieldsForDisplay((prevState) => ({
+                        ...prevState,
+                        [eachField.field]: ''
+                    }));
+                }
+            }
+        })
+        if (requiredFields.length) {
+            requiredFields.forEach((each, index) => {
+                if (index < requiredFields.length - 1) {
+                    fields = `${fields} ${each},`
+                } else {
+                    fields = `${fields} ${each}`
+                }
+            })
+            errorMsg = requiredFieldsErrorMsg + fields;
+        } 
+        return errorMsg;
+    }
+
     function updateDevice() {
         console.log(editData);
-        ApiService.put(ApiUrls.device(accountId, displayDetails['uid']), editData)
+        const error = validateDeviceData(editData);
+        if (error) {
+            openNotification(`error`, error);
+        } else {
+            ApiService.put(ApiUrls.device(accountId, displayDetails['uid']), editData)
             .then(data => {
                 if (!data.errorSummary) {
                     console.log(data);
@@ -78,6 +163,7 @@ function Device(props: any) {
                 console.error('Error: ', error);
                 openNotification('error', 'An Error has occured with updating Device');
             })
+        }      
     }
 
     function handleEditClick() {
@@ -138,7 +224,7 @@ function Device(props: any) {
                                     ...editData,
                                     device_name: e.target.value
                                 })}
-                                style={{ width: "275px" }}
+                                style={{ width: "275px", borderColor: deviceReqFieldsForDisplay?.device_name }}
                                 className="form-control"
                                 placeholder="Enter device name"
                                 defaultValue={displayDetails['device_name'] !== "" ? displayDetails['device_name'] : ""}
@@ -159,7 +245,8 @@ function Device(props: any) {
                                     ...editData,
                                     device_type: value
                                 })}
-                                style={{ width: '275px' }}
+                                style={{ width: '275px'}}
+                                className= {deviceReqFieldsForDisplay?.device_type === 'red' ? 'select-mandatory' : ''}
                             >
                                 {
                                     Object.keys(deviceTypeOptions).map(device => {
@@ -186,6 +273,7 @@ function Device(props: any) {
                                     vendor: value
                                 })}
                                 style={{ width: '275px' }}
+                                className= {deviceReqFieldsForDisplay?.vendor === 'red' ? 'select-mandatory' : ''}
                             >
                                 {
                                     Object.keys(vendorOptions).map(vendor => {
@@ -217,7 +305,7 @@ function Device(props: any) {
                         }
                     </div>
                     <div className="content-device-key-header">
-                        Serial Number:
+                        <p>Serial Number<span className="mandatory">*</span> :</p>
                     </div>
                     <div>
                         {isEdit ?
@@ -228,7 +316,7 @@ function Device(props: any) {
                                     ...editData,
                                     serial_number: e.target.value
                                 })}
-                                style={{ width: "275px" }}
+                                style={{ width: "275px", borderColor: deviceReqFieldsForDisplay?.serial_number }}
                                 className="form-control"
                                 placeholder="Enter serial number"
                                 defaultValue={displayDetails['device_name'] !== "" ? displayDetails['serial_number'] : ""}
