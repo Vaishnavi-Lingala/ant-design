@@ -403,7 +403,7 @@ export const deactivateConfirmMsg = 'Deactivating a user will remove all enrollm
 
 export const DEFAULT_TEXT_COLOR = '#000000';
 export const DEFAULT_BACKGROUND_COLOR = '#ffffff';
-export const globalPolicyReqFields = [{field: 'name', dataType: 'string'}, {field: 'auth_policy_groups', dataType: 'array'}];
+export const globalPolicyReqFields = [{ field: 'name', dataType: 'string' }, { field: 'auth_policy_groups', dataType: 'array' }];
 
 export const policyInfoModel = {
     name: 'Policy Name',
@@ -428,13 +428,13 @@ export const passwordPolicyInfoModel = {
     grace_period: 'Grace Period'
 }
 
-export const kioskPolicyReqFields = [{ field: 'name', dataType: 'string' }, 
-{ field: 'auth_policy_groups', dataType: 'array' }, 
-{ field: 'kiosk_machine_groups', dataType: 'array' }, 
-{ field: 'login_type', dataType: 'string', objectName: 'policy_req' }, 
-{field: 'access_key_id', dataType: 'string', objectName: 'policy_req'},
-{field: 'assay', dataType: 'string', objectName: 'policy_req'},
-{field: 'confirm_assay', dataType: 'string', objectName: 'policy_req'}];
+export const kioskPolicyReqFields = [{ field: 'name', dataType: 'string' },
+{ field: 'auth_policy_groups', dataType: 'array' },
+{ field: 'kiosk_machine_groups', dataType: 'array' },
+{ field: 'login_type', dataType: 'string', objectName: 'policy_req' },
+{ field: 'access_key_id', dataType: 'string', objectName: 'policy_req' },
+{ field: 'assay', dataType: 'string', objectName: 'policy_req' },
+{ field: 'confirm_assay', dataType: 'string', objectName: 'policy_req' }];
 
 export const kioskPolicyInfoModel = {
     name: 'Policy Name',
@@ -444,4 +444,28 @@ export const kioskPolicyInfoModel = {
     access_key_id: 'Username',
     assay: 'Password',
     confirm_assay: 'Confirm Password'
+}
+
+export const mechanismReqFields = [
+    { field: 'name', dataType: 'string' },
+    { field: 'mechanism_groups', dataType: 'array' },
+    { field: 'on_tap_out', dataType: 'string' }];
+
+export const mechanismInfoModel = {
+    name: 'Mechanism Name',
+    mechanism_groups: 'Group Name',
+    on_tap_out: 'Tap Out Action'
+}
+
+export const deviceReqFields = [
+    { field: 'device_name', dataType: 'string' },
+    { field: 'device_type', dataType: 'string' },
+    { field: 'vendor', dataType: 'string' },
+    { field: 'serial_number', dataType: 'string' }];
+
+export const deviceInfoModel = {
+    device_name: 'Device Name',
+    device_type: 'Device Type',
+    vendor: 'Vendor',
+    serial_number: 'Serial Number'
 }
