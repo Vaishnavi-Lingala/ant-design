@@ -8,7 +8,9 @@ function ColorPicker(props: any) {
   const [background, setBackground] = useState(props.defaultColor);
 
   function handleClick() {
-    setDisplayColorPicker(!displayColorPicker);
+    if(props.disabled === true) {
+      setDisplayColorPicker(!displayColorPicker);
+    }
   }
 
   function handleClose() {
@@ -51,13 +53,12 @@ function ColorPicker(props: any) {
     },
   });
 
-
   return (
     <div>
       <div style={styles.swatch} onClick={handleClick}>
         <div style={styles.color} />
       </div>
-      <span style={{ padding: '10px' }}>{background}</span>
+      {/* <span style={{ padding: '10px' }}>{background}</span> */}
       {displayColorPicker ?
         //@ts-ignore 
         <div style={styles.popover}>
