@@ -32,6 +32,11 @@ function Domains() {
                 console.error('Error: ', error);
                 openNotification('error', 'An Error has occured with getting Settings');
             })
+
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
     }
 
     function handleEditClick() {
@@ -70,11 +75,6 @@ function Domains() {
                 }
             })
     }
-
-    window.scrollTo({
-        top: 0,
-        behavior: 'smooth',
-    });
 
     return (
         <>
